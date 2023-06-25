@@ -59,7 +59,6 @@ If you are reporting a bug, please include:
 * Any details about your local setup that might be helpful in troubleshooting.
 * Detailed steps to reproduce the bug.
 * For visual bugs, a screenshot or animated GIF of the bug in action.
-* If possible, please include a link to an example on [RunKit](https://runkit.com/).
 
 #### Fix Bugs
 
@@ -93,7 +92,7 @@ The best way to send feedback is to file an issue on GitHub.
 
 ### Contributors
 
-* [@romainsacchi](romain.sacchi@psi.ch)
+* [Romain Sacchi](https://github.com/romainsacchi)
 
 
 ### Financial Support
