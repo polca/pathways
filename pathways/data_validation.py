@@ -4,8 +4,9 @@ in the datapackage.json file.
 """
 
 import json
-import datapackage
 from pathlib import Path
+
+import datapackage
 import pandas as pd
 import yaml
 
@@ -103,7 +104,7 @@ def validate_scenario_data(filepath: str) -> bool:
         "variable": str,
         "region": str,
         "year": int,
-        "value": float
+        "value": float,
     }
 
     for column in required_columns:
@@ -111,8 +112,10 @@ def validate_scenario_data(filepath: str) -> bool:
             raise ValueError(f"Missing mandatory column: {column}")
 
         if not data[column].dtype == required_data_types[column]:
-            raise TypeError(f"Invalid data type for column {column}. "
-                            f"Must be {required_data_types[column]}")
+            raise TypeError(
+                f"Invalid data type for column {column}. "
+                f"Must be {required_data_types[column]}"
+            )
 
     return True
 
@@ -171,4 +174,6 @@ def validate_mapping(filepath: str):
     scenario_data = read_scenario_data("data/scenarios.csv")
     scenario_variables = set(scenario_variables)
     if not scenario_variables.issubset(set(scenario_data["variable"].unique())):
-        raise ValueError("All values for `scenario variable` must be present in the scenario data")
+        raise ValueError(
+            "All values for `scenario variable` must be present in the scenario data"
+        )
