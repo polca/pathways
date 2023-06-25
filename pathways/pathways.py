@@ -47,9 +47,7 @@ class Pathways:
         :return: dict
 
         """
-        filepath = self.data["mappings"]["path"]
-        with open(filepath, "r") as f:
-            return yaml.safe_load(f)
+        return yaml.safe_load(self.data.get_resource("mapping").raw_read())
 
     def read_scenario_data(self, scenario):
         """Read the scenario data.
@@ -77,21 +75,27 @@ class Pathways:
         Load scenarios from filepaths as pandas DataFrame.
         Concatenate them into an xarray DataArray.
         """
-        scenarios = {}
-        for scenario in self.data["scenarios"]:
-            scenarios[scenario] = self.read_scenario_data(scenario)
 
-        # Concatenate into xarray DataArray
-        data = xr.concat(scenarios, dim="scenario")
+        scenario_data = self.data.get_resource("scenarios").read()
+        scenario_data = pd.DataFrame(scenario_data, columns=self.data.get_resource("scenarios").headers)
+
+        # remove rows which do not have a value under the `variable`
+        # column that correpsonds to any value in self.mapping for `scenario variable`
+        scenario_data = scenario_data[scenario_data["variable"].isin([item["scenario variable"] for item in self.mapping])]
+
+        # Convert to xarray DataArray
+        data = (
+            scenario_data
+            .groupby(["model", "pathway", "variable", "region", "year"])["value"]
+            .mean()
+            .to_xarray()
+        )
 
         # Add metadata
-        data.attrs["metadata"] = self.data.descriptor["metadata"]
+        data.attrs["contributors"] = self.data.descriptor["contributors"]
+        data.attrs["description"] = self.data.descriptor["description"]
 
         # Replace variable names with values found in self.mapping
-        # under `pathways variable`
-        for variable in data.coords["variable"].values:
-            for item in self.mapping:
-                if variable == item["scenario variable"]:
-                    data.coords["variable"].loc[variable] = item["pathways variable"]
+        data.coords["variable"] = [item["variable"] for item in self.mapping]
 
         return data
