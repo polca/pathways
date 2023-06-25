@@ -1,0 +1,4 @@
+include pathways/data/*.txt
+include premise/data/*.csv
+include premise/data/*.json
+include premise/data/*.yml

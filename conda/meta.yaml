@@ -1,0 +1,30 @@
+package:
+  name: pathways
+  version: {{ environ['VERSION'] }}
+
+source:
+  path: ..
+
+build:
+  noarch: python
+  number: 0
+  script: python -m pip install --no-deps --ignore-installed .
+  script_env:
+    - VERSION
+    - CONDA_BLD_PATH
+
+requirements:
+  build:
+    - python
+    - setuptools
+  run:
+    - numpy
+test:
+  imports:
+    - pathways
+
+about:
+  home: https://github.com/polca/pathways
+  license: BSD License
+  summary: 'Scenario-level environmental impact assessment of energy systems and transition pathways.'
+license_family: BSD
