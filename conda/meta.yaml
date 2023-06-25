@@ -19,6 +19,10 @@ requirements:
     - setuptools
   run:
     - numpy
+    - pandas
+    - xarray
+    - scipy
+    - pathlib
 test:
   imports:
     - pathways

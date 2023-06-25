@@ -73,9 +73,8 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install pathlib
           pip install -r requirements.txt --upgrade pip
-          pip install -e .
+          pip install .
           pip install pytest
 
       - name: Run tests

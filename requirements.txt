@@ -1,1 +1,5 @@
 numpy
+pathlib
+pandas
+scipy
+xarray

@@ -42,6 +42,11 @@ setup(
     include_package_data=True,
     install_requires=[
         "numpy",
+        "pathlib",
+        "pandas",
+        "xarray",
+        "pandas",
+        "scipy",
     ],
     url="https://github.com/polca/premise",
     description="Scenario-level LCA of energy systems and transition pathways",
