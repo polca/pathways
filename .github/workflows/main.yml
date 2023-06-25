@@ -25,8 +25,6 @@ jobs:
       - name: Push changes
         if: steps.git-check.outputs.modified == 'true'
         run: |
-          git config --global user.email "r_s@me.com"
-          git config --global user.name "romainsacchi"
           git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/$GITHUB_REPOSITORY
           git checkout $GITHUB_HEAD_REF
           git commit -am "Black reformating"
@@ -84,7 +82,7 @@ jobs:
 
       - name: Run tests
         run: |
-          pytest -m "not ecoinvent" -s --cov=pathways
+          pytest --cov=pathways
           coveralls -v --service=github-actions
         env:
           GITHUB_TOKEN: ${{ secrets.COVERALLS }}
