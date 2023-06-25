@@ -37,7 +37,8 @@ setup(
     packages=packages,
     author="Romain Sacchi <romain.sacchi@psi.ch>",
     license=open("LICENSE").read(),
-    # Only if you have non-python data (CSV, etc.). Might need to change the directory name as well.
+    # Only if you have non-python data (CSV, etc.).
+    # Might need to change the directory name as well.
     include_package_data=True,
     install_requires=[
         "numpy",
