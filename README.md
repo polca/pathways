@@ -18,6 +18,7 @@ and calculates the environmental impacts over a defined period.
 
 ```
 
+
 ## Usage
 
 ``pathways`` is a Python package, and can be used in Python scripts
