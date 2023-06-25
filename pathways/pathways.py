@@ -5,11 +5,14 @@ LCA datasets, and LCA matrices.
 """
 
 import json
-from .data_validation import validate_datapackage
-from datapackage import DataPackage
-import xarray as xr
+
 import pandas as pd
+import xarray as xr
 import yaml
+from datapackage import DataPackage
+
+from .data_validation import validate_datapackage
+
 
 class Pathways:
     """The Pathways class reads in a datapackage that contains scenario data,
