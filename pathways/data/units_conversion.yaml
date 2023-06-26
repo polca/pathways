@@ -1,0 +1,16 @@
+PJ/year:
+  kilowatt hour: 2.778e+8
+  megajoule: 1e+9
+Mtonne/yr:
+  kilogram: 1e+9
+Mt/yr:
+  kilogram: 1e+9
+million ha:
+  square meter: 1e+12
+EJ/yr:
+  kilowatt hour: 2.778e+11
+  megajoule: 1e+12
+bn tkm/yr:
+  ton kilometer: 1e+9
+bn pkm/yr:
+  passenger kilometer: 1e+9

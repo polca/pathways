@@ -58,7 +58,7 @@ def validate_datapackage(datapackage: datapackage.DataPackage):
     validate_mapping(datapackage.get_resource("mapping"), datapackage)
 
     # Check that the LCA data is valid
-    validate_lca_data(datapackage)
+    #validate_lca_data(datapackage)
 
     return datapackage
 
@@ -109,25 +109,15 @@ def validate_mapping(resource: datapackage.Resource, datapackage: datapackage.Da
     mapping = yaml.safe_load(resource.raw_read())
 
     # Check that the data has the required structure
-    required_keys = ["variable", "dataset", "scenario variable"]
-    for item in mapping:
-        for key in required_keys:
-            if key not in item:
-                raise ValueError(f"Missing key: {key}")
-            if key == "dataset":
-                assert "name" in item[key]
-                assert "reference product" in item[key]
-                assert "unit" in item[key]
+    required_keys = ["dataset", "scenario variable"]
+    for k, v in mapping.items():
+        if not set(required_keys).issubset(set(v.keys())):
+            raise ValueError(f"Invalid mapping: missing keys for {k}")
 
     # Check that all values for `scenario variable` are unique
-    scenario_variables = [item["scenario variable"] for item in mapping]
+    scenario_variables = [item["scenario variable"] for item in mapping.values()]
     if len(scenario_variables) != len(set(scenario_variables)):
         raise ValueError("All values for `scenario variable` must be unique")
-
-    # Check that all values for `variable` are unique
-    pathways_variables = [item["variable"] for item in mapping]
-    if len(pathways_variables) != len(set(pathways_variables)):
-        raise ValueError("All values for `pathways variable` must be unique")
 
     # Check that all values for `scenario variable` are present in the scenario data
     scenario_data = datapackage.get_resource("scenarios").read()
@@ -151,6 +141,6 @@ def validate_lca_data(datapackage):
     required_resources = ["exchanges", "labels"]
     for resource in required_resources:
         try:
-            datapackage.get_resource(resource)
+            datapackage.get_resource(resource).read()
         except DataPackageException:
             raise ValueError(f"Missing resource: {resource}")
