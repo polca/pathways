@@ -47,6 +47,8 @@ setup(
         "xarray",
         "pandas",
         "scipy",
+        "premise",
+        "pyyaml",
     ],
     url="https://github.com/polca/premise",
     description="Scenario-level LCA of energy systems and transition pathways",

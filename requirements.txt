@@ -3,3 +3,5 @@ pathlib
 pandas
 scipy
 xarray
+premise
+pyyaml

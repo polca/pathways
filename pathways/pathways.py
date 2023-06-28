@@ -7,7 +7,6 @@ LCA datasets, and LCA matrices.
 import json
 
 import pandas as pd
-import xarray as xr
 import yaml
 from datapackage import DataPackage
 from pathlib import Path
@@ -15,8 +14,19 @@ from csv import reader
 import csv
 import numpy as np
 from scipy import sparse
-from scipy.sparse.linalg import spsolve
-from scipy.linalg import solve
+from .lcia import fill_characterization_factors_matrix, get_lcia_method_names
+from .utils import load_classifications, load_units_conversion
+import xarray as xr
+from collections import defaultdict
+from premise.geomap import Geomap
+from multiprocessing import Pool, cpu_count
+import sys
+
+# if pypardiso is installed, use it
+try:
+    from pypardiso import spsolve
+except ImportError:
+    from scipy.sparse.linalg import spsolve
 
 from .data_validation import validate_datapackage
 
@@ -24,8 +34,8 @@ from .data_validation import validate_datapackage
 def csv_to_dict(filename):
     output_dict = {}
 
-    with open(filename, 'r') as file:
-        reader = csv.reader(file, delimiter=';')
+    with open(filename, "r") as file:
+        reader = csv.reader(file, delimiter=";")
         for row in reader:
             # Making sure there are at least 5 items in the row
             if len(row) >= 5:
@@ -38,9 +48,127 @@ def csv_to_dict(filename):
 
 
 def get_visible_files(path):
-    return [
-        file for file in Path(path).iterdir() if not file.name.startswith(".")
+    return [file for file in Path(path).iterdir() if not file.name.startswith(".")]
+
+
+def _get_activity_indices(activities, A_index, geo, region):
+    indices = []
+    for activity in activities:
+        idx = A_index.get((activity[0], activity[1], activity[2], region))
+        if idx is not None:
+            indices.append(int(idx))
+        else:
+            possible_locations = geo.iam_to_ecoinvent_location(activity[-1])
+
+            for loc in possible_locations:
+                idx = A_index.get((activity[0], activity[1], activity[2], loc))
+                if idx is not None:
+                    indices.append(int(idx))
+                    break
+            else:
+                for default_loc in ["RoW", "GLO", "RER", "CH"]:
+                    idx = A_index.get((activity[0], activity[1], activity[2], default_loc))
+                    if idx is not None:
+                        indices.append(int(idx))
+                        break
+    return indices
+
+
+def process_region(data):
+    model, scenario, year, region, scenarios, mapping, units_map, A, B, A_index, B_index, lcia_matrix, reverse_classifications, lca_results_coords, geo = data
+
+    if region == "World":
+        return None
+
+    # Fetch the demand
+    demand = scenarios.sel(
+        region=region,
+        model=model,
+        pathway=scenario,
+        year=year,
+    )
+
+    if demand.sum() == 0:
+        return None
+
+    activities = [
+        (
+            mapping[x]["dataset"]["name"],
+            mapping[x]["dataset"]["reference product"],
+            mapping[x]["dataset"]["unit"],
+            region,
+        )
+        for x in demand.coords["variable"].values
     ]
+
+    # Here, you would need to implement the _get_activity_indices method
+    # as a standalone function, and adjust the inputs accordingly
+    activities_idx = _get_activity_indices(activities, A_index, geo, region)
+
+    assert len(activities_idx) == len(activities)
+
+    units = [
+        scenarios.attrs["units"][
+            mapping[x]["scenario variable"]
+        ]
+        for x in mapping
+    ]
+
+    unit_conversion = np.ones(len(units))
+    for i, unit in enumerate(units):
+        unit_conversion[i] = units_map[unit][activities[i][2]]
+
+    f = np.zeros(A.shape[0])
+    f[activities_idx] = np.asarray(demand) * unit_conversion
+
+    # remove contributions of activities_idx in other activities
+    A[
+        activities_idx,
+        [x for x in range(len(A.shape[1])) if x not in activities_idx]
+    ] = 0
+
+    A_inv = spsolve(A, f)[:, np.newaxis]
+
+    sys.stdout.flush()
+
+    C = A_inv * B
+
+    D = C[..., None] * lcia_matrix
+
+    D = D.sum(axis=1)
+
+    acts_idx = []
+    for cat in lca_results_coords["act_category"].values:
+        acts_idx.append(
+            [
+                int(A_index[a])
+                for a in reverse_classifications[cat]
+                if a in A_index
+            ]
+        )
+
+    max_len = max([len(x) for x in acts_idx])
+    acts_idx = np.array(
+        [
+            np.pad(x, (0, max_len - len(x)), constant_values=-1)
+            for x in acts_idx
+        ]
+    )
+    acts_idx = np.swapaxes(acts_idx, 0, 1)
+
+    D = D[acts_idx, ...].sum(axis=0)
+
+    return {
+        "act_category": lca_results_coords[
+            "act_category"
+        ].values,
+        "impact_category": lca_results_coords[
+            "impact_category"
+        ].values,
+        "year": year,
+        "region": region,
+        "D": D
+    }
 
 
 class Pathways:
@@ -58,6 +186,17 @@ class Pathways:
         self.data = validate_datapackage(self.read_datapackage())
         self.mapping = self.get_mapping()
         self.scenarios = self.get_scenarios()
+        self.classifications = load_classifications()
+
+        # create a reverse mapping
+        self.reverse_classifications = defaultdict(list)
+        for k, v in self.classifications.items():
+            self.reverse_classifications[v].append(k)
+
+        self.lca_results = None
+        self.lcia_methods = get_lcia_method_names()
+        self.units = load_units_conversion()
+        self.lcia_matrix = None
         # self.lca_A, self.lca_B = self.get_lca_matrices()
         # self.lca_labels = self.get_lca_labels()
 
@@ -108,24 +247,38 @@ class Pathways:
         """
 
         scenario_data = self.data.get_resource("scenarios").read()
-        scenario_data = pd.DataFrame(scenario_data, columns=self.data.get_resource("scenarios").headers)
+        scenario_data = pd.DataFrame(
+            scenario_data, columns=self.data.get_resource("scenarios").headers
+        )
 
         # remove rows which do not have a value under the `variable`
         # column that correpsonds to any value in self.mapping for `scenario variable`
         scenario_data = scenario_data[
-            scenario_data["variable"].isin([item["scenario variable"] for item in self.mapping.values()])]
+            scenario_data["variable"].isin(
+                [item["scenario variable"] for item in self.mapping.values()]
+            )
+        ]
+
+        # convert `year` column to integer
+        scenario_data["year"] = scenario_data["year"].astype(int)
 
         # Convert to xarray DataArray
         data = (
-            scenario_data
-            .groupby(["model", "pathway", "variable", "region", "year"])["value"]
+            scenario_data.groupby(["model", "pathway", "variable", "region", "year"])[
+                "value"
+            ]
             .mean()
             .to_xarray()
         )
 
-        # Add metadata
-        data.attrs["contributors"] = self.data.descriptor["contributors"]
-        data.attrs["description"] = self.data.descriptor["description"]
+        # Add units
+        units = {}
+        for variable in data.coords["variable"].values:
+            units[variable] = scenario_data[scenario_data["variable"] == variable].iloc[
+                0
+            ]["unit"]
+
+        data.attrs["units"] = units
 
         # Replace variable names with values found in self.mapping
         new_names = []
@@ -139,25 +292,23 @@ class Pathways:
 
     def get_lca_matrices(self, model, scenario, year):
 
-        dirpath = Path(self.datapackage).parent / "inventories" / model / scenario / str(year)
+        dirpath = (
+                Path(self.datapackage).parent / "inventories" / model / scenario / str(year)
+        )
 
         # creates dict of activities <--> indices in A matrix
         A_inds = dict()
-        with open(dirpath / "A_matrix_index.csv", 'r') as read_obj:
+        with open(dirpath / "A_matrix_index.csv", "r") as read_obj:
             csv_reader = reader(read_obj, delimiter=";")
             for row in csv_reader:
                 A_inds[(row[0], row[1], row[2], row[3])] = row[4]
 
-        A_inds_rev = {int(v): k for k, v in A_inds.items()}
-
         # creates dict of bio flow <--> indices in B matrix
         B_inds = dict()
-        with open(dirpath / "B_matrix_index.csv", 'r') as read_obj:
+        with open(dirpath / "B_matrix_index.csv", "r") as read_obj:
             csv_reader = reader(read_obj, delimiter=";")
             for row in csv_reader:
                 B_inds[(row[0], row[1], row[2], row[3])] = row[4]
-
-        B_inds_rev = {int(v): k for k, v in B_inds.items()}
 
         # create a sparse A matrix
         A_coords = np.genfromtxt(dirpath / "A_matrix.csv", delimiter=";", skip_header=1)
@@ -169,51 +320,180 @@ class Pathways:
         B_coords = np.genfromtxt(dirpath / "B_matrix.csv", delimiter=";", skip_header=1)
         I = B_coords[:, 0].astype(int)
         J = B_coords[:, 1].astype(int)
-        B = sparse.csr_matrix((B_coords[:, 2] * -1, (I, J)), shape=(A.shape[0], len(B_inds)))
+        B = sparse.csr_matrix(
+            (B_coords[:, 2] * -1, (I, J)), shape=(A.shape[0], len(B_inds))
+        )
 
         return A, B, A_inds, B_inds
 
-    def calculate(self):
-        """Calculate the LCA results for the scenarios."""
-        # iterate through the scenarios
-        for model in self.scenarios.coords["model"].values:
-            for scenario in self.scenarios.coords["pathway"].values:
-                for year in self.scenarios.coords["year"].values:
+    def create_lca_results_array(self, B_inds, methods, years, regions):
+        """
+        Create an xarray where to store results.
 
-                    print(model, scenario, year)
+        :return:
+        """
 
-                    A, B, A_index, B_index = self.get_lca_matrices(model, scenario, year)
+        # the dimensions are `emissions`, `act_category`, `impact_category`, `year`
+        # the coordinates are keys from B_inds, values from self.classifications,
+        # outputs from get_lcia_methods(), and years from self.scenarios.coords["year"].values
 
-                    print(A.shape, B.shape)
+        # create the coordinates
 
-                    for var in self.scenarios.coords["variable"].values:
-                        for region in self.scenarios.coords["region"].values:
-                            # get the value for the current scenario
-                            value = self.scenarios.sel(
-                                model=model,
-                                pathway=scenario,
-                                variable=var,
-                                region=region,
-                                year=year
-                            ).values
+        list_emissions = list(B_inds.keys())
 
-                            # get the corresponding LCA activity
-                            # by looking into `self.mapping`
+        # reduce this list to the first element of each tuple
+        list_emissions = list(set([x[0] for x in list_emissions]))
 
-                            # get the activity details
-                            name = self.mapping[var]["dataset"]["name"]
-                            reference_product = self.mapping[var]["dataset"]["reference product"]
-                            unit = self.mapping[var]["dataset"]["unit"]
+        coords = {
+            # "emissions": list_emissions,
+            "act_category": list(set(self.classifications.values())),
+            "impact_category": methods,
+            "year": years,
+            "region": regions,
+        }
 
-                            if (name, reference_product, unit, region) in A_index:
+        # create the DataArray
+        return xr.DataArray(
+            np.zeros(
+                (
+                    # len(coords["emissions"]),
+                    len(coords["act_category"]),
+                    len(methods),
+                    len(years),
+                    len(regions)
+                )
+            ),
+            coords=coords,
+            dims=[
+                # "emissions",
+                "act_category",
+                "impact_category",
+                "year",
+                "region"
+            ],
+        )
 
-                                key = (name, reference_product, unit, region)
-                                idx = A_index[key]
-                                print(key, idx)
-                                f = np.zeros(A.shape[0])
-                                f[int(idx)] = 1
-                                A_inv = spsolve(np.nan_to_num(A), f)
-                                print(A_inv.shape)
-                                # print()
-                                # C = A_inv * B
-                                # print(C.sum())
+    def calculate(self, methods=None, models=None, scenarios=None, regions=None, years=None):
+        missing_class = []
+
+        if methods is None:
+            methods = get_lcia_method_names()
+
+        if models is None:
+            models = self.scenarios.coords["model"].values
+
+        if scenarios is None:
+            scenarios = self.scenarios.coords["pathway"].values
+
+        if regions is None:
+            regions = self.scenarios.coords["region"].values
+
+        if years is None:
+            years = self.scenarios.coords["year"].values
+
+        for model in models:
+            geo = Geomap(model=model)
+            for scenario in scenarios:
+                for year in years:
+
+                    try:
+                        A, B, A_index, B_index = self.get_lca_matrices(
+                            model, scenario, year
+                        )
+                        B = np.asarray(B.todense())
+                    except FileNotFoundError:
+                        continue
+
+                    if self.lca_results is None:
+                        self.lca_results = self.create_lca_results_array(
+                            B_index,
+                            methods,
+                            years,
+                            regions
+                        )
+
+                    self.lcia_matrix = fill_characterization_factors_matrix(
+                        list(B_index.keys()), methods
+                    )
+
+                    for act in A_index:
+                        if act not in self.classifications:
+                            missing_class.append(list(act))
+
+                    data_for_regions = [
+                        (
+                            model,
+                            scenario,
+                            year,
+                            region,
+                            self.scenarios,
+                            self.mapping,
+                            self.units,
+                            A,
+                            B,
+                            A_index,
+                            B_index,
+                            self.lcia_matrix,
+                            self.reverse_classifications,
+                            self.lca_results.coords,
+                            geo
+                        )
+                        for region in regions
+                    ]
+
+                    with Pool(cpu_count()) as p:
+                        results = p.map(process_region, data_for_regions)
+
+                    for result in results:
+                        if result is not None:
+                            self.lca_results.loc[
+                                {
+                                    "act_category": result["act_category"],
+                                    "impact_category": result["impact_category"],
+                                    "year": result["year"],
+                                    "region": result["region"],
+                                }
+                            ] = result["D"]
+
+    def display_results(self, cutoff=0.01):
+        """
+        Display results in a dataframe
+        But aggregate activity_categories if they represent less than
+        `cutoff` percent of the total impact, and call that "other".
+        """
+
+        if self.lca_results is None:
+            raise ValueError("No results to display")
+
+        # aggregate activity categories
+        df = (
+            self.lca_results.to_dataframe("value")
+            .reset_index()
+            .groupby(["act_category", "impact_category", "year", "region"])
+            .sum()
+            .reset_index()
+        )
+
+        # get total impact per year
+        df = df.merge(
+            df.groupby(["impact_category", "year", "region"])["value"].sum().reset_index(),
+            on=["impact_category", "year", "region"],
+            suffixes=["", "_total"],
+        )
+
+        # get percentage of total
+        df["percentage"] = df["value"] / df["value_total"]
+
+        # aggregate activity categories
+        df.loc[df["percentage"] < cutoff, "act_category"] = "other"
+
+        # drop total columns
+        df = df.drop(columns=["value_total", "percentage"])
+
+        arr = df.groupby(["act_category", "impact_category", "year", "region"])["value"].sum().to_xarray()
+
+        # interpolate years to have a continuous time series
+        arr = arr.interp(year=np.arange(arr.year.min(), arr.year.max() + 1), kwargs={"fill_value": "extrapolate", "method": "linear"})
+
+        # convert to xarray
+        return arr
