@@ -67,7 +67,9 @@ def _get_activity_indices(activities, A_index, geo, region):
                     break
             else:
                 for default_loc in ["RoW", "GLO", "RER", "CH"]:
-                    idx = A_index.get((activity[0], activity[1], activity[2], default_loc))
+                    idx = A_index.get(
+                        (activity[0], activity[1], activity[2], default_loc)
+                    )
                     if idx is not None:
                         indices.append(int(idx))
                         break
@@ -75,10 +77,26 @@ def _get_activity_indices(activities, A_index, geo, region):
 
 
 def process_region(data):
-    model, scenario, year, region, scenarios, mapping, units_map, A, B, A_index, B_index, lcia_matrix, reverse_classifications, lca_results_coords, geo = data
+    (
+        model,
+        scenario,
+        year,
+        region,
+        scenarios,
+        mapping,
+        units_map,
+        A,
+        B,
+        A_index,
+        B_index,
+        lcia_matrix,
+        reverse_classifications,
+        lca_results_coords,
+        geo,
+    ) = data
 
-    if region == "World":
-        return None
+    #if region == "World":
+    #    return None
 
     # Fetch the demand
     demand = scenarios.sel(
@@ -107,12 +125,7 @@ def process_region(data):
 
     assert len(activities_idx) == len(activities)
 
-    units = [
-        scenarios.attrs["units"][
-            mapping[x]["scenario variable"]
-        ]
-        for x in mapping
-    ]
+    units = [scenarios.attrs["units"][mapping[x]["scenario variable"]] for x in mapping]
 
     unit_conversion = np.ones(len(units))
     for i, unit in enumerate(units):
@@ -122,14 +135,21 @@ def process_region(data):
     f[activities_idx] = np.asarray(demand) * unit_conversion
 
     # remove contributions of activities_idx in other activities
-    A[
-        activities_idx,
-        [x for x in range(len(A.shape[1])) if x not in activities_idx]
+    # Convert your csr_matrix to a lil_matrix
+    A_lil = A.tolil()
+
+    # Now, you can modify your lil_matrix without getting the warning
+    A_lil[
+        np.ix_(
+            activities_idx,
+            [x for x in range(A_lil.shape[1]) if x not in activities_idx],
+        )
     ] = 0
 
-    A_inv = spsolve(A, f)[:, np.newaxis]
+    # Convert it back to csr_matrix if needed
+    A = A_lil.tocsr()
 
-    sys.stdout.flush()
+    A_inv = spsolve(A, f)[:, np.newaxis]
 
     C = A_inv * B
 
@@ -140,34 +160,25 @@ def process_region(data):
     acts_idx = []
     for cat in lca_results_coords["act_category"].values:
         acts_idx.append(
-            [
-                int(A_index[a])
-                for a in reverse_classifications[cat]
-                if a in A_index
-            ]
+            [int(A_index[a]) for a in reverse_classifications[cat] if a in A_index]
         )
 
     max_len = max([len(x) for x in acts_idx])
     acts_idx = np.array(
-        [
-            np.pad(x, (0, max_len - len(x)), constant_values=-1)
-            for x in acts_idx
-        ]
+        [np.pad(x, (0, max_len - len(x)), constant_values=-1) for x in acts_idx]
     )
     acts_idx = np.swapaxes(acts_idx, 0, 1)
 
     D = D[acts_idx, ...].sum(axis=0)
 
     return {
-        "act_category": lca_results_coords[
-            "act_category"
-        ].values,
-        "impact_category": lca_results_coords[
-            "impact_category"
-        ].values,
+        "act_category": lca_results_coords["act_category"].values,
+        "impact_category": lca_results_coords["impact_category"].values,
         "year": year,
         "region": region,
-        "D": D
+        "D": D,
+        "scenario": scenario,
+        "model": model,
     }
 
 
@@ -293,7 +304,7 @@ class Pathways:
     def get_lca_matrices(self, model, scenario, year):
 
         dirpath = (
-                Path(self.datapackage).parent / "inventories" / model / scenario / str(year)
+            Path(self.datapackage).parent / "inventories" / model / scenario / str(year)
         )
 
         # creates dict of activities <--> indices in A matrix
@@ -326,7 +337,7 @@ class Pathways:
 
         return A, B, A_inds, B_inds
 
-    def create_lca_results_array(self, B_inds, methods, years, regions):
+    def create_lca_results_array(self, methods, years, regions, models, scenarios):
         """
         Create an xarray where to store results.
 
@@ -339,17 +350,14 @@ class Pathways:
 
         # create the coordinates
 
-        list_emissions = list(B_inds.keys())
-
-        # reduce this list to the first element of each tuple
-        list_emissions = list(set([x[0] for x in list_emissions]))
-
         coords = {
             # "emissions": list_emissions,
             "act_category": list(set(self.classifications.values())),
             "impact_category": methods,
             "year": years,
             "region": regions,
+            "model": models,
+            "scenario": scenarios,
         }
 
         # create the DataArray
@@ -360,7 +368,9 @@ class Pathways:
                     len(coords["act_category"]),
                     len(methods),
                     len(years),
-                    len(regions)
+                    len(regions),
+                    len(models),
+                    len(scenarios),
                 )
             ),
             coords=coords,
@@ -369,11 +379,15 @@ class Pathways:
                 "act_category",
                 "impact_category",
                 "year",
-                "region"
+                "region",
+                "model",
+                "scenario",
             ],
         )
 
-    def calculate(self, methods=None, models=None, scenarios=None, regions=None, years=None):
+    def calculate(
+        self, methods=None, models=None, scenarios=None, regions=None, years=None
+    ):
         missing_class = []
 
         if methods is None:
@@ -391,6 +405,11 @@ class Pathways:
         if years is None:
             years = self.scenarios.coords["year"].values
 
+        if self.lca_results is None:
+            self.lca_results = self.create_lca_results_array(
+                methods, years, regions, models, scenarios
+            )
+
         for model in models:
             geo = Geomap(model=model)
             for scenario in scenarios:
@@ -404,13 +423,7 @@ class Pathways:
                     except FileNotFoundError:
                         continue
 
-                    if self.lca_results is None:
-                        self.lca_results = self.create_lca_results_array(
-                            B_index,
-                            methods,
-                            years,
-                            regions
-                        )
+
 
                     self.lcia_matrix = fill_characterization_factors_matrix(
                         list(B_index.keys()), methods
@@ -436,7 +449,7 @@ class Pathways:
                             self.lcia_matrix,
                             self.reverse_classifications,
                             self.lca_results.coords,
-                            geo
+                            geo,
                         )
                         for region in regions
                     ]
@@ -452,6 +465,8 @@ class Pathways:
                                     "impact_category": result["impact_category"],
                                     "year": result["year"],
                                     "region": result["region"],
+                                    "model": result["model"],
+                                    "scenario": result["scenario"],
                                 }
                             ] = result["D"]
 
@@ -469,14 +484,16 @@ class Pathways:
         df = (
             self.lca_results.to_dataframe("value")
             .reset_index()
-            .groupby(["act_category", "impact_category", "year", "region"])
+            .groupby(["model", "scenario", "act_category", "impact_category", "year", "region"])
             .sum()
             .reset_index()
         )
 
         # get total impact per year
         df = df.merge(
-            df.groupby(["impact_category", "year", "region"])["value"].sum().reset_index(),
+            df.groupby(["model", "scenario", "impact_category", "year", "region"])["value"]
+            .sum()
+            .reset_index(),
             on=["impact_category", "year", "region"],
             suffixes=["", "_total"],
         )
@@ -490,10 +507,19 @@ class Pathways:
         # drop total columns
         df = df.drop(columns=["value_total", "percentage"])
 
-        arr = df.groupby(["act_category", "impact_category", "year", "region"])["value"].sum().to_xarray()
+        arr = (
+            df.groupby(["model", "scenario", "act_category", "impact_category", "year", "region"])["value"]
+            .sum()
+            .to_xarray()
+        )
 
         # interpolate years to have a continuous time series
-        arr = arr.interp(year=np.arange(arr.year.min(), arr.year.max() + 1), kwargs={"fill_value": "extrapolate", "method": "linear"})
+        if len(arr.year) > 1:
+            arr = arr.interp(
+                year=np.arange(arr.year.min(), arr.year.max() + 1),
+                kwargs={"fill_value": "extrapolate"},
+                method="linear",
+            )
 
         # convert to xarray
         return arr
