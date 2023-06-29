@@ -29,7 +29,16 @@ be used in a terminal.
 
 ```python
 
-  import pathways
+from pathways import Pathways
+p = Pathways(datapackage="sample/datapackage.json")
+p.calculate(
+    methods=[
+            "EF v3.1 - acidification - accumulated exceedance (AE)"
+        ],
+    years=[2080, 2090, 2100],
+    regions=["World"],
+    scenarios=["SSP2-Base", "SSP2-RCP26",]
+)
 
 ```
 
