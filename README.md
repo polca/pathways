@@ -10,11 +10,11 @@ and calculates the environmental impacts over a defined period.
 
 ## Installation
 
-``pathways`` is available on PyPI and can be installed with ``pip``:
+For now ``pathways`` can be installed form the Github repo  with ``pip``:
 
 ```bash
 
-  pip install pathways
+  pip install git+https://github.com/romainsacchi/pathways.git
 
 ```
 
