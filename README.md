@@ -10,12 +10,12 @@ and calculates the environmental impacts over a defined period.
 
 ## Installation
 
-``pathways`` is in an Alpha development stage, and
+``pathways`` is in an early development stage, and
 can be installed from the Github repo  with ``pip``:
 
 ```bash
 
-  pip install git+https://github.com/romainsacchi/pathways.git
+  pip install git+https://github.com/polca/pathways.git
 
 ```
 
