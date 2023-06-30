@@ -10,7 +10,8 @@ and calculates the environmental impacts over a defined period.
 
 ## Installation
 
-For now ``pathways`` can be installed form the Github repo  with ``pip``:
+``pathways`` is in an Alpha development stage, and
+can be installed from the Github repo  with ``pip``:
 
 ```bash
 
@@ -22,8 +23,7 @@ For now ``pathways`` can be installed form the Github repo  with ``pip``:
 ## Usage
 
 ``pathways`` is a Python package, and can be used in Python scripts
-or in a Python interpreter. It is also a command-line tool, and can
-be used in a terminal.
+or in a Python interpreter.
 
 ### Python
 
@@ -42,13 +42,30 @@ p.calculate(
 
 ```
 
-### Command-line
+The argument `datapackage` is the path to the datapackage.json file
+that describes the scenario and the LCA databases.
+The argument `methods` is a list of methods to be used for the LCA
+calculations. The argument `years` is a list of years for which the
+LCA calculations are performed. The argument `regions` is a list of
+regions for which the LCA calculations are performed. The argument
+`scenarios` is a list of scenarios for which the LCA calculations are
+performed.
 
-```bash
+If not specified, all the methods, years, regions and scenarios
+defined in the datapackage.json file are used, which can be very
+time-consuming.
 
-  pathways --help
+Once calculate, the results of the LCA calculations are stored in the `.lcia_results`
+attribute of the `Pathways` object, and can be formatted in an array by calling `.display_results()`.
+
+```python
+
+p.display_results()
 
 ```
+
+which can then be visualized using your favorite plotting library.
+![Screenshot](assets/screenshot.png)
 
 ## Contributing
 
