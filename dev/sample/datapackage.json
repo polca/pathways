@@ -1,0 +1,79 @@
+{
+    "profile": "data-package",
+    "name": "sample-package",
+    "title": "This is a sample datapackage for pathways",
+    "description": "This datapackage contains all necessary data to do an LCA of a pathway",
+    "version": "0.0.1",
+    "contributors":[{
+    "title": "Romain Sacchi",
+    "email": "r_s@me.com"
+    }],
+    "dependencies": {
+        "pathways": ">=0.0.1"
+    },
+    "licenses": [{
+    "id": "CC0-1.0",
+    "title": "CC0 1.0",
+    "url": "https://creativecommons.org/publicdomain/zero/1.0/"
+      }],
+    "resources": [
+        {
+            "path": "scenario_data/scenario_data.csv",
+            "profile": "tabular-data-resource",
+            "name": "scenarios",
+            "format": "csv",
+            "mediatype": "text/csv",
+            "encoding": "utf-8-sig",
+            "schema": {
+                "fields": [
+                    {
+                        "name": "model",
+                        "type": "string",
+                        "format": "default"
+                    },
+                    {
+                        "name": "pathway",
+                        "type": "string",
+                        "format": "default"
+                    },
+                    {
+                        "name": "region",
+                        "type": "string",
+                        "format": "default"
+                    },
+                    {
+                        "name": "variable",
+                        "type": "string",
+                        "format": "default"
+                    },
+                    {
+                        "name": "unit",
+                        "type": "string",
+                        "format": "default"
+                    },
+                    {
+                        "name": "year",
+                        "type": "number",
+                        "format": "default"
+                    },
+                    {
+                        "name": "value",
+                        "type": "number",
+                        "format": "default"
+                    }
+                ],
+                "missingValues": [
+                    ""
+                ]
+            }
+        },
+        {
+            "path": "mapping/mapping.yaml",
+            "profile": "data-resource",
+            "name": "mapping",
+            "format": "yaml",
+            "mediatype": "text/yaml",
+            "encoding": "utf-8"
+        }
+    ]
+}
