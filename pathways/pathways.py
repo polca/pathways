@@ -4,23 +4,24 @@ that contains scenario data, mapping between scenario variables and
 LCA datasets, and LCA matrices.
 """
 
+import csv
 import json
+import sys
+from collections import defaultdict
+from csv import reader
+from multiprocessing import Pool, cpu_count
+from pathlib import Path
 
+import numpy as np
 import pandas as pd
+import xarray as xr
 import yaml
 from datapackage import DataPackage
-from pathlib import Path
-from csv import reader
-import csv
-import numpy as np
+from premise.geomap import Geomap
 from scipy import sparse
+
 from .lcia import fill_characterization_factors_matrix, get_lcia_method_names
 from .utils import load_classifications, load_units_conversion
-import xarray as xr
-from collections import defaultdict
-from premise.geomap import Geomap
-from multiprocessing import Pool, cpu_count
-import sys
 
 # if pypardiso is installed, use it
 try:
@@ -95,7 +96,7 @@ def process_region(data):
         geo,
     ) = data
 
-    #if region == "World":
+    # if region == "World":
     #    return None
 
     # Fetch the demand
@@ -302,7 +303,6 @@ class Pathways:
         return data
 
     def get_lca_matrices(self, model, scenario, year):
-
         dirpath = (
             Path(self.datapackage).parent / "inventories" / model / scenario / str(year)
         )
@@ -414,7 +414,6 @@ class Pathways:
             geo = Geomap(model=model)
             for scenario in scenarios:
                 for year in years:
-
                     try:
                         A, B, A_index, B_index = self.get_lca_matrices(
                             model, scenario, year
@@ -422,8 +421,6 @@ class Pathways:
                         B = np.asarray(B.todense())
                     except FileNotFoundError:
                         continue
-
-
 
                     self.lcia_matrix = fill_characterization_factors_matrix(
                         list(B_index.keys()), methods
@@ -484,14 +481,25 @@ class Pathways:
         df = (
             self.lca_results.to_dataframe("value")
             .reset_index()
-            .groupby(["model", "scenario", "act_category", "impact_category", "year", "region"])
+            .groupby(
+                [
+                    "model",
+                    "scenario",
+                    "act_category",
+                    "impact_category",
+                    "year",
+                    "region",
+                ]
+            )
             .sum()
             .reset_index()
         )
 
         # get total impact per year
         df = df.merge(
-            df.groupby(["model", "scenario", "impact_category", "year", "region"])["value"]
+            df.groupby(["model", "scenario", "impact_category", "year", "region"])[
+                "value"
+            ]
             .sum()
             .reset_index(),
             on=["impact_category", "year", "region"],
@@ -508,7 +516,16 @@ class Pathways:
         df = df.drop(columns=["value_total", "percentage"])
 
         arr = (
-            df.groupby(["model", "scenario", "act_category", "impact_category", "year", "region"])["value"]
+            df.groupby(
+                [
+                    "model",
+                    "scenario",
+                    "act_category",
+                    "impact_category",
+                    "year",
+                    "region",
+                ]
+            )["value"]
             .sum()
             .to_xarray()
         )

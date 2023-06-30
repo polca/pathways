@@ -1,10 +1,11 @@
-import yaml
 import numpy as np
+import yaml
 
 from . import DATA_DIR
 
 CLASSIFICATIONS = DATA_DIR / "activities_classifications.yaml"
 UNITS_CONVERSION = DATA_DIR / "units_conversion.yaml"
+
 
 def load_classifications():
     """Load the activities classifications."""
@@ -27,6 +28,7 @@ def load_classifications():
 
     return data
 
+
 def load_units_conversion():
     """Load the units conversion."""
 
@@ -34,5 +36,3 @@ def load_units_conversion():
         data = yaml.full_load(f)
 
     return data
-
-
