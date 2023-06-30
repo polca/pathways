@@ -1,7 +1,6 @@
 # Data directories #
 *.egg-info/
 logs/
-dev/
 *.egg/
 build/
 dist/
