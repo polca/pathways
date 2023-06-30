@@ -43,7 +43,7 @@ p.calculate(
 ```
 
 The argument `datapackage` is the path to the datapackage.json file
-that describes the scenario and the LCA databases.
+that describes the scenario and the LCA databases -- see dev/sample.
 The argument `methods` is a list of methods to be used for the LCA
 calculations. The argument `years` is a list of years for which the
 LCA calculations are performed. The argument `regions` is a list of
