@@ -1,12 +1,14 @@
-import yaml
+from typing import List, Union
+
 import numpy as np
 import xarray as xr
-from typing import Union, List
+import yaml
 
 from . import DATA_DIR
 
 CLASSIFICATIONS = DATA_DIR / "activities_classifications.yaml"
 UNITS_CONVERSION = DATA_DIR / "units_conversion.yaml"
+
 
 def load_classifications():
     """Load the activities classifications."""
@@ -29,6 +31,7 @@ def load_classifications():
 
     return data
 
+
 def load_units_conversion():
     """Load the units conversion."""
 
@@ -37,13 +40,14 @@ def load_units_conversion():
 
     return data
 
+
 def create_lca_results_array(
-        methods: List[str],
-        years: List[int],
-        regions: List[str],
-        models: List[str],
-        scenarios: List[str],
-        classifications: dict,
+    methods: List[str],
+    years: List[int],
+    regions: List[str],
+    models: List[str],
+    scenarios: List[str],
+    classifications: dict,
 ) -> xr.DataArray:
     """
     Create an xarray DataArray to store Life Cycle Assessment (LCA) results.
@@ -99,7 +103,10 @@ def create_lca_results_array(
         ],
     )
 
-def display_results(lca_results: Union[xr.DataArray, None], cutoff: float = 0.01) -> xr.DataArray:
+
+def display_results(
+    lca_results: Union[xr.DataArray, None], cutoff: float = 0.01
+) -> xr.DataArray:
     """
     Aggregate and display Life Cycle Assessment (LCA) results in an xarray format.
 
@@ -140,9 +147,7 @@ def display_results(lca_results: Union[xr.DataArray, None], cutoff: float = 0.01
 
     # Get total impact per year
     df = df.merge(
-        df.groupby(["model", "scenario", "impact_category", "year", "region"])[
-            "value"
-        ]
+        df.groupby(["model", "scenario", "impact_category", "year", "region"])["value"]
         .sum()
         .reset_index(),
         on=["impact_category", "year", "region"],
@@ -184,7 +189,3 @@ def display_results(lca_results: Union[xr.DataArray, None], cutoff: float = 0.01
 
     # Return aggregated results as an xarray DataArray
     return arr
-
-
-
-

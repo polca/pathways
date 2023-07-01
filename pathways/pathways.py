@@ -4,25 +4,31 @@ that contains scenario data, mapping between scenario variables and
 LCA datasets, and LCA matrices.
 """
 
+import csv
 import json
 import sys
+from collections import defaultdict
+from csv import reader
+from multiprocessing import Pool, cpu_count
+from pathlib import Path
+from typing import Any, Dict, List, Optional, Tuple, Union
 
+import numpy as np
 import pandas as pd
+import xarray as xr
 import yaml
 from datapackage import DataPackage
-from pathlib import Path
-from csv import reader
-import csv
-import numpy as np
-from scipy import sparse
-from .lcia import fill_characterization_factors_matrix, get_lcia_method_names
-from .utils import load_classifications, load_units_conversion, display_results, create_lca_results_array
-from .lca import solve_inventory, create_demand_vector, get_lca_matrices
-import xarray as xr
-from collections import defaultdict
 from premise.geomap import Geomap
-from multiprocessing import Pool, cpu_count
-from typing import Any, Dict, List, Tuple, Union, Optional
+from scipy import sparse
+
+from .lca import create_demand_vector, get_lca_matrices, solve_inventory
+from .lcia import fill_characterization_factors_matrix, get_lcia_method_names
+from .utils import (
+    create_lca_results_array,
+    display_results,
+    load_classifications,
+    load_units_conversion,
+)
 
 # if pypardiso is installed, use it
 try:
@@ -383,12 +389,12 @@ class Pathways:
         return data
 
     def calculate(
-            self,
-            methods: Optional[List[str]] = None,
-            models: Optional[List[str]] = None,
-            scenarios: Optional[List[str]] = None,
-            regions: Optional[List[str]] = None,
-            years: Optional[List[int]] = None
+        self,
+        methods: Optional[List[str]] = None,
+        models: Optional[List[str]] = None,
+        scenarios: Optional[List[str]] = None,
+        regions: Optional[List[str]] = None,
+        years: Optional[List[int]] = None,
     ) -> None:
         """
         Calculate Life Cycle Assessment (LCA) results for given methods, models, scenarios, regions, and years.
@@ -437,7 +443,6 @@ class Pathways:
             geo = Geomap(model=model)
             for scenario in scenarios:
                 for year in years:
-
                     # Try to load LCA matrices for the given model, scenario, and year
                     try:
                         A, B, A_index, B_index = get_lca_matrices(
@@ -499,6 +504,4 @@ class Pathways:
                             ] = result["D"]
 
     def display_results(self, cutoff: float = 0.01) -> xr.DataArray:
-
         return display_results(self.lca_results, cutoff=cutoff)
-

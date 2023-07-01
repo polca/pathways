@@ -1,15 +1,16 @@
-import numpy as np
-import scipy
 import csv
-import xarray as xr
-from typing import List, Tuple, Dict, Optional
-import scipy.sparse
-from scipy import sparse
+import sys
 from csv import reader
 from pathlib import Path
+from typing import Dict, List, Optional, Tuple
+
+import numpy as np
+import scipy
+import scipy.sparse
+import xarray as xr
+from scipy import sparse
 from scipy.sparse import coo_matrix, csr_matrix
 from scipy.sparse.linalg import spsolve
-import sys
 
 # Attempt to import pypardiso's spsolve function. If it isn't available, fall back on scipy's spsolve.
 try:
@@ -18,9 +19,12 @@ except ImportError:
     from scipy.sparse.linalg import spsolve
 
 
-
-
-def create_demand_vector(activities_idx: List[int], A: scipy.sparse, demand: xr.DataArray, unit_conversion: np.ndarray) -> np.ndarray:
+def create_demand_vector(
+    activities_idx: List[int],
+    A: scipy.sparse,
+    demand: xr.DataArray,
+    unit_conversion: np.ndarray,
+) -> np.ndarray:
     """
     Create a demand vector with the given activities indices, sparse matrix A, demand values, and unit conversion factors.
 
@@ -75,11 +79,11 @@ def read_indices_csv(file_path: Path) -> Dict[Tuple[str, str, str, str], str]:
 
 
 def load_matrix_and_index(
-        file_path: Path,
-        num_indices: int,
-        sign: int = 1,
-        transpose: bool = False,
-        extra_indices: Optional[int] = None
+    file_path: Path,
+    num_indices: int,
+    sign: int = 1,
+    transpose: bool = False,
+    extra_indices: Optional[int] = None,
 ) -> csr_matrix:
     """
     Reads a CSV file and returns its contents as a CSR sparse matrix.
@@ -109,7 +113,10 @@ def load_matrix_and_index(
         shape = (num_indices, I.max() + 1)
         idx = (J, I)
     else:
-        shape = (extra_indices if extra_indices is not None else I.max() + 1, num_indices)
+        shape = (
+            extra_indices if extra_indices is not None else I.max() + 1,
+            num_indices,
+        )
         idx = (I, J)
 
     # Create and return the CSR matrix
@@ -118,10 +125,7 @@ def load_matrix_and_index(
 
 
 def get_lca_matrices(
-    datapackage: str,
-    model: str,
-    scenario: str,
-    year: int
+    datapackage: str, model: str, scenario: str, year: int
 ) -> Tuple[sparse.csr_matrix, sparse.csr_matrix, Dict, Dict]:
     """
     Retrieve Life Cycle Assessment (LCA) matrices from disk.
@@ -136,11 +140,20 @@ def get_lca_matrices(
     B_inds = read_indices_csv(dirpath / "B_matrix_index.csv")
 
     A = load_matrix_and_index(dirpath / "A_matrix.csv", len(A_inds), transpose=True)
-    B = load_matrix_and_index(dirpath / "B_matrix.csv", len(B_inds), sign = -1, extra_indices=len(A_inds))
+    B = load_matrix_and_index(
+        dirpath / "B_matrix.csv", len(B_inds), sign=-1, extra_indices=len(A_inds)
+    )
 
     return A, B, A_inds, B_inds
 
-def solve_inventory(A: csr_matrix, B: np.ndarray, f: np.ndarray, lcia_matrix: np.ndarray, activities_idx: list) -> np.ndarray:
+
+def solve_inventory(
+    A: csr_matrix,
+    B: np.ndarray,
+    f: np.ndarray,
+    lcia_matrix: np.ndarray,
+    activities_idx: list,
+) -> np.ndarray:
     """
     Solve the inventory problem for a set of activities, given technosphere and biosphere matrices, demand vector,
     LCIA matrix, and the indices of activities to consider.
@@ -189,4 +202,3 @@ def solve_inventory(A: csr_matrix, B: np.ndarray, f: np.ndarray, lcia_matrix: np
     D = D.sum(axis=1)
 
     return D
-
