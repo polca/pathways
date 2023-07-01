@@ -7,9 +7,9 @@ import json
 from pathlib import Path
 
 import datapackage
-from datapackage import DataPackageException, validate
 import pandas as pd
 import yaml
+from datapackage import DataPackageException, validate
 
 
 def validate_datapackage(datapackage: datapackage.DataPackage):
@@ -58,7 +58,7 @@ def validate_datapackage(datapackage: datapackage.DataPackage):
     validate_mapping(datapackage.get_resource("mapping"), datapackage)
 
     # Check that the LCA data is valid
-    #validate_lca_data(datapackage)
+    # validate_lca_data(datapackage)
 
     return datapackage
 
@@ -92,7 +92,10 @@ def validate_scenario_data(resource: datapackage.Resource) -> bool:
 
     return True
 
-def validate_mapping(resource: datapackage.Resource, datapackage: datapackage.DataPackage):
+
+def validate_mapping(
+    resource: datapackage.Resource, datapackage: datapackage.DataPackage
+):
     """
     Validates the mapping between scenario variables and LCA datasets.
     The mapping must be a YAML file.
@@ -121,7 +124,9 @@ def validate_mapping(resource: datapackage.Resource, datapackage: datapackage.Da
 
     # Check that all values for `scenario variable` are present in the scenario data
     scenario_data = datapackage.get_resource("scenarios").read()
-    scenario_data = pd.DataFrame(scenario_data, columns=datapackage.get_resource("scenarios").headers)
+    scenario_data = pd.DataFrame(
+        scenario_data, columns=datapackage.get_resource("scenarios").headers
+    )
     scenario_variables = set(scenario_variables)
     if not scenario_variables.issubset(set(scenario_data["variable"].unique())):
         raise ValueError(

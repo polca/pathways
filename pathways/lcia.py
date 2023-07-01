@@ -1,9 +1,10 @@
-import numpy as np
-from scipy import sparse
-from . import DATA_DIR
 import json
-import xarray as xr
 
+import numpy as np
+import xarray as xr
+from scipy import sparse
+
+from . import DATA_DIR
 
 LCIA_METHODS = DATA_DIR / "lcia_data.json"
 
