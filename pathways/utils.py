@@ -1,10 +1,10 @@
 import sys
+from typing import Any, Dict, List, Tuple, Union
 
-import yaml
 import numpy as np
-import xarray as xr
-from typing import Union, List, Any, Dict, Tuple
 import pandas as pd
+import xarray as xr
+import yaml
 
 from . import DATA_DIR
 
@@ -99,9 +99,7 @@ def _get_activity_indices(
 
 
 def get_unit_conversion_factors(
-    scenario_unit,
-    dataset_unit,
-    unit_mapping
+    scenario_unit, dataset_unit, unit_mapping
 ) -> np.ndarray:
     """
     Get the unit conversion factors for a given scenario unit and dataset unit.
@@ -190,7 +188,9 @@ def create_lca_results_array(
     )
 
 
-def display_results(lca_results: Union[xr.DataArray, None], cutoff: float = 0.01) -> xr.DataArray:
+def display_results(
+    lca_results: Union[xr.DataArray, None], cutoff: float = 0.01
+) -> xr.DataArray:
     if lca_results is None:
         raise ValueError("No results to display")
 
@@ -225,7 +225,11 @@ def display_results(lca_results: Union[xr.DataArray, None], cutoff: float = 0.01
         )["value"]
         .sum()
         .reset_index(),
-        on=["impact_category", "year", "region",],
+        on=[
+            "impact_category",
+            "year",
+            "region",
+        ],
         suffixes=["", "_total"],
     )
     df["percentage"] = df["value"] / df["value_total"]
@@ -257,5 +261,3 @@ def display_results(lca_results: Union[xr.DataArray, None], cutoff: float = 0.01
         )
 
     return arr
-
-

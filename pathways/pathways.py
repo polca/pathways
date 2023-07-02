@@ -4,37 +4,38 @@ that contains scenario data, mapping between scenario variables and
 LCA datasets, and LCA matrices.
 """
 
+import csv
 import json
 import sys
+from collections import defaultdict
+from csv import reader
+from multiprocessing import Pool, cpu_count
+from pathlib import Path
+from typing import Any, Dict, List, Optional, Tuple, Union
 
+import numpy as np
 import pandas as pd
+import xarray as xr
 import yaml
 from datapackage import DataPackage
-from pathlib import Path
-from csv import reader
-import csv
-import numpy as np
+from premise.geomap import Geomap
 from scipy import sparse
-from .lcia import fill_characterization_factors_matrix, get_lcia_method_names
-from .utils import (
-    load_classifications,
-    load_units_conversion,
-    display_results,
-    create_lca_results_array,
-    _get_activity_indices,
-    get_unit_conversion_factors,
-)
+
 from .lca import (
-    solve_inventory,
     create_demand_vector,
     get_lca_matrices,
     remove_double_counting,
+    solve_inventory,
 )
-import xarray as xr
-from collections import defaultdict
-from premise.geomap import Geomap
-from multiprocessing import Pool, cpu_count
-from typing import Any, Dict, List, Tuple, Union, Optional
+from .lcia import fill_characterization_factors_matrix, get_lcia_method_names
+from .utils import (
+    _get_activity_indices,
+    create_lca_results_array,
+    display_results,
+    get_unit_conversion_factors,
+    load_classifications,
+    load_units_conversion,
+)
 
 # if pypardiso is installed, use it
 try:
@@ -122,7 +123,6 @@ def fetch_indices(mapping, regions, variables, A_index, geo):
     vars_idx = {}
 
     for region in regions:
-
         activities = [
             (
                 mapping[x]["dataset"]["name"],
@@ -173,10 +173,7 @@ def process_region(data: Tuple) -> Union[None, Dict[str, Any]]:
     category_idx = []
     for cat in lca_results_coords["act_category"].values:
         category_idx.append(
-            [
-                int(A_index[a])
-                for a in reverse_classifications[cat]
-                if a in A_index]
+            [int(A_index[a]) for a in reverse_classifications[cat] if a in A_index]
         )
 
     act_categories = lca_results_coords["act_category"].values
@@ -186,7 +183,6 @@ def process_region(data: Tuple) -> Union[None, Dict[str, Any]]:
     )
 
     for v, variable in enumerate(variables):
-
         idx, dataset = vars_idx[variable]["idx"], vars_idx[variable]["dataset"]
 
         # Compute the unit conversion vector for the given activities
@@ -323,8 +319,7 @@ class Pathways:
 
         scenario_data = self.data.get_resource("scenarios").read()
         scenario_data = pd.DataFrame(
-            scenario_data,
-            columns=self.data.get_resource("scenarios").headers
+            scenario_data, columns=self.data.get_resource("scenarios").headers
         )
 
         # remove rows which do not have a value under the `variable`
@@ -519,5 +514,4 @@ class Pathways:
                             ] = result["D"]
 
     def display_results(self, cutoff: float = 0.01) -> xr.DataArray:
-
         return display_results(self.lca_results, cutoff=cutoff)
