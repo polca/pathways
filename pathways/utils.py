@@ -1,12 +1,16 @@
+import sys
+
 import yaml
 import numpy as np
 import xarray as xr
-from typing import Union, List
+from typing import Union, List, Any, Dict, Tuple
+import pandas as pd
 
 from . import DATA_DIR
 
 CLASSIFICATIONS = DATA_DIR / "activities_classifications.yaml"
 UNITS_CONVERSION = DATA_DIR / "units_conversion.yaml"
+
 
 def load_classifications():
     """Load the activities classifications."""
@@ -29,6 +33,87 @@ def load_classifications():
 
     return data
 
+
+def _get_activity_indices(
+    activities: List[Tuple[str, str, str, str]],
+    A_index: Dict[Tuple[str, str, str, str], int],
+    geo: Any,
+) -> List[int]:
+    """
+    Fetch the indices of activities in the technosphere matrix.
+
+    This function iterates over the provided list of activities. For each activity, it first tries to find the activity
+    index in the technosphere matrix for the specific region. If the activity is not found, it looks for the activity
+    in possible locations based on the IAM to Ecoinvent mapping. If still not found, it tries to find the activity index
+    for some default locations ("RoW", "GLO", "RER", "CH").
+
+    :param activities: A list of tuples, each representing an activity. Each tuple contains four elements: the name of
+                       the activity, the reference product, the unit, and the region.
+    :type activities: List[Tuple[str, str, str, str]]
+    :param A_index: A dictionary mapping activity tuples to their indices in the technosphere matrix.
+    :type A_index: Dict[Tuple[str, str, str, str], int]
+    :param geo: An object providing an IAM to Ecoinvent location mapping.
+    :type geo: Any
+    :param region: The region for which to fetch activity indices.
+    :type region: str
+
+    :return: A list of activity indices in the technosphere matrix.
+    :rtype: List[int]
+    """
+
+    indices = []  # List to hold the found indices
+
+    # Iterate over each activity in the provided list
+    for a, activity in enumerate(activities):
+        # Try to find the index for the specific region
+        idx = A_index.get(activity)
+        if idx is not None:
+            indices.append(int(idx))  # If found, add to the list
+        else:
+            # If not found, look for the activity in possible locations
+            possible_locations = geo.iam_to_ecoinvent_location(activity[-1])
+
+            for loc in possible_locations:
+                idx = A_index.get((activity[0], activity[1], activity[2], loc))
+                if idx is not None:
+                    indices.append(int(idx))  # If found, add to the list
+                    activities[a] = (activity[0], activity[1], activity[2], loc)
+                    break  # Exit the loop as the index was found
+            else:
+                # If still not found, try some default locations
+                for default_loc in ["RoW", "GLO", "RER", "CH"]:
+                    idx = A_index.get(
+                        (activity[0], activity[1], activity[2], default_loc)
+                    )
+                    if idx is not None:
+                        indices.append(int(idx))  # If found, add to the list
+                        activities[a] = (
+                            activity[0],
+                            activity[1],
+                            activity[2],
+                            default_loc,
+                        )
+                        break  # Exit the loop as the index was found
+
+    return indices  # Return the list of indices
+
+
+def get_unit_conversion_factors(
+    scenario_unit,
+    dataset_unit,
+    unit_mapping
+) -> np.ndarray:
+    """
+    Get the unit conversion factors for a given scenario unit and dataset unit.
+    :param scenario_unit:
+    :param dataset_unit:
+    :param unit_mapping:
+    :return:
+    """
+
+    return np.array(unit_mapping[scenario_unit][dataset_unit])
+
+
 def load_units_conversion():
     """Load the units conversion."""
 
@@ -37,13 +122,15 @@ def load_units_conversion():
 
     return data
 
+
 def create_lca_results_array(
-        methods: List[str],
-        years: List[int],
-        regions: List[str],
-        models: List[str],
-        scenarios: List[str],
-        classifications: dict,
+    methods: List[str],
+    years: List[int],
+    regions: List[str],
+    models: List[str],
+    scenarios: List[str],
+    classifications: dict,
+    mapping: dict,
 ) -> xr.DataArray:
     """
     Create an xarray DataArray to store Life Cycle Assessment (LCA) results.
@@ -68,6 +155,7 @@ def create_lca_results_array(
     # Define the coordinates for the xarray DataArray
     coords = {
         "act_category": list(set(classifications.values())),
+        "variable": list(mapping.keys()),
         "impact_category": methods,
         "year": years,
         "region": regions,
@@ -81,6 +169,7 @@ def create_lca_results_array(
         np.zeros(
             (
                 len(coords["act_category"]),
+                len(coords["variable"]),
                 len(methods),
                 len(years),
                 len(regions),
@@ -91,6 +180,7 @@ def create_lca_results_array(
         coords=coords,
         dims=[
             "act_category",
+            "variable",
             "impact_category",
             "year",
             "region",
@@ -99,28 +189,11 @@ def create_lca_results_array(
         ],
     )
 
+
 def display_results(lca_results: Union[xr.DataArray, None], cutoff: float = 0.01) -> xr.DataArray:
-    """
-    Aggregate and display Life Cycle Assessment (LCA) results in an xarray format.
-
-    Aggregates 'activity categories' if they represent less than `cutoff` percent
-    of the total impact and label these as 'other'. It also interpolates years
-    to have a continuous time series.
-
-    :param lca_results: Life Cycle Assessment results as an xarray DataArray.
-    :type lca_results: Union[xr.DataArray, None]
-    :param cutoff: The percentage below which 'activity categories' will be aggregated. Default is 0.01.
-    :type cutoff: float, default is 0.01
-    :raises ValueError: If `lca_results` is None.
-    :return: Aggregated LCA results as an xarray DataArray.
-    :rtype: xr.DataArray
-    """
-
-    # Check if lca_results is None
     if lca_results is None:
         raise ValueError("No results to display")
 
-    # Convert lca_results to DataFrame and aggregate 'activity categories'
     df = (
         lca_results.to_dataframe("value")
         .reset_index()
@@ -128,53 +201,54 @@ def display_results(lca_results: Union[xr.DataArray, None], cutoff: float = 0.01
             [
                 "model",
                 "scenario",
-                "act_category",
-                "impact_category",
                 "year",
                 "region",
+                "impact_category",
+                "variable",
+                "act_category",
             ]
         )
         .sum()
         .reset_index()
     )
 
-    # Get total impact per year
+    # Aggregation for 'act_category'
     df = df.merge(
-        df.groupby(["model", "scenario", "impact_category", "year", "region"])[
-            "value"
-        ]
+        df.groupby(
+            [
+                "model",
+                "scenario",
+                "year",
+                "region",
+                "impact_category",
+            ]
+        )["value"]
         .sum()
         .reset_index(),
-        on=["impact_category", "year", "region"],
+        on=["impact_category", "year", "region",],
         suffixes=["", "_total"],
     )
-
-    # Calculate percentage of total
     df["percentage"] = df["value"] / df["value_total"]
-
-    # Aggregate 'activity categories' representing less than 'cutoff' percent of total
     df.loc[df["percentage"] < cutoff, "act_category"] = "other"
 
-    # Drop columns 'value_total' and 'percentage'
     df = df.drop(columns=["value_total", "percentage"])
 
-    # Aggregate again after labelling less represented 'activity categories' as 'other'
     arr = (
         df.groupby(
             [
                 "model",
                 "scenario",
-                "act_category",
-                "impact_category",
                 "year",
                 "region",
+                "impact_category",
+                "variable",
+                "act_category",
             ]
         )["value"]
         .sum()
         .to_xarray()
     )
 
-    # Interpolate years to have a continuous time series if there's more than 1 year
     if len(arr.year) > 1:
         arr = arr.interp(
             year=np.arange(arr.year.min(), arr.year.max() + 1),
@@ -182,9 +256,6 @@ def display_results(lca_results: Union[xr.DataArray, None], cutoff: float = 0.01
             method="linear",
         )
 
-    # Return aggregated results as an xarray DataArray
     return arr
-
-
 
 

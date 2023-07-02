@@ -1,3 +1,6 @@
+import sys
+import warnings
+
 import numpy as np
 import scipy
 import csv
@@ -5,19 +8,14 @@ import xarray as xr
 from typing import List, Tuple, Dict, Optional
 import scipy.sparse
 from scipy import sparse
-from csv import reader
 from pathlib import Path
-from scipy.sparse import coo_matrix, csr_matrix
-from scipy.sparse.linalg import spsolve
-import sys
+from scipy.sparse import csr_matrix
 
 # Attempt to import pypardiso's spsolve function. If it isn't available, fall back on scipy's spsolve.
 try:
     from pypardiso import spsolve
 except ImportError:
     from scipy.sparse.linalg import spsolve
-
-
 
 
 def create_demand_vector(activities_idx: List[int], A: scipy.sparse, demand: xr.DataArray, unit_conversion: np.ndarray) -> np.ndarray:
@@ -132,6 +130,10 @@ def get_lca_matrices(
     """
     dirpath = Path(datapackage).parent / "inventories" / model / scenario / str(year)
 
+    # check that files exist
+    if not dirpath.exists():
+        raise FileNotFoundError(f"Directory {dirpath} does not exist.")
+
     A_inds = read_indices_csv(dirpath / "A_matrix_index.csv")
     B_inds = read_indices_csv(dirpath / "B_matrix_index.csv")
 
@@ -140,7 +142,33 @@ def get_lca_matrices(
 
     return A, B, A_inds, B_inds
 
-def solve_inventory(A: csr_matrix, B: np.ndarray, f: np.ndarray, lcia_matrix: np.ndarray, activities_idx: list) -> np.ndarray:
+
+def remove_double_counting(A: csr_matrix, vars_info: dict) -> csr_matrix:
+    """
+    Remove double counting from a technosphere matrix.
+    :param A:
+    :param activities_idx:
+    :return:
+    """
+
+    # Modify A in COO format for efficiency
+    # To avoid double-counting, set all entries in A corresponding
+    # to activities not in activities_idx to zero
+
+    A_coo = A.tocoo()
+
+    for region in vars_info:
+        for variable in vars_info[region]:
+            idx = vars_info[region][variable]['idx']
+            row_mask = np.isin(A_coo.row, idx)
+            col_mask = np.isin(A_coo.col, idx)
+            A_coo.data[row_mask & ~col_mask] = 0  # zero out rows
+
+    A_coo.eliminate_zeros()
+    return A_coo.tocsr()
+
+
+def solve_inventory(A: csr_matrix, B: np.ndarray, f: np.ndarray, lcia_matrix: np.ndarray) -> np.ndarray:
     """
     Solve the inventory problem for a set of activities, given technosphere and biosphere matrices, demand vector,
     LCIA matrix, and the indices of activities to consider.
@@ -166,18 +194,10 @@ def solve_inventory(A: csr_matrix, B: np.ndarray, f: np.ndarray, lcia_matrix: np
     if lcia_matrix.ndim != 2 or lcia_matrix.shape[0] != B.shape[1]:
         raise ValueError("Incompatible dimensions between B and lcia_matrix")
 
-    # Modify A in COO format for efficiency
-    # To avoid double-counting, set all entries in A corresponding
-    # to activities not in activities_idx to zero
-    A_coo = A.tocoo()
-    row_mask = np.isin(A_coo.row, activities_idx)
-    col_mask = np.isin(A_coo.col, activities_idx)
-    A_coo.data[row_mask & ~col_mask] = 0  # zero out rows
-    A_coo.eliminate_zeros()
-    A = A_coo.tocsr()
-
-    # Solve the system Ax = f for x using sparse solver
-    A_inv = spsolve(A, f)[:, np.newaxis]
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
+        # Solve the system Ax = f for x using sparse solver
+        A_inv = spsolve(A, f)[:, np.newaxis]
 
     # Compute product of A_inv and B
     C = A_inv * B

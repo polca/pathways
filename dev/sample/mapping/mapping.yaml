@@ -1,168 +1,205 @@
+Electricity:
+  dataset:
+      name: market for electricity, low voltage
+      reference product: electricity, low voltage
+      unit: kilowatt hour
+  scenario variable: Secondary Energy|Electricity
+  validation:
+    scenario variable: Emissions|CO2|Electricity Production
+    method: 'selected LCI results - air - CO2, fossil'
 Biomass CHP:
   dataset:
     name: heat and power co-generation, wood chips, 2000 kW
     reference product: electricity, high voltage
     unit: kilowatt hour
   scenario variable: Secondary Energy|Electricity|Biomass|w/o CCS|3
+  group: electricity
 Biomass CHP CCS:
   dataset:
     name: electricity production, at co-generation power plant/wood, post, pipeline 200km, storage 1000m
     reference product: electricity, high voltage
     unit: kilowatt hour
   scenario variable: Secondary Energy|Electricity|Biomass|w/ CCS|2
+  group: electricity
 Biomass IGCC:
   dataset:
     name: electricity production, at BIGCC power plant, no CCS
     reference product: electricity, high voltage
     unit: kilowatt hour
   scenario variable: Secondary Energy|Electricity|Biomass|w/o CCS|2
+  group: electricity
 Biomass IGCC CCS:
   dataset:
     name: electricity production, at BIGCC power plant, pre, pipeline 200km, storage 1000m
     reference product: electricity, high voltage
     unit: kilowatt hour
   scenario variable: Secondary Energy|Electricity|Biomass|w/ CCS|1
+  group: electricity
 Biomass ST:
   dataset:
     name: electricity production, at wood burning power plant 20 MW, truck 25km, no CCS
     reference product: electricity, high voltage
     unit: kilowatt hour
   scenario variable: Secondary Energy|Electricity|Biomass|w/o CCS|1
+  group: electricity
 Coal CHP:
   dataset:
     name: heat and power co-generation, hard coal
     reference product: electricity, high voltage
     unit: kilowatt hour
   scenario variable: Secondary Energy|Electricity|Coal|w/o CCS|3
+  group: electricity
 Coal CHP CCS:
   dataset:
     name: electricity production, at co-generation power plant/hard coal, oxy, pipeline 200km, storage 1000m
     reference product: electricity, high voltage
     unit: kilowatt hour
   scenario variable: Secondary Energy|Electricity|Coal|w/ CCS|2
+  group: electricity
 Coal IGCC:
   dataset:
     name: electricity production, at power plant/hard coal, IGCC, no CCS
     reference product: electricity, high voltage
     unit: kilowatt hour
   scenario variable: Secondary Energy|Electricity|Coal|w/o CCS|2
+  group: electricity
 Coal IGCC CCS:
   dataset:
     name: electricity production, at power plant/hard coal, post, pipeline 200km, storage 1000m
     reference product: electricity, high voltage
     unit: kilowatt hour
   scenario variable: Secondary Energy|Electricity|Coal|w/ CCS|1
+  group: electricity
 Coal PC:
   dataset:
     name: electricity production, hard coal
     reference product: electricity, high voltage
     unit: kilowatt hour
   scenario variable: Secondary Energy|Electricity|Coal|w/o CCS|1
+  group: electricity
 Gas CC:
   dataset:
     name: electricity production, natural gas, combined cycle power plant
     reference product: electricity, high voltage
     unit: kilowatt hour
   scenario variable: Secondary Energy|Electricity|Gas|w/o CCS|2
+  group: electricity
 Gas CC CCS:
   dataset:
     name: electricity production, at power plant/natural gas, post, pipeline 200km, storage 1000m
     reference product: electricity, high voltage
     unit: kilowatt hour
   scenario variable: Secondary Energy|Electricity|Gas|w/ CCS|1
+  group: electricity
 Gas CHP:
   dataset:
     name: heat and power co-generation, natural gas, combined cycle power plant, 400MW electrical
     reference product: electricity, high voltage
     unit: kilowatt hour
   scenario variable: Secondary Energy|Electricity|Gas|w/o CCS|3
+  group: electricity
 Gas CHP CCS:
   dataset:
     name: electricity production, at co-generation power plant/natural gas, post, pipeline 200km, storage 1000m
     reference product: electricity, high voltage
     unit: kilowatt hour
   scenario variable: Secondary Energy|Electricity|Gas|w/ CCS|2
+  group: electricity
 Gas OC:
   dataset:
     name: electricity production, natural gas, conventional power plant
     reference product: electricity, high voltage
     unit: kilowatt hour
   scenario variable: Secondary Energy|Electricity|Gas|w/o CCS|1
+  group: electricity
 Geothermal:
   dataset:
     name: electricity production, deep geothermal
     reference product: electricity, high voltage
     unit: kilowatt hour
   scenario variable: Secondary Energy|Electricity|Other
+  group: electricity
 Hydro:
   dataset:
     name: electricity production, hydro, reservoir, alpine region
     reference product: electricity, high voltage
     unit: kilowatt hour
   scenario variable: Secondary Energy|Electricity|Hydro
+  group: electricity
 Nuclear:
   dataset:
     name: electricity production, nuclear, pressure water reactor
     reference product: electricity, high voltage
     unit: kilowatt hour
   scenario variable: Secondary Energy|Electricity|Nuclear
+  group: electricity
 Oil CC:
   dataset:
     name: electricity production, oil
     reference product: electricity, high voltage
     unit: kilowatt hour
   scenario variable: Secondary Energy|Electricity|Oil|w/o CCS|2
+  group: electricity
 Oil CC CCS:
   dataset:
     name: electricity production, at co-generation power plant/oil, post, pipeline 200km, storage 1000m
     reference product: electricity, high voltage
     unit: kilowatt hour
   scenario variable: Secondary Energy|Electricity|Oil|w/ CCS|1
+  group: electricity
 Oil CHP:
   dataset:
     name: heat and power co-generation, oil
     reference product: electricity, high voltage
     unit: kilowatt hour
   scenario variable: Secondary Energy|Electricity|Oil|w/o CCS|3
+  group: electricity
 Oil CHP CCS:
   dataset:
     name: electricity production, at co-generation power plant/oil, post, pipeline 200km, storage 1000m
     reference product: electricity, high voltage
     unit: kilowatt hour
   scenario variable: Secondary Energy|Electricity|Oil|w/ CCS|2
+  group: electricity
 Oil ST:
   dataset:
     name: electricity production, oil
     reference product: electricity, high voltage
     unit: kilowatt hour
   scenario variable: Secondary Energy|Electricity|Oil|w/o CCS|1
+  group: electricity
 Solar CSP:
   dataset:
     name: electricity production, solar thermal parabolic trough, 50 MW
     reference product: electricity, high voltage
     unit: kilowatt hour
   scenario variable: Secondary Energy|Electricity|Solar|CSP
+  group: electricity
 Solar PV Centralized:
   dataset:
     name: electricity production, photovoltaic, commercial
     reference product: electricity, low voltage
     unit: kilowatt hour
   scenario variable: Secondary Energy|Electricity|Solar|PV|1
+  group: electricity
 Solar PV Residential:
   dataset:
     name: electricity production, photovoltaic, residential
     reference product: electricity, low voltage
     unit: kilowatt hour
   scenario variable: Secondary Energy|Electricity|Solar|PV|2
+  group: electricity
 Wind Offshore:
   dataset:
     name: electricity production, wind, 1-3MW turbine, offshore
     reference product: electricity, high voltage
     unit: kilowatt hour
   scenario variable: Secondary Energy|Electricity|Wind|2
+  group: electricity
 Wind Onshore:
   dataset:
     name: electricity production, wind, 1-3MW turbine, onshore
     reference product: electricity, high voltage
     unit: kilowatt hour
   scenario variable: Secondary Energy|Electricity|Wind|1
+  group: electricity
