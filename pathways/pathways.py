@@ -26,6 +26,7 @@ from .utils import (
 )
 from .lca import (
     solve_inventory,
+    characterize_inventory,
     create_demand_vector,
     get_lca_matrices,
     remove_double_counting,
@@ -148,8 +149,26 @@ def fetch_indices(mapping, regions, variables, A_index, geo):
 
     return vars_idx
 
+def generate_A_indices(A_index, reverse_classifications, lca_results_coords):
+    # Generate a list of activity indices for each activity category
+    acts_idx = []
+    for cat in lca_results_coords["act_category"].values:
+        acts_idx.append(
+            [int(A_index[a]) for a in reverse_classifications[cat] if a in A_index]
+        )
+
+    # Pad each list in acts_idx with -1 to make them all the same length
+    max_len = max([len(x) for x in acts_idx])
+    acts_idx = np.array(
+        [np.pad(x, (0, max_len - len(x)), constant_values=-1) for x in acts_idx]
+    )
+
+    # Swap the axes of acts_idx to align with the dimensionality of D
+    return np.swapaxes(acts_idx, 0, 1)
+
 
 def process_region(data: Tuple) -> Union[None, Dict[str, Any]]:
+    global impact_categories
     (
         model,
         scenario,
@@ -180,10 +199,14 @@ def process_region(data: Tuple) -> Union[None, Dict[str, Any]]:
         )
 
     act_categories = lca_results_coords["act_category"].values
-    impact_categories = lca_results_coords["impact_category"].values
-    target = np.zeros(
-        (len(act_categories), len(list(vars_idx)), len(impact_categories))
-    )
+
+    if lcia_matrix is not None:
+        impact_categories = lca_results_coords["impact_category"].values
+        target = np.zeros(
+            (len(act_categories), len(list(vars_idx)), len(impact_categories))
+        )
+    else:
+        target = np.zeros((len(act_categories), len(list(vars_idx)), len(B_index)))
 
     for v, variable in enumerate(variables):
 
@@ -213,33 +236,34 @@ def process_region(data: Tuple) -> Union[None, Dict[str, Any]]:
         # Create the demand vector
         f = create_demand_vector([idx], A, demand, unit_vector)
 
-        # Solve the LCA problem to get the LCIA scores
-        D = solve_inventory(A, B, f, lcia_matrix)
+        # Solve the inventory
+        C = solve_inventory(A, B, f)
 
-        # Generate a list of activity indices for each activity category
-        acts_idx = []
-        for cat in lca_results_coords["act_category"].values:
-            acts_idx.append(
-                [int(A_index[a]) for a in reverse_classifications[cat] if a in A_index]
-            )
+        if lcia_matrix is not None:
+            if lcia_matrix.ndim != 2 or lcia_matrix.shape[0] != B.shape[1]:
+                raise ValueError("Incompatible dimensions between B and lcia_matrix")
 
-        # Pad each list in acts_idx with -1 to make them all the same length
-        max_len = max([len(x) for x in acts_idx])
-        acts_idx = np.array(
-            [np.pad(x, (0, max_len - len(x)), constant_values=-1) for x in acts_idx]
-        )
+            # Solve the LCA problem to get the LCIA scores
+            D = characterize_inventory(C, lcia_matrix)
 
-        # Swap the axes of acts_idx to align with the dimensionality of D
-        acts_idx = np.swapaxes(acts_idx, 0, 1)
+            # Sum along the first axis of D to get final result
+            D = D.sum(axis=1)
 
-        # Sum over the first axis of D, using acts_idx for advanced indexing
-        target[:, v] = D[acts_idx, ...].sum(axis=0)
+            acts_idx = generate_A_indices(A_index, reverse_classifications, lca_results_coords,)
+
+            # Sum over the first axis of D, using acts_idx for advanced indexing
+            target[:, v] = D[acts_idx, ...].sum(axis=0)
+
+        else:
+            # else, just sum the results of the inventory
+            acts_idx = generate_A_indices(A_index, reverse_classifications, lca_results_coords, )
+            target[:, v] = C[acts_idx, ...].sum(axis=0)
 
     # Return a dictionary containing the processed LCA data for the given region
     return {
         "act_category": act_categories,
         "variable": list(vars_idx.keys()),
-        "impact_category": impact_categories,
+        "impact_category": impact_categories if lcia_matrix is not None else [" - ".join(a) for a in list(B_index.keys())],
         "year": year,
         "region": region,
         "D": target,
@@ -374,6 +398,7 @@ class Pathways:
         regions: Optional[List[str]] = None,
         years: Optional[List[int]] = None,
         variables: Optional[List[str]] = None,
+        characterization: bool = True,
     ) -> None:
         """
         Calculate Life Cycle Assessment (LCA) results for given methods, models, scenarios, regions, and years.
@@ -384,6 +409,7 @@ class Pathways:
         This function processes each combination of model, scenario, and year in parallel
         and stores the results in the `lca_results` attribute.
 
+        :param characterization: Boolean. If True, calculate LCIA results. If False, calculate LCI results.
         :param methods: List of impact assessment methods. If None, all available methods will be used.
         :type methods: Optional[List[str]], default is None
         :param models: List of models. If None, all available models will be used.
@@ -401,9 +427,13 @@ class Pathways:
         # Initialize list to store activities not found in classifications
         missing_class = []
 
+        if characterization is False:
+            methods = None
+
         # Set default values if arguments are not provided
         if methods is None:
-            methods = get_lcia_method_names()
+            if characterization is True:
+                methods = get_lcia_method_names()
         if models is None:
             models = self.scenarios.coords["model"].values
         if scenarios is None:
@@ -420,24 +450,14 @@ class Pathways:
             self.scenarios, models, scenarios, regions, years, variables
         )
 
-        # refresh self.mapping, remove keys that are not in self.scenarios.variable.values
+        # refresh self.mapping,
+        # remove keys that are not
+        # in self.scenarios.variable.values
         self.mapping = {
             k: v
             for k, v in self.mapping.items()
             if k in self.scenarios.coords["variable"].values
         }
-
-        # Create xarray for storing LCA results if not already present
-        if self.lca_results is None:
-            self.lca_results = create_lca_results_array(
-                methods,
-                years,
-                regions,
-                models,
-                scenarios,
-                self.classifications,
-                self.mapping,
-            )
 
         # Iterate over each combination of model, scenario, and year
         for model in models:
@@ -466,10 +486,24 @@ class Pathways:
                     # Remove contribution from activities in other activities
                     A = remove_double_counting(A, vars_info)
 
+                    # Create xarray for storing LCA results if not already present
+                    if self.lca_results is None:
+                        self.lca_results = create_lca_results_array(
+                            methods,
+                            B_index,
+                            years,
+                            regions,
+                            models,
+                            scenarios,
+                            self.classifications,
+                            self.mapping,
+                        )
+
                     # Fill characterization factor matrix for the given methods
-                    self.lcia_matrix = fill_characterization_factors_matrix(
-                        list(B_index.keys()), methods
-                    )
+                    if characterization is True:
+                        self.lcia_matrix = fill_characterization_factors_matrix(
+                            list(B_index.keys()), methods
+                        )
 
                     # Check for activities not found in classifications
                     for act in A_index:
@@ -492,7 +526,7 @@ class Pathways:
                             B,
                             A_index,
                             B_index,
-                            self.lcia_matrix,
+                            self.lcia_matrix if characterization else None,
                             self.reverse_classifications,
                             self.lca_results.coords,
                         )
@@ -517,6 +551,24 @@ class Pathways:
                                     "scenario": result["scenario"],
                                 }
                             ] = result["D"]
+
+    def characterize_planetary_boundaries(
+        self,
+        models: Optional[List[str]] = None,
+        scenarios: Optional[List[str]] = None,
+        regions: Optional[List[str]] = None,
+        years: Optional[List[int]] = None,
+        variables: Optional[List[str]] = None,
+    ):
+
+        self.calculate(
+            models=models,
+            scenarios=scenarios,
+            regions=regions,
+            years=years,
+            variables=variables,
+            characterization=False,
+        )
 
     def display_results(self, cutoff: float = 0.01) -> xr.DataArray:
 

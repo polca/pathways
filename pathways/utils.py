@@ -124,7 +124,8 @@ def load_units_conversion():
 
 
 def create_lca_results_array(
-    methods: List[str],
+    methods: [List[str], None],
+    B_indices: Dict,
     years: List[int],
     regions: List[str],
     models: List[str],
@@ -156,37 +157,34 @@ def create_lca_results_array(
     coords = {
         "act_category": list(set(classifications.values())),
         "variable": list(mapping.keys()),
-        "impact_category": methods,
         "year": years,
         "region": regions,
         "model": models,
         "scenario": scenarios,
     }
 
+    dims = (
+        len(coords["act_category"]),
+        len(coords["variable"]),
+        len(years),
+        len(regions),
+        len(models),
+        len(scenarios),
+    )
+
+    if methods is not None:
+        coords["impact_category"] = methods
+        dims += (len(methods),)
+    else:
+        coords["impact_category"] = [" - ".join(a) for a in list(B_indices.keys())]
+        dims += (len(B_indices),)
+
     # Create the xarray DataArray with the defined coordinates and dimensions.
     # The array is initialized with zeros.
     return xr.DataArray(
-        np.zeros(
-            (
-                len(coords["act_category"]),
-                len(coords["variable"]),
-                len(methods),
-                len(years),
-                len(regions),
-                len(models),
-                len(scenarios),
-            )
-        ),
+        np.zeros(dims),
         coords=coords,
-        dims=[
-            "act_category",
-            "variable",
-            "impact_category",
-            "year",
-            "region",
-            "model",
-            "scenario",
-        ],
+        dims=list(coords.keys())
     )
 
 

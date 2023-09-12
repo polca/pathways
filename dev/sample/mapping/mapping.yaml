@@ -1,6 +1,6 @@
 Electricity:
   dataset:
-      name: market for electricity, low voltage
+      name: market group for electricity, low voltage
       reference product: electricity, low voltage
       unit: kilowatt hour
   scenario variable: Secondary Energy|Electricity
@@ -16,28 +16,28 @@ Biomass CHP:
   group: electricity
 Biomass CHP CCS:
   dataset:
-    name: electricity production, at co-generation power plant/wood, post, pipeline 200km, storage 1000m
+    name: electricity production, at co-generation wood-fired power plant, post, pipeline 200km, storage 1000m
     reference product: electricity, high voltage
     unit: kilowatt hour
   scenario variable: Secondary Energy|Electricity|Biomass|w/ CCS|2
   group: electricity
 Biomass IGCC:
   dataset:
-    name: electricity production, at BIGCC power plant, no CCS
+    name: electricity production, at biomass-fired IGCC power plant
     reference product: electricity, high voltage
     unit: kilowatt hour
   scenario variable: Secondary Energy|Electricity|Biomass|w/o CCS|2
   group: electricity
 Biomass IGCC CCS:
   dataset:
-    name: electricity production, at BIGCC power plant, pre, pipeline 200km, storage 1000m
+    name: electricity production, at biomass-fired IGCC power plant, pre, pipeline 200km, storage 1000m
     reference product: electricity, high voltage
     unit: kilowatt hour
   scenario variable: Secondary Energy|Electricity|Biomass|w/ CCS|1
   group: electricity
 Biomass ST:
   dataset:
-    name: electricity production, at wood burning power plant 20 MW, truck 25km, no CCS
+    name: electricity production, at wood burning power plant
     reference product: electricity, high voltage
     unit: kilowatt hour
   scenario variable: Secondary Energy|Electricity|Biomass|w/o CCS|1
@@ -51,21 +51,21 @@ Coal CHP:
   group: electricity
 Coal CHP CCS:
   dataset:
-    name: electricity production, at co-generation power plant/hard coal, oxy, pipeline 200km, storage 1000m
+    name: electricity production, at co-generation hard coal-fired power plant, post, pipeline 200km, storage 1000m
     reference product: electricity, high voltage
     unit: kilowatt hour
   scenario variable: Secondary Energy|Electricity|Coal|w/ CCS|2
   group: electricity
 Coal IGCC:
   dataset:
-    name: electricity production, at power plant/hard coal, IGCC, no CCS
+    name: electricity production, at hard coal-fired IGCC power plant
     reference product: electricity, high voltage
     unit: kilowatt hour
   scenario variable: Secondary Energy|Electricity|Coal|w/o CCS|2
   group: electricity
 Coal IGCC CCS:
   dataset:
-    name: electricity production, at power plant/hard coal, post, pipeline 200km, storage 1000m
+    name: electricity production, at hard coal-fired IGCC power plant, pre, pipeline 200km, storage 1000m
     reference product: electricity, high voltage
     unit: kilowatt hour
   scenario variable: Secondary Energy|Electricity|Coal|w/ CCS|1
@@ -86,7 +86,7 @@ Gas CC:
   group: electricity
 Gas CC CCS:
   dataset:
-    name: electricity production, at power plant/natural gas, post, pipeline 200km, storage 1000m
+    name: electricity production, at natural gas-fired combined cycle power plant, post, pipeline 200km, storage 1000m
     reference product: electricity, high voltage
     unit: kilowatt hour
   scenario variable: Secondary Energy|Electricity|Gas|w/ CCS|1
@@ -100,7 +100,7 @@ Gas CHP:
   group: electricity
 Gas CHP CCS:
   dataset:
-    name: electricity production, at co-generation power plant/natural gas, post, pipeline 200km, storage 1000m
+    name: electricity production, at co-generation natural gas-fired power plant, post, pipeline 200km, storage 1000m
     reference product: electricity, high voltage
     unit: kilowatt hour
   scenario variable: Secondary Energy|Electricity|Gas|w/ CCS|2
@@ -142,7 +142,7 @@ Oil CC:
   group: electricity
 Oil CC CCS:
   dataset:
-    name: electricity production, at co-generation power plant/oil, post, pipeline 200km, storage 1000m
+    name: electricity production, at co-generation oil-fired power plant, post, pipeline 200km, storage 1000m
     reference product: electricity, high voltage
     unit: kilowatt hour
   scenario variable: Secondary Energy|Electricity|Oil|w/ CCS|1
@@ -156,7 +156,7 @@ Oil CHP:
   group: electricity
 Oil CHP CCS:
   dataset:
-    name: electricity production, at co-generation power plant/oil, post, pipeline 200km, storage 1000m
+    name: electricity production, at co-generation oil-fired power plant, post, pipeline 200km, storage 1000m
     reference product: electricity, high voltage
     unit: kilowatt hour
   scenario variable: Secondary Energy|Electricity|Oil|w/ CCS|2

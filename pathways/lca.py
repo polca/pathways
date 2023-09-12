@@ -168,10 +168,22 @@ def remove_double_counting(A: csr_matrix, vars_info: dict) -> csr_matrix:
     return A_coo.tocsr()
 
 
-def solve_inventory(A: csr_matrix, B: np.ndarray, f: np.ndarray, lcia_matrix: np.ndarray) -> np.ndarray:
+def characterize_inventory(C, lcia_matrix) -> np.ndarray:
+    """
+    Characterize an inventory with an LCIA matrix.
+    :param C: Solved inventory
+    :param lcia_matrix: Characterization matrix
+    :return: Characterized inventory
+    """
+
+    # Multiply C with lcia_matrix to get D
+    return C[..., None] * lcia_matrix
+
+
+def solve_inventory(A: csr_matrix, B: np.ndarray, f: np.ndarray) -> np.ndarray:
     """
     Solve the inventory problem for a set of activities, given technosphere and biosphere matrices, demand vector,
-    LCIA matrix, and the indices of activities to consider.
+    and the indices of activities to consider.
 
     This function uses either the pypardiso or scipy library to solve the linear system, depending on the availability
     of the pypardiso library. The solutions are then used to calculate LCIA scores.
@@ -191,8 +203,7 @@ def solve_inventory(A: csr_matrix, B: np.ndarray, f: np.ndarray, lcia_matrix: np
     if B.shape[0] != A.shape[0]:
         raise ValueError("Incompatible dimensions between A and B")
 
-    if lcia_matrix.ndim != 2 or lcia_matrix.shape[0] != B.shape[1]:
-        raise ValueError("Incompatible dimensions between B and lcia_matrix")
+
 
     with warnings.catch_warnings():
         warnings.simplefilter("ignore")
@@ -202,11 +213,4 @@ def solve_inventory(A: csr_matrix, B: np.ndarray, f: np.ndarray, lcia_matrix: np
     # Compute product of A_inv and B
     C = A_inv * B
 
-    # Multiply C with lcia_matrix to get D
-    D = C[..., None] * lcia_matrix
-
-    # Sum along the first axis of D to get final result
-    D = D.sum(axis=1)
-
-    return D
-
+    return C
