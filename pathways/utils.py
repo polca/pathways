@@ -179,11 +179,7 @@ def create_lca_results_array(
 
     # Create the xarray DataArray with the defined coordinates and dimensions.
     # The array is initialized with zeros.
-    return xr.DataArray(
-        np.zeros(dims),
-        coords=coords,
-        dims=list(coords.keys())
-    )
+    return xr.DataArray(np.zeros(dims), coords=coords, dims=list(coords.keys()))
 
 
 def display_results(

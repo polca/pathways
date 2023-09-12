@@ -1,14 +1,14 @@
+import csv
 import sys
 import warnings
+from pathlib import Path
+from typing import Dict, List, Optional, Tuple
 
 import numpy as np
 import scipy
-import csv
-import xarray as xr
-from typing import List, Tuple, Dict, Optional
 import scipy.sparse
+import xarray as xr
 from scipy import sparse
-from pathlib import Path
 from scipy.sparse import csr_matrix
 
 # Attempt to import pypardiso's spsolve function. If it isn't available, fall back on scipy's spsolve.
@@ -18,7 +18,12 @@ except ImportError:
     from scipy.sparse.linalg import spsolve
 
 
-def create_demand_vector(activities_idx: List[int], A: scipy.sparse, demand: xr.DataArray, unit_conversion: np.ndarray) -> np.ndarray:
+def create_demand_vector(
+    activities_idx: List[int],
+    A: scipy.sparse,
+    demand: xr.DataArray,
+    unit_conversion: np.ndarray,
+) -> np.ndarray:
     """
     Create a demand vector with the given activities indices, sparse matrix A, demand values, and unit conversion factors.
 
@@ -73,11 +78,11 @@ def read_indices_csv(file_path: Path) -> Dict[Tuple[str, str, str, str], str]:
 
 
 def load_matrix_and_index(
-        file_path: Path,
-        num_indices: int,
-        sign: int = 1,
-        transpose: bool = False,
-        extra_indices: Optional[int] = None
+    file_path: Path,
+    num_indices: int,
+    sign: int = 1,
+    transpose: bool = False,
+    extra_indices: Optional[int] = None,
 ) -> csr_matrix:
     """
     Reads a CSV file and returns its contents as a CSR sparse matrix.
@@ -107,7 +112,10 @@ def load_matrix_and_index(
         shape = (num_indices, I.max() + 1)
         idx = (J, I)
     else:
-        shape = (extra_indices if extra_indices is not None else I.max() + 1, num_indices)
+        shape = (
+            extra_indices if extra_indices is not None else I.max() + 1,
+            num_indices,
+        )
         idx = (I, J)
 
     # Create and return the CSR matrix
@@ -116,10 +124,7 @@ def load_matrix_and_index(
 
 
 def get_lca_matrices(
-    datapackage: str,
-    model: str,
-    scenario: str,
-    year: int
+    datapackage: str, model: str, scenario: str, year: int
 ) -> Tuple[sparse.csr_matrix, sparse.csr_matrix, Dict, Dict]:
     """
     Retrieve Life Cycle Assessment (LCA) matrices from disk.
@@ -138,7 +143,9 @@ def get_lca_matrices(
     B_inds = read_indices_csv(dirpath / "B_matrix_index.csv")
 
     A = load_matrix_and_index(dirpath / "A_matrix.csv", len(A_inds), transpose=True)
-    B = load_matrix_and_index(dirpath / "B_matrix.csv", len(B_inds), sign = -1, extra_indices=len(A_inds))
+    B = load_matrix_and_index(
+        dirpath / "B_matrix.csv", len(B_inds), sign=-1, extra_indices=len(A_inds)
+    )
 
     return A, B, A_inds, B_inds
 
@@ -159,7 +166,7 @@ def remove_double_counting(A: csr_matrix, vars_info: dict) -> csr_matrix:
 
     for region in vars_info:
         for variable in vars_info[region]:
-            idx = vars_info[region][variable]['idx']
+            idx = vars_info[region][variable]["idx"]
             row_mask = np.isin(A_coo.row, idx)
             col_mask = np.isin(A_coo.col, idx)
             A_coo.data[row_mask & ~col_mask] = 0  # zero out rows
@@ -202,8 +209,6 @@ def solve_inventory(A: csr_matrix, B: np.ndarray, f: np.ndarray) -> np.ndarray:
 
     if B.shape[0] != A.shape[0]:
         raise ValueError("Incompatible dimensions between A and B")
-
-
 
     with warnings.catch_warnings():
         warnings.simplefilter("ignore")
