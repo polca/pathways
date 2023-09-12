@@ -183,7 +183,7 @@ def characterize_inventory(C, lcia_matrix) -> np.ndarray:
 def solve_inventory(A: csr_matrix, B: np.ndarray, f: np.ndarray) -> np.ndarray:
     """
     Solve the inventory problem for a set of activities, given technosphere and biosphere matrices, demand vector,
-    and the indices of activities to consider.
+    LCIA matrix, and the indices of activities to consider.
 
     This function uses either the pypardiso or scipy library to solve the linear system, depending on the availability
     of the pypardiso library. The solutions are then used to calculate LCIA scores.
