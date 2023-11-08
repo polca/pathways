@@ -21,6 +21,7 @@ from datapackage import DataPackage
 from premise.geomap import Geomap
 from scipy import sparse
 
+from . import DATA_DIR
 from .lca import (
     characterize_inventory,
     create_demand_vector,
@@ -37,7 +38,6 @@ from .utils import (
     load_classifications,
     load_units_conversion,
 )
-from . import DATA_DIR
 
 # if pypardiso is installed, use it
 try:
@@ -318,7 +318,6 @@ class Pathways:
         """
         return DataPackage(self.datapackage)
 
-
     def get_final_energy_mapping(self):
         """
         Read the final energy mapping file, which is an Excel file
@@ -334,16 +333,17 @@ class Pathways:
                 # Create the dictionary structure for this row for the specific model
                 dict_structure = {
                     key: {
-                        'dataset': {
-                            'name': row['dataset name'],
-                            'reference product': row['dataset reference product'],
-                            'unit': row['unit']
+                        "dataset": {
+                            "name": row["dataset name"],
+                            "reference product": row["dataset reference product"],
+                            "unit": row["unit"],
                         },
-                        'scenario variable': row[model]
+                        "scenario variable": row[model],
                     }
                 }
                 return dict_structure
             return None
+
         def create_dict_with_specific_model(dataframe, model):
             model_dict = {}
             for index, row in dataframe.iterrows():
