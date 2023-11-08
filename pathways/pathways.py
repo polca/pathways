@@ -37,6 +37,7 @@ from .utils import (
     load_classifications,
     load_units_conversion,
 )
+from . import DATA_DIR
 
 # if pypardiso is installed, use it
 try:
@@ -293,6 +294,7 @@ class Pathways:
         self.datapackage = datapackage
         self.data = validate_datapackage(self.read_datapackage())
         self.mapping = self.get_mapping()
+        self.mapping.update(self.get_final_energy_mapping())
         self.scenarios = self.get_scenarios()
         self.classifications = load_classifications()
 
@@ -315,6 +317,47 @@ class Pathways:
             The datapackage as a dictionary.
         """
         return DataPackage(self.datapackage)
+
+
+    def get_final_energy_mapping(self):
+        """
+        Read the final energy mapping file, which is an Excel file
+        :return: dict
+        """
+
+        def create_dict_for_specific_model(row, model):
+            # Construct the key from 'sector', 'variable', and 'fuel'
+            key = f"{row['sector']} {row['variable']} {row['fuel']}".replace(" ", "_")
+
+            # Check if the specific model's scenario variable is available
+            if pd.notna(row[model]):
+                # Create the dictionary structure for this row for the specific model
+                dict_structure = {
+                    key: {
+                        'dataset': {
+                            'name': row['dataset name'],
+                            'reference product': row['dataset reference product'],
+                            'unit': row['unit']
+                        },
+                        'scenario variable': row[model]
+                    }
+                }
+                return dict_structure
+            return None
+        def create_dict_with_specific_model(dataframe, model):
+            model_dict = {}
+            for index, row in dataframe.iterrows():
+                row_dict = create_dict_for_specific_model(row, model)
+                if row_dict:
+                    model_dict.update(row_dict)
+            return model_dict
+
+        # Read the Excel file
+        df = pd.read_excel(
+            DATA_DIR / "data" / "final_energy_mapping.xlsx",
+        )
+        model = self.data.coords["model"].values[0]
+        return create_dict_with_specific_model(df, model)
 
     def get_mapping(self) -> dict:
         """
