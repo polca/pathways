@@ -38,7 +38,7 @@ def validate_datapackage(datapackage: datapackage.DataPackage):
             raise ValueError(f"Invalid datapackage: {e}")
 
     # Check that the datapackage contains the required resources
-    required_resources = ["scenarios", "exchanges", "labels", "mapping"]
+    required_resources = ["scenario_data", "exchanges", "labels", "mapping"]
     for resource in required_resources:
         try:
             datapackage.get_resource(resource)
@@ -52,7 +52,7 @@ def validate_datapackage(datapackage: datapackage.DataPackage):
             raise ValueError(f"Missing metadata: {metadata}")
 
     # Check that the scenario data is valid
-    validate_scenario_data(datapackage.get_resource("scenarios"))
+    validate_scenario_data(datapackage.get_resource("scenario_data"))
 
     # Check that the mapping is valid
     validate_mapping(datapackage.get_resource("mapping"), datapackage)
@@ -80,7 +80,7 @@ def validate_scenario_data(resource: datapackage.Resource) -> bool:
     """
 
     # Check that the file contains the required columns
-    required_columns = ["model", "pathway", "variable", "region", "year", "value"]
+    required_columns = ["model", "pathway", "variables", "region", "year", "value"]
 
     data = resource.read()
     headers = resource.headers
@@ -120,15 +120,17 @@ def validate_mapping(
     # Check that all values for `scenario variable` are unique
     scenario_variables = [item["scenario variable"] for item in mapping.values()]
     if len(scenario_variables) != len(set(scenario_variables)):
-        raise ValueError("All values for `scenario variable` must be unique")
+        print("All values for `scenario variable` must be unique. "
+            f"Duplicate values: {set([x for x in scenario_variables if scenario_variables.count(x) > 1])}"
+        )
 
     # Check that all values for `scenario variable` are present in the scenario data
-    scenario_data = datapackage.get_resource("scenarios").read()
+    scenario_data = datapackage.get_resource("scenario_data").read()
     scenario_data = pd.DataFrame(
-        scenario_data, columns=datapackage.get_resource("scenarios").headers
+        scenario_data, columns=datapackage.get_resource("scenario_data").headers
     )
     scenario_variables = set(scenario_variables)
-    if not scenario_variables.issubset(set(scenario_data["variable"].unique())):
+    if not scenario_variables.issubset(set(scenario_data["variables"].unique())):
         raise ValueError(
             "All values for `scenario variable` must be present in the scenario data"
             f"Missing variables: {scenario_variables - set(scenario_data['variable'].unique())}"

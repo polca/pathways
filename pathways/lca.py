@@ -51,7 +51,7 @@ def create_demand_vector(
 
     # Assign demand values to the positions in the vector corresponding to the activities indices
     # Demand values are converted to the appropriate units before assignment
-    f[activities_idx] = np.asarray(demand) * unit_conversion
+    f[activities_idx] = float(demand) * float(unit_conversion)
 
     return f
 
@@ -70,7 +70,7 @@ def read_indices_csv(file_path: Path) -> Dict[Tuple[str, str, str, str], str]:
     :rtype: Dict[Tuple[str, str, str, str], str]
     """
     indices = dict()
-    with open(file_path, "r") as read_obj:
+    with open(file_path) as read_obj:
         csv_reader = csv.reader(read_obj, delimiter=";")
         for row in csv_reader:
             indices[(row[0], row[1], row[2], row[3])] = row[4]
@@ -133,7 +133,7 @@ def get_lca_matrices(
 
     :rtype: Tuple[sparse.csr_matrix, sparse.csr_matrix, Dict, Dict]
     """
-    dirpath = Path(datapackage).parent / "inventories" / model / scenario / str(year)
+    dirpath = Path(datapackage).parent / "inventories" / model.lower() / scenario / str(year)
 
     # check that files exist
     if not dirpath.exists():

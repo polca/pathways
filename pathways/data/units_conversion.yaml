@@ -10,6 +10,9 @@ million ha:
 EJ/yr:
   kilowatt hour: 2.778e+11
   megajoule: 1e+12
+PJ/yr:
+  kilowatt hour: 2.778e+8
+  megajoule: 1e+9
 bn tkm/yr:
   ton kilometer: 1e+9
 bn pkm/yr:

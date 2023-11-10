@@ -94,6 +94,10 @@ def _get_activity_indices(
                             default_loc,
                         )
                         break  # Exit the loop as the index was found
+        if idx is None:
+            print(
+                f"Activity {activity} not found in the technosphere matrix."
+            )
 
     return indices  # Return the list of indices
 
@@ -130,6 +134,7 @@ def create_lca_results_array(
     scenarios: List[str],
     classifications: dict,
     mapping: dict,
+    flows: List[str] = None,
 ) -> xr.DataArray:
     """
     Create an xarray DataArray to store Life Cycle Assessment (LCA) results.
@@ -174,8 +179,12 @@ def create_lca_results_array(
         coords["impact_category"] = methods
         dims += (len(methods),)
     else:
-        coords["impact_category"] = [" - ".join(a) for a in list(B_indices.keys())]
-        dims += (len(B_indices),)
+        if flows is not None:
+            coords["impact_category"] = [" - ".join(a) for a in flows]
+            dims += (len(flows),)
+        else:
+            coords["impact_category"] = [" - ".join(a) for a in list(B_indices.keys())]
+            dims += (len(B_indices),)
 
     # Create the xarray DataArray with the defined coordinates and dimensions.
     # The array is initialized with zeros.

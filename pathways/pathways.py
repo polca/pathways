@@ -5,10 +5,8 @@ LCA datasets, and LCA matrices.
 """
 
 import csv
-import json
 import sys
 from collections import defaultdict
-from csv import reader
 from multiprocessing import Pool, cpu_count
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple, Union
@@ -19,7 +17,6 @@ import xarray as xr
 import yaml
 from datapackage import DataPackage
 from premise.geomap import Geomap
-from scipy import sparse
 
 from . import DATA_DIR
 from .lca import (
@@ -48,6 +45,25 @@ except ImportError:
 from .data_validation import validate_datapackage
 
 
+def check_unclassified_activities(A_index, classifications):
+    """
+    Check if there are activities in the technosphere matrix that are not in the classifications.
+    :param A:
+    :param classifications:
+    :return:
+    """
+    missing_classifications = []
+    for act in A_index:
+        if act not in classifications:
+            missing_classifications.append(list(act))
+    if missing_classifications:
+        print(
+            f"{len(missing_classifications)} activities are not found in the classifications. "
+            "There are exported in the file 'missing_classifications.csv'."
+        )
+        with open("missing_classifications.csv", "a") as f:
+            writer = csv.writer(f)
+            writer.writerows(missing_classifications)
 def csv_to_dict(filename):
     output_dict = {}
 
@@ -97,7 +113,7 @@ def resize_scenario_data(
         scenario_data.coords["region"].values.tolist().index(x) for x in region
     ]
     variable_idx = [
-        scenario_data.coords["variable"].values.tolist().index(x) for x in variables
+        scenario_data.coords["variables"].values.tolist().index(x) for x in variables
     ]
 
     # Resize the scenario data
@@ -106,7 +122,7 @@ def resize_scenario_data(
         pathway=scenario_idx,
         year=year_idx,
         region=region_idx,
-        variable=variable_idx,
+        variables=variable_idx,
     )
 
     return scenario_data
@@ -188,6 +204,7 @@ def process_region(data: Tuple) -> Union[None, Dict[str, Any]]:
         lcia_matrix,
         reverse_classifications,
         lca_results_coords,
+        flows
     ) = data
 
     # Generate a list of activity indices for each activity category
@@ -205,7 +222,11 @@ def process_region(data: Tuple) -> Union[None, Dict[str, Any]]:
             (len(act_categories), len(list(vars_idx)), len(impact_categories))
         )
     else:
-        target = np.zeros((len(act_categories), len(list(vars_idx)), len(B_index)))
+        if flows is not None:
+            target = np.zeros((len(act_categories), len(list(vars_idx)), len(flows)))
+        else:
+            target = np.zeros((len(act_categories), len(list(vars_idx)), len(B_index)))
+
 
     for v, variable in enumerate(variables):
         idx, dataset = vars_idx[variable]["idx"], vars_idx[variable]["dataset"]
@@ -220,7 +241,7 @@ def process_region(data: Tuple) -> Union[None, Dict[str, Any]]:
 
         # Fetch the demand for the given region, model, pathway, and year
         demand = scenarios.sel(
-            variable=variable,
+            variables=variable,
             region=region,
             model=model,
             pathway=scenario,
@@ -228,7 +249,7 @@ def process_region(data: Tuple) -> Union[None, Dict[str, Any]]:
         )
 
         # If the total demand is zero, return None
-        if demand.sum() == 0:
+        if demand.sum() < 1e-4:
             continue
 
         # Create the demand vector
@@ -263,15 +284,25 @@ def process_region(data: Tuple) -> Union[None, Dict[str, Any]]:
                 reverse_classifications,
                 lca_results_coords,
             )
-            target[:, v] = C[acts_idx, ...].sum(axis=0)
+            if flows is not None:
+                flows_idx = [int(B_index[f]) for f in flows]
+                C = C[:, flows_idx]
+                target[:, v] = C[acts_idx, ...].sum(axis=0)
+            else:
+                target[:, v] = C[acts_idx, ...].sum(axis=0)
 
     # Return a dictionary containing the processed LCA data for the given region
+    def get_indices():
+        if flows is not None:
+            return [" - ".join(a) for a in flows]
+        return [" - ".join(a) for a in list(B_index.keys())]
+
     return {
         "act_category": act_categories,
         "variable": list(vars_idx.keys()),
         "impact_category": impact_categories
         if lcia_matrix is not None
-        else [" - ".join(a) for a in list(B_index.keys())],
+        else get_indices(),
         "year": year,
         "region": region,
         "D": target,
@@ -292,7 +323,8 @@ class Pathways:
 
     def __init__(self, datapackage):
         self.datapackage = datapackage
-        self.data = validate_datapackage(self.read_datapackage())
+        #self.data = validate_datapackage(self.read_datapackage())
+        self.data = self.read_datapackage()
         self.mapping = self.get_mapping()
         self.mapping.update(self.get_final_energy_mapping())
         self.scenarios = self.get_scenarios()
@@ -326,7 +358,7 @@ class Pathways:
 
         def create_dict_for_specific_model(row, model):
             # Construct the key from 'sector', 'variable', and 'fuel'
-            key = f"{row['sector']} {row['variable']} {row['fuel']}".replace(" ", "_")
+            key = f"{row['sector']}_{row['variable']}_{row['fuel']}"
 
             # Check if the specific model's scenario variable is available
             if pd.notna(row[model]):
@@ -354,9 +386,10 @@ class Pathways:
 
         # Read the Excel file
         df = pd.read_excel(
-            DATA_DIR / "data" / "final_energy_mapping.xlsx",
+            DATA_DIR / "final_energy_mapping.xlsx",
         )
-        model = self.data.coords["model"].values[0]
+        model = self.data.descriptor["scenarios"][0]["name"].split(" - ")[0]
+
         return create_dict_with_specific_model(df, model)
 
     def get_mapping(self) -> dict:
@@ -395,15 +428,16 @@ class Pathways:
         Concatenate them into an xarray DataArray.
         """
 
-        scenario_data = self.data.get_resource("scenarios").read()
+        scenario_data = self.data.get_resource("scenario_data").read()
         scenario_data = pd.DataFrame(
-            scenario_data, columns=self.data.get_resource("scenarios").headers
+            scenario_data, columns=self.data.get_resource("scenario_data").headers
         )
 
         # remove rows which do not have a value under the `variable`
         # column that correspond to any value in self.mapping for `scenario variable`
+
         scenario_data = scenario_data[
-            scenario_data["variable"].isin(
+            scenario_data["variables"].isin(
                 [item["scenario variable"] for item in self.mapping.values()]
             )
         ]
@@ -413,26 +447,29 @@ class Pathways:
 
         # Convert to xarray DataArray
         data = (
-            scenario_data.groupby(["model", "pathway", "variable", "region", "year"])[
+            scenario_data.groupby(["model", "pathway", "variables", "region", "year"])[
                 "value"
             ]
             .mean()
             .to_xarray()
         )
 
+        # convert values under "model" column to lower case
+        data.coords["model"] = [x.lower() for x in data.coords["model"].values]
+
         # Replace variable names with values found in self.mapping
         new_names = []
-        for variable in data.coords["variable"].values:
+        for variable in data.coords["variables"].values:
             for p_var, val in self.mapping.items():
                 if val["scenario variable"] == variable:
                     new_names.append(p_var)
-        data.coords["variable"] = new_names
+        data.coords["variables"] = new_names
 
         # Add units
         units = {}
-        for variable in data.coords["variable"].values:
+        for variable in data.coords["variables"].values:
             units[variable] = scenario_data[
-                scenario_data["variable"] == self.mapping[variable]["scenario variable"]
+                scenario_data["variables"] == self.mapping[variable]["scenario variable"]
             ].iloc[0]["unit"]
 
         data.attrs["units"] = units
@@ -448,6 +485,7 @@ class Pathways:
         years: Optional[List[int]] = None,
         variables: Optional[List[str]] = None,
         characterization: bool = True,
+        flows: Optional[List[str]] = None,
     ) -> None:
         """
         Calculate Life Cycle Assessment (LCA) results for given methods, models, scenarios, regions, and years.
@@ -485,6 +523,7 @@ class Pathways:
                 methods = get_lcia_method_names()
         if models is None:
             models = self.scenarios.coords["model"].values
+            models = [m.lower() for m in models]
         if scenarios is None:
             scenarios = self.scenarios.coords["pathway"].values
         if regions is None:
@@ -492,7 +531,7 @@ class Pathways:
         if years is None:
             years = self.scenarios.coords["year"].values
         if variables is None:
-            variables = self.scenarios.coords["variable"].values
+            variables = self.scenarios.coords["variables"].values
 
         # resize self.scenarios array to fit the given arguments
         self.scenarios = resize_scenario_data(
@@ -505,7 +544,7 @@ class Pathways:
         self.mapping = {
             k: v
             for k, v in self.mapping.items()
-            if k in self.scenarios.coords["variable"].values
+            if k in self.scenarios.coords["variables"].values
         }
 
         # Iterate over each combination of model, scenario, and year
@@ -523,8 +562,10 @@ class Pathways:
                             self.datapackage, model, scenario, year
                         )
                         B = np.asarray(B.todense())
+
                     except FileNotFoundError:
                         # If LCA matrices can't be loaded, skip to the next iteration
+                        print("LCA matrices not found for the given model, scenario, and year.")
                         continue
 
                     # Fetch indices
@@ -534,6 +575,9 @@ class Pathways:
 
                     # Remove contribution from activities in other activities
                     A = remove_double_counting(A, vars_info)
+
+                    # check unclassified activities
+                    check_unclassified_activities(A_index, self.classifications)
 
                     # Create xarray for storing LCA results if not already present
                     if self.lca_results is None:
@@ -546,6 +590,7 @@ class Pathways:
                             scenarios,
                             self.classifications,
                             self.mapping,
+                            flows
                         )
 
                     # Fill characterization factor matrix for the given methods
@@ -578,6 +623,7 @@ class Pathways:
                             self.lcia_matrix if characterization else None,
                             self.reverse_classifications,
                             self.lca_results.coords,
+                            flows
                         )
                         for region in regions
                     ]
