@@ -120,7 +120,8 @@ def validate_mapping(
     # Check that all values for `scenario variable` are unique
     scenario_variables = [item["scenario variable"] for item in mapping.values()]
     if len(scenario_variables) != len(set(scenario_variables)):
-        print("All values for `scenario variable` must be unique. "
+        print(
+            "All values for `scenario variable` must be unique. "
             f"Duplicate values: {set([x for x in scenario_variables if scenario_variables.count(x) > 1])}"
         )
 

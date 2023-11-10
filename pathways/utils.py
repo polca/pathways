@@ -95,9 +95,7 @@ def _get_activity_indices(
                         )
                         break  # Exit the loop as the index was found
         if idx is None:
-            print(
-                f"Activity {activity} not found in the technosphere matrix."
-            )
+            print(f"Activity {activity} not found in the technosphere matrix.")
 
     return indices  # Return the list of indices
 

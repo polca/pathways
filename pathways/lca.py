@@ -133,7 +133,9 @@ def get_lca_matrices(
 
     :rtype: Tuple[sparse.csr_matrix, sparse.csr_matrix, Dict, Dict]
     """
-    dirpath = Path(datapackage).parent / "inventories" / model.lower() / scenario / str(year)
+    dirpath = (
+        Path(datapackage).parent / "inventories" / model.lower() / scenario / str(year)
+    )
 
     # check that files exist
     if not dirpath.exists():

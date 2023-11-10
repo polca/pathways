@@ -64,6 +64,8 @@ def check_unclassified_activities(A_index, classifications):
         with open("missing_classifications.csv", "a") as f:
             writer = csv.writer(f)
             writer.writerows(missing_classifications)
+
+
 def csv_to_dict(filename):
     output_dict = {}
 
@@ -204,7 +206,7 @@ def process_region(data: Tuple) -> Union[None, Dict[str, Any]]:
         lcia_matrix,
         reverse_classifications,
         lca_results_coords,
-        flows
+        flows,
     ) = data
 
     # Generate a list of activity indices for each activity category
@@ -226,7 +228,6 @@ def process_region(data: Tuple) -> Union[None, Dict[str, Any]]:
             target = np.zeros((len(act_categories), len(list(vars_idx)), len(flows)))
         else:
             target = np.zeros((len(act_categories), len(list(vars_idx)), len(B_index)))
-
 
     for v, variable in enumerate(variables):
         idx, dataset = vars_idx[variable]["idx"], vars_idx[variable]["dataset"]
@@ -323,7 +324,7 @@ class Pathways:
 
     def __init__(self, datapackage):
         self.datapackage = datapackage
-        #self.data = validate_datapackage(self.read_datapackage())
+        # self.data = validate_datapackage(self.read_datapackage())
         self.data = self.read_datapackage()
         self.mapping = self.get_mapping()
         self.mapping.update(self.get_final_energy_mapping())
@@ -469,7 +470,8 @@ class Pathways:
         units = {}
         for variable in data.coords["variables"].values:
             units[variable] = scenario_data[
-                scenario_data["variables"] == self.mapping[variable]["scenario variable"]
+                scenario_data["variables"]
+                == self.mapping[variable]["scenario variable"]
             ].iloc[0]["unit"]
 
         data.attrs["units"] = units
@@ -565,7 +567,9 @@ class Pathways:
 
                     except FileNotFoundError:
                         # If LCA matrices can't be loaded, skip to the next iteration
-                        print("LCA matrices not found for the given model, scenario, and year.")
+                        print(
+                            "LCA matrices not found for the given model, scenario, and year."
+                        )
                         continue
 
                     # Fetch indices
@@ -590,7 +594,7 @@ class Pathways:
                             scenarios,
                             self.classifications,
                             self.mapping,
-                            flows
+                            flows,
                         )
 
                     # Fill characterization factor matrix for the given methods
@@ -623,7 +627,7 @@ class Pathways:
                             self.lcia_matrix if characterization else None,
                             self.reverse_classifications,
                             self.lca_results.coords,
-                            flows
+                            flows,
                         )
                         for region in regions
                     ]
