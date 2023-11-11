@@ -1,4 +1,4 @@
-<p style="center">
+<p align="center">
 <img src="https://github.com/polca/pathways/blob/main/assets/pathways-high-resolution-logo-transparent.png" height="300"/>
 </p>
 
