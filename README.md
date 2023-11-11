@@ -1,5 +1,5 @@
 <div style="text-align:center">
-<img src="https://github.com/polca/pathways/raw/master/assets/pathways-high-resolution-logo-transparent.png" height="300"/>
+<img src="https://github.com/polca/pathways/blob/main/assets/pathways-high-resolution-logo-transparent.png" height="300"/>
 </div>
 
 
