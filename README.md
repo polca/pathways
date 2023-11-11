@@ -1,3 +1,8 @@
+<div style="text-align:center">
+<img src="https://github.com/polca/pathways/raw/master/assets/pathways-high-resolution-logo-transparent.png" height="300"/>
+</div>
+
+
 # pathways
 
 ``pathways`` is a Python package that characterizes

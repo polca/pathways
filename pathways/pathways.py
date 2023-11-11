@@ -324,8 +324,7 @@ class Pathways:
 
     def __init__(self, datapackage):
         self.datapackage = datapackage
-        # self.data = validate_datapackage(self.read_datapackage())
-        self.data = self.read_datapackage()
+        self.data = validate_datapackage(self.read_datapackage())
         self.mapping = self.get_mapping()
         self.mapping.update(self.get_final_energy_mapping())
         self.scenarios = self.get_scenarios()
@@ -434,13 +433,18 @@ class Pathways:
             scenario_data, columns=self.data.get_resource("scenario_data").headers
         )
 
+        mapping_vars = [item["scenario variable"] for item in self.mapping.values()]
+
+        #check if all variables in mapping are in scenario_data
+        for var in mapping_vars:
+            if var not in scenario_data["variables"].values:
+                print(f"Variable {var} not found in scenario data.")
+
         # remove rows which do not have a value under the `variable`
         # column that correspond to any value in self.mapping for `scenario variable`
 
         scenario_data = scenario_data[
-            scenario_data["variables"].isin(
-                [item["scenario variable"] for item in self.mapping.values()]
-            )
+            scenario_data["variables"].isin(mapping_vars)
         ]
 
         # convert `year` column to integer

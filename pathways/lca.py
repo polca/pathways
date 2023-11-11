@@ -11,7 +11,8 @@ import xarray as xr
 from scipy import sparse
 from scipy.sparse import csr_matrix
 
-# Attempt to import pypardiso's spsolve function. If it isn't available, fall back on scipy's spsolve.
+# Attempt to import pypardiso's spsolve function.
+# If it isn't available, fall back on scipy's spsolve.
 try:
     from pypardiso import spsolve
 except ImportError:
