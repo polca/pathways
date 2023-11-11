@@ -435,7 +435,7 @@ class Pathways:
 
         mapping_vars = [item["scenario variable"] for item in self.mapping.values()]
 
-        #check if all variables in mapping are in scenario_data
+        # check if all variables in mapping are in scenario_data
         for var in mapping_vars:
             if var not in scenario_data["variables"].values:
                 print(f"Variable {var} not found in scenario data.")
@@ -443,9 +443,7 @@ class Pathways:
         # remove rows which do not have a value under the `variable`
         # column that correspond to any value in self.mapping for `scenario variable`
 
-        scenario_data = scenario_data[
-            scenario_data["variables"].isin(mapping_vars)
-        ]
+        scenario_data = scenario_data[scenario_data["variables"].isin(mapping_vars)]
 
         # convert `year` column to integer
         scenario_data["year"] = scenario_data["year"].astype(int)
