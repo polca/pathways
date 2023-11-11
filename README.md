@@ -60,7 +60,7 @@ If not specified, all the methods, years, regions and scenarios
 defined in the datapackage.json file are used, which can be very
 time-consuming.
 
-Once calculate, the results of the LCA calculations are stored in the `.lcia_results`
+Once calculated, the results of the LCA calculations are stored in the `.lcia_results`
 attribute of the `Pathways` object, and can be formatted in an array by calling `.display_results()`.
 
 ```python
