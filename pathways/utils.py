@@ -117,15 +117,13 @@ def harmonize_units(scenario: xr.DataArray, variables: list) -> xr.DataArray:
             # create vector of conversion factors
             conversion_factors = np.array([1e-3 if u == "PJ/yr" else 1 for u in units])
             # multiply scenario by conversion factors
-            scenario.loc[
-                dict(variables=variables)
-            ] *= conversion_factors[:, np.newaxis, np.newaxis]
+            scenario.loc[dict(variables=variables)] *= conversion_factors[
+                :, np.newaxis, np.newaxis
+            ]
             # update units
             scenario.attrs["units"] = {var: "EJ/yr" for var in variables}
 
-
     return scenario
-
 
 
 def get_unit_conversion_factors(

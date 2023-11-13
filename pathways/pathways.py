@@ -12,11 +12,11 @@ from typing import Any, Dict, List, Optional, Tuple, Union
 
 import numpy as np
 import pandas as pd
+import pyprind
 import xarray as xr
 import yaml
 from datapackage import DataPackage
 from premise.geomap import Geomap
-import pyprind
 
 from . import DATA_DIR
 from .lca import (
@@ -32,9 +32,9 @@ from .utils import (
     create_lca_results_array,
     display_results,
     get_unit_conversion_factors,
+    harmonize_units,
     load_classifications,
     load_units_conversion,
-    harmonize_units
 )
 
 # if pypardiso is installed, use it
