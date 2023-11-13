@@ -5,7 +5,6 @@ LCA datasets, and LCA matrices.
 """
 
 import csv
-import sys
 from collections import defaultdict
 from multiprocessing import Pool, cpu_count
 from pathlib import Path
@@ -17,6 +16,7 @@ import xarray as xr
 import yaml
 from datapackage import DataPackage
 from premise.geomap import Geomap
+import pyprind
 
 from . import DATA_DIR
 from .lca import (
@@ -34,6 +34,7 @@ from .utils import (
     get_unit_conversion_factors,
     load_classifications,
     load_units_conversion,
+    harmonize_units
 )
 
 # if pypardiso is installed, use it
@@ -207,6 +208,7 @@ def process_region(data: Tuple) -> Union[None, Dict[str, Any]]:
         reverse_classifications,
         lca_results_coords,
         flows,
+        demand_cutoff,
     ) = data
 
     # Generate a list of activity indices for each activity category
@@ -250,7 +252,15 @@ def process_region(data: Tuple) -> Union[None, Dict[str, Any]]:
         )
 
         # If the total demand is zero, return None
-        if demand.sum() < 1e-4:
+        if (
+            demand
+            / scenarios.sel(
+                region=region,
+                model=model,
+                pathway=scenario,
+                year=year,
+            ).sum(dim="variables")
+        ) < demand_cutoff:
             continue
 
         # Create the demand vector
@@ -490,6 +500,9 @@ class Pathways:
         variables: Optional[List[str]] = None,
         characterization: bool = True,
         flows: Optional[List[str]] = None,
+        multiprocessing: bool = False,
+        data_type: np.dtype = np.float64,
+        demand_cutoff: float = 1e-3,
     ) -> None:
         """
         Calculate Life Cycle Assessment (LCA) results for given methods, models, scenarios, regions, and years.
@@ -513,7 +526,17 @@ class Pathways:
         :type years: Optional[List[int]], default is None
         :param variables: List of variables. If None, all available variables will be used.
         :type variables: Optional[List[str]], default is None
+        :param flows: List of biosphere flows. If None, all available flows will be used.
+        :type flows: Optional[List[str]], default is None
+        :param multiprocessing: Boolean. If True, process each region in parallel.
+        :type multiprocessing: bool, default is False
+        :param data_type: Data type to use for storing LCA results.
+        :type data_type: np.dtype, default is np.float64
+        :param demand_cutoff: Float. If the total demand for a given variable is less than this value, the variable is skipped.
+        :type demand_cutoff: float, default is 1e-3
         """
+
+        self.scenarios = harmonize_units(self.scenarios, variables)
 
         # Initialize list to store activities not found in classifications
         missing_class = []
@@ -563,7 +586,7 @@ class Pathways:
                     # Try to load LCA matrices for the given model, scenario, and year
                     try:
                         A, B, A_index, B_index = get_lca_matrices(
-                            self.datapackage, model, scenario, year
+                            self.datapackage, model, scenario, year, data_type=data_type
                         )
                         B = np.asarray(B.todense())
 
@@ -610,33 +633,67 @@ class Pathways:
                         if act not in self.classifications:
                             missing_class.append(list(act))
 
-                    # Prepare data for each region
-                    data_for_regions = [
-                        (
-                            model,
-                            scenario,
-                            year,
-                            region,
-                            variables,
-                            vars_info[region],
-                            self.scenarios,
-                            self.mapping,
-                            self.units,
-                            A,
-                            B,
-                            A_index,
-                            B_index,
-                            self.lcia_matrix if characterization else None,
-                            self.reverse_classifications,
-                            self.lca_results.coords,
-                            flows,
-                        )
-                        for region in regions
-                    ]
+                    if multiprocessing is True:
+                        # Prepare data for each region
+                        data_for_regions = [
+                            (
+                                model,
+                                scenario,
+                                year,
+                                region,
+                                variables,
+                                vars_info[region],
+                                self.scenarios,
+                                self.mapping,
+                                self.units,
+                                A,
+                                B,
+                                A_index,
+                                B_index,
+                                self.lcia_matrix if characterization else None,
+                                self.reverse_classifications,
+                                self.lca_results.coords,
+                                flows,
+                                demand_cutoff,
+                            )
+                            for region in regions
+                        ]
 
-                    # Process each region in parallel
-                    with Pool(cpu_count()) as p:
-                        results = p.map(process_region, data_for_regions)
+                        # Process each region in parallel
+                        with Pool(cpu_count()) as p:
+                            results = p.map(process_region, data_for_regions)
+
+                    else:
+                        results = []
+                        # use pyprind
+                        bar = pyprind.ProgBar(len(regions))
+                        for region in regions:
+                            bar.update()
+                            # Iterate over each region
+                            results.append(
+                                process_region(
+                                    (
+                                        model,
+                                        scenario,
+                                        year,
+                                        region,
+                                        variables,
+                                        vars_info[region],
+                                        self.scenarios,
+                                        self.mapping,
+                                        self.units,
+                                        A,
+                                        B,
+                                        A_index,
+                                        B_index,
+                                        self.lcia_matrix if characterization else None,
+                                        self.reverse_classifications,
+                                        self.lca_results.coords,
+                                        flows,
+                                        demand_cutoff,
+                                    )
+                                )
+                            )
 
                     # Store results in the LCA results xarray
                     for result in results:
@@ -670,5 +727,5 @@ class Pathways:
             characterization=False,
         )
 
-    def display_results(self, cutoff: float = 0.01) -> xr.DataArray:
+    def display_results(self, cutoff: float = 0.001) -> xr.DataArray:
         return display_results(self.lca_results, cutoff=cutoff)

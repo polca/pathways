@@ -100,8 +100,36 @@ def _get_activity_indices(
     return indices  # Return the list of indices
 
 
+def harmonize_units(scenario: xr.DataArray, variables: list) -> xr.DataArray:
+    """
+    Harmonize the units of a scenario. Some units ar ein PJ/yr, while others are in EJ/yr
+    We want to convert everything to the same unit - preferably the largest one.
+    :param scenario:
+    :return:
+    """
+
+    units = [scenario.attrs["units"][var] for var in variables]
+
+    # if not all units are the same, we need to convert
+    if len(set(units)) > 1:
+        if all(x in ["PJ/yr", "EJ/yr"] for x in units):
+            # convert to EJ/yr
+            # create vector of conversion factors
+            conversion_factors = np.array([1e-3 if u == "PJ/yr" else 1 for u in units])
+            # multiply scenario by conversion factors
+            scenario.loc[
+                dict(variables=variables)
+            ] *= conversion_factors[:, np.newaxis, np.newaxis]
+            # update units
+            scenario.attrs["units"] = {var: "EJ/yr" for var in variables}
+
+
+    return scenario
+
+
+
 def get_unit_conversion_factors(
-    scenario_unit, dataset_unit, unit_mapping
+    scenario_unit: dict, dataset_unit: list, unit_mapping: dict
 ) -> np.ndarray:
     """
     Get the unit conversion factors for a given scenario unit and dataset unit.
@@ -190,7 +218,7 @@ def create_lca_results_array(
 
 
 def display_results(
-    lca_results: Union[xr.DataArray, None], cutoff: float = 0.01
+    lca_results: Union[xr.DataArray, None], cutoff: float = 0.001
 ) -> xr.DataArray:
     if lca_results is None:
         raise ValueError("No results to display")

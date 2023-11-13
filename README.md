@@ -11,7 +11,8 @@ Life Cycle Assessment (LCA).
 
 ``pathways`` is a work in progress. It reads in
 scenarios and corresponding premise-generated LCA databases,
-and calculates the environmental impacts over a defined period.
+solve double-accounting issues and calculates the environmental 
+impacts over a defined period.
 
 ## Installation
 

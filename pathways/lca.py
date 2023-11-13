@@ -84,6 +84,7 @@ def load_matrix_and_index(
     sign: int = 1,
     transpose: bool = False,
     extra_indices: Optional[int] = None,
+    data_type: np.dtype = np.float32,
 ) -> csr_matrix:
     """
     Reads a CSV file and returns its contents as a CSR sparse matrix.
@@ -120,12 +121,12 @@ def load_matrix_and_index(
         idx = (I, J)
 
     # Create and return the CSR matrix
-    matrix = csr_matrix((data, idx), shape=shape)
+    matrix = csr_matrix((data, idx), shape=shape, dtype=data_type)
     return matrix
 
 
 def get_lca_matrices(
-    datapackage: str, model: str, scenario: str, year: int
+    datapackage: str, model: str, scenario: str, year: int, data_type: np.dtype = np.float32
 ) -> Tuple[sparse.csr_matrix, sparse.csr_matrix, Dict, Dict]:
     """
     Retrieve Life Cycle Assessment (LCA) matrices from disk.
@@ -145,9 +146,9 @@ def get_lca_matrices(
     A_inds = read_indices_csv(dirpath / "A_matrix_index.csv")
     B_inds = read_indices_csv(dirpath / "B_matrix_index.csv")
 
-    A = load_matrix_and_index(dirpath / "A_matrix.csv", len(A_inds), transpose=True)
+    A = load_matrix_and_index(dirpath / "A_matrix.csv", len(A_inds), transpose=True, data_type=data_type)
     B = load_matrix_and_index(
-        dirpath / "B_matrix.csv", len(B_inds), sign=-1, extra_indices=len(A_inds)
+        dirpath / "B_matrix.csv", len(B_inds), sign=-1, extra_indices=len(A_inds), data_type=data_type
     )
 
     return A, B, A_inds, B_inds
