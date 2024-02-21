@@ -144,15 +144,24 @@ def fetch_indices(mapping, regions, variables, A_index, geo):
     vars_idx = {}
 
     for region in regions:
-        activities = [
-            (
-                mapping[x]["dataset"]["name"],
-                mapping[x]["dataset"]["reference product"],
-                mapping[x]["dataset"]["unit"],
-                region,
-            )
-            for x in variables
-        ]
+
+        activities = []
+
+        for variable in variables:
+            for dataset in mapping[variable]["dataset"]:
+                activities.append(
+                    (
+                        dataset["name"],
+                        dataset["reference product"],
+                        dataset["unit"],
+                        region,
+                    )
+                )
+
+        if len(activities) != len(variables):
+            print("Warning: mismatch between activities and variables.")
+            print(f"Number of variables: {len(variables)}")
+            print(f"Number of datasets: {len(activities)}")
 
         idxs = _get_activity_indices(activities, A_index, geo)
 
@@ -334,10 +343,10 @@ class Pathways:
 
     def __init__(self, datapackage):
         self.datapackage = datapackage
-        self.data = validate_datapackage(self.read_datapackage())
+        self.data, dataframe = validate_datapackage(self.read_datapackage())
         self.mapping = self.get_mapping()
         self.mapping.update(self.get_final_energy_mapping())
-        self.scenarios = self.get_scenarios()
+        self.scenarios = self.get_scenarios(dataframe)
         self.classifications = load_classifications()
 
         # create a reverse mapping
@@ -432,16 +441,11 @@ class Pathways:
             # Excel file
             return pd.read_excel(filepath, index_col=0)
 
-    def get_scenarios(self):
+    def get_scenarios(self, scenario_data: pd.DataFrame) -> xr.DataArray:
         """
         Load scenarios from filepaths as pandas DataFrame.
         Concatenate them into an xarray DataArray.
         """
-
-        scenario_data = self.data.get_resource("scenario_data").read()
-        scenario_data = pd.DataFrame(
-            scenario_data, columns=self.data.get_resource("scenario_data").headers
-        )
 
         mapping_vars = [item["scenario variable"] for item in self.mapping.values()]
 
@@ -456,7 +460,7 @@ class Pathways:
         scenario_data = scenario_data[scenario_data["variables"].isin(mapping_vars)]
 
         # convert `year` column to integer
-        scenario_data["year"] = scenario_data["year"].astype(int)
+        scenario_data.loc[:, "year"] = scenario_data["year"].astype(int)
 
         # Convert to xarray DataArray
         data = (

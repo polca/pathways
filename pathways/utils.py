@@ -71,7 +71,13 @@ def _get_activity_indices(
             indices.append(int(idx))  # If found, add to the list
         else:
             # If not found, look for the activity in possible locations
-            possible_locations = geo.iam_to_ecoinvent_location(activity[-1])
+            # find out if the location is an IAM location or just an ecoinvent location
+
+            if (geo.model.upper(), activity[-1]) not in geo.geo.keys():
+                print(f"{activity[-1]} is not an IAM location.")
+                possible_locations = [activity[-1]]
+            else:
+                possible_locations = geo.iam_to_ecoinvent_location(activity[-1])
 
             for loc in possible_locations:
                 idx = A_index.get((activity[0], activity[1], activity[2], loc))
@@ -94,6 +100,10 @@ def _get_activity_indices(
                             default_loc,
                         )
                         break  # Exit the loop as the index was found
+                else:
+                    # If still not found, print a message and add None to the list
+                    print(f"Activity {activity} not found in the technosphere matrix.")
+                    indices.append(None)
         if idx is None:
             print(f"Activity {activity} not found in the technosphere matrix.")
 

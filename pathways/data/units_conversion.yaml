@@ -13,6 +13,12 @@ EJ/yr:
 PJ/yr:
   kilowatt hour: 2.778e+8
   megajoule: 1e+9
+PJ/yr.:
+  kilowatt hour: 2.778e+8
+  megajoule: 1e+9
+TWh:
+  kilowatt hour: 1e+9
+  megajoule: 3.6e+9
 bn tkm/yr:
   ton kilometer: 1e+9
 bn pkm/yr:

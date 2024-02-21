@@ -51,19 +51,24 @@ def validate_datapackage(datapackage: datapackage.DataPackage):
         if metadata not in datapackage.descriptor:
             raise ValueError(f"Missing metadata: {metadata}")
 
+    # extract the scenario data
+    data = datapackage.get_resource("scenario_data").read()
+    headers = datapackage.get_resource("scenario_data").headers
+    dataframe = pd.DataFrame(data, columns=headers)
+
     # Check that the scenario data is valid
-    validate_scenario_data(datapackage.get_resource("scenario_data"))
+    validate_scenario_data(dataframe)
 
     # Check that the mapping is valid
-    validate_mapping(datapackage.get_resource("mapping"), datapackage)
+    validate_mapping(datapackage.get_resource("mapping"), dataframe)
 
     # Check that the LCA data is valid
     # validate_lca_data(datapackage)
 
-    return datapackage
+    return datapackage, dataframe
 
 
-def validate_scenario_data(resource: datapackage.Resource) -> bool:
+def validate_scenario_data(dataframe: pd.DataFrame) -> bool:
     """
     This function validates the scenario data.
     `filepath` is a relative path within the datapackage.
@@ -82,19 +87,16 @@ def validate_scenario_data(resource: datapackage.Resource) -> bool:
     # Check that the file contains the required columns
     required_columns = ["model", "pathway", "variables", "region", "year", "value"]
 
-    data = resource.read()
-    headers = resource.headers
-    df = pd.DataFrame(data, columns=headers)
-
     for column in required_columns:
-        if column not in df.columns:
+        if column not in dataframe.columns:
             raise ValueError(f"Missing mandatory column: {column}")
 
     return True
 
 
 def validate_mapping(
-    resource: datapackage.Resource, datapackage: datapackage.DataPackage
+    resource: datapackage.Resource,
+    dataframe: pd.DataFrame
 ):
     """
     Validates the mapping between scenario variables and LCA datasets.
@@ -124,19 +126,6 @@ def validate_mapping(
             "All values for `scenario variable` must be unique. "
             f"Duplicate values: {set([x for x in scenario_variables if scenario_variables.count(x) > 1])}"
         )
-
-    # Check that all values for `scenario variable` are present in the scenario data
-    scenario_data = datapackage.get_resource("scenario_data").read()
-    scenario_data = pd.DataFrame(
-        scenario_data, columns=datapackage.get_resource("scenario_data").headers
-    )
-    scenario_variables = set(scenario_variables)
-    if not scenario_variables.issubset(set(scenario_data["variables"].unique())):
-        raise ValueError(
-            "All values for `scenario variable` must be present in the scenario data"
-            f"Missing variables: {scenario_variables - set(scenario_data['variable'].unique())}"
-        )
-
 
 def validate_lca_data(datapackage):
     """
