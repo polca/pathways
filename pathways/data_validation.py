@@ -94,10 +94,7 @@ def validate_scenario_data(dataframe: pd.DataFrame) -> bool:
     return True
 
 
-def validate_mapping(
-    resource: datapackage.Resource,
-    dataframe: pd.DataFrame
-):
+def validate_mapping(resource: datapackage.Resource, dataframe: pd.DataFrame):
     """
     Validates the mapping between scenario variables and LCA datasets.
     The mapping must be a YAML file.
@@ -126,6 +123,7 @@ def validate_mapping(
             "All values for `scenario variable` must be unique. "
             f"Duplicate values: {set([x for x in scenario_variables if scenario_variables.count(x) > 1])}"
         )
+
 
 def validate_lca_data(datapackage):
     """

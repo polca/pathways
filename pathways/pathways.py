@@ -320,9 +320,9 @@ def process_region(data: Tuple) -> Union[None, Dict[str, Any]]:
     return {
         "act_category": act_categories,
         "variable": list(vars_idx.keys()),
-        "impact_category": impact_categories
-        if lcia_matrix is not None
-        else get_indices(),
+        "impact_category": (
+            impact_categories if lcia_matrix is not None else get_indices()
+        ),
         "year": year,
         "region": region,
         "D": target,
