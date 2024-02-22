@@ -153,6 +153,11 @@ def get_lca_matrices(
     A = load_matrix_and_index(
         dirpath / "A_matrix.csv", len(A_inds), transpose=True, data_type=data_type
     )
+
+    # if A is not square, raise an error
+    if A.shape[0] != A.shape[1]:
+        raise ValueError(f"A must be a square matrix. Current shape is {A.shape}.")
+
     B = load_matrix_and_index(
         dirpath / "B_matrix.csv",
         len(B_inds),
@@ -160,6 +165,11 @@ def get_lca_matrices(
         extra_indices=len(A_inds),
         data_type=data_type,
     )
+
+    if B.shape[0] != A.shape[0]:
+        raise ValueError(
+            f"Incompatible dimensions between A and B. A shape: {A.shape}, B shape: {B.shape}"
+        )
 
     return A, B, A_inds, B_inds
 

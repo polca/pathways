@@ -671,6 +671,8 @@ class Pathways:
                         results = []
                         # use pyprind
                         bar = pyprind.ProgBar(len(regions))
+                        print(A.shape)
+                        print(len(A_index))
                         for region in regions:
                             bar.update()
                             # Iterate over each region
