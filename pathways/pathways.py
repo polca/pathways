@@ -607,7 +607,7 @@ class Pathways:
                     )
 
                     # Remove contribution from activities in other activities
-                    A = remove_double_counting(A, vars_info)
+                    #A = remove_double_counting(A, vars_info)
 
                     # check unclassified activities
                     check_unclassified_activities(A_index, self.classifications)

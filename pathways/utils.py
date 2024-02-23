@@ -2,7 +2,6 @@ import sys
 from typing import Any, Dict, List, Tuple, Union
 
 import numpy as np
-import pandas as pd
 import xarray as xr
 import yaml
 

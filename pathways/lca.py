@@ -177,9 +177,9 @@ def get_lca_matrices(
 def remove_double_counting(A: csr_matrix, vars_info: dict) -> csr_matrix:
     """
     Remove double counting from a technosphere matrix.
-    :param A:
-    :param activities_idx:
-    :return:
+    :param A: Technosphere matrix
+    :param vars_info: Dictionary with information about variables
+    :return: Technosphere matrix with double counting removed
     """
 
     # Modify A in COO format for efficiency
@@ -188,12 +188,16 @@ def remove_double_counting(A: csr_matrix, vars_info: dict) -> csr_matrix:
 
     A_coo = A.tocoo()
 
+    list_of_idx = []
+
     for region in vars_info:
         for variable in vars_info[region]:
             idx = vars_info[region][variable]["idx"]
-            row_mask = np.isin(A_coo.row, idx)
-            col_mask = np.isin(A_coo.col, idx)
-            A_coo.data[row_mask & ~col_mask] = 0  # zero out rows
+            if idx not in list_of_idx:
+                list_of_idx.append(idx)
+                row_mask = np.isin(A_coo.row, idx)
+                col_mask = np.isin(A_coo.col, idx)
+                A_coo.data[row_mask & ~col_mask] = 0  # zero out rows
 
     A_coo.eliminate_zeros()
     return A_coo.tocsr()
