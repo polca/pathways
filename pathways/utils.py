@@ -192,7 +192,6 @@ def create_lca_results_array(
     :rtype: xr.DataArray
     """
 
-
     # Define the coordinates for the xarray DataArray
     coords = {
         "act_category": list(set(classifications.values())),
