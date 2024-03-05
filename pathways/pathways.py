@@ -179,6 +179,19 @@ def fetch_indices(mapping, regions, variables, A_index, geo):
     return vars_idx
 
 
+def fetch_inventories_locations(A_index: Dict[str, Tuple[str, str, str]]) -> List[str]:
+    """
+    Fetch the locations of the inventories.
+    :param A_index: Dictionary with the indices of the activities in the technosphere matrix.
+    :return: List of locations.
+    """
+    locations = []
+    for act in A_index:
+        if act[1] not in locations:
+            locations.append(act[1])
+    return locations
+
+
 def generate_A_indices(A_index, reverse_classifications, lca_results_coords):
     # Generate a list of activity indices for each activity category
     acts_idx = []
@@ -549,9 +562,8 @@ class Pathways:
             methods = None
 
         # Set default values if arguments are not provided
-        if methods is None:
-            if characterization is True:
-                methods = get_lcia_method_names()
+        if methods is None and characterization is True:
+            methods = get_lcia_method_names()
         if models is None:
             models = self.scenarios.coords["model"].values
             models = [m.lower() for m in models]
@@ -614,6 +626,7 @@ class Pathways:
 
                     # Create xarray for storing LCA results if not already present
                     if self.lca_results is None:
+                        locations = fetch_inventories_locations(A_index)
                         self.lca_results = create_lca_results_array(
                             methods,
                             B_index,

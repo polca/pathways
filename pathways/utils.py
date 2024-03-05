@@ -163,6 +163,7 @@ def create_lca_results_array(
     B_indices: Dict,
     years: List[int],
     regions: List[str],
+    locations: List[str],
     models: List[str],
     scenarios: List[str],
     classifications: dict,
@@ -180,6 +181,8 @@ def create_lca_results_array(
     :type years: List[int]
     :param regions: List of regions to consider in the LCA results.
     :type regions: List[str]
+    :param locations: List of locations to consider in the LCA results.
+    :type locations: List[str]
     :param models: List of models to consider in the LCA results.
     :type models: List[str]
     :param scenarios: List of scenarios to consider in the LCA results.
@@ -189,12 +192,14 @@ def create_lca_results_array(
     :rtype: xr.DataArray
     """
 
+
     # Define the coordinates for the xarray DataArray
     coords = {
         "act_category": list(set(classifications.values())),
         "variable": list(mapping.keys()),
         "year": years,
         "region": regions,
+        "location": locations,
         "model": models,
         "scenario": scenarios,
     }
@@ -204,6 +209,7 @@ def create_lca_results_array(
         len(coords["variable"]),
         len(years),
         len(regions),
+        len(locations),
         len(models),
         len(scenarios),
     )
