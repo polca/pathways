@@ -619,7 +619,7 @@ class Pathways:
                     )
 
                     # Remove contribution from activities in other activities
-                    # A = remove_double_counting(A, vars_info)
+                    #A = remove_double_counting(A, vars_info)
 
                     # check unclassified activities
                     check_unclassified_activities(A_index, self.classifications)
@@ -628,15 +628,16 @@ class Pathways:
                     if self.lca_results is None:
                         locations = fetch_inventories_locations(A_index)
                         self.lca_results = create_lca_results_array(
-                            methods,
-                            B_index,
-                            years,
-                            regions,
-                            models,
-                            scenarios,
-                            self.classifications,
-                            self.mapping,
-                            flows,
+                            methods=methods,
+                            B_indices=B_index,
+                            years=years,
+                            regions=regions,
+                            locations=
+                            models=models,
+                            scenarios=scenarios,
+                            classifications=self.classifications,
+                            mapping=self.mapping,
+                            flows=flows,
                         )
 
                     # Fill characterization factor matrix for the given methods

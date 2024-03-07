@@ -230,10 +230,20 @@ def create_lca_results_array(
 
 
 def display_results(
-    lca_results: Union[xr.DataArray, None], cutoff: float = 0.001
+    lca_results: Union[xr.DataArray, None], cutoff: float = 0.001, interpolate: bool = True
 ) -> xr.DataArray:
     if lca_results is None:
         raise ValueError("No results to display")
+
+    # replace zeros with NaNs
+    lca_results = lca_results.where(lca_results != 0)
+
+    if len(lca_results.year) > 1 and interpolate:
+        lca_results = lca_results.interp(
+            year=np.arange(lca_results.year.min(), lca_results.year.max() + 1),
+            kwargs={"fill_value": "extrapolate"},
+            method="linear",
+        )
 
     df = (
         lca_results.to_dataframe("value")
@@ -293,12 +303,5 @@ def display_results(
         .sum()
         .to_xarray()
     )
-
-    if len(arr.year) > 1:
-        arr = arr.interp(
-            year=np.arange(arr.year.min(), arr.year.max() + 1),
-            kwargs={"fill_value": "extrapolate"},
-            method="linear",
-        )
 
     return arr
