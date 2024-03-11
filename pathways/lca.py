@@ -15,8 +15,10 @@ from scipy.sparse import csr_matrix
 # If it isn't available, fall back on scipy's spsolve.
 try:
     from pypardiso import spsolve
+    print("Solver: pypardiso")
 except ImportError:
     from scikits.umfpack import spsolve
+    print("Solver: scikits.umfpack")
 
 
 def create_demand_vector(
