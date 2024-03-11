@@ -641,7 +641,6 @@ class Pathways:
                             self.datapackage, model, scenario, year, data_type=data_type
                         )
                         B = np.asarray(B.todense())
-
                     except FileNotFoundError:
                         # If LCA matrices can't be loaded, skip to the next iteration
                         print(
