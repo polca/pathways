@@ -189,9 +189,7 @@ def fetch_inventories_locations(A_index: Dict[str, Tuple[str, str, str]]) -> Lis
     :return: List of locations.
     """
 
-    return list(set([
-        act[3] for act in A_index
-    ]))
+    return list(set([act[3] for act in A_index]))
 
 
 def generate_A_indices(A_index, reverse_classifications, lca_results_coords):
@@ -210,7 +208,6 @@ def generate_A_indices(A_index, reverse_classifications, lca_results_coords):
 
     # Swap the axes of acts_idx to align with the dimensionality of D
     return np.swapaxes(acts_idx, 0, 1)
-
 
 
 def process_region(data: Tuple) -> Union[None, Dict[str, Any]]:
@@ -252,13 +249,22 @@ def process_region(data: Tuple) -> Union[None, Dict[str, Any]]:
     if lcia_matrix is not None:
         impact_categories = lca_results_coords["impact_category"].values
         target = np.zeros(
-            (len(act_categories), len(list(vars_idx)), len(locations), len(impact_categories))
+            (
+                len(act_categories),
+                len(list(vars_idx)),
+                len(locations),
+                len(impact_categories),
+            )
         )
     else:
         if flows is not None:
-            target = np.zeros((len(act_categories), len(list(vars_idx)), len(locations), len(flows)))
+            target = np.zeros(
+                (len(act_categories), len(list(vars_idx)), len(locations), len(flows))
+            )
         else:
-            target = np.zeros((len(act_categories), len(list(vars_idx)), len(locations), len(B_index)))
+            target = np.zeros(
+                (len(act_categories), len(list(vars_idx)), len(locations), len(B_index))
+            )
 
     for v, variable in enumerate(variables):
         idx, dataset = vars_idx[variable]["idx"], vars_idx[variable]["dataset"]
@@ -432,11 +438,13 @@ class Pathways:
                 # Create the dictionary structure for this row for the specific model
                 dict_structure = {
                     key: {
-                        "dataset": [{
-                            "name": row["dataset name"],
-                            "reference product": row["dataset reference product"],
-                            "unit": row["unit"],
-                        }],
+                        "dataset": [
+                            {
+                                "name": row["dataset name"],
+                                "reference product": row["dataset reference product"],
+                                "unit": row["unit"],
+                            }
+                        ],
                         "scenario variable": row[model],
                     }
                 }
@@ -654,7 +662,7 @@ class Pathways:
                     )
 
                     # Remove contribution from activities in other activities
-                    #A = remove_double_counting(A, vars_info)
+                    # A = remove_double_counting(A, vars_info)
 
                     # check unclassified activities
                     check_unclassified_activities(A_index, self.classifications)

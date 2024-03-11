@@ -9,11 +9,15 @@ for scenario in [
     p.calculate(
         methods=[
             "RELICS - metals extraction - Lithium",
-            "RELICS - metals extraction - Molybdenum"
+            "RELICS - metals extraction - Molybdenum",
         ],
-        regions=["WEU",],
+        regions=[
+            "WEU",
+        ],
         scenarios=[scenario],
-        years=[2020, ],
+        years=[
+            2020,
+        ],
         variables=[
             v
             for v in p.scenarios.coords["variables"].values

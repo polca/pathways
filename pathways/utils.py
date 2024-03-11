@@ -230,7 +230,9 @@ def create_lca_results_array(
 
 
 def display_results(
-    lca_results: Union[xr.DataArray, None], cutoff: float = 0.001, interpolate: bool = False
+    lca_results: Union[xr.DataArray, None],
+    cutoff: float = 0.001,
+    interpolate: bool = False,
 ) -> xr.DataArray:
     if lca_results is None:
         raise ValueError("No results to display")
@@ -246,22 +248,21 @@ def display_results(
 
     # Step 2: Aggregate values below the cutoff across the 'act_category' dimension
     # Summing all values below the cutoff for each combination of other dimensions
-    below_cutoff = lca_results.where(lca_results <= cutoff).sum(dim='act_category')
+    below_cutoff = lca_results.where(lca_results <= cutoff).sum(dim="act_category")
 
     # Since summing removes the 'act_category', we need to add it back
     # Create a new coordinate for 'act_category' that includes 'other'
-    new_act_category = np.append(lca_results.act_category.values, 'other')
+    new_act_category = np.append(lca_results.act_category.values, "other")
 
     # Create a new DataArray for below-cutoff values with 'act_category' as 'other'
     # This involves broadcasting below_cutoff to match the original array's dimensions but with 'act_category' replaced
-    other_data = below_cutoff.expand_dims({'act_category': ['other']}, axis=0)
+    other_data = below_cutoff.expand_dims({"act_category": ["other"]}, axis=0)
 
     # Step 3: Combine the above-cutoff data with the new 'other' data
     # Concatenate along the 'act_category' dimension
-    combined = xr.concat([above_cutoff, other_data], dim='act_category')
+    combined = xr.concat([above_cutoff, other_data], dim="act_category")
 
     # Ensure the 'act_category' coordinate is updated to include 'other'
-    combined = combined.assign_coords({'act_category': new_act_category})
+    combined = combined.assign_coords({"act_category": new_act_category})
 
     return combined
-
