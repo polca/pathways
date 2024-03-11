@@ -23,6 +23,7 @@ requirements:
     - xarray
     - scipy
     - pathlib
+    - scikit-umfpack
 test:
   imports:
     - pathways
