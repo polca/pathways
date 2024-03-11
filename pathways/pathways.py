@@ -37,12 +37,6 @@ from .utils import (
     load_units_conversion,
 )
 
-# if pypardiso is installed, use it
-try:
-    from pypardiso import spsolve
-except ImportError:
-    from scipy.sparse.linalg import spsolve
-
 from .data_validation import validate_datapackage
 
 
