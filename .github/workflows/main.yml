@@ -67,11 +67,11 @@ jobs:
       - name: Install python version
         uses: gabrielfalcao/pyenv-action@v7
         with:
-          default: 3.9.0
-          command: pip install -U pip  # upgrade pip after installing python
+          default: 3.10.6
+          command: pip install -U pip
 
       - name: create environment
-        run: pyenv local 3.9.0 && python -mvenv .venv390
+        run: pyenv local 3.10.6 && python -mvenv .venv390
 
       - name: Install dependencies
         run: |
@@ -92,7 +92,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ "ubuntu-latest" ]
-        python-version: [ "3.9", "3.10" ]
+        python-version: [ "3.10" ]
 
     steps:
       - uses: actions/checkout@v2
@@ -138,7 +138,7 @@ jobs:
       fail-fast: false
       matrix:
         os: ["ubuntu-latest"]
-        python-version: ["3.9", "3.10"]
+        python-version: [ "3.10" ]
     steps:
       - uses: actions/checkout@v2
       - uses: conda-incubator/setup-miniconda@v2
@@ -187,7 +187,7 @@ jobs:
       fail-fast: false
       matrix:
         os: ["ubuntu-latest"]
-        python-version: ["3.9", "3.10"]
+        python-version: [ "3.10" ]
     steps:
       - uses: actions/checkout@v2
       - uses: conda-incubator/setup-miniconda@v2
