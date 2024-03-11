@@ -5,3 +5,4 @@ scipy
 xarray
 premise
 pyyaml
+scikit-umfpack
