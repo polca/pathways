@@ -19,6 +19,7 @@ from datapackage import DataPackage
 from premise.geomap import Geomap
 
 from . import DATA_DIR
+from .data_validation import validate_datapackage
 from .lca import (
     characterize_inventory,
     create_demand_vector,
@@ -36,8 +37,6 @@ from .utils import (
     load_classifications,
     load_units_conversion,
 )
-
-from .data_validation import validate_datapackage
 
 
 def check_unclassified_activities(A_index, classifications):
