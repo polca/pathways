@@ -49,7 +49,7 @@ setup(
         "scipy",
         "premise",
         "pyyaml",
-        "scikit-umfpack",
+        "pypardiso",
     ],
     url="https://github.com/polca/premise",
     description="Scenario-level LCA of energy systems and transition pathways",
