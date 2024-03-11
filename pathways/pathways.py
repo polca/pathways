@@ -148,20 +148,23 @@ def fetch_indices(mapping, regions, variables, A_index, geo):
         activities = []
 
         for variable in variables:
-            for dataset in mapping[variable]["dataset"]:
-                activities.append(
-                    (
-                        dataset["name"],
-                        dataset["reference product"],
-                        dataset["unit"],
-                        region,
-                    )
+            if len(mapping[variable]["dataset"]) > 1:
+                print(
+                    f"Warning: multiple datasets found for variable {variable}. Using the first one."
                 )
+            activities.append(
+                (
+                    mapping[variable]["dataset"][0]["name"],
+                    mapping[variable]["dataset"][0]["reference product"],
+                    mapping[variable]["dataset"][0]["unit"],
+                    region,
+                )
+            )
 
         if len(activities) != len(variables):
             print("Warning: mismatch between activities and variables.")
-            print(f"Number of variables: {len(variables)}")
-            print(f"Number of datasets: {len(activities)}")
+            print(f"Number of variables: {len(variables)}: {variables}")
+            print(f"Number of datasets: {len(activities)}: {activities}")
 
         idxs = _get_activity_indices(activities, A_index, geo)
 
@@ -185,11 +188,10 @@ def fetch_inventories_locations(A_index: Dict[str, Tuple[str, str, str]]) -> Lis
     :param A_index: Dictionary with the indices of the activities in the technosphere matrix.
     :return: List of locations.
     """
-    locations = []
-    for act in A_index:
-        if act[1] not in locations:
-            locations.append(act[1])
-    return locations
+
+    return list(set([
+        act[3] for act in A_index
+    ]))
 
 
 def generate_A_indices(A_index, reverse_classifications, lca_results_coords):
@@ -208,6 +210,7 @@ def generate_A_indices(A_index, reverse_classifications, lca_results_coords):
 
     # Swap the axes of acts_idx to align with the dimensionality of D
     return np.swapaxes(acts_idx, 0, 1)
+
 
 
 def process_region(data: Tuple) -> Union[None, Dict[str, Any]]:
@@ -233,6 +236,10 @@ def process_region(data: Tuple) -> Union[None, Dict[str, Any]]:
         demand_cutoff,
     ) = data
 
+    locations = lca_results_coords["location"].values.tolist()
+    location_to_index = {location: index for index, location in enumerate(locations)}
+    rev_A_index = {int(v): k for k, v in A_index.items()}
+
     # Generate a list of activity indices for each activity category
     category_idx = []
     for cat in lca_results_coords["act_category"].values:
@@ -245,13 +252,13 @@ def process_region(data: Tuple) -> Union[None, Dict[str, Any]]:
     if lcia_matrix is not None:
         impact_categories = lca_results_coords["impact_category"].values
         target = np.zeros(
-            (len(act_categories), len(list(vars_idx)), len(impact_categories))
+            (len(act_categories), len(list(vars_idx)), len(locations), len(impact_categories))
         )
     else:
         if flows is not None:
-            target = np.zeros((len(act_categories), len(list(vars_idx)), len(flows)))
+            target = np.zeros((len(act_categories), len(list(vars_idx)), len(locations), len(flows)))
         else:
-            target = np.zeros((len(act_categories), len(list(vars_idx)), len(B_index)))
+            target = np.zeros((len(act_categories), len(list(vars_idx)), len(locations), len(B_index)))
 
     for v, variable in enumerate(variables):
         idx, dataset = vars_idx[variable]["idx"], vars_idx[variable]["dataset"]
@@ -301,14 +308,26 @@ def process_region(data: Tuple) -> Union[None, Dict[str, Any]]:
             # Sum along the first axis of D to get final result
             D = D.sum(axis=1)
 
+            # Initialize the new array with zeros for missing data
+            E = np.zeros((len(A_index), len(locations), len(impact_categories)))
+
+            # Populate the result array
+            act_locs = [a[-1] for a in rev_A_index.values()]
+
+            for i, act in enumerate(rev_A_index.values()):
+                if act[-1] in act_locs:
+                    loc_idx = location_to_index[act[-1]]
+                    E[i, loc_idx, :] = D[i, :]
+
             acts_idx = generate_A_indices(
                 A_index,
                 reverse_classifications,
                 lca_results_coords,
             )
 
-            # Sum over the first axis of D, using acts_idx for advanced indexing
-            target[:, v] = D[acts_idx, ...].sum(axis=0)
+            # Sum over the first axis of D,
+            # using acts_idx for advanced indexing
+            target[:, v] = E[acts_idx, ...].sum(axis=0)
 
         else:
             # else, just sum the results of the inventory
@@ -318,16 +337,32 @@ def process_region(data: Tuple) -> Union[None, Dict[str, Any]]:
                 lca_results_coords,
             )
             if flows is not None:
-                flows_idx = [int(B_index[f]) for f in flows]
+
+                def transf_flow(f):
+                    return tuple(f.split(" - "))
+
+                flows_idx = [int(B_index[transf_flow(f)]) for f in flows]
                 C = C[:, flows_idx]
-                target[:, v] = C[acts_idx, ...].sum(axis=0)
+
+                # Initialize the new array with zeros for missing data
+                E = np.zeros((len(A_index), len(locations), len(flows_idx)))
+
+                # Populate the result array
+                act_locs = [a[-1] for a in rev_A_index.values()]
+
+                for i, act in enumerate(rev_A_index.values()):
+                    if act[-1] in act_locs:
+                        loc_idx = location_to_index[act[-1]]
+                        E[i, loc_idx, :] = C[i, :]
+
+                target[:, v] = E[acts_idx, ...].sum(axis=0)
             else:
                 target[:, v] = C[acts_idx, ...].sum(axis=0)
 
     # Return a dictionary containing the processed LCA data for the given region
     def get_indices():
         if flows is not None:
-            return [" - ".join(a) for a in flows]
+            return [a for a in flows]
         return [" - ".join(a) for a in list(B_index.keys())]
 
     return {
@@ -397,11 +432,11 @@ class Pathways:
                 # Create the dictionary structure for this row for the specific model
                 dict_structure = {
                     key: {
-                        "dataset": {
+                        "dataset": [{
                             "name": row["dataset name"],
                             "reference product": row["dataset reference product"],
                             "unit": row["unit"],
-                        },
+                        }],
                         "scenario variable": row[model],
                     }
                 }
@@ -627,12 +662,13 @@ class Pathways:
                     # Create xarray for storing LCA results if not already present
                     if self.lca_results is None:
                         locations = fetch_inventories_locations(A_index)
+
                         self.lca_results = create_lca_results_array(
                             methods=methods,
                             B_indices=B_index,
                             years=years,
                             regions=regions,
-                            locations=
+                            locations=locations,
                             models=models,
                             scenarios=scenarios,
                             classifications=self.classifications,

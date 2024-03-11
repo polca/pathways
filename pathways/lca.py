@@ -16,7 +16,7 @@ from scipy.sparse import csr_matrix
 try:
     from pypardiso import spsolve
 except ImportError:
-    from scipy.sparse.linalg import spsolve
+    from scikits.umfpack import spsolve
 
 
 def create_demand_vector(

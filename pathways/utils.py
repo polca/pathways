@@ -218,7 +218,7 @@ def create_lca_results_array(
         dims += (len(methods),)
     else:
         if flows is not None:
-            coords["impact_category"] = [" - ".join(a) for a in flows]
+            coords["impact_category"] = flows
             dims += (len(flows),)
         else:
             coords["impact_category"] = [" - ".join(a) for a in list(B_indices.keys())]
@@ -230,13 +230,10 @@ def create_lca_results_array(
 
 
 def display_results(
-    lca_results: Union[xr.DataArray, None], cutoff: float = 0.001, interpolate: bool = True
+    lca_results: Union[xr.DataArray, None], cutoff: float = 0.001, interpolate: bool = False
 ) -> xr.DataArray:
     if lca_results is None:
         raise ValueError("No results to display")
-
-    # replace zeros with NaNs
-    lca_results = lca_results.where(lca_results != 0)
 
     if len(lca_results.year) > 1 and interpolate:
         lca_results = lca_results.interp(
@@ -245,63 +242,26 @@ def display_results(
             method="linear",
         )
 
-    df = (
-        lca_results.to_dataframe("value")
-        .reset_index()
-        .groupby(
-            [
-                "model",
-                "scenario",
-                "year",
-                "region",
-                "impact_category",
-                "variable",
-                "act_category",
-            ]
-        )
-        .sum()
-        .reset_index()
-    )
+    above_cutoff = lca_results.where(lca_results > cutoff)
 
-    # Aggregation for 'act_category'
-    df = df.merge(
-        df.groupby(
-            [
-                "model",
-                "scenario",
-                "year",
-                "region",
-                "impact_category",
-            ]
-        )["value"]
-        .sum()
-        .reset_index(),
-        on=[
-            "impact_category",
-            "year",
-            "region",
-        ],
-        suffixes=["", "_total"],
-    )
-    df["percentage"] = df["value"] / df["value_total"]
-    df.loc[df["percentage"] < cutoff, "act_category"] = "other"
+    # Step 2: Aggregate values below the cutoff across the 'act_category' dimension
+    # Summing all values below the cutoff for each combination of other dimensions
+    below_cutoff = lca_results.where(lca_results <= cutoff).sum(dim='act_category')
 
-    df = df.drop(columns=["value_total", "percentage"])
+    # Since summing removes the 'act_category', we need to add it back
+    # Create a new coordinate for 'act_category' that includes 'other'
+    new_act_category = np.append(lca_results.act_category.values, 'other')
 
-    arr = (
-        df.groupby(
-            [
-                "model",
-                "scenario",
-                "year",
-                "region",
-                "impact_category",
-                "variable",
-                "act_category",
-            ]
-        )["value"]
-        .sum()
-        .to_xarray()
-    )
+    # Create a new DataArray for below-cutoff values with 'act_category' as 'other'
+    # This involves broadcasting below_cutoff to match the original array's dimensions but with 'act_category' replaced
+    other_data = below_cutoff.expand_dims({'act_category': ['other']}, axis=0)
 
-    return arr
+    # Step 3: Combine the above-cutoff data with the new 'other' data
+    # Concatenate along the 'act_category' dimension
+    combined = xr.concat([above_cutoff, other_data], dim='act_category')
+
+    # Ensure the 'act_category' coordinate is updated to include 'other'
+    combined = combined.assign_coords({'act_category': new_act_category})
+
+    return combined
+
