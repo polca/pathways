@@ -68,5 +68,4 @@ def fill_characterization_factors_matrix(biosphere_flows: list, methods) -> np.n
             except KeyError:
                 continue
 
-
     return cf_matrix
