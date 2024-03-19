@@ -99,7 +99,7 @@ def load_matrix_and_index(
 
     # give `indices_array` a list of tuples of indices
     indices_array = np.array(
-        list(zip(coords[:, 0].astype(int), coords[:, 1].astype(int))),
+        list(zip(coords[:, 1].astype(int), coords[:, 0].astype(int))),
         dtype=bwp.INDICES_DTYPE,
     )
 
@@ -144,7 +144,7 @@ def get_lca_matrices(
         dirpath / "A_matrix.csv",
     )
 
-    b_data, b_indices, b_sign = load_matrix_and_index(
+    b_data, b_indices, _ = load_matrix_and_index(
         dirpath / "B_matrix.csv",
     )
 
@@ -158,29 +158,17 @@ def get_lca_matrices(
         matrix='biosphere_matrix',
         indices_array=b_indices,
         data_array=b_data,
-        flip_array=b_sign,
     )
 
-    # c_data, c_indices, c_sign = fill_characterization_factors_matrix(
-    #     B_inds, methods
-    # )
-    #
-    #
-    # # if c_data is multidimensional
-    # if len(c_data.shape) > 1:
-    #     dp.add_persistent_array(
-    #         matrix='characterization_matrix',
-    #         indices_array=c_indices,
-    #         data_array=c_data,
-    #         flip_array=c_sign,
-    #     )
-    # else:
-    #     dp.add_persistent_vector(
-    #         matrix='characterization_matrix',
-    #         indices_array=c_indices,
-    #         data_array=c_data,
-    #         flip_array=c_sign,
-    #     )
+    c_data, c_indices = fill_characterization_factors_matrix(
+         B_inds, methods
+    )
+
+    dp.add_persistent_vector(
+        matrix='characterization_matrix',
+        indices_array=c_indices,
+        data_array=c_data,
+    )
 
     return dp, A_inds, B_inds
 
@@ -188,7 +176,7 @@ def get_lca_matrices(
 def fill_characterization_factors_matrix(
         biosphere_flows: dict,
         methods
-) -> np.ndarray:
+) -> Tuple[np.ndarray, np.ndarray]:
     """
     Create a characterization matrix based on the list of biosphere flows
     given.
@@ -199,24 +187,24 @@ def fill_characterization_factors_matrix(
 
     lcia_data = get_lcia_methods(methods=methods)
 
-    print(lcia_data)
+    biosphere_flows = {
+        k[:3]:v for k, v in biosphere_flows.items()
+    }
 
+    list_flows = []
+    list_cf = []
 
-    # create a numpy array filled with zeros
-    # of size equal to biosphere_flows and lcia methods
+    for method, flows in lcia_data.items():
+        for flow, cf in flows.items():
+            flow_idx = int(biosphere_flows.get(flow))
+            if flow_idx:
+                list_flows.append((flow_idx, flow_idx))
+                list_cf.append(cf)
 
-    cf_matrix = np.zeros((len(biosphere_flows), len(methods)))
+    data = np.array(list_cf)
+    indices = np.array(list_flows, dtype=bwp.INDICES_DTYPE)
 
-    # fill the matrix
-    for i, flow in enumerate(biosphere_flows):
-        for j, method in enumerate(methods):
-            try:
-                cf_matrix[i, j] = lcia_data[method][flow[:3]]
-            except KeyError:
-                continue
-
-    return cf_matrix
-
+    return data, indices
 def remove_double_counting(A: csr_matrix, vars_info: dict) -> csr_matrix:
     """
     Remove double counting from a technosphere matrix.

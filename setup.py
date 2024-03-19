@@ -49,7 +49,9 @@ setup(
         "scipy",
         "premise",
         "pyyaml",
-        "scikit-umfpack"
+        "scikit-umfpack",
+        "bw_processing",
+        "bw2calc==2.0.DEV16"
     ],
     url="https://github.com/polca/premise",
     description="Scenario-level LCA of energy systems and transition pathways",

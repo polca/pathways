@@ -6,3 +6,5 @@ xarray
 premise
 pyyaml
 scikit-umfpack
+bw_processing
+bw2calc == 2.0.DEV16

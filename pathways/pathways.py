@@ -239,15 +239,15 @@ def process_region(data: Tuple) -> Union[None, Dict[str, Any]]:
     act_categories = lca_results_coords["act_category"].values
 
     # if lcia_matrix is not None:
-    #     impact_categories = lca_results_coords["impact_category"].values
-    #     target = np.zeros(
-    #         (
-    #             len(act_categories),
-    #             len(list(vars_idx)),
-    #             len(locations),
-    #             len(impact_categories),
-    #         )
-    #     )
+    impact_categories = lca_results_coords["impact_category"].values
+    target = np.zeros(
+        (
+           len(act_categories),
+           len(list(vars_idx)),
+           len(locations),
+           len(impact_categories),
+        )
+    )
     # else:
     #     if flows is not None:
     #         target = np.zeros(
@@ -260,6 +260,7 @@ def process_region(data: Tuple) -> Union[None, Dict[str, Any]]:
 
     FU = []
 
+    vars_list = []
     for v, variable in enumerate(variables):
         idx, dataset = vars_idx[variable]["idx"], vars_idx[variable]["dataset"]
 
@@ -298,57 +299,42 @@ def process_region(data: Tuple) -> Union[None, Dict[str, Any]]:
             }
         )
 
-    print(FU)
+        vars_list.append(v)
 
-    lca = bc.MultiLCA(
-        demands=FU,
-        method_config=dp,
+    lca = bc.LCA(
+        demand=FU[0],
         data_objs=[dp],
     )
     lca.lci()
-    lca.lcia()
-    lca.score
+
+    # Populate the result array
+    act_locs = [a[-1] for a in rev_A_index.values()]
+
+    # Initialize the new array with zeros for missing data
+    E = np.zeros((len(A_index), len(locations), len(impact_categories)))
+
+    acts_idx = generate_A_indices(
+       A_index,
+       reverse_classifications,
+       lca_results_coords,
+    )
+
+    for f, fu in enumerate(FU):
+        print(f)
+        lca.redo_lcia(fu)
+
+        # Sum along the first axis of D to get final result
+        D = lca.characterized_inventory.sum(axis=0)
+
+        for i, act in enumerate(rev_A_index.values()):
+            if act[-1] in act_locs:
+                loc_idx = location_to_index[act[-1]]
+                E[i, loc_idx] = D[:, i]
 
 
-
-        #
-        #
-        # # Create the demand vector
-        # f = create_demand_vector([idx], A, demand, unit_vector)
-        #
-        # # Solve the inventory
-        # C = solve_inventory(A, B, f)
-        #
-        # if lcia_matrix is not None:
-        #     if lcia_matrix.ndim != 2 or lcia_matrix.shape[0] != B.shape[1]:
-        #         raise ValueError("Incompatible dimensions between B and lcia_matrix")
-        #
-        #     # Solve the LCA problem to get the LCIA scores
-        #     D = characterize_inventory(C, lcia_matrix)
-        #
-        #     # Sum along the first axis of D to get final result
-        #     D = D.sum(axis=1)
-        #
-        #     # Initialize the new array with zeros for missing data
-        #     E = np.zeros((len(A_index), len(locations), len(impact_categories)))
-        #
-        #     # Populate the result array
-        #     act_locs = [a[-1] for a in rev_A_index.values()]
-        #
-        #     for i, act in enumerate(rev_A_index.values()):
-        #         if act[-1] in act_locs:
-        #             loc_idx = location_to_index[act[-1]]
-        #             E[i, loc_idx, :] = D[i, :]
-        #
-        #     acts_idx = generate_A_indices(
-        #         A_index,
-        #         reverse_classifications,
-        #         lca_results_coords,
-        #     )
-        #
-        #     # Sum over the first axis of D,
-        #     # using acts_idx for advanced indexing
-        #     target[:, v] = E[acts_idx, ...].sum(axis=0)
+        # Sum over the first axis of D,
+        # using acts_idx for advanced indexing
+        target[:, vars_list[f]] = E[acts_idx, ...].sum(axis=0)
         #
         # else:
         #     # else, just sum the results of the inventory
@@ -389,9 +375,7 @@ def process_region(data: Tuple) -> Union[None, Dict[str, Any]]:
     return {
         "act_category": act_categories,
         "variable": list(vars_idx.keys()),
-        "impact_category": (
-            impact_categories if lcia_matrix is not None else get_indices()
-        ),
+        "impact_category": impact_categories,
         "year": year,
         "region": region,
         "D": target,
@@ -730,7 +714,6 @@ class Pathways:
                         # Process each region in parallel
                         with Pool(cpu_count()) as p:
                             results = p.map(process_region, data_for_regions)
-
                     else:
                         results = []
                         # use pyprind
