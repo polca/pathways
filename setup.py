@@ -41,7 +41,7 @@ setup(
     # Might need to change the directory name as well.
     include_package_data=True,
     install_requires=[
-        "numpy",
+        "numpy==1.24.0",
         "pathlib",
         "pandas",
         "xarray",
@@ -49,7 +49,7 @@ setup(
         "scipy",
         "premise",
         "pyyaml",
-        "pypardiso",
+        "scikit-umfpack"
     ],
     url="https://github.com/polca/premise",
     description="Scenario-level LCA of energy systems and transition pathways",

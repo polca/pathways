@@ -17,6 +17,7 @@ import xarray as xr
 import yaml
 from datapackage import DataPackage
 from premise.geomap import Geomap
+import bw2calc as bc
 
 from . import DATA_DIR
 from .data_validation import validate_datapackage
@@ -27,7 +28,7 @@ from .lca import (
     remove_double_counting,
     solve_inventory,
 )
-from .lcia import fill_characterization_factors_matrix, get_lcia_method_names
+from .lcia import get_lcia_method_names
 from .utils import (
     _get_activity_indices,
     create_lca_results_array,
@@ -215,11 +216,9 @@ def process_region(data: Tuple) -> Union[None, Dict[str, Any]]:
         scenarios,
         mapping,
         units_map,
-        A,
-        B,
+        dp,
         A_index,
         B_index,
-        lcia_matrix,
         reverse_classifications,
         lca_results_coords,
         flows,
@@ -239,25 +238,27 @@ def process_region(data: Tuple) -> Union[None, Dict[str, Any]]:
 
     act_categories = lca_results_coords["act_category"].values
 
-    if lcia_matrix is not None:
-        impact_categories = lca_results_coords["impact_category"].values
-        target = np.zeros(
-            (
-                len(act_categories),
-                len(list(vars_idx)),
-                len(locations),
-                len(impact_categories),
-            )
-        )
-    else:
-        if flows is not None:
-            target = np.zeros(
-                (len(act_categories), len(list(vars_idx)), len(locations), len(flows))
-            )
-        else:
-            target = np.zeros(
-                (len(act_categories), len(list(vars_idx)), len(locations), len(B_index))
-            )
+    # if lcia_matrix is not None:
+    #     impact_categories = lca_results_coords["impact_category"].values
+    #     target = np.zeros(
+    #         (
+    #             len(act_categories),
+    #             len(list(vars_idx)),
+    #             len(locations),
+    #             len(impact_categories),
+    #         )
+    #     )
+    # else:
+    #     if flows is not None:
+    #         target = np.zeros(
+    #             (len(act_categories), len(list(vars_idx)), len(locations), len(flows))
+    #         )
+    #     else:
+    #         target = np.zeros(
+    #             (len(act_categories), len(list(vars_idx)), len(locations), len(B_index))
+    #         )
+
+    FU = []
 
     for v, variable in enumerate(variables):
         idx, dataset = vars_idx[variable]["idx"], vars_idx[variable]["dataset"]
@@ -291,72 +292,93 @@ def process_region(data: Tuple) -> Union[None, Dict[str, Any]]:
         ) < demand_cutoff:
             continue
 
-        # Create the demand vector
-        f = create_demand_vector([idx], A, demand, unit_vector)
+        FU.append(
+            {
+                idx: demand.values * float(unit_vector),
+            }
+        )
 
-        # Solve the inventory
-        C = solve_inventory(A, B, f)
+    print(FU)
 
-        if lcia_matrix is not None:
-            if lcia_matrix.ndim != 2 or lcia_matrix.shape[0] != B.shape[1]:
-                raise ValueError("Incompatible dimensions between B and lcia_matrix")
+    lca = bc.MultiLCA(
+        demands=FU,
+        method_config=dp,
+        data_objs=[dp],
+    )
+    lca.lci()
+    lca.lcia()
+    lca.score
 
-            # Solve the LCA problem to get the LCIA scores
-            D = characterize_inventory(C, lcia_matrix)
 
-            # Sum along the first axis of D to get final result
-            D = D.sum(axis=1)
 
-            # Initialize the new array with zeros for missing data
-            E = np.zeros((len(A_index), len(locations), len(impact_categories)))
-
-            # Populate the result array
-            act_locs = [a[-1] for a in rev_A_index.values()]
-
-            for i, act in enumerate(rev_A_index.values()):
-                if act[-1] in act_locs:
-                    loc_idx = location_to_index[act[-1]]
-                    E[i, loc_idx, :] = D[i, :]
-
-            acts_idx = generate_A_indices(
-                A_index,
-                reverse_classifications,
-                lca_results_coords,
-            )
-
-            # Sum over the first axis of D,
-            # using acts_idx for advanced indexing
-            target[:, v] = E[acts_idx, ...].sum(axis=0)
-
-        else:
-            # else, just sum the results of the inventory
-            acts_idx = generate_A_indices(
-                A_index,
-                reverse_classifications,
-                lca_results_coords,
-            )
-            if flows is not None:
-
-                def transf_flow(f):
-                    return tuple(f.split(" - "))
-
-                flows_idx = [int(B_index[transf_flow(f)]) for f in flows]
-                C = C[:, flows_idx]
-
-                # Initialize the new array with zeros for missing data
-                E = np.zeros((len(A_index), len(locations), len(flows_idx)))
-
-                # Populate the result array
-                act_locs = [a[-1] for a in rev_A_index.values()]
-
-                for i, act in enumerate(rev_A_index.values()):
-                    if act[-1] in act_locs:
-                        loc_idx = location_to_index[act[-1]]
-                        E[i, loc_idx, :] = C[i, :]
-
-                target[:, v] = E[acts_idx, ...].sum(axis=0)
-            else:
-                target[:, v] = C[acts_idx, ...].sum(axis=0)
+        #
+        #
+        # # Create the demand vector
+        # f = create_demand_vector([idx], A, demand, unit_vector)
+        #
+        # # Solve the inventory
+        # C = solve_inventory(A, B, f)
+        #
+        # if lcia_matrix is not None:
+        #     if lcia_matrix.ndim != 2 or lcia_matrix.shape[0] != B.shape[1]:
+        #         raise ValueError("Incompatible dimensions between B and lcia_matrix")
+        #
+        #     # Solve the LCA problem to get the LCIA scores
+        #     D = characterize_inventory(C, lcia_matrix)
+        #
+        #     # Sum along the first axis of D to get final result
+        #     D = D.sum(axis=1)
+        #
+        #     # Initialize the new array with zeros for missing data
+        #     E = np.zeros((len(A_index), len(locations), len(impact_categories)))
+        #
+        #     # Populate the result array
+        #     act_locs = [a[-1] for a in rev_A_index.values()]
+        #
+        #     for i, act in enumerate(rev_A_index.values()):
+        #         if act[-1] in act_locs:
+        #             loc_idx = location_to_index[act[-1]]
+        #             E[i, loc_idx, :] = D[i, :]
+        #
+        #     acts_idx = generate_A_indices(
+        #         A_index,
+        #         reverse_classifications,
+        #         lca_results_coords,
+        #     )
+        #
+        #     # Sum over the first axis of D,
+        #     # using acts_idx for advanced indexing
+        #     target[:, v] = E[acts_idx, ...].sum(axis=0)
+        #
+        # else:
+        #     # else, just sum the results of the inventory
+        #     acts_idx = generate_A_indices(
+        #         A_index,
+        #         reverse_classifications,
+        #         lca_results_coords,
+        #     )
+        #     if flows is not None:
+        #
+        #         def transf_flow(f):
+        #             return tuple(f.split(" - "))
+        #
+        #         flows_idx = [int(B_index[transf_flow(f)]) for f in flows]
+        #         C = C[:, flows_idx]
+        #
+        #         # Initialize the new array with zeros for missing data
+        #         E = np.zeros((len(A_index), len(locations), len(flows_idx)))
+        #
+        #         # Populate the result array
+        #         act_locs = [a[-1] for a in rev_A_index.values()]
+        #
+        #         for i, act in enumerate(rev_A_index.values()):
+        #             if act[-1] in act_locs:
+        #                 loc_idx = location_to_index[act[-1]]
+        #                 E[i, loc_idx, :] = C[i, :]
+        #
+        #         target[:, v] = E[acts_idx, ...].sum(axis=0)
+        #     else:
+        #         target[:, v] = C[acts_idx, ...].sum(axis=0)
 
     # Return a dictionary containing the processed LCA data for the given region
     def get_indices():
@@ -637,10 +659,10 @@ class Pathways:
 
                     # Try to load LCA matrices for the given model, scenario, and year
                     try:
-                        A, B, A_index, B_index = get_lca_matrices(
-                            self.datapackage, model, scenario, year, data_type=data_type
+                        dp, A_index, B_index = get_lca_matrices(
+                            self.datapackage, model, scenario, year, methods
                         )
-                        B = np.asarray(B.todense())
+
                     except FileNotFoundError:
                         # If LCA matrices can't be loaded, skip to the next iteration
                         print(
@@ -676,12 +698,6 @@ class Pathways:
                             flows=flows,
                         )
 
-                    # Fill characterization factor matrix for the given methods
-                    if characterization is True:
-                        self.lcia_matrix = fill_characterization_factors_matrix(
-                            list(B_index.keys()), methods
-                        )
-
                     # Check for activities not found in classifications
                     for act in A_index:
                         if act not in self.classifications:
@@ -700,11 +716,9 @@ class Pathways:
                                 self.scenarios,
                                 self.mapping,
                                 self.units,
-                                A,
-                                B,
+                                dp,
                                 A_index,
                                 B_index,
-                                self.lcia_matrix if characterization else None,
                                 self.reverse_classifications,
                                 self.lca_results.coords,
                                 flows,
@@ -736,11 +750,9 @@ class Pathways:
                                         self.scenarios,
                                         self.mapping,
                                         self.units,
-                                        A,
-                                        B,
+                                        dp,
                                         A_index,
                                         B_index,
-                                        self.lcia_matrix if characterization else None,
                                         self.reverse_classifications,
                                         self.lca_results.coords,
                                         flows,

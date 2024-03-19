@@ -1,8 +1,8 @@
-numpy
+numpy==1.24.0
 pathlib
 pandas
 scipy
 xarray
 premise
 pyyaml
-pypardiso
+scikit-umfpack
