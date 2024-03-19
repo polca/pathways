@@ -3,12 +3,12 @@ import warnings
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple
 
+import bw_processing as bwp
+import numpy as np
 import scipy.sparse
 import xarray as xr
 from scipy import sparse
 from scipy.sparse import csr_matrix
-import bw_processing as bwp
-import numpy as np
 
 from .lcia import get_lcia_methods
 
@@ -149,23 +149,21 @@ def get_lca_matrices(
     )
 
     dp.add_persistent_vector(
-        matrix='technosphere_matrix',
+        matrix="technosphere_matrix",
         indices_array=a_indices,
         data_array=a_data,
         flip_array=a_sign,
     )
     dp.add_persistent_vector(
-        matrix='biosphere_matrix',
+        matrix="biosphere_matrix",
         indices_array=b_indices,
         data_array=b_data,
     )
 
-    c_data, c_indices = fill_characterization_factors_matrix(
-         B_inds, methods
-    )
+    c_data, c_indices = fill_characterization_factors_matrix(B_inds, methods)
 
     dp.add_persistent_vector(
-        matrix='characterization_matrix',
+        matrix="characterization_matrix",
         indices_array=c_indices,
         data_array=c_data,
     )
@@ -174,8 +172,7 @@ def get_lca_matrices(
 
 
 def fill_characterization_factors_matrix(
-        biosphere_flows: dict,
-        methods
+    biosphere_flows: dict, methods
 ) -> Tuple[np.ndarray, np.ndarray]:
     """
     Create a characterization matrix based on the list of biosphere flows
@@ -187,9 +184,7 @@ def fill_characterization_factors_matrix(
 
     lcia_data = get_lcia_methods(methods=methods)
 
-    biosphere_flows = {
-        k[:3]:v for k, v in biosphere_flows.items()
-    }
+    biosphere_flows = {k[:3]: v for k, v in biosphere_flows.items()}
 
     list_flows = []
     list_cf = []
@@ -205,6 +200,8 @@ def fill_characterization_factors_matrix(
     indices = np.array(list_flows, dtype=bwp.INDICES_DTYPE)
 
     return data, indices
+
+
 def remove_double_counting(A: csr_matrix, vars_info: dict) -> csr_matrix:
     """
     Remove double counting from a technosphere matrix.

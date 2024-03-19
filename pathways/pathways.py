@@ -10,6 +10,7 @@ from multiprocessing import Pool, cpu_count
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple, Union
 
+import bw2calc as bc
 import numpy as np
 import pandas as pd
 import pyprind
@@ -17,7 +18,6 @@ import xarray as xr
 import yaml
 from datapackage import DataPackage
 from premise.geomap import Geomap
-import bw2calc as bc
 
 from . import DATA_DIR
 from .data_validation import validate_datapackage
@@ -242,10 +242,10 @@ def process_region(data: Tuple) -> Union[None, Dict[str, Any]]:
     impact_categories = lca_results_coords["impact_category"].values
     target = np.zeros(
         (
-           len(act_categories),
-           len(list(vars_idx)),
-           len(locations),
-           len(impact_categories),
+            len(act_categories),
+            len(list(vars_idx)),
+            len(locations),
+            len(impact_categories),
         )
     )
     # else:
@@ -314,9 +314,9 @@ def process_region(data: Tuple) -> Union[None, Dict[str, Any]]:
     E = np.zeros((len(A_index), len(locations), len(impact_categories)))
 
     acts_idx = generate_A_indices(
-       A_index,
-       reverse_classifications,
-       lca_results_coords,
+        A_index,
+        reverse_classifications,
+        lca_results_coords,
     )
 
     for f, fu in enumerate(FU):
@@ -330,7 +330,6 @@ def process_region(data: Tuple) -> Union[None, Dict[str, Any]]:
             if act[-1] in act_locs:
                 loc_idx = location_to_index[act[-1]]
                 E[i, loc_idx] = D[:, i]
-
 
         # Sum over the first axis of D,
         # using acts_idx for advanced indexing
