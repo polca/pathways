@@ -3,12 +3,12 @@ import warnings
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple
 
+import bw_processing as bwp
+import numpy as np
 import scipy.sparse
 import xarray as xr
 from scipy import sparse
 from scipy.sparse import csr_matrix
-import bw_processing as bwp
-import numpy as np
 
 from .lcia import get_lcia_methods
 
@@ -149,13 +149,13 @@ def get_lca_matrices(
     )
 
     dp.add_persistent_vector(
-        matrix='technosphere_matrix',
+        matrix="technosphere_matrix",
         indices_array=a_indices,
         data_array=a_data,
         flip_array=a_sign,
     )
     dp.add_persistent_vector(
-        matrix='biosphere_matrix',
+        matrix="biosphere_matrix",
         indices_array=b_indices,
         data_array=b_data,
         flip_array=b_sign,
@@ -185,10 +185,7 @@ def get_lca_matrices(
     return dp, A_inds, B_inds
 
 
-def fill_characterization_factors_matrix(
-        biosphere_flows: dict,
-        methods
-) -> np.ndarray:
+def fill_characterization_factors_matrix(biosphere_flows: dict, methods) -> np.ndarray:
     """
     Create a characterization matrix based on the list of biosphere flows
     given.
@@ -200,7 +197,6 @@ def fill_characterization_factors_matrix(
     lcia_data = get_lcia_methods(methods=methods)
 
     print(lcia_data)
-
 
     # create a numpy array filled with zeros
     # of size equal to biosphere_flows and lcia methods
@@ -216,6 +212,7 @@ def fill_characterization_factors_matrix(
                 continue
 
     return cf_matrix
+
 
 def remove_double_counting(A: csr_matrix, vars_info: dict) -> csr_matrix:
     """

@@ -45,6 +45,3 @@ def get_lcia_methods(methods: list = None):
         data = [x for x in data if " - ".join(x["name"]) in methods]
 
     return {" - ".join(x["name"]): format_lcia_method_exchanges(x) for x in data}
-
-
-
