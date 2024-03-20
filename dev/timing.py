@@ -9,14 +9,14 @@ for scenario in [
     p.calculate(
         methods=[
             "RELICS - metals extraction - Lithium",
-            "RELICS - metals extraction - Molybdenum",
+            #"RELICS - metals extraction - Molybdenum",
         ],
         regions=[
-            "WEU",
+            "WEU", "USA",
         ],
         scenarios=[scenario],
         years=[
-            2020,
+            2010, 2020, 2030,
         ],
         variables=[
             v
@@ -24,6 +24,7 @@ for scenario in [
             if any(i in v for i in ["Industry", "Transport", "Heating"])
         ],
         demand_cutoff=0.01,
+        multiprocessing=True
     )
     arr = p.display_results()
     arr.to_netcdf(f"results_image_{scenario}.nc")
