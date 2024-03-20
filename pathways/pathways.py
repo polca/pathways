@@ -16,10 +16,10 @@ import pandas as pd
 import pyprind
 import xarray as xr
 import yaml
-from numpy import ndarray, dtype
-from scipy import sparse
 from datapackage import DataPackage
+from numpy import dtype, ndarray
 from premise.geomap import Geomap
+from scipy import sparse
 
 from . import DATA_DIR
 from .data_validation import validate_datapackage
@@ -227,7 +227,7 @@ def process_region(data: Tuple) -> dict[str, ndarray[Any, dtype[Any]] | list[int
         locations,
         location_to_index,
         rev_A_index,
-        lca
+        lca,
     ) = data
 
     FU = []
@@ -280,7 +280,11 @@ def process_region(data: Tuple) -> dict[str, ndarray[Any, dtype[Any]] | list[int
 
     # concatenate the list of sparse matrices and
     # add a third dimension and concatenate along it
-    return {"data": np.column_stack(d), "variables": variables_demand, "variables_idx": variables_idx}
+    return {
+        "data": np.column_stack(d),
+        "variables": variables_demand,
+        "variables_idx": variables_idx,
+    }
 
 
 def _calculate_year(args):
@@ -314,15 +318,11 @@ def _calculate_year(args):
 
     except FileNotFoundError:
         # If LCA matrices can't be loaded, skip to the next iteration
-        print(
-            "LCA matrices not found for the given model, scenario, and year."
-        )
+        print("LCA matrices not found for the given model, scenario, and year.")
         return
 
     # Fetch indices
-    vars_info = fetch_indices(
-        mapping, regions, variables, technosphere_indices, geo
-    )
+    vars_info = fetch_indices(mapping, regions, variables, technosphere_indices, geo)
 
     # Remove contribution from activities in other activities
     # A = remove_double_counting(A, vars_info)
@@ -344,7 +344,9 @@ def _calculate_year(args):
 
     lca = bc.LCA(
         demand={0: 1},
-        data_objs=[bw_datapackage,],
+        data_objs=[
+            bw_datapackage,
+        ],
     )
     lca.lci(factorize=True)
 
@@ -375,7 +377,7 @@ def _calculate_year(args):
                 locations,
                 location_to_index,
                 rev_technosphere_index,
-                lca
+                lca,
             )
         )
 
@@ -393,15 +395,31 @@ def _calculate_year(args):
     category_idx = []
     for cat in lca_results.coords["act_category"].values:
         category_idx.append(
-            [int(technosphere_indices[a]) for a in reverse_classifications[cat] if a in technosphere_indices]
+            [
+                int(technosphere_indices[a])
+                for a in reverse_classifications[cat]
+                if a in technosphere_indices
+            ]
         )
 
     mask = np.array([act[-1] in act_locs for act in rev_technosphere_index.values()])
     loc_idx = np.array(
-        [location_to_index[act[-1]] for act in rev_technosphere_index.values() if act[-1] in act_locs])
+        [
+            location_to_index[act[-1]]
+            for act in rev_technosphere_index.values()
+            if act[-1] in act_locs
+        ]
+    )
 
     # Initialize the new array with zeros for missing data
-    E = np.zeros((len(technosphere_indices), len(locations), len(impact_categories), len(variables)))
+    E = np.zeros(
+        (
+            len(technosphere_indices),
+            len(locations),
+            len(impact_categories),
+            len(variables),
+        )
+    )
     print("E.shape", E.shape)
 
     for region, result in results.items():
@@ -427,6 +445,7 @@ def _calculate_year(args):
     ] = E.transpose(0, -1, 1, 2)
 
     return lca_results
+
 
 class Pathways:
     """The Pathways class reads in a datapackage that contains scenario data,
