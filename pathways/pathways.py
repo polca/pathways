@@ -6,6 +6,7 @@ LCA datasets, and LCA matrices.
 
 import csv
 import uuid
+import warnings
 from collections import defaultdict
 from multiprocessing import Pool, cpu_count
 from pathlib import Path
@@ -36,7 +37,6 @@ from .utils import (
     load_units_conversion,
 )
 
-import warnings
 warnings.filterwarnings("ignore")
 
 
