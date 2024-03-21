@@ -39,6 +39,9 @@ from .utils import (
     load_numpy_array_from_disk
 )
 
+import warnings
+warnings.filterwarnings("ignore")
+
 
 def check_unclassified_activities(A_index, classifications):
     """
