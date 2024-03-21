@@ -57,10 +57,10 @@ def validate_datapackage(datapackage: datapackage.DataPackage):
     dataframe = pd.DataFrame(data, columns=headers)
 
     # Check that the scenario data is valid
-    #validate_scenario_data(dataframe)
+    # validate_scenario_data(dataframe)
 
     # Check that the mapping is valid
-    #validate_mapping(datapackage.get_resource("mapping"), dataframe)
+    # validate_mapping(datapackage.get_resource("mapping"), dataframe)
 
     # Check that the LCA data is valid
     # validate_lca_data(datapackage)
