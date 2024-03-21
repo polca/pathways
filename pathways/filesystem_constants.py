@@ -3,6 +3,7 @@ This module contains constants for the filesystem paths used by Pathways.
 """
 
 from pathlib import Path
+
 import platformdirs
 
 # Directories for data which comes with Pathways
