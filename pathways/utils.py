@@ -1,11 +1,10 @@
-import sys
 from typing import Any, Dict, List, Tuple, Union
 
 import numpy as np
 import xarray as xr
 import yaml
 
-from . import DATA_DIR
+from .filesystem_constants import DATA_DIR
 
 CLASSIFICATIONS = DATA_DIR / "activities_classifications.yaml"
 UNITS_CONVERSION = DATA_DIR / "units_conversion.yaml"
@@ -266,3 +265,13 @@ def display_results(
     combined = combined.assign_coords({"act_category": new_act_category})
 
     return combined
+
+
+def load_numpy_array_from_disk(filepath):
+    """
+    Load a numpy array from disk.
+    :param filepath: The path to the file containing the numpy array.
+    :return: numpy array
+    """
+
+    return np.load(filepath)

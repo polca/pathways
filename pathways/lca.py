@@ -1,12 +1,9 @@
 import csv
-import warnings
 from pathlib import Path
-from typing import Dict, List, Optional, Tuple
+from typing import Dict, Tuple
 
 import bw_processing as bwp
 import numpy as np
-import scipy.sparse
-import xarray as xr
 from scipy import sparse
 from scipy.sparse import csr_matrix
 
@@ -22,44 +19,6 @@ except ImportError:
     from scikits.umfpack import spsolve
 
     print("Solver: scikits.umfpack")
-
-
-def create_demand_vector(
-    activities_idx: List[int],
-    A: scipy.sparse,
-    demand: xr.DataArray,
-    unit_conversion: np.ndarray,
-) -> np.ndarray:
-    """
-    Create a demand vector with the given activities indices, sparse matrix A, demand values, and unit conversion factors.
-
-    This function multiplies the given demand with the unit conversion factors and assigns the result to the positions in
-    the vector corresponding to the activities indices. All other positions in the vector are set to zero.
-
-    :param activities_idx: Indices of activities for which to create demand. These indices correspond to positions in the vector and matrix A.
-    :type activities_idx: List[int]
-
-    :param A: Sparse matrix used to determine the size of the demand vector.
-    :type A: scipy.sparse.csr_matrix
-
-    :param demand: Demand values for the activities, provided as a DataArray from the xarray package.
-    :type demand: xr.DataArray
-
-    :param unit_conversion: Unit conversion factors corresponding to each activity in activities_idx.
-    :type unit_conversion: numpy.ndarray
-
-    :return: The demand vector, represented as a 1-dimensional numpy array.
-    :rtype: numpy.ndarray
-    """
-
-    # Initialize the demand vector with zeros, with length equal to the number of rows in A
-    f = np.zeros(A.shape[0])
-
-    # Assign demand values to the positions in the vector corresponding to the activities indices
-    # Demand values are converted to the appropriate units before assignment
-    f[activities_idx] = float(demand) * float(unit_conversion)
-
-    return f
 
 
 def read_indices_csv(file_path: Path) -> Dict[Tuple[str, str, str, str], str]:
@@ -229,49 +188,3 @@ def remove_double_counting(A: csr_matrix, vars_info: dict) -> csr_matrix:
 
     A_coo.eliminate_zeros()
     return A_coo.tocsr()
-
-
-def characterize_inventory(C, lcia_matrix) -> np.ndarray:
-    """
-    Characterize an inventory with an LCIA matrix.
-    :param C: Solved inventory
-    :param lcia_matrix: Characterization matrix
-    :return: Characterized inventory
-    """
-
-    # Multiply C with lcia_matrix to get D
-    return C[..., None] * lcia_matrix
-
-
-def solve_inventory(A: csr_matrix, B: np.ndarray, f: np.ndarray) -> np.ndarray:
-    """
-    Solve the inventory problem for a set of activities, given technosphere and biosphere matrices, demand vector,
-    LCIA matrix, and the indices of activities to consider.
-
-    This function uses either the pypardiso or scipy library to solve the linear system, depending on the availability
-    of the pypardiso library. The solutions are then used to calculate LCIA scores.
-
-    ...
-
-    :rtype: numpy.ndarray
-
-    """
-
-    if A.shape[0] != A.shape[1]:
-        raise ValueError("A must be a square matrix")
-
-    if A.shape[0] != f.size:
-        raise ValueError("Incompatible dimensions between A and f")
-
-    if B.shape[0] != A.shape[0]:
-        raise ValueError("Incompatible dimensions between A and B")
-
-    with warnings.catch_warnings():
-        warnings.simplefilter("ignore")
-        # Solve the system Ax = f for x using sparse solver
-        A_inv = spsolve(A, f)[:, np.newaxis]
-
-    # Compute product of A_inv and B
-    C = A_inv * B
-
-    return C

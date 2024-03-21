@@ -9,6 +9,7 @@ from collections import defaultdict
 from multiprocessing import Pool, cpu_count
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple, Union
+import uuid
 
 import bw2calc as bc
 import numpy as np
@@ -19,16 +20,12 @@ import yaml
 from datapackage import DataPackage
 from numpy import dtype, ndarray
 from premise.geomap import Geomap
-from scipy import sparse
 
-from . import DATA_DIR
+from .filesystem_constants import DATA_DIR, DIR_CACHED_DB
 from .data_validation import validate_datapackage
 from .lca import (
-    characterize_inventory,
-    create_demand_vector,
     get_lca_matrices,
     remove_double_counting,
-    solve_inventory,
 )
 from .lcia import get_lcia_method_names
 from .utils import (
@@ -39,6 +36,7 @@ from .utils import (
     harmonize_units,
     load_classifications,
     load_units_conversion,
+    load_numpy_array_from_disk
 )
 
 
@@ -84,12 +82,12 @@ def get_visible_files(path):
 
 
 def resize_scenario_data(
-    scenario_data: xr.DataArray,
-    model: List[str],
-    scenario: List[str],
-    region: List[str],
-    year: List[int],
-    variables: List[str],
+        scenario_data: xr.DataArray,
+        model: List[str],
+        scenario: List[str],
+        region: List[str],
+        year: List[int],
+        variables: List[str],
 ):
     """
     Resize the scenario data to the given scenario, year, region, and variables.
@@ -188,13 +186,14 @@ def fetch_inventories_locations(A_index: Dict[str, Tuple[str, str, str]]) -> Lis
     return list(set([act[3] for act in A_index]))
 
 
-def generate_A_indices(A_index, reverse_classifications, lca_results_coords):
+def group_technosphere_indices_by_category(technosphere_index, reverse_classifications, lca_results_coords) -> Tuple:
     # Generate a list of activity indices for each activity category
     acts_idx = []
+    acts_dict = {}
     for cat in lca_results_coords["act_category"].values:
-        acts_idx.append(
-            [int(A_index[a]) for a in reverse_classifications[cat] if a in A_index]
-        )
+        x = [int(technosphere_index[a]) for a in reverse_classifications[cat] if a in technosphere_index]
+        acts_idx.append(x)
+        acts_dict[cat] = x
 
     # Pad each list in acts_idx with -1 to make them all the same length
     max_len = max([len(x) for x in acts_idx])
@@ -203,11 +202,41 @@ def generate_A_indices(A_index, reverse_classifications, lca_results_coords):
     )
 
     # Swap the axes of acts_idx to align with the dimensionality of D
-    return np.swapaxes(acts_idx, 0, 1)
+    return acts_idx, acts_dict, np.swapaxes(acts_idx, 0, 1)
+
+def group_technosphere_indices_by_location(technosphere_index, locations) -> Tuple:
+    """
+    Group the technosphere indices by location.
+    :param technosphere_index:
+    :param locations:
+    :return:
+    """
+
+    act_indices_list = []
+    act_indices_dict = {}
+    for loc in locations:
+        x = [
+                int(technosphere_index[a])
+                for a in technosphere_index
+                if a[-1] == loc
+            ]
+
+        act_indices_list.append(x)
+        act_indices_dict[loc] = x
+
+    # Pad each list in act_indices_list with -1 to make them all the same length
+    max_len = max([len(x) for x in act_indices_list])
+    act_indices_array = np.array(
+        [
+            np.pad(x, (0, max_len - len(x)), constant_values=-1)
+            for x in act_indices_list
+        ]
+    )
+
+    return act_indices_list, act_indices_dict, act_indices_array
 
 
 def process_region(data: Tuple) -> dict[str, ndarray[Any, dtype[Any]] | list[int]]:
-
     (
         model,
         scenario,
@@ -255,13 +284,13 @@ def process_region(data: Tuple) -> dict[str, ndarray[Any, dtype[Any]] | list[int
 
         # If the total demand is zero, return None
         if (
-            demand
-            / scenarios.sel(
-                region=region,
-                model=model,
-                pathway=scenario,
-                year=year,
-            ).sum(dim="variables")
+                demand
+                / scenarios.sel(
+            region=region,
+            model=model,
+            pathway=scenario,
+            year=year,
+        ).sum(dim="variables")
         ) < demand_cutoff:
             continue
 
@@ -276,19 +305,20 @@ def process_region(data: Tuple) -> dict[str, ndarray[Any, dtype[Any]] | list[int
     d = []
     for f, fu in enumerate(FU):
         lca.lcia(fu)
-        d.append(lca.supply_array)
+        d.append(lca.characterized_inventory.sum(axis=0))
+
+    id_array = uuid.uuid4()
+    np.save(file=DIR_CACHED_DB / f"{id_array}.npy", arr=np.vstack(d).T)
 
     # concatenate the list of sparse matrices and
     # add a third dimension and concatenate along it
     return {
-        "data": np.column_stack(d),
-        "variables": variables_demand,
-        "variables_idx": variables_idx,
+        "id_array": id_array,
+        "variables": {v: idx for v, idx in zip(variables_demand, variables_idx)},
     }
 
 
 def _calculate_year(args):
-
     (
         model,
         scenario,
@@ -338,9 +368,42 @@ def _calculate_year(args):
         if act not in classifications:
             missing_class.append(list(act))
 
+    results = {}
+
     locations = lca_results.coords["location"].values.tolist()
     location_to_index = {location: index for index, location in enumerate(locations)}
-    rev_technosphere_index = {int(v): k for k, v in technosphere_indices.items()}
+    reverse_technosphere_index = {int(v): k for k, v in technosphere_indices.items()}
+    loc_idx = np.array(
+         [
+             location_to_index[act[-1]]
+            for act in reverse_technosphere_index.values()
+            if act[-1] in locations
+         ]
+     )
+
+    acts_category_idx_list, acts_category_idx_dict, acts_category_idx_array = group_technosphere_indices_by_category(
+         technosphere_indices,
+         reverse_classifications,
+         lca_results.coords,
+    )
+
+    acts_location_idx_list, acts_location_idx_dict, acts_location_idx_array = group_technosphere_indices_by_location(
+        technosphere_indices,
+        locations,
+    )
+
+    results["other"] = {
+        "locations": locations,
+        "location_to_index": location_to_index,
+        "reverse_technosphere_index": reverse_technosphere_index,
+        "activity_location_idx": loc_idx,
+        "acts_category_idx_list": acts_category_idx_list,
+        "acts_category_idx_dict": acts_category_idx_dict,
+        "acts_category_idx_array": acts_category_idx_array,
+        "acts_location_idx_list": acts_location_idx_list,
+        "acts_location_idx_dict": acts_location_idx_dict,
+        "acts_location_idx_array": acts_location_idx_array,
+    }
 
     lca = bc.LCA(
         demand={0: 1},
@@ -350,11 +413,8 @@ def _calculate_year(args):
     )
     lca.lci(factorize=True)
 
-    results = {}
-    # use pyprind
     bar = pyprind.ProgBar(len(regions))
     for region in regions:
-        print(region)
         bar.update()
         # Iterate over each region
         results[region] = process_region(
@@ -376,75 +436,12 @@ def _calculate_year(args):
                 demand_cutoff,
                 locations,
                 location_to_index,
-                rev_technosphere_index,
+                reverse_technosphere_index,
                 lca,
             )
         )
 
-    # Populate the result array
-    act_locs = [a[-1] for a in rev_technosphere_index.values()]
-    acts_idx = generate_A_indices(
-        technosphere_indices,
-        reverse_classifications,
-        lca_results.coords,
-    )
-    act_categories = lca_results.coords["act_category"].values
-    impact_categories = lca_results.coords["impact_category"].values
-
-    # Generate a list of activity indices for each activity category
-    category_idx = []
-    for cat in lca_results.coords["act_category"].values:
-        category_idx.append(
-            [
-                int(technosphere_indices[a])
-                for a in reverse_classifications[cat]
-                if a in technosphere_indices
-            ]
-        )
-
-    mask = np.array([act[-1] in act_locs for act in rev_technosphere_index.values()])
-    loc_idx = np.array(
-        [
-            location_to_index[act[-1]]
-            for act in rev_technosphere_index.values()
-            if act[-1] in act_locs
-        ]
-    )
-
-    # Initialize the new array with zeros for missing data
-    E = np.zeros(
-        (
-            len(technosphere_indices),
-            len(locations),
-            len(impact_categories),
-            len(variables),
-        )
-    )
-    print("E.shape", E.shape)
-
-    for region, result in results.items():
-        data = result["data"]
-        variables_demand = result["variables"]
-        variables_idx = result["variables_idx"]
-        E[mask, loc_idx][..., variables_idx] = data[mask][:, None]
-
-    # using acts_idx for advanced indexing
-    E = E[acts_idx, ...].sum(axis=0)
-    print("final E.shape", E.shape)
-
-    lca_results.loc[
-        {
-            "act_category": act_categories,
-            "variable": variables_demand,
-            "impact_category": impact_categories,
-            "year": year,
-            "region": region,
-            "model": model,
-            "scenario": scenario,
-        }
-    ] = E.transpose(0, -1, 1, 2)
-
-    return lca_results
+    return results
 
 
 class Pathways:
@@ -474,6 +471,10 @@ class Pathways:
         self.lcia_methods = get_lcia_method_names()
         self.units = load_units_conversion()
         self.lcia_matrix = None
+
+        # clean up the cache directory
+        for file in get_visible_files(DIR_CACHED_DB):
+            file.unlink()
 
     def read_datapackage(self) -> DataPackage:
         """Read the datapackage.json file.
@@ -606,25 +607,25 @@ class Pathways:
             units[variable] = scenario_data[
                 scenario_data["variables"]
                 == self.mapping[variable]["scenario variable"]
-            ].iloc[0]["unit"]
+                ].iloc[0]["unit"]
 
         data.attrs["units"] = units
 
         return data
 
     def calculate(
-        self,
-        methods: Optional[List[str]] = None,
-        models: Optional[List[str]] = None,
-        scenarios: Optional[List[str]] = None,
-        regions: Optional[List[str]] = None,
-        years: Optional[List[int]] = None,
-        variables: Optional[List[str]] = None,
-        characterization: bool = True,
-        flows: Optional[List[str]] = None,
-        multiprocessing: bool = False,
-        demand_cutoff: float = 1e-3,
-    ) -> None:
+            self,
+            methods: Optional[List[str]] = None,
+            models: Optional[List[str]] = None,
+            scenarios: Optional[List[str]] = None,
+            regions: Optional[List[str]] = None,
+            years: Optional[List[int]] = None,
+            variables: Optional[List[str]] = None,
+            characterization: bool = True,
+            flows: Optional[List[str]] = None,
+            multiprocessing: bool = False,
+            demand_cutoff: float = 1e-3,
+    ) -> dict[Any, Any] | dict[int | Any, dict[Any, dict[str, Any]] | None]:
         """
         Calculate Life Cycle Assessment (LCA) results for given methods, models, scenarios, regions, and years.
 
@@ -694,14 +695,14 @@ class Pathways:
 
         # Create xarray for storing LCA results if not already present
         if self.lca_results is None:
-            dp, A_index, B_index = get_lca_matrices(
+            dp, technosphere_index, biosphere_index = get_lca_matrices(
                 self.datapackage, models[0], scenarios[0], years[0], methods
             )
-            locations = fetch_inventories_locations(A_index)
+            locations = fetch_inventories_locations(technosphere_index)
 
             self.lca_results = create_lca_results_array(
                 methods=methods,
-                B_indices=B_index,
+                B_indices=biosphere_index,
                 years=years,
                 regions=regions,
                 locations=locations,
@@ -713,6 +714,7 @@ class Pathways:
             )
 
         # Iterate over each combination of model, scenario, and year
+        results = {}
         for model in models:
             print(f"Calculating LCA results for {model}...")
             for scenario in scenarios:
@@ -739,40 +741,93 @@ class Pathways:
                     ]
                     # Process each region in parallel
                     with Pool(cpu_count()) as p:
-                        results = p.map(_calculate_year, args)
+                        # store th results as a dictionary with years as keys
+                        results.update({(model, scenario, year): result for year, result in
+                                        zip(years, p.map(_calculate_year, args))})
                 else:
-                    results = []
-                    for year in years:
-                        results.append(
-                            _calculate_year(
-                                (
-                                    model,
-                                    scenario,
-                                    year,
-                                    regions,
-                                    variables,
-                                    methods,
-                                    demand_cutoff,
-                                    self.datapackage,
-                                    self.mapping,
-                                    self.units,
-                                    self.lca_results,
-                                    self.classifications,
-                                    self.scenarios,
-                                    self.reverse_classifications,
-                                )
+                    results = {
+                        (model, scenario, year): _calculate_year(
+                            (
+                                model,
+                                scenario,
+                                year,
+                                regions,
+                                variables,
+                                methods,
+                                demand_cutoff,
+                                self.datapackage,
+                                self.mapping,
+                                self.units,
+                                self.lca_results,
+                                self.classifications,
+                                self.scenarios,
+                                self.reverse_classifications,
                             )
                         )
+                        for year in years
+                    }
 
-                self.lca_results = xr.concat(results, dim="year")
+        # remove None values in results
+        results = {k: v for k, v in results.items() if v is not None}
+
+        self.fill_in_result_array(results)
+
+    def fill_in_result_array(self, results: dict):
+
+        # Assuming DIR_CACHED_DB, results, and self.lca_results are already defined
+
+        # Pre-loading data from disk if possible
+        cached_data = {data["id_array"]: load_numpy_array_from_disk(DIR_CACHED_DB / f"{data['id_array']}.npy")
+                       for coord, result in results.items()
+                       for region, data in result.items() if region != "other"}
+        # use pyprint to display progress
+        bar = pyprind.ProgBar(len(results))
+        for coord, result in results.items():
+            bar.update()
+            model, scenario, year = coord
+            acts_category_idx_dict = result["other"]["acts_category_idx_dict"]
+            acts_location_idx_dict = result["other"]["acts_location_idx_dict"]
+
+            for region, data in result.items():
+                if region == "other":
+                    continue
+
+                id_array = data["id_array"]
+                variables = data["variables"]
+
+                # Use pre-loaded data
+                d = cached_data[id_array]
+
+                # Attempt to perform operations more efficiently
+                for cat, act_cat_idx in acts_category_idx_dict.items():
+                    for loc, act_loc_idx in acts_location_idx_dict.items():
+                        # This could potentially be optimized further depending on the nature of idx
+                        idx = np.intersect1d(act_cat_idx, act_loc_idx)
+                        idx = idx[idx != -1]
+
+                        if idx.size > 0:
+                            summed_data = d[idx].sum(axis=0)[None, ...].T
+
+                            # Consider if this operation can be batched or optimized
+                            self.lca_results.loc[
+                                {
+                                    "region": region,
+                                    "model": model,
+                                    "scenario": scenario,
+                                    "year": year,
+                                    "act_category": cat,
+                                    "location": loc,
+                                    "variable": list(variables.keys())
+                                }
+                            ] = summed_data
 
     def characterize_planetary_boundaries(
-        self,
-        models: Optional[List[str]] = None,
-        scenarios: Optional[List[str]] = None,
-        regions: Optional[List[str]] = None,
-        years: Optional[List[int]] = None,
-        variables: Optional[List[str]] = None,
+            self,
+            models: Optional[List[str]] = None,
+            scenarios: Optional[List[str]] = None,
+            regions: Optional[List[str]] = None,
+            years: Optional[List[int]] = None,
+            variables: Optional[List[str]] = None,
     ):
         self.calculate(
             models=models,
