@@ -835,7 +835,6 @@ class Pathways:
                                 }
                             ] = d[..., idx].sum(axis=-1)
 
-        clean_cache_directory()
 
     def characterize_planetary_boundaries(
         self,
