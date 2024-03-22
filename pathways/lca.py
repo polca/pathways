@@ -1,14 +1,14 @@
 import csv
 from pathlib import Path
-from typing import Dict, Tuple, List, Any
+from typing import Any, Dict, List, Tuple
 
 import bw_processing as bwp
 import numpy as np
+import sparse as sp
 from bw_processing import Datapackage
-from numpy import ndarray, dtype
+from numpy import dtype, ndarray
 from scipy import sparse
 from scipy.sparse import csr_matrix
-import sparse as sp
 
 from .lcia import get_lcia_methods
 

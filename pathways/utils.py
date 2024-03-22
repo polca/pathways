@@ -1,9 +1,9 @@
+from pathlib import Path
 from typing import Any, Dict, List, Tuple, Union
 
 import numpy as np
 import xarray as xr
 import yaml
-from pathlib import Path
 
 from .filesystem_constants import DATA_DIR, DIR_CACHED_DB
 
@@ -277,8 +277,10 @@ def load_numpy_array_from_disk(filepath):
 
     return np.load(filepath, allow_pickle=True)
 
+
 def get_visible_files(path):
     return [file for file in Path(path).iterdir() if not file.name.startswith(".")]
+
 
 def clean_cache_directory():
     # clean up the cache directory

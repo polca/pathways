@@ -24,10 +24,15 @@ from premise.geomap import Geomap
 
 from .data_validation import validate_datapackage
 from .filesystem_constants import DATA_DIR, DIR_CACHED_DB
-from .lca import get_lca_matrices, remove_double_counting, fill_characterization_factors_matrices
+from .lca import (
+    fill_characterization_factors_matrices,
+    get_lca_matrices,
+    remove_double_counting,
+)
 from .lcia import get_lcia_method_names
 from .utils import (
     _get_activity_indices,
+    clean_cache_directory,
     create_lca_results_array,
     display_results,
     get_unit_conversion_factors,
@@ -35,7 +40,6 @@ from .utils import (
     load_classifications,
     load_numpy_array_from_disk,
     load_units_conversion,
-    clean_cache_directory
 )
 
 warnings.filterwarnings("ignore")
@@ -254,7 +258,7 @@ def process_region(data: Tuple) -> dict[str, ndarray[Any, dtype[Any]] | list[int
         location_to_index,
         rev_A_index,
         lca,
-        characterization_matrix
+        characterization_matrix,
     ) = data
 
     FU = []
@@ -415,7 +419,9 @@ def _calculate_year(args):
     )
     lca.lci(factorize=True)
 
-    characterization_matrix = fill_characterization_factors_matrices(biosphere_indices, methods, lca.dicts.biosphere)
+    characterization_matrix = fill_characterization_factors_matrices(
+        biosphere_indices, methods, lca.dicts.biosphere
+    )
 
     bar = pyprind.ProgBar(len(regions))
     for region in regions:
@@ -442,7 +448,7 @@ def _calculate_year(args):
                 location_to_index,
                 reverse_technosphere_index,
                 lca,
-                characterization_matrix
+                characterization_matrix,
             )
         )
 
