@@ -3,8 +3,9 @@ from typing import Any, Dict, List, Tuple, Union
 import numpy as np
 import xarray as xr
 import yaml
+from pathlib import Path
 
-from .filesystem_constants import DATA_DIR
+from .filesystem_constants import DATA_DIR, DIR_CACHED_DB
 
 CLASSIFICATIONS = DATA_DIR / "activities_classifications.yaml"
 UNITS_CONVERSION = DATA_DIR / "units_conversion.yaml"
@@ -274,4 +275,12 @@ def load_numpy_array_from_disk(filepath):
     :return: numpy array
     """
 
-    return np.load(filepath)
+    return np.load(filepath, allow_pickle=True)
+
+def get_visible_files(path):
+    return [file for file in Path(path).iterdir() if not file.name.startswith(".")]
+
+def clean_cache_directory():
+    # clean up the cache directory
+    for file in get_visible_files(DIR_CACHED_DB):
+        file.unlink()

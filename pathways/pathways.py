@@ -23,7 +23,7 @@ from premise.geomap import Geomap
 
 from .data_validation import validate_datapackage
 from .filesystem_constants import DATA_DIR, DIR_CACHED_DB
-from .lca import get_lca_matrices, remove_double_counting
+from .lca import get_lca_matrices, remove_double_counting, fill_characterization_factors_matrices
 from .lcia import get_lcia_method_names
 from .utils import (
     _get_activity_indices,
@@ -34,6 +34,7 @@ from .utils import (
     load_classifications,
     load_numpy_array_from_disk,
     load_units_conversion,
+    clean_cache_directory
 )
 
 import warnings
@@ -75,10 +76,6 @@ def csv_to_dict(filename):
                 output_dict[int(value)] = key
 
     return output_dict
-
-
-def get_visible_files(path):
-    return [file for file in Path(path).iterdir() if not file.name.startswith(".")]
 
 
 def resize_scenario_data(
@@ -257,6 +254,7 @@ def process_region(data: Tuple) -> dict[str, ndarray[Any, dtype[Any]] | list[int
         location_to_index,
         rev_A_index,
         lca,
+        characterization_matrix
     ) = data
 
     FU = []
@@ -304,11 +302,11 @@ def process_region(data: Tuple) -> dict[str, ndarray[Any, dtype[Any]] | list[int
 
     d = []
     for f, fu in enumerate(FU):
-        lca.lcia(fu)
-        d.append(lca.characterized_inventory.sum(axis=0))
+        lca.lci(fu)
+        d.append((characterization_matrix @ lca.inventory).toarray())
 
     id_array = uuid.uuid4()
-    np.save(file=DIR_CACHED_DB / f"{id_array}.npy", arr=np.vstack(d).T)
+    np.save(file=DIR_CACHED_DB / f"{id_array}.npy", arr=np.stack(d, axis=0))
 
     # concatenate the list of sparse matrices and
     # add a third dimension and concatenate along it
@@ -343,7 +341,7 @@ def _calculate_year(args):
     # Try to load LCA matrices for the given model, scenario, and year
     try:
         bw_datapackage, technosphere_indices, biosphere_indices = get_lca_matrices(
-            datapackage, model, scenario, year, methods
+            datapackage, model, scenario, year
         )
 
     except FileNotFoundError:
@@ -417,6 +415,8 @@ def _calculate_year(args):
     )
     lca.lci(factorize=True)
 
+    characterization_matrix = fill_characterization_factors_matrices(biosphere_indices, methods, lca.dicts.biosphere)
+
     bar = pyprind.ProgBar(len(regions))
     for region in regions:
         bar.update()
@@ -442,6 +442,7 @@ def _calculate_year(args):
                 location_to_index,
                 reverse_technosphere_index,
                 lca,
+                characterization_matrix
             )
         )
 
@@ -476,9 +477,7 @@ class Pathways:
         self.units = load_units_conversion()
         self.lcia_matrix = None
 
-        # clean up the cache directory
-        for file in get_visible_files(DIR_CACHED_DB):
-            file.unlink()
+        clean_cache_directory()
 
     def read_datapackage(self) -> DataPackage:
         """Read the datapackage.json file.
@@ -699,8 +698,8 @@ class Pathways:
 
         # Create xarray for storing LCA results if not already present
         if self.lca_results is None:
-            dp, technosphere_index, biosphere_index = get_lca_matrices(
-                self.datapackage, models[0], scenarios[0], years[0], methods
+            _, technosphere_index, biosphere_index = get_lca_matrices(
+                self.datapackage, models[0], scenarios[0], years[0]
             )
             locations = fetch_inventories_locations(technosphere_index)
 
@@ -789,7 +788,7 @@ class Pathways:
         # Pre-loading data from disk if possible
         cached_data = {
             data["id_array"]: load_numpy_array_from_disk(
-                DIR_CACHED_DB / f"{data['id_array']}.npy"
+                DIR_CACHED_DB / f"{data['id_array']}.npy",
             )
             for coord, result in results.items()
             for region, data in result.items()
@@ -810,20 +809,14 @@ class Pathways:
                 id_array = data["id_array"]
                 variables = data["variables"]
 
-                # Use pre-loaded data
                 d = cached_data[id_array]
 
-                # Attempt to perform operations more efficiently
                 for cat, act_cat_idx in acts_category_idx_dict.items():
                     for loc, act_loc_idx in acts_location_idx_dict.items():
-                        # This could potentially be optimized further depending on the nature of idx
                         idx = np.intersect1d(act_cat_idx, act_loc_idx)
                         idx = idx[idx != -1]
 
                         if idx.size > 0:
-                            summed_data = d[idx].sum(axis=0)[None, ...].T
-
-                            # Consider if this operation can be batched or optimized
                             self.lca_results.loc[
                                 {
                                     "region": region,
@@ -834,7 +827,9 @@ class Pathways:
                                     "location": loc,
                                     "variable": list(variables.keys()),
                                 }
-                            ] = summed_data
+                            ] = d[..., idx].sum(axis=-1)
+
+        clean_cache_directory()
 
     def characterize_planetary_boundaries(
         self,

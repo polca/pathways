@@ -1,11 +1,14 @@
 import csv
 from pathlib import Path
-from typing import Dict, Tuple
+from typing import Dict, Tuple, List, Any
 
 import bw_processing as bwp
 import numpy as np
+from bw_processing import Datapackage
+from numpy import ndarray, dtype
 from scipy import sparse
 from scipy.sparse import csr_matrix
+import sparse as sp
 
 from .lcia import get_lcia_methods
 
@@ -76,8 +79,7 @@ def get_lca_matrices(
     model: str,
     scenario: str,
     year: int,
-    methods: list,
-) -> Tuple[bwp.datapackage, Dict, Dict]:
+) -> Tuple[Datapackage, Dict, Dict]:
     """
     Retrieve Life Cycle Assessment (LCA) matrices from disk.
 
@@ -119,46 +121,37 @@ def get_lca_matrices(
         data_array=b_data,
     )
 
-    c_data, c_indices = fill_characterization_factors_matrix(B_inds, methods)
-
-    dp.add_persistent_vector(
-        matrix="characterization_matrix",
-        indices_array=c_indices,
-        data_array=c_data,
-    )
-
     return dp, A_inds, B_inds
 
 
-def fill_characterization_factors_matrix(
-    biosphere_flows: dict, methods
-) -> Tuple[np.ndarray, np.ndarray]:
+def fill_characterization_factors_matrices(
+    biosphere_flows: dict, methods, biosphere_dict
+) -> csr_matrix:
     """
-    Create a characterization matrix based on the list of biosphere flows
-    given.
+    Create one CSR matrix for all LCIA method, with the last dimension being the index of the method
     :param biosphere_flows:
     :param methods: contains names of the methods to use.
     :return:
     """
 
     lcia_data = get_lcia_methods(methods=methods)
-
     biosphere_flows = {k[:3]: v for k, v in biosphere_flows.items()}
+    reversed_biosphere_flows = {int(v): k for k, v in biosphere_flows.items()}
 
-    list_flows = []
-    list_cf = []
+    matrix = sparse.csr_matrix(
+        (len(methods), len(biosphere_dict)),
+        dtype=np.float64,
+    )
 
-    for method, flows in lcia_data.items():
-        for flow, cf in flows.items():
-            flow_idx = int(biosphere_flows.get(flow))
-            if flow_idx:
-                list_flows.append((flow_idx, flow_idx))
-                list_cf.append(cf)
+    for m, method in enumerate(methods):
+        method_data = lcia_data[method]
+        for flow_idx, f in biosphere_dict.items():
+            if flow_idx in reversed_biosphere_flows:
+                flow = reversed_biosphere_flows[flow_idx]
+                if flow in method_data:
+                    matrix[m, f] = method_data[flow]
 
-    data = np.array(list_cf)
-    indices = np.array(list_flows, dtype=bwp.INDICES_DTYPE)
-
-    return data, indices
+    return matrix
 
 
 def remove_double_counting(A: csr_matrix, vars_info: dict) -> csr_matrix:
