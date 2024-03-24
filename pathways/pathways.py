@@ -5,12 +5,12 @@ LCA datasets, and LCA matrices.
 """
 
 import csv
+import logging
 import uuid
 import warnings
 from collections import defaultdict
 from multiprocessing import Pool, cpu_count
 from typing import Any, Dict, List, Optional, Tuple
-import logging
 
 import bw2calc as bc
 import numpy as np
@@ -268,7 +268,7 @@ def process_region(data: Tuple) -> dict[str, ndarray[Any, dtype[Any]] | list[int
         rev_A_index,
         lca,
         characterization_matrix,
-        debug
+        debug,
     ) = data
 
     variables_demand = {}
@@ -357,9 +357,11 @@ def _calculate_year(args):
 
     print(f"------ Calculating LCA results for {year}...")
     if debug:
-        logging.info(f"############################### "
-                     f"{model}, {scenario}, {year} "
-                     f"###############################")
+        logging.info(
+            f"############################### "
+            f"{model}, {scenario}, {year} "
+            f"###############################"
+        )
 
     geo = Geomap(model=model)
 
@@ -382,7 +384,9 @@ def _calculate_year(args):
     # A = remove_double_counting(A, vars_info)
 
     # check unclassified activities
-    missing_classifications = check_unclassified_activities(technosphere_indices, classifications)
+    missing_classifications = check_unclassified_activities(
+        technosphere_indices, classifications
+    )
 
     if missing_classifications:
         if debug:
@@ -453,7 +457,9 @@ def _calculate_year(args):
     )
 
     if debug:
-        logging.info(f"Characterization matrix created. Shape: {characterization_matrix.shape}")
+        logging.info(
+            f"Characterization matrix created. Shape: {characterization_matrix.shape}"
+        )
 
     bar = pyprind.ProgBar(len(regions))
     for region in regions:
@@ -481,7 +487,7 @@ def _calculate_year(args):
                 reverse_technosphere_index,
                 lca,
                 characterization_matrix,
-                debug
+                debug,
             )
         )
 
@@ -520,14 +526,15 @@ class Pathways:
         clean_cache_directory()
 
         if self.debug:
-            logging.basicConfig(level=logging.DEBUG,
-                                filename='pathways.log',  # Log file to save the entries
-                                filemode='a',  # Append to the log file if it exists, 'w' to overwrite
-                                format='%(asctime)s - %(levelname)s - %(module)s - %(message)s',
-                                datefmt='%Y-%m-%d %H:%M:%S')
+            logging.basicConfig(
+                level=logging.DEBUG,
+                filename="pathways.log",  # Log file to save the entries
+                filemode="a",  # Append to the log file if it exists, 'w' to overwrite
+                format="%(asctime)s - %(levelname)s - %(module)s - %(message)s",
+                datefmt="%Y-%m-%d %H:%M:%S",
+            )
             logging.info("#" * 600)
             logging.info(f"Pathways initialized with datapackage: {datapackage}")
-
 
     def read_datapackage(self) -> DataPackage:
         """Read the datapackage.json file.
@@ -802,7 +809,7 @@ class Pathways:
                             self.classifications,
                             self.scenarios,
                             self.reverse_classifications,
-                            self.debug
+                            self.debug,
                         )
                         for year in years
                     ]
@@ -835,7 +842,7 @@ class Pathways:
                                 self.classifications,
                                 self.scenarios,
                                 self.reverse_classifications,
-                                self.debug
+                                self.debug,
                             )
                         )
                         for year in years
