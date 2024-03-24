@@ -320,7 +320,7 @@ def process_region(data: Tuple) -> dict[str, ndarray[Any, dtype[Any]] | list[int
                 f"ref.: {dataset[1]}, unit: {dataset[2][:50]}, idx: {idx},"
                 f"loc.: {dataset[3]}, demand: {round(float(demand.values * float(unit_vector)), 2)}, "
                 f"unit conv.: {unit_vector}, "
-                f"impact: {round(float(characterized_inventory.sum(axis=-1) / (demand.values * float(unit_vector))), 3)}. "
+                f"impact: {round(characterized_inventory.sum(axis=-1) / (demand.values * float(unit_vector)), 3)}. "
             )
 
     id_array = uuid.uuid4()
