@@ -10,11 +10,13 @@ import pandas as pd
 import yaml
 from datapackage import DataPackageException, validate
 
-logging.basicConfig(level=logging.DEBUG,
-                    filename='pathways.log',  # Log file to save the entries
-                    filemode='a',  # Append to the log file if it exists, 'w' to overwrite
-                    format='%(asctime)s - %(levelname)s - %(module)s - %(message)s',
-                    datefmt='%Y-%m-%d %H:%M:%S')
+logging.basicConfig(
+    level=logging.DEBUG,
+    filename="pathways.log",  # Log file to save the entries
+    filemode="a",  # Append to the log file if it exists, 'w' to overwrite
+    format="%(asctime)s - %(levelname)s - %(module)s - %(message)s",
+    datefmt="%Y-%m-%d %H:%M:%S",
+)
 
 
 def validate_datapackage(datapackage: datapackage.DataPackage):
@@ -125,4 +127,3 @@ def validate_mapping(resource: datapackage.Resource, dataframe: pd.DataFrame):
             "All values for `scenario variable` must be unique. "
             f"Duplicate values: {set([x for x in scenario_variables if scenario_variables.count(x) > 1])}"
         )
-

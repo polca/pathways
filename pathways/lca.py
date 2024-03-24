@@ -1,7 +1,7 @@
 import csv
+import logging
 from pathlib import Path
 from typing import Any, Dict, List, Tuple
-import logging
 
 import bw_processing as bwp
 import numpy as np
@@ -22,12 +22,13 @@ except ImportError:
 
     print("Solver: scikits.umfpack")
 
-logging.basicConfig(level=logging.DEBUG,
-                    filename='pathways.log',  # Log file to save the entries
-                    filemode='a',  # Append to the log file if it exists, 'w' to overwrite
-                    format='%(asctime)s - %(levelname)s - %(module)s - %(message)s',
-                    datefmt='%Y-%m-%d %H:%M:%S')
-
+logging.basicConfig(
+    level=logging.DEBUG,
+    filename="pathways.log",  # Log file to save the entries
+    filemode="a",  # Append to the log file if it exists, 'w' to overwrite
+    format="%(asctime)s - %(levelname)s - %(module)s - %(message)s",
+    datefmt="%Y-%m-%d %H:%M:%S",
+)
 
 
 def read_indices_csv(file_path: Path) -> Dict[Tuple[str, str, str, str], str]:
@@ -168,7 +169,9 @@ def fill_characterization_factors_matrices(
         l = sorted(l, key=lambda x: (x[0], x[1]))
         for x in l:
             method, flow, f, value = x
-            logging.info(f"LCIA method: {method}, Flow: {flow}, Index: {f}, Value: {value}")
+            logging.info(
+                f"LCIA method: {method}, Flow: {flow}, Index: {f}, Value: {value}"
+            )
 
     return matrix
 
