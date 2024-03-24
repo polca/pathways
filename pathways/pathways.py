@@ -9,8 +9,8 @@ import uuid
 import warnings
 from collections import defaultdict
 from multiprocessing import Pool, cpu_count
-from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple, Union
+from typing import Any, Dict, List, Optional, Tuple
+import logging
 
 import bw2calc as bc
 import numpy as np
@@ -45,7 +45,7 @@ from .utils import (
 warnings.filterwarnings("ignore")
 
 
-def check_unclassified_activities(A_index, classifications):
+def check_unclassified_activities(technosphere_indices, classifications) -> List:
     """
     Check if there are activities in the technosphere matrix that are not in the classifications.
     :param A:
@@ -53,23 +53,22 @@ def check_unclassified_activities(A_index, classifications):
     :return:
     """
     missing_classifications = []
-    for act in A_index:
+    for act in technosphere_indices:
         if act not in classifications:
             missing_classifications.append(list(act))
     if missing_classifications:
-        print(
-            f"{len(missing_classifications)} activities are not found in the classifications. "
-            "There are exported in the file 'missing_classifications.csv'."
-        )
+
         with open("missing_classifications.csv", "a") as f:
             writer = csv.writer(f)
             writer.writerows(missing_classifications)
+
+    return missing_classifications
 
 
 def csv_to_dict(filename):
     output_dict = {}
 
-    with open(filename, "r") as file:
+    with open(filename, encoding="utf-8") as file:
         reader = csv.reader(file, delimiter=";")
         for row in reader:
             # Making sure there are at least 5 items in the row
@@ -78,6 +77,8 @@ def csv_to_dict(filename):
                 key = tuple(row[:4])
                 value = row[4]
                 output_dict[int(value)] = key
+            else:
+                logging.warning(f"Row {row} has less than 5 items.")
 
     return output_dict
 
@@ -160,6 +161,11 @@ def fetch_indices(mapping, regions, variables, A_index, geo):
             print("Warning: mismatch between activities and variables.")
             print(f"Number of variables: {len(variables)}: {variables}")
             print(f"Number of datasets: {len(activities)}: {activities}")
+            logging.warning(
+                f"Mismatch between activities and variables for region {region}."
+                f"Number of variables: {len(variables)}."
+                f"Number of datasets: {len(activities)}."
+            )
 
         idxs = _get_activity_indices(activities, A_index, geo)
 
@@ -184,7 +190,10 @@ def fetch_inventories_locations(A_index: Dict[str, Tuple[str, str, str]]) -> Lis
     :return: List of locations.
     """
 
-    return list(set([act[3] for act in A_index]))
+    locations = list(set([act[3] for act in A_index]))
+    logging.info(f"Unique locations in LCA database: {locations}")
+
+    return locations
 
 
 def group_technosphere_indices_by_category(
@@ -259,11 +268,11 @@ def process_region(data: Tuple) -> dict[str, ndarray[Any, dtype[Any]] | list[int
         rev_A_index,
         lca,
         characterization_matrix,
+        debug
     ) = data
 
-    FU = []
-    variables_demand = []
-    variables_idx = []
+    variables_demand = {}
+    d = []
 
     for v, variable in enumerate(variables):
         idx, dataset = vars_idx[variable]["idx"], vars_idx[variable]["dataset"]
@@ -296,27 +305,34 @@ def process_region(data: Tuple) -> dict[str, ndarray[Any, dtype[Any]] | list[int
         ) < demand_cutoff:
             continue
 
-        FU.append(
-            {
-                idx: demand.values * float(unit_vector),
-            }
-        )
-        variables_demand.append(variable)
-        variables_idx.append(v)
+        variables_demand[variable] = {
+            "id": idx,
+            "demand": demand.values * float(unit_vector),
+        }
 
-    d = []
-    for f, fu in enumerate(FU):
-        lca.lci(fu)
-        d.append((characterization_matrix @ lca.inventory).toarray())
+        lca.lci(demand={idx: demand.values * float(unit_vector)})
+        characterized_inventory = (characterization_matrix @ lca.inventory).toarray()
+        d.append(characterized_inventory)
+
+        if debug:
+            logging.info(
+                f"var.: {variable}, name: {dataset[0][:50]}, "
+                f"ref.: {dataset[1]}, unit: {dataset[2][:50]}, idx: {idx},"
+                f"loc.: {dataset[3]}, demand: {round(float(demand.values * float(unit_vector)), 2)}, "
+                f"unit conv.: {unit_vector}, "
+                f"impact: {round(float(characterized_inventory.sum(axis=-1) / (demand.values * float(unit_vector))), 3)}. "
+            )
 
     id_array = uuid.uuid4()
-    np.save(file=DIR_CACHED_DB / f"{id_array}.npy", arr=np.stack(d, axis=0))
+    np.save(file=DIR_CACHED_DB / f"{id_array}.npy", arr=np.stack(d))
+
+    del d
 
     # concatenate the list of sparse matrices and
     # add a third dimension and concatenate along it
     return {
         "id_array": id_array,
-        "variables": {v: idx for v, idx in zip(variables_demand, variables_idx)},
+        "variables": {k: v["demand"] for k, v in variables_demand.items()},
     }
 
 
@@ -336,9 +352,14 @@ def _calculate_year(args):
         classifications,
         scenarios,
         reverse_classifications,
+        debug,
     ) = args
 
     print(f"------ Calculating LCA results for {year}...")
+    if debug:
+        logging.info(f"############################### "
+                     f"{model}, {scenario}, {year} "
+                     f"###############################")
 
     geo = Geomap(model=model)
 
@@ -350,7 +371,8 @@ def _calculate_year(args):
 
     except FileNotFoundError:
         # If LCA matrices can't be loaded, skip to the next iteration
-        print("LCA matrices not found for the given model, scenario, and year.")
+        if debug:
+            logging.warning(f"Skipping {model}, {scenario}, {year}, as data not found.")
         return
 
     # Fetch indices
@@ -360,7 +382,14 @@ def _calculate_year(args):
     # A = remove_double_counting(A, vars_info)
 
     # check unclassified activities
-    check_unclassified_activities(technosphere_indices, classifications)
+    missing_classifications = check_unclassified_activities(technosphere_indices, classifications)
+
+    if missing_classifications:
+        if debug:
+            logging.warning(
+                f"{len(missing_classifications)} activities are not found in the classifications."
+                "See missing_classifications.csv for more details."
+            )
 
     # Initialize list to store activities not found in classifications
     missing_class = []
@@ -420,8 +449,11 @@ def _calculate_year(args):
     lca.lci(factorize=True)
 
     characterization_matrix = fill_characterization_factors_matrices(
-        biosphere_indices, methods, lca.dicts.biosphere
+        biosphere_indices, methods, lca.dicts.biosphere, debug
     )
+
+    if debug:
+        logging.info(f"Characterization matrix created. Shape: {characterization_matrix.shape}")
 
     bar = pyprind.ProgBar(len(regions))
     for region in regions:
@@ -449,6 +481,7 @@ def _calculate_year(args):
                 reverse_technosphere_index,
                 lca,
                 characterization_matrix,
+                debug
             )
         )
 
@@ -465,11 +498,12 @@ class Pathways:
         Path to the datapackage.json file.
     """
 
-    def __init__(self, datapackage):
+    def __init__(self, datapackage, debug=False):
         self.datapackage = datapackage
         self.data, dataframe = validate_datapackage(self.read_datapackage())
         self.mapping = self.get_mapping()
         self.mapping.update(self.get_final_energy_mapping())
+        self.debug = debug
         self.scenarios = self.get_scenarios(dataframe)
         self.classifications = load_classifications()
 
@@ -484,6 +518,16 @@ class Pathways:
         self.lcia_matrix = None
 
         clean_cache_directory()
+
+        if self.debug:
+            logging.basicConfig(level=logging.DEBUG,
+                                filename='pathways.log',  # Log file to save the entries
+                                filemode='a',  # Append to the log file if it exists, 'w' to overwrite
+                                format='%(asctime)s - %(levelname)s - %(module)s - %(message)s',
+                                datefmt='%Y-%m-%d %H:%M:%S')
+            logging.info("#" * 600)
+            logging.info(f"Pathways initialized with datapackage: {datapackage}")
+
 
     def read_datapackage(self) -> DataPackage:
         """Read the datapackage.json file.
@@ -580,7 +624,8 @@ class Pathways:
         # check if all variables in mapping are in scenario_data
         for var in mapping_vars:
             if var not in scenario_data["variables"].values:
-                print(f"Variable {var} not found in scenario data.")
+                if self.debug:
+                    logging.warning(f"Variable {var} not found in scenario data.")
 
         # remove rows which do not have a value under the `variable`
         # column that correspond to any value in self.mapping for `scenario variable`
@@ -634,7 +679,7 @@ class Pathways:
         flows: Optional[List[str]] = None,
         multiprocessing: bool = False,
         demand_cutoff: float = 1e-3,
-    ) -> dict[Any, Any] | dict[int | Any, dict[Any, dict[str, Any]] | None]:
+    ) -> None:
         """
         Calculate Life Cycle Assessment (LCA) results for given methods, models, scenarios, regions, and years.
 
@@ -675,18 +720,30 @@ class Pathways:
         # Set default values if arguments are not provided
         if methods is None and characterization is True:
             methods = get_lcia_method_names()
+            if self.debug:
+                logging.info(f"Using the following LCIA methods: {methods}")
         if models is None:
             models = self.scenarios.coords["model"].values
             models = [m.lower() for m in models]
+            if self.debug:
+                logging.info(f"Using the following models: {models}")
         if scenarios is None:
             scenarios = self.scenarios.coords["pathway"].values
+            if self.debug:
+                logging.info(f"Using the following scenarios: {scenarios}")
         if regions is None:
             regions = self.scenarios.coords["region"].values
+            if self.debug:
+                logging.info(f"Using the following regions: {regions}")
         if years is None:
             years = self.scenarios.coords["year"].values
+            if self.debug:
+                logging.info(f"Using the following years: {years}")
         if variables is None:
             variables = self.scenarios.coords["variables"].values
             variables = [str(v) for v in variables]
+            if self.debug:
+                logging.info(f"Using the following variables: {variables}")
 
         # resize self.scenarios array to fit the given arguments
         self.scenarios = resize_scenario_data(
@@ -745,6 +802,7 @@ class Pathways:
                             self.classifications,
                             self.scenarios,
                             self.reverse_classifications,
+                            self.debug
                         )
                         for year in years
                     ]
@@ -777,6 +835,7 @@ class Pathways:
                                 self.classifications,
                                 self.scenarios,
                                 self.reverse_classifications,
+                                self.debug
                             )
                         )
                         for year in years
@@ -821,6 +880,7 @@ class Pathways:
                     for loc, act_loc_idx in acts_location_idx_dict.items():
                         idx = np.intersect1d(act_cat_idx, act_loc_idx)
                         idx = idx[idx != -1]
+                        summed_data = d[..., idx].sum(axis=-1)
 
                         if idx.size > 0:
                             self.lca_results.loc[
@@ -833,7 +893,7 @@ class Pathways:
                                     "location": loc,
                                     "variable": list(variables.keys()),
                                 }
-                            ] = d[..., idx].sum(axis=-1)
+                            ] = summed_data
 
     def characterize_planetary_boundaries(
         self,

@@ -1,12 +1,11 @@
 import csv
 from pathlib import Path
 from typing import Any, Dict, List, Tuple
+import logging
 
 import bw_processing as bwp
 import numpy as np
-import sparse as sp
 from bw_processing import Datapackage
-from numpy import dtype, ndarray
 from scipy import sparse
 from scipy.sparse import csr_matrix
 
@@ -22,6 +21,13 @@ except ImportError:
     from scikits.umfpack import spsolve
 
     print("Solver: scikits.umfpack")
+
+logging.basicConfig(level=logging.DEBUG,
+                    filename='pathways.log',  # Log file to save the entries
+                    filemode='a',  # Append to the log file if it exists, 'w' to overwrite
+                    format='%(asctime)s - %(levelname)s - %(module)s - %(message)s',
+                    datefmt='%Y-%m-%d %H:%M:%S')
+
 
 
 def read_indices_csv(file_path: Path) -> Dict[Tuple[str, str, str, str], str]:
@@ -105,7 +111,7 @@ def get_lca_matrices(
         dirpath / "A_matrix.csv",
     )
 
-    b_data, b_indices, _ = load_matrix_and_index(
+    b_data, b_indices, b_sign = load_matrix_and_index(
         dirpath / "B_matrix.csv",
     )
 
@@ -118,14 +124,15 @@ def get_lca_matrices(
     dp.add_persistent_vector(
         matrix="biosphere_matrix",
         indices_array=b_indices,
-        data_array=b_data,
+        data_array=b_data * -1,
+        flip_array=b_sign,
     )
 
     return dp, A_inds, B_inds
 
 
 def fill_characterization_factors_matrices(
-    biosphere_flows: dict, methods, biosphere_dict
+    biosphere_flows: dict, methods, biosphere_dict, debug=False
 ) -> csr_matrix:
     """
     Create one CSR matrix for all LCIA method, with the last dimension being the index of the method
@@ -143,6 +150,11 @@ def fill_characterization_factors_matrices(
         dtype=np.float64,
     )
 
+    if debug:
+        logging.info(f"LCIA matrix shape: {matrix.shape}")
+
+    l = []
+
     for m, method in enumerate(methods):
         method_data = lcia_data[method]
         for flow_idx, f in biosphere_dict.items():
@@ -150,6 +162,13 @@ def fill_characterization_factors_matrices(
                 flow = reversed_biosphere_flows[flow_idx]
                 if flow in method_data:
                     matrix[m, f] = method_data[flow]
+                    l.append((method, flow, f, method_data[flow]))
+    if debug:
+        # sort l by method and flow
+        l = sorted(l, key=lambda x: (x[0], x[1]))
+        for x in l:
+            method, flow, f, value = x
+            logging.info(f"LCIA method: {method}, Flow: {flow}, Index: {f}, Value: {value}")
 
     return matrix
 

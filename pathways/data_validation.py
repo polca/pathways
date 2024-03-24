@@ -3,13 +3,18 @@ This module contains functions that validate the data contained
 in the datapackage.json file.
 """
 
-import json
-from pathlib import Path
+import logging
 
 import datapackage
 import pandas as pd
 import yaml
 from datapackage import DataPackageException, validate
+
+logging.basicConfig(level=logging.DEBUG,
+                    filename='pathways.log',  # Log file to save the entries
+                    filemode='a',  # Append to the log file if it exists, 'w' to overwrite
+                    format='%(asctime)s - %(levelname)s - %(module)s - %(message)s',
+                    datefmt='%Y-%m-%d %H:%M:%S')
 
 
 def validate_datapackage(datapackage: datapackage.DataPackage):
@@ -57,13 +62,10 @@ def validate_datapackage(datapackage: datapackage.DataPackage):
     dataframe = pd.DataFrame(data, columns=headers)
 
     # Check that the scenario data is valid
-    # validate_scenario_data(dataframe)
+    validate_scenario_data(dataframe)
 
     # Check that the mapping is valid
-    # validate_mapping(datapackage.get_resource("mapping"), dataframe)
-
-    # Check that the LCA data is valid
-    # validate_lca_data(datapackage)
+    validate_mapping(datapackage.get_resource("mapping"), dataframe)
 
     return datapackage, dataframe
 
@@ -124,18 +126,3 @@ def validate_mapping(resource: datapackage.Resource, dataframe: pd.DataFrame):
             f"Duplicate values: {set([x for x in scenario_variables if scenario_variables.count(x) > 1])}"
         )
 
-
-def validate_lca_data(datapackage):
-    """
-    Ensure that the required LCA data is present and valid.
-    :param datapackage:
-    :return:
-    """
-
-    # Check that resources `exchanges` and `labels` are present
-    required_resources = ["exchanges", "labels"]
-    for resource in required_resources:
-        try:
-            datapackage.get_resource(resource).read()
-        except DataPackageException:
-            raise ValueError(f"Missing resource: {resource}")
