@@ -112,6 +112,14 @@ def get_lca_matrices(
         dirpath / "A_matrix.csv",
     )
 
+    # look for "A_matrix_uncertainty.csv" in dirpath
+    a_uncertainty = None
+    if (dirpath / "A_matrix_uncertainty.csv").exists():
+        a_uncertainty = load_uncertainty_data(
+            dirpath / "A_matrix_uncertainty.csv",
+            a_data, a_indices
+        )
+
     b_data, b_indices, b_sign = load_matrix_and_index(
         dirpath / "B_matrix.csv",
     )
@@ -121,7 +129,9 @@ def get_lca_matrices(
         indices_array=a_indices,
         data_array=a_data,
         flip_array=a_sign,
+        distributions_array=a_uncertainty if a_uncertainty else None,
     )
+
     dp.add_persistent_vector(
         matrix="biosphere_matrix",
         indices_array=b_indices,
@@ -131,6 +141,46 @@ def get_lca_matrices(
 
     return dp, A_inds, B_inds
 
+
+def load_uncertainty_data(file_path: Path, technosphere_array, technosphere_indices) -> np.ndarray:
+    """
+    Reads a CSV file and returns its contents as a CSR sparse matrix.
+
+    :param file_path: The path to the CSV file.
+    :type file_path: Path
+    :return: A CSR sparse matrix.
+    :rtype: csr_matrix
+    """
+    # Load the data from the CSV file
+    array = np.genfromtxt(file_path, delimiter=";", skip_header=1)
+
+    print(array.shape)
+
+    # remove the two first columns
+    uncertainty_data = array[:, 2:]
+    indices = array[:, :2]
+
+    print("data shape: ", uncertainty_data.shape)
+    print("technosphere array shape: ", technosphere_array.shape)
+    data_array = np.empty((technosphere_array.shape[0], 7))
+    print("data array shape: ", data_array.shape)
+    data_array[:, 0] = 0
+    data_array[:, 1] = technosphere_array
+    data_array[:, 2:6] = np.nan
+    data_array[:, -1] = False
+
+
+    # iterate through indices, and find the position of the indices in technosphere_indices
+    for i, idx in enumerate(indices):
+        print("i: ", i)
+        print("idx: ", idx)
+        row = np.where((technosphere_indices[:, 0] == idx[0]) & (technosphere_indices[:, 1] == idx[1]))[0][0]
+        print("row: ", row)
+        data_array[row, 2:6] = uncertainty_data[i]
+        print(data_array[row])
+
+
+    return array
 
 def fill_characterization_factors_matrices(
     biosphere_flows: dict, methods, biosphere_dict, debug=False
