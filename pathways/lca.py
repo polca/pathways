@@ -116,8 +116,7 @@ def get_lca_matrices(
     a_uncertainty = None
     if (dirpath / "A_matrix_uncertainty.csv").exists():
         a_uncertainty = load_uncertainty_data(
-            dirpath / "A_matrix_uncertainty.csv",
-            a_data, a_indices
+            dirpath / "A_matrix_uncertainty.csv", a_data, a_indices
         )
 
     b_data, b_indices, b_sign = load_matrix_and_index(
@@ -142,7 +141,9 @@ def get_lca_matrices(
     return dp, A_inds, B_inds
 
 
-def load_uncertainty_data(file_path: Path, technosphere_array, technosphere_indices) -> np.ndarray:
+def load_uncertainty_data(
+    file_path: Path, technosphere_array, technosphere_indices
+) -> np.ndarray:
     """
     Reads a CSV file and returns its contents as a CSR sparse matrix.
 
@@ -169,18 +170,20 @@ def load_uncertainty_data(file_path: Path, technosphere_array, technosphere_indi
     data_array[:, 2:6] = np.nan
     data_array[:, -1] = False
 
-
     # iterate through indices, and find the position of the indices in technosphere_indices
     for i, idx in enumerate(indices):
         print("i: ", i)
         print("idx: ", idx)
-        row = np.where((technosphere_indices[:, 0] == idx[0]) & (technosphere_indices[:, 1] == idx[1]))[0][0]
+        row = np.where(
+            (technosphere_indices[:, 0] == idx[0])
+            & (technosphere_indices[:, 1] == idx[1])
+        )[0][0]
         print("row: ", row)
         data_array[row, 2:6] = uncertainty_data[i]
         print(data_array[row])
 
-
     return array
+
 
 def fill_characterization_factors_matrices(
     biosphere_flows: dict, methods, biosphere_dict, debug=False
