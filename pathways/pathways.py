@@ -13,12 +13,12 @@ from multiprocessing import Pool, cpu_count
 from typing import Any, Dict, List, Optional, Tuple
 
 import bw2calc as bc
-from bw2calc.monte_carlo import MonteCarloLCA
 import numpy as np
 import pandas as pd
 import pyprind
 import xarray as xr
 import yaml
+from bw2calc.monte_carlo import MonteCarloLCA
 from datapackage import DataPackage
 from numpy import dtype, ndarray
 from premise.geomap import Geomap
@@ -312,10 +312,11 @@ def process_region(data: Tuple) -> dict[str, ndarray[Any, dtype[Any]] | list[int
             "demand": demand.values * float(unit_vector),
         }
 
-
         if use_distributions == 0:
             lca.lci(demand={idx: demand.values * float(unit_vector)})
-            characterized_inventory = (characterization_matrix @ lca.inventory).toarray()
+            characterized_inventory = (
+                characterization_matrix @ lca.inventory
+            ).toarray()
 
         else:
             # Use distributions for LCA calculations
@@ -327,18 +328,23 @@ def process_region(data: Tuple) -> dict[str, ndarray[Any, dtype[Any]] | list[int
                 print(lca.inventory.shape)
                 print(lca.inventory.sum())
 
-
-            results = np.array([
-                (characterization_matrix @ lca.lci(demand={idx: demand.values * float(unit_vector)}).inventory).toarray() for _ in zip(range(use_distributions), lca)
-            ])
+            results = np.array(
+                [
+                    (
+                        characterization_matrix
+                        @ lca.lci(
+                            demand={idx: demand.values * float(unit_vector)}
+                        ).inventory
+                    ).toarray()
+                    for _ in zip(range(use_distributions), lca)
+                ]
+            )
 
             print(results.shape)
             for result in results:
                 print(result.sum(axis=-1))
 
-
             characterized_inventory = np.empty_like(lca.inventory)
-
 
         # vars_info = fetch_indices(mapping, regions, variables, A_index, Geomap(model))
         # characterized_inventory = remove_double_counting(characterized_inventory=characterized_inventory,
