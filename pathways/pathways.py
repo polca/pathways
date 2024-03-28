@@ -312,6 +312,11 @@ def process_region(data: Tuple) -> dict[str, ndarray[Any, dtype[Any]] | list[int
 
         lca.lci(demand={idx: demand.values * float(unit_vector)})
         characterized_inventory = (characterization_matrix @ lca.inventory).toarray()
+        # vars_info = fetch_indices(mapping, regions, variables, A_index, Geomap(model))
+        # characterized_inventory = remove_double_counting(characterized_inventory=characterized_inventory,
+        #                                                  vars_info=vars_idx,
+        #                                                  activity_idx=idx
+        #                                                  )
         d.append(characterized_inventory)
 
         if debug:
@@ -353,6 +358,7 @@ def _calculate_year(args):
         scenarios,
         reverse_classifications,
         debug,
+        use_distributions,
     ) = args
 
     print(f"------ Calculating LCA results for {year}...")
@@ -449,6 +455,7 @@ def _calculate_year(args):
         data_objs=[
             bw_datapackage,
         ],
+        use_distributions=use_distributions,
     )
     lca.lci(factorize=True)
 
@@ -686,6 +693,7 @@ class Pathways:
         flows: Optional[List[str]] = None,
         multiprocessing: bool = False,
         demand_cutoff: float = 1e-3,
+        use_distributions: bool = False,
     ) -> None:
         """
         Calculate Life Cycle Assessment (LCA) results for given methods, models, scenarios, regions, and years.
@@ -810,6 +818,7 @@ class Pathways:
                             self.scenarios,
                             self.reverse_classifications,
                             self.debug,
+                            use_distributions,
                         )
                         for year in years
                     ]
@@ -843,6 +852,7 @@ class Pathways:
                                 self.scenarios,
                                 self.reverse_classifications,
                                 self.debug,
+                                use_distributions,
                             )
                         )
                         for year in years

@@ -54,7 +54,7 @@ def read_indices_csv(file_path: Path) -> Dict[Tuple[str, str, str, str], str]:
 
 def load_matrix_and_index(
     file_path: Path,
-) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
+) -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
     """
     Reads a CSV file and returns its contents as a CSR sparse matrix.
 
@@ -64,21 +64,21 @@ def load_matrix_and_index(
     :rtype: Tuple[np.ndarray, np.ndarray, np.ndarray]
     """
     # Load the data from the CSV file
-    coords = np.genfromtxt(file_path, delimiter=";", skip_header=1)
+    array = np.genfromtxt(file_path, delimiter=";", skip_header=1)
 
     # give `indices_array` a list of tuples of indices
     indices_array = np.array(
-        list(zip(coords[:, 1].astype(int), coords[:, 0].astype(int))),
+        list(zip(array[:, 1].astype(int), array[:, 0].astype(int))),
         dtype=bwp.INDICES_DTYPE,
     )
 
-    data_array = coords[:, 2]
+    data_array = array[:, 2]
     # make a boolean scalar array to store the sign of the data
-    sign_array = np.where(data_array < 0, True, False)
-    # make values of data_array all positive
-    data_array = np.abs(data_array)
+    flip_array = array[:, -1]
 
-    return data_array, indices_array, sign_array
+    distributions_array = array[:, 3:-1]
+
+    return data_array, indices_array, flip_array, distributions_array
 
 
 def get_lca_matrices(
@@ -108,18 +108,11 @@ def get_lca_matrices(
     # create brightway datapackage
     dp = bwp.create_datapackage()
 
-    a_data, a_indices, a_sign = load_matrix_and_index(
+    a_data, a_indices, a_sign, a_distributions = load_matrix_and_index(
         dirpath / "A_matrix.csv",
     )
 
-    # look for "A_matrix_uncertainty.csv" in dirpath
-    a_uncertainty = None
-    if (dirpath / "A_matrix_uncertainty.csv").exists():
-        a_uncertainty = load_uncertainty_data(
-            dirpath / "A_matrix_uncertainty.csv", a_data, a_indices
-        )
-
-    b_data, b_indices, b_sign = load_matrix_and_index(
+    b_data, b_indices, b_sign, b_distributions = load_matrix_and_index(
         dirpath / "B_matrix.csv",
     )
 
@@ -128,14 +121,15 @@ def get_lca_matrices(
         indices_array=a_indices,
         data_array=a_data,
         flip_array=a_sign,
-        distributions_array=a_uncertainty if a_uncertainty else None,
+        distributions_array= a_distributions,
     )
 
     dp.add_persistent_vector(
         matrix="biosphere_matrix",
         indices_array=b_indices,
-        data_array=b_data * -1,
+        data_array=b_data,
         flip_array=b_sign,
+        distributions_array= b_distributions,
     )
 
     return dp, A_inds, B_inds
@@ -228,31 +222,37 @@ def fill_characterization_factors_matrices(
 
     return matrix
 
-
-def remove_double_counting(A: csr_matrix, vars_info: dict) -> csr_matrix:
+def remove_double_counting(characterized_inventory: csr_matrix, vars_info: dict, activity_idx: int) -> csr_matrix:
     """
-    Remove double counting from a technosphere matrix.
-    :param A: Technosphere matrix
-    :param vars_info: Dictionary with information about variables
-    :return: Technosphere matrix with double counting removed
+    Remove double counting from a characterized inventory matrix for all activities except
+    the activity being evaluated, across all methods.
+
+    :param characterized_inventory: Characterized inventory matrix with rows for different methods and columns for different activities.
+    :param vars_info: Dictionary with information about which indices to zero out.
+    :param activity_idx: Index of the activity being evaluated, which should not be zeroed out.
+    :return: Characterized inventory with double counting removed for all but the evaluated activity.
     """
 
-    # Modify A in COO format for efficiency
-    # To avoid double-counting, set all entries in A corresponding
-    # to activities not in activities_idx to zero
+    print("Removing double counting")
+    if isinstance(characterized_inventory, np.ndarray):
+        characterized_inventory = csr_matrix(characterized_inventory)
+    elif not isinstance(characterized_inventory, csr_matrix):
+        raise TypeError("characterized_inventory must be a csr_matrix or a numpy array.")
 
-    A_coo = A.tocoo()
-
-    list_of_idx = []
-
+    # Gather all indices for which we want to avoid double counting, except the evaluated activity
+    list_of_idx_to_remove = []
     for region in vars_info:
         for variable in vars_info[region]:
-            idx = vars_info[region][variable]["idx"]
-            if idx not in list_of_idx:
-                list_of_idx.append(idx)
-                row_mask = np.isin(A_coo.row, idx)
-                col_mask = np.isin(A_coo.col, idx)
-                A_coo.data[row_mask & ~col_mask] = 0  # zero out rows
+            idx = vars_info[region][variable]
+            if idx != activity_idx:
+                list_of_idx_to_remove.append(idx)
 
-    A_coo.eliminate_zeros()
-    return A_coo.tocsr()
+    # Convert to lil_matrix for more efficient element-wise operations - CHECK IF THIS IS ACTUALLY FASTER
+    characterized_inventory = characterized_inventory.tolil()
+
+    # Zero out the specified indices for all methods, except for the activity being evaluated
+    for idx in list_of_idx_to_remove:
+        characterized_inventory[:, idx] = 0
+
+    return characterized_inventory.tocsr()
+
