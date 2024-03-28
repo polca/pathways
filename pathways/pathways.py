@@ -325,10 +325,7 @@ def process_region(data: Tuple) -> dict[str, ndarray[Any, dtype[Any]] | list[int
 
             results = np.array(
                 [
-                    (
-                        characterization_matrix
-                        @ lca.inventory
-                    ).toarray()
+                    (characterization_matrix @ lca.inventory).toarray()
                     for _ in zip(range(use_distributions), lca)
                 ]
             )
