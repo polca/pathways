@@ -121,7 +121,7 @@ def get_lca_matrices(
         indices_array=a_indices,
         data_array=a_data,
         flip_array=a_sign,
-        distributions_array= a_distributions,
+        distributions_array=a_distributions,
     )
 
     dp.add_persistent_vector(
@@ -129,7 +129,7 @@ def get_lca_matrices(
         indices_array=b_indices,
         data_array=b_data,
         flip_array=b_sign,
-        distributions_array= b_distributions,
+        distributions_array=b_distributions,
     )
 
     return dp, A_inds, B_inds
@@ -222,7 +222,10 @@ def fill_characterization_factors_matrices(
 
     return matrix
 
-def remove_double_counting(characterized_inventory: csr_matrix, vars_info: dict, activity_idx: int) -> csr_matrix:
+
+def remove_double_counting(
+    characterized_inventory: csr_matrix, vars_info: dict, activity_idx: int
+) -> csr_matrix:
     """
     Remove double counting from a characterized inventory matrix for all activities except
     the activity being evaluated, across all methods.
@@ -237,7 +240,9 @@ def remove_double_counting(characterized_inventory: csr_matrix, vars_info: dict,
     if isinstance(characterized_inventory, np.ndarray):
         characterized_inventory = csr_matrix(characterized_inventory)
     elif not isinstance(characterized_inventory, csr_matrix):
-        raise TypeError("characterized_inventory must be a csr_matrix or a numpy array.")
+        raise TypeError(
+            "characterized_inventory must be a csr_matrix or a numpy array."
+        )
 
     # Gather all indices for which we want to avoid double counting, except the evaluated activity
     list_of_idx_to_remove = []
@@ -255,4 +260,3 @@ def remove_double_counting(characterized_inventory: csr_matrix, vars_info: dict,
         characterized_inventory[:, idx] = 0
 
     return characterized_inventory.tocsr()
-
