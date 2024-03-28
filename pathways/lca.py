@@ -92,8 +92,6 @@ def load_matrix_and_index(
         dtype=bwp.UNCERTAINTY_DTYPE,
     )
 
-    print(distributions_array[:5])
-
     return data_array, indices_array, flip_array, distributions_array
 
 
@@ -144,7 +142,7 @@ def get_lca_matrices(
         matrix="biosphere_matrix",
         indices_array=b_indices,
         data_array=b_data,
-        # flip_array=b_sign,
+        flip_array=b_sign,
         distributions_array=b_distributions,
     )
 

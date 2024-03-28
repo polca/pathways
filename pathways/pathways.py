@@ -312,8 +312,9 @@ def process_region(data: Tuple) -> dict[str, ndarray[Any, dtype[Any]] | list[int
             "demand": demand.values * float(unit_vector),
         }
 
+        lca.lci(demand={idx: demand.values * float(unit_vector)})
+
         if use_distributions == 0:
-            lca.lci(demand={idx: demand.values * float(unit_vector)})
             characterized_inventory = (
                 characterization_matrix @ lca.inventory
             ).toarray()
@@ -322,29 +323,18 @@ def process_region(data: Tuple) -> dict[str, ndarray[Any, dtype[Any]] | list[int
             # Use distributions for LCA calculations
             # next(lca) is a generator that yields the inventory matrix
 
-            for _ in range(use_distributions):
-                next(lca)
-                lca.lci(demand={idx: demand.values * float(unit_vector)})
-                print(lca.inventory.shape)
-                print(lca.inventory.sum())
-
             results = np.array(
                 [
                     (
                         characterization_matrix
-                        @ lca.lci(
-                            demand={idx: demand.values * float(unit_vector)}
-                        ).inventory
+                        @ lca.inventory
                     ).toarray()
                     for _ in zip(range(use_distributions), lca)
                 ]
             )
 
-            print(results.shape)
-            for result in results:
-                print(result.sum(axis=-1))
-
-            characterized_inventory = np.empty_like(lca.inventory)
+            # calculate quantiles along the first dimension
+            characterized_inventory = np.quantile(results, [0.05, 0.5, 0.95], axis=0)
 
         # vars_info = fetch_indices(mapping, regions, variables, A_index, Geomap(model))
         # characterized_inventory = remove_double_counting(characterized_inventory=characterized_inventory,
