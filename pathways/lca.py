@@ -73,10 +73,26 @@ def load_matrix_and_index(
     )
 
     data_array = array[:, 2]
-    # make a boolean scalar array to store the sign of the data
-    flip_array = array[:, -1]
 
-    distributions_array = array[:, 3:-1]
+    # make a boolean scalar array to store the sign of the data
+    flip_array = array[:, -1].astype(bool)
+
+    distributions_array = np.array(
+        list(
+            zip(
+                array[:, 3].astype(int), # uncertainty type
+                array[:, 4].astype(float), # loc
+                array[:, 5].astype(float), # scale
+                array[:, 6].astype(float), # shape
+                array[:, 7].astype(float), # minimum
+                array[:, 8].astype(float), # maximum
+                array[:, 9].astype(bool), # negative
+            )
+        ),
+        dtype=bwp.UNCERTAINTY_DTYPE,
+    )
+
+    print(distributions_array[:5])
 
     return data_array, indices_array, flip_array, distributions_array
 
@@ -128,56 +144,11 @@ def get_lca_matrices(
         matrix="biosphere_matrix",
         indices_array=b_indices,
         data_array=b_data,
-        flip_array=b_sign,
+        #flip_array=b_sign,
         distributions_array= b_distributions,
     )
 
     return dp, A_inds, B_inds
-
-
-def load_uncertainty_data(
-    file_path: Path, technosphere_array, technosphere_indices
-) -> np.ndarray:
-    """
-    Reads a CSV file and returns its contents as a CSR sparse matrix.
-
-    :param file_path: The path to the CSV file.
-    :type file_path: Path
-    :return: A CSR sparse matrix.
-    :rtype: csr_matrix
-    """
-    # Load the data from the CSV file
-    array = np.genfromtxt(file_path, delimiter=";", skip_header=1)
-
-    print(array.shape)
-
-    # remove the two first columns
-    uncertainty_data = array[:, 2:]
-    indices = array[:, :2]
-
-    print("data shape: ", uncertainty_data.shape)
-    print("technosphere array shape: ", technosphere_array.shape)
-    data_array = np.empty((technosphere_array.shape[0], 7))
-    print("data array shape: ", data_array.shape)
-    data_array[:, 0] = 0
-    data_array[:, 1] = technosphere_array
-    data_array[:, 2:6] = np.nan
-    data_array[:, -1] = False
-
-    # iterate through indices, and find the position of the indices in technosphere_indices
-    for i, idx in enumerate(indices):
-        print("i: ", i)
-        print("idx: ", idx)
-        row = np.where(
-            (technosphere_indices[:, 0] == idx[0])
-            & (technosphere_indices[:, 1] == idx[1])
-        )[0][0]
-        print("row: ", row)
-        data_array[row, 2:6] = uncertainty_data[i]
-        print(data_array[row])
-
-    return array
-
 
 def fill_characterization_factors_matrices(
     biosphere_flows: dict, methods, biosphere_dict, debug=False

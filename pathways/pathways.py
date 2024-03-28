@@ -13,6 +13,7 @@ from multiprocessing import Pool, cpu_count
 from typing import Any, Dict, List, Optional, Tuple
 
 import bw2calc as bc
+from bw2calc.monte_carlo import MonteCarloLCA
 import numpy as np
 import pandas as pd
 import pyprind
@@ -269,6 +270,7 @@ def process_region(data: Tuple) -> dict[str, ndarray[Any, dtype[Any]] | list[int
         lca,
         characterization_matrix,
         debug,
+        use_distributions,
     ) = data
 
     variables_demand = {}
@@ -310,8 +312,34 @@ def process_region(data: Tuple) -> dict[str, ndarray[Any, dtype[Any]] | list[int
             "demand": demand.values * float(unit_vector),
         }
 
-        lca.lci(demand={idx: demand.values * float(unit_vector)})
-        characterized_inventory = (characterization_matrix @ lca.inventory).toarray()
+
+        if use_distributions == 0:
+            lca.lci(demand={idx: demand.values * float(unit_vector)})
+            characterized_inventory = (characterization_matrix @ lca.inventory).toarray()
+
+        else:
+            # Use distributions for LCA calculations
+            # next(lca) is a generator that yields the inventory matrix
+
+            for _ in range(use_distributions):
+                next(lca)
+                lca.lci(demand={idx: demand.values * float(unit_vector)})
+                print(lca.inventory.shape)
+                print(lca.inventory.sum())
+
+
+            results = np.array([
+                (characterization_matrix @ lca.lci(demand={idx: demand.values * float(unit_vector)}).inventory).toarray() for _ in zip(range(use_distributions), lca)
+            ])
+
+            print(results.shape)
+            for result in results:
+                print(result.sum(axis=-1))
+
+
+            characterized_inventory = np.empty_like(lca.inventory)
+
+
         # vars_info = fetch_indices(mapping, regions, variables, A_index, Geomap(model))
         # characterized_inventory = remove_double_counting(characterized_inventory=characterized_inventory,
         #                                                  vars_info=vars_idx,
@@ -450,14 +478,24 @@ def _calculate_year(args):
         "acts_location_idx_array": acts_location_idx_array,
     }
 
-    lca = bc.LCA(
-        demand={0: 1},
-        data_objs=[
-            bw_datapackage,
-        ],
-        use_distributions=use_distributions,
-    )
-    lca.lci(factorize=True)
+    if use_distributions == 0:
+        lca = bc.LCA(
+            demand={0: 1},
+            data_objs=[
+                bw_datapackage,
+            ],
+            use_distributions=True if use_distributions > 0 else False,
+        )
+        lca.lci(factorize=True)
+    else:
+        lca = MonteCarloLCA(
+            demand={0: 1},
+            data_objs=[
+                bw_datapackage,
+            ],
+            use_distributions=True,
+        )
+        lca.lci()
 
     characterization_matrix = fill_characterization_factors_matrices(
         biosphere_indices, methods, lca.dicts.biosphere, debug
@@ -495,6 +533,7 @@ def _calculate_year(args):
                 lca,
                 characterization_matrix,
                 debug,
+                use_distributions,
             )
         )
 
@@ -693,7 +732,7 @@ class Pathways:
         flows: Optional[List[str]] = None,
         multiprocessing: bool = False,
         demand_cutoff: float = 1e-3,
-        use_distributions: bool = False,
+        use_distributions: int = 0,
     ) -> None:
         """
         Calculate Life Cycle Assessment (LCA) results for given methods, models, scenarios, regions, and years.
@@ -725,6 +764,7 @@ class Pathways:
         :type data_type: np.dtype, default is np.float64
         :param demand_cutoff: Float. If the total demand for a given variable is less than this value, the variable is skipped.
         :type demand_cutoff: float, default is 1e-3
+        :param use_distributions: Integer. If non zero, use distributions for LCA calculations.
         """
 
         self.scenarios = harmonize_units(self.scenarios, variables)
