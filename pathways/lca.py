@@ -80,13 +80,13 @@ def load_matrix_and_index(
     distributions_array = np.array(
         list(
             zip(
-                array[:, 3].astype(int),  # uncertainty type
-                array[:, 4].astype(float),  # loc
-                array[:, 5].astype(float),  # scale
-                array[:, 6].astype(float),  # shape
-                array[:, 7].astype(float),  # minimum
-                array[:, 8].astype(float),  # maximum
-                array[:, 9].astype(bool),  # negative
+                array[:, 3].astype(int), # uncertainty type
+                array[:, 4].astype(float), # loc
+                array[:, 5].astype(float), # scale
+                array[:, 6].astype(float), # shape
+                array[:, 7].astype(float), # minimum
+                array[:, 8].astype(float), # maximum
+                array[:, 9].astype(bool), # negative
             )
         ),
         dtype=bwp.UNCERTAINTY_DTYPE,
@@ -144,12 +144,11 @@ def get_lca_matrices(
         matrix="biosphere_matrix",
         indices_array=b_indices,
         data_array=b_data,
-        # flip_array=b_sign,
-        distributions_array=b_distributions,
+        #flip_array=b_sign,
+        distributions_array= b_distributions,
     )
 
     return dp, A_inds, B_inds
-
 
 def fill_characterization_factors_matrices(
     biosphere_flows: dict, methods, biosphere_dict, debug=False
