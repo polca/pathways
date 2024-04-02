@@ -480,7 +480,6 @@ def _calculate_year(args):
             data_objs=[
                 bw_datapackage,
             ],
-            use_distributions=True if use_distributions > 0 else False,
         )
         lca.lci(factorize=True)
     else:
@@ -819,7 +818,6 @@ class Pathways:
 
             self.lca_results = create_lca_results_array(
                 methods=methods,
-                B_indices=biosphere_index,
                 years=years,
                 regions=regions,
                 locations=locations,
@@ -827,7 +825,7 @@ class Pathways:
                 scenarios=scenarios,
                 classifications=self.classifications,
                 mapping=self.mapping,
-                flows=flows,
+                use_distributions=True if use_distributions > 0 else False,
             )
 
         # Iterate over each combination of model, scenario, and year
@@ -912,6 +910,7 @@ class Pathways:
             for region, data in result.items()
             if region != "other"
         }
+
         # use pyprint to display progress
         bar = pyprind.ProgBar(len(results))
         for coord, result in results.items():
@@ -936,17 +935,32 @@ class Pathways:
                         summed_data = d[..., idx].sum(axis=-1)
 
                         if idx.size > 0:
-                            self.lca_results.loc[
-                                {
-                                    "region": region,
-                                    "model": model,
-                                    "scenario": scenario,
-                                    "year": year,
-                                    "act_category": cat,
-                                    "location": loc,
-                                    "variable": list(variables.keys()),
-                                }
-                            ] = summed_data
+                            try:
+                                self.lca_results.loc[
+                                    {
+                                        "region": region,
+                                        "model": model,
+                                        "scenario": scenario,
+                                        "year": year,
+                                        "act_category": cat,
+                                        "location": loc,
+                                        "variable": list(variables.keys()),
+                                    }
+                                ] = summed_data
+
+                            except:
+                                print("summed data shape", summed_data.shape)
+                                print(self.lca_results.loc[
+                                          {
+                                              "region": region,
+                                              "model": model,
+                                              "scenario": scenario,
+                                              "year": year,
+                                              "act_category": cat,
+                                              "location": loc,
+                                              "variable": list(variables.keys()),
+                                          }
+                                      ].shape)
 
     def characterize_planetary_boundaries(
         self,

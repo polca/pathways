@@ -160,7 +160,6 @@ def load_units_conversion():
 
 def create_lca_results_array(
     methods: [List[str], None],
-    B_indices: Dict,
     years: List[int],
     regions: List[str],
     locations: List[str],
@@ -168,25 +167,31 @@ def create_lca_results_array(
     scenarios: List[str],
     classifications: dict,
     mapping: dict,
-    flows: List[str] = None,
+    use_distributions: bool = False,
 ) -> xr.DataArray:
     """
     Create an xarray DataArray to store Life Cycle Assessment (LCA) results.
 
     The DataArray has dimensions `act_category`, `impact_category`, `year`, `region`, `model`, and `scenario`.
 
-    :param methods: List of impact assessment methods.
+    :param methods: A list of impact categories.
     :type methods: List[str]
-    :param years: List of years to consider in the LCA results.
+    :param years: A list of years.
     :type years: List[int]
-    :param regions: List of regions to consider in the LCA results.
+    :param regions: A list of regions.
     :type regions: List[str]
-    :param locations: List of locations to consider in the LCA results.
+    :param locations: A list of locations.
     :type locations: List[str]
-    :param models: List of models to consider in the LCA results.
+    :param models: A list of models.
     :type models: List[str]
-    :param scenarios: List of scenarios to consider in the LCA results.
+    :param scenarios: A list of scenarios.
     :type scenarios: List[str]
+    :param classifications: A dictionary mapping activities to categories.
+    :type classifications: dict
+    :param mapping: A dictionary mapping scenario variables to LCA datasets.
+    :type mapping: dict
+    :param use_distributions: A boolean indicating whether to use distributions.
+    :type use_distributions: bool
 
     :return: An xarray DataArray with the appropriate coordinates and dimensions to store LCA results.
     :rtype: xr.DataArray
@@ -201,7 +206,15 @@ def create_lca_results_array(
         "location": locations,
         "model": models,
         "scenario": scenarios,
+        "impact_category": methods,
     }
+
+    if use_distributions is True:
+        coords.update(
+            {
+                "quantile": [0.05, 0.5, 0.95]
+            }
+        )
 
     dims = (
         len(coords["act_category"]),
@@ -211,18 +224,11 @@ def create_lca_results_array(
         len(locations),
         len(models),
         len(scenarios),
+        len(methods),
     )
 
-    if methods is not None:
-        coords["impact_category"] = methods
-        dims += (len(methods),)
-    else:
-        if flows is not None:
-            coords["impact_category"] = flows
-            dims += (len(flows),)
-        else:
-            coords["impact_category"] = [" - ".join(a) for a in list(B_indices.keys())]
-            dims += (len(B_indices),)
+    if use_distributions is True:
+        dims += (3,)
 
     # Create the xarray DataArray with the defined coordinates and dimensions.
     # The array is initialized with zeros.
