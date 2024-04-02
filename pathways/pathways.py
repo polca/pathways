@@ -947,17 +947,19 @@ class Pathways:
 
                             except:
                                 print("summed data shape", summed_data.shape)
-                                print(self.lca_results.loc[
-                                          {
-                                              "region": region,
-                                              "model": model,
-                                              "scenario": scenario,
-                                              "year": year,
-                                              "act_category": cat,
-                                              "location": loc,
-                                              "variable": list(variables.keys()),
-                                          }
-                                      ].shape)
+                                print(
+                                    self.lca_results.loc[
+                                        {
+                                            "region": region,
+                                            "model": model,
+                                            "scenario": scenario,
+                                            "year": year,
+                                            "act_category": cat,
+                                            "location": loc,
+                                            "variable": list(variables.keys()),
+                                        }
+                                    ].shape
+                                )
 
     def characterize_planetary_boundaries(
         self,

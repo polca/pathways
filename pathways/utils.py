@@ -210,11 +210,7 @@ def create_lca_results_array(
     }
 
     if use_distributions is True:
-        coords.update(
-            {
-                "quantile": [0.05, 0.5, 0.95]
-            }
-        )
+        coords.update({"quantile": [0.05, 0.5, 0.95]})
 
     dims = (
         len(coords["act_category"]),
