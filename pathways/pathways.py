@@ -932,6 +932,7 @@ class Pathways:
                         summed_data = d[..., idx].sum(axis=-1)
 
                         if idx.size > 0:
+
                             try:
                                 self.lca_results.loc[
                                     {
@@ -946,20 +947,18 @@ class Pathways:
                                 ] = summed_data
 
                             except:
-                                print("summed data shape", summed_data.shape)
-                                print(
-                                    self.lca_results.loc[
-                                        {
-                                            "region": region,
-                                            "model": model,
-                                            "scenario": scenario,
-                                            "year": year,
-                                            "act_category": cat,
-                                            "location": loc,
-                                            "variable": list(variables.keys()),
-                                        }
-                                    ].shape
-                                )
+                                # transpose quantile dimension to the penultimate dimension
+                                self.lca_results.loc[
+                                    {
+                                        "region": region,
+                                        "model": model,
+                                        "scenario": scenario,
+                                        "year": year,
+                                        "act_category": cat,
+                                        "location": loc,
+                                        "variable": list(variables.keys()),
+                                    }
+                                ] = summed_data.transpose(0, 2, 1)
 
     def characterize_planetary_boundaries(
         self,

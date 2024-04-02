@@ -142,7 +142,6 @@ def get_lca_matrices(
         matrix="biosphere_matrix",
         indices_array=b_indices,
         data_array=b_data,
-        flip_array=b_sign,
         distributions_array=b_distributions,
     )
 
