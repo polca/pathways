@@ -1,0 +1,340 @@
+### When different technology configurations or alternatives are found,
+### we are taking the best performing technology in terms of GWP.
+Wind: ### Check if IAMs make the distinction between onshore and offshore
+  onshore:
+    - name: electricity production, wind, <1MW turbine, onshore
+      reference product: electricity, high voltage
+      unit: kilowatt hour
+      2020:
+        value: 0.96
+      2050:
+        min: 0.83
+        max: 0.96
+        distribution: uniform
+      create copy: False
+  offshore:
+    - name: electricity production, wind, 1-3MW turbine, offshore
+      reference product: electricity, high voltage
+      unit: kilowatt hour
+      2020:
+        value: 0.04
+      2050:
+        min: 0.04
+        max: 0.17
+        distribution: uniform
+      create copy: False
+PV:
+  c-Si:
+    - name: electricity production, photovoltaic, at 93 kWp slanted-roof, multi-Si, laminated, integrated
+      reference product: electricity production, photovoltaic, at 93 kWp slanted-roof, multi-Si, laminated, integrated
+      unit: kilowatt hour
+      2020:
+        value: 0.9440
+      2050:
+        min: 0.6250
+        max: 0.9440
+        distribution: uniform
+      create copy: False
+  CdTe:
+    - name: electricity production, photovoltaic, at 3kWp slanted-roof, CdTe, panel, mounted
+      reference product: electricity production, photovoltaic, at 3kWp slanted-roof, CdTe, panel, mounted
+      unit: kilowatt hour
+      2020:
+        value: 0.0400
+      2050:
+        min: 0.0400
+        max: 0.2500
+        distribution: uniform
+      create copy: False
+  CIGS:
+    - name: electricity production, photovoltaic, 3kWp slanted-roof installation, CdTe, laminated, integrated
+      reference product: electricity, low voltage
+      unit: kilowatt hour
+      2020:
+        value: 0.015
+      2050:
+        min: 0.015
+        max: 0.1250
+        distribution: uniform
+      create copy: False
+  a-Si:
+    - name: electricity production, photovoltaic, 3kWp slanted-roof installation, a-Si, laminated, integrated
+      reference product: electricity, low voltage
+      unit: kilowatt hour
+      2020:
+        value: 0.0010
+      2050:
+        min: 0.0000
+        max: 0.0090
+        distribution: uniform
+      create copy: False
+  Perovskite:
+    - name: null
+      reference product: null
+      unit: kilowatt hour
+      2020:
+        value: 0.0000
+      2050:
+        min: 0.0000
+        max: 0.3000
+        distribution: uniform
+      create copy: False
+  GaAs:
+    - name: null
+      reference product: null
+      unit: kilowatt hour
+      2020:
+        value: 0.0000
+      2050:
+        min: 0.0000
+        max: 0.1500
+        distribution: uniform
+      create copy: False
+CSP:
+  Parabolic trough:
+    - name: electricity production, solar thermal parabolic trough, 50 MW
+      reference product: electricity, high voltage
+      unit: kilowatt hour
+      2020:
+        value: 0.9474
+      2050:
+        min: 0.5
+        max: 0.95
+        distribution: uniform
+      create copy: False
+  Solar tower:
+    - name: electricity production, solar tower power plant, 20 MW
+      reference product: electricity, high voltage
+      unit: kilowatt hour
+      2020:
+        value: 0.0526
+      2050:
+        min: 0.05
+        max: 0.5
+        distribution: uniform
+      create copy: False
+Fuel cell - Stationary:
+  PEMFC:
+    - name: electricity, residential, by conversion of hydrogen using fuel cell, PEM, allocated by exergy, distributed by pipeline, produced by Electrolysis, PEM using electricity from grid
+      reference product: electricity, from residential heating system
+      unit: kilowatt hour
+      2020:
+        value: 0.1053
+      2050:
+        min: 0.1150
+        max: 0.85
+        distribution: uniform
+      create copy: False
+  SOFC:
+    - name: electricity, residential, by conversion of hydrogen using fuel cell, SOFC, allocated by exergy, distributed by pipeline, produced by Electrolysis, PEM using electricity from grid
+      reference product: electricity, from residential heating system
+      unit: kilowatt hour
+      2020:
+        value: 0.3684
+      2050:
+        min: 0.117
+        max:  0.40
+        distribution: uniform
+      create copy: False
+  PAFC:
+    - name: null
+      reference product: null
+      unit: kilowatt hour
+      2020:
+        value: 0.5263
+      2050:
+        min: 0.0
+        max: 0.4750
+        distribution: uniform
+      create copy: False
+Electrolyzer:
+  PEM:
+    - name: hydrogen production, gaseous, 30 bar, from PEM electrolysis, from grid electricity
+      reference product: hydrogen, gaseous, 30 bar
+      unit: kilogram
+      2020:
+        value: 0.5
+      2050:
+        min: 0.5057
+        max: 0.75
+        distribution: uniform
+      create copy: False
+  Alkaline:
+    - name: hydrogen production, gaseous, 20 bar, from AEC electrolysis, from grid electricity
+      reference product: hydrogen, gaseous, 20 bar
+      unit: kilogram
+      2020:
+        value: 0.50
+      2050:
+        min: 0.0
+        max: 0.4943
+        distribution: uniform
+      create copy: False
+  HTEL:
+    - name: hydrogen production, gaseous, 1 bar, from SOEC electrolysis, from grid electricity
+      reference product: hydrogen, gaseous, 1 bar
+      unit:
+      2020:
+        value: 0.0
+      2050:
+        min: 0.0
+        max: 0.25
+        distribution: uniform
+      create copy: False
+Battery-Mobile:
+  NMC111:
+    - name: battery cell, NMC-111 # NMC alternatives w/ hyphen: version from E. Crenna et al. (2021)
+      reference product: battery cell
+      unit: kilogram
+      2020:
+        value: 0.25
+      2050:
+        min: 0.0
+        max: 0.22
+        distribution: uniform
+      create copy: False
+  NMC622:
+    - name: battery cell, NMC-622 # This is the activity currently link to the transport needs
+      reference product: battery cell
+      unit: kilogram
+      2020:
+        value: 0.45
+      2050:
+        min: 0.0
+        max: 0.45
+        distribution: uniform
+      create copy: False
+  NMC811:
+    - name: battery cell, NMC-811
+      reference product: battery cell
+      unit: kilogram
+      2020:
+        value: 0.05
+      2050:
+        min: 0.0
+        max: 0.75
+        distribution: uniform
+      create copy: False
+  NCA:
+    - name: battery cell, NCA
+      reference product: battery cell
+      unit: kilogram
+      2020:
+        value: 0.15
+      2050:
+        min: 0.0
+        max: 0.15
+        distribution: uniform
+      create copy: False
+  LFP:
+    - name: battery cell, LFP
+      reference product: battery cell
+      unit: kilogram
+      2020:
+        value: 0.1
+      2050:
+        min: 0.0
+        max: 0.1
+        distribution: uniform
+      create copy: False
+  LiS:
+    - name: battery cell production, LiS
+      reference product: battery cell, LiS
+      unit: kilogram
+      2020:
+        value: 0.0
+      2050:
+        min: 0.0
+        max: 0.9
+        distribution: uniform
+      create copy: False
+  LiO2:
+    - name: battery cell production, Li-O2
+      reference product: battery cell, Li-O2
+      unit: kilogram
+      2020:
+        value: 0.0
+      2050:
+        min: 0.0
+        max: 0.1
+        distribution: uniform
+      create copy: False
+#### ON BATTERIES, WE WILL BE WORKING WITH KILOGRAMS... FORGETTING ABOUT ENERGY DENSITIES :(
+Battery-Stationary: ### Home storage uses NMC811 (w/o hyphen) in the current premise version
+  NMC111:
+    - name: market for battery cell, Li-ion, NMC111
+      reference product: battery cell, Li-ion, NMC111
+      unit: kilogram
+      2020:
+        value: 0.24
+      2050:
+        min: 0.0
+        max: 0.205
+        distribution: uniform
+      create copy: False
+  NMC622:
+    - name: battery cell, NMC-622 # This activity is the same as before - We need to create a copy of the activity
+      reference product: battery cell
+      unit: kilogram
+      2020:
+        value: 0.13
+      2050:
+        min: 0.02
+        max: 0.30
+        distribution: uniform
+      create copy: True
+  NMC811:
+    - name: market for battery cell, Li-ion, NMC811 # Connected to home storage system
+      reference product: battery cell, Li-ion, NMC811
+      unit: kilogram
+      2020:
+        value: 0.03
+      2050:
+        min: 0.039
+        max: 0.44
+        distribution: uniform
+      create copy: False
+  Lead-Acid:
+    - name: market for battery, lead acid, rechargeable, stationary
+      reference product: battery, lead acid, rechargeable, stationary
+      unit: kilogram
+      2020:
+        value: 0.10
+      2050:
+        min: 0.0
+        max: 0.095
+        distribution: uniform
+      create copy: False
+  LFP:
+    - name: market for battery cell, Li-ion, LFP
+      reference product: battery cell, Li-ion, LFP
+      unit: kilogram
+      2020:
+        value: 0.40
+      2050:
+        min: 0.17
+        max: 0.40
+        distribution: uniform
+      create copy: False
+  SIB:
+    - name: battery cell production, SIB, with NMMT cathode and fossil-HC anode
+      reference product: battery cell, SIB, with NMMT cathode and fossil-HC anode
+      unit: kilogram
+      2020:
+        value: 0.05
+      2050:
+        min: 0.05
+        max: 0.33
+        distribution: uniform
+      create copy: False
+  Redox-Flow: # CHECK WITH ROMAIN: Different unit + Modeling in the LCA
+    - name: vanadium-redox flow battery system assembly, 8.3 megawatt hour
+      reference product: vanadium-redox flow battery system
+      unit: unit # DIFFERENT UNIT!!!
+      2020:
+        value: 0.05
+      2050:
+        min: 0.0.05
+        max: 0.33
+        distribution: uniform
+      create copy: False

@@ -28,6 +28,9 @@ from .filesystem_constants import DATA_DIR, DIR_CACHED_DB
 from .lca import (
     fill_characterization_factors_matrices,
     get_lca_matrices,
+    get_matrix_arrays,
+    get_indices,
+    # get_subshares_matrix,
     remove_double_counting,
 )
 from .lcia import get_lcia_method_names
@@ -38,9 +41,11 @@ from .utils import (
     display_results,
     get_unit_conversion_factors,
     harmonize_units,
+    load_subshares,
     load_classifications,
     load_numpy_array_from_disk,
     load_units_conversion,
+    get_dirpath
 )
 
 warnings.filterwarnings("ignore")
@@ -127,14 +132,61 @@ def resize_scenario_data(
 
     return scenario_data
 
+def subshares_indices(regions, A_index, geo):
+    """
+    Fetch the indices in the technosphere matrix from the activities in technologies_shares.yaml in
+    the given regions.
+    :param regions: List of regions
+    :param A_index: Dictionary with the indices of the activities in the technosphere matrix.
+    :param geo: Geomap object.
+    :return: dictionary of technology categories and their indices.
+    """
+    technologies_dict = load_subshares()
+
+    indices_dict = {}
+
+    for region in regions:
+        for tech_category, techs in technologies_dict.items():
+            if tech_category not in indices_dict:
+                indices_dict[tech_category] = {}
+            for tech_type, tech_list in techs.items():
+                for tech in tech_list:
+                    name = tech.get("name")
+                    ref_prod = tech.get("reference product")
+                    unit = tech.get("unit")
+                    activity = (name, ref_prod, unit, region)
+                    activity_index = _get_activity_indices([activity], A_index, geo)[0]
+
+                    value_2020 = tech.get(2020, {}).get("value")
+                    min_2050 = tech.get(2050, {}).get("min")
+                    max_2050 = tech.get(2050, {}).get("max")
+                    distribution_2050 = tech.get(2050, {}).get("distribution")
+
+                    if region not in indices_dict[tech_category]:
+                        indices_dict[tech_category][region] = {}
+                    indices_dict[tech_category][region][tech_type] = {
+                        'idx': activity_index,
+                        2020: {
+                            "value": value_2020
+                        },
+                        2050: {
+                            "min": min_2050,
+                            "max": max_2050,
+                            "distribution": distribution_2050
+                        },
+                    }
+
+    return indices_dict
 
 def fetch_indices(mapping, regions, variables, A_index, geo):
     """
     Fetch the indices for the given activities in
     the technosphere matrix.
-    :param variables:
-    :param A_index:
-    :param geo:
+    :param mapping: Mapping between scenario variables and LCA datasets.
+    :param regions: List of regions.
+    :param variables: List of variables.
+    :param A_index: Dictionary with the indices of the activities in the technosphere matrix.
+    :param geo: Geomap object.
     :return:
     """
 
@@ -182,6 +234,7 @@ def fetch_indices(mapping, regions, variables, A_index, geo):
         }
 
     return vars_idx
+
 
 
 def fetch_inventories_locations(A_index: Dict[str, Tuple[str, str, str]]) -> List[str]:
@@ -318,7 +371,6 @@ def process_region(data: Tuple) -> dict[str, ndarray[Any, dtype[Any]] | list[int
             characterized_inventory = (
                 characterization_matrix @ lca.inventory
             ).toarray()
-
         else:
             # Use distributions for LCA calculations
             # next(lca) is a generator that yields the inventory matrix
@@ -380,6 +432,7 @@ def _calculate_year(args):
         reverse_classifications,
         debug,
         use_distributions,
+        subshares
     ) = args
 
     print(f"------ Calculating LCA results for {year}...")
@@ -394,21 +447,20 @@ def _calculate_year(args):
 
     # Try to load LCA matrices for the given model, scenario, and year
     try:
-        bw_datapackage, technosphere_indices, biosphere_indices = get_lca_matrices(
-            datapackage, model, scenario, year
-        )
-
+        dirpath = get_dirpath(datapackage, model, scenario, year)
     except FileNotFoundError:
         # If LCA matrices can't be loaded, skip to the next iteration
         if debug:
             logging.warning(f"Skipping {model}, {scenario}, {year}, as data not found.")
         return
 
+    A_arrays = get_matrix_arrays(dirpath, matrix_type="A")
+    B_arrays = get_matrix_arrays(dirpath, matrix_type="B")
+    technosphere_indices, biosphere_indices = get_indices(dirpath)
+    bw_datapackage = get_lca_matrices(A_arrays, B_arrays)
+
     # Fetch indices
     vars_info = fetch_indices(mapping, regions, variables, technosphere_indices, geo)
-
-    # Remove contribution from activities in other activities
-    # A = remove_double_counting(A, vars_info)
 
     # check unclassified activities
     missing_classifications = check_unclassified_activities(
@@ -479,7 +531,7 @@ def _calculate_year(args):
             ],
         )
         lca.lci(factorize=True)
-    else:
+    elif use_distributions != 0 and subshares == False:
         lca = MonteCarloLCA(
             demand={0: 1},
             data_objs=[
@@ -488,6 +540,22 @@ def _calculate_year(args):
             use_distributions=True,
         )
         lca.lci()
+    else:
+
+        subshares_indices = subshares_indices(regions, technosphere_indices, geo)
+
+        bw_correlated = get_subshares_matrix(A_arrays, subshares_indices, year)
+
+        lca = MonteCarloLCA(
+            demand={0: 1},
+            data_objs=[
+                bw_datapackage, bw_correlated
+            ],
+            use_distributions=True,
+            use_arrays=True,
+        )
+        lca.lci()
+
 
     characterization_matrix = fill_characterization_factors_matrices(
         biosphere_indices, methods, lca.dicts.biosphere, debug
@@ -725,6 +793,7 @@ class Pathways:
         multiprocessing: bool = False,
         demand_cutoff: float = 1e-3,
         use_distributions: int = 0,
+        subshares: bool = False,
     ) -> None:
         """
         Calculate Life Cycle Assessment (LCA) results for given methods, models, scenarios, regions, and years.
@@ -850,6 +919,7 @@ class Pathways:
                             self.reverse_classifications,
                             self.debug,
                             use_distributions,
+                            subshares
                         )
                         for year in years
                     ]
@@ -884,6 +954,7 @@ class Pathways:
                                 self.reverse_classifications,
                                 self.debug,
                                 use_distributions,
+                                subshares
                             )
                         )
                         for year in years
@@ -891,6 +962,9 @@ class Pathways:
 
         # remove None values in results
         results = {k: v for k, v in results.items() if v is not None}
+
+        test = subshares_indices(regions, technosphere_index, Geomap(model=model))
+        print(test)
 
         self.fill_in_result_array(results)
 
