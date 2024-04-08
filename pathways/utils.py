@@ -1,10 +1,10 @@
+import math
 from pathlib import Path
 from typing import Any, Dict, List, Tuple, Union
 
 import numpy as np
 import xarray as xr
 import yaml
-import math
 
 from .filesystem_constants import DATA_DIR, DIR_CACHED_DB
 
@@ -14,10 +14,10 @@ SUBSHARES = DATA_DIR / "technologies_shares.yaml"
 
 
 def get_dirpath(
-        datapackage: str,
-        model: str,
-        scenario: str,
-        year: int,
+    datapackage: str,
+    model: str,
+    scenario: str,
+    year: int,
 ) -> Path:
     """
     Get the directory path for a specific year.
@@ -27,12 +27,15 @@ def get_dirpath(
     :rtype: Path
     """
 
-    dirpath = Path(datapackage).parent / "inventories" / model.lower() / scenario / str(year)
+    dirpath = (
+        Path(datapackage).parent / "inventories" / model.lower() / scenario / str(year)
+    )
 
     if not dirpath.exists():
         raise FileNotFoundError(f"Directory {dirpath} does not exist.")
 
     return dirpath
+
 
 def load_classifications():
     """Load the activities classifications."""
@@ -302,6 +305,7 @@ def load_numpy_array_from_disk(filepath):
 
     return np.load(filepath, allow_pickle=True)
 
+
 def load_subshares() -> dict:
     """
     Load a YAML file and return its content as a Python dictionary.
@@ -313,6 +317,7 @@ def load_subshares() -> dict:
 
     adjust_subshares(data)
     return data
+
 
 def adjust_subshares(data):
     """
@@ -331,9 +336,9 @@ def adjust_subshares(data):
         for subcategory, tech_list in technologies.items():
             for tech in tech_list:
                 if 2020 in tech:
-                    value = tech[2020].get('value', 0)
+                    value = tech[2020].get("value", 0)
                     total_2020_value += value
-                    if tech.get('name') is not None:
+                    if tech.get("name") is not None:
                         total_adjustable_value += value
 
         # Skip adjustment if no values or all values are named
@@ -346,14 +351,16 @@ def adjust_subshares(data):
         adjusted_total = 0
         for subcategory, tech_list in technologies.items():
             for tech in tech_list:
-                if 2020 in tech and tech.get('name') is not None:
-                    tech[2020]['value'] = tech[2020]['value'] * adjustment_factor
-                    adjusted_total += tech[2020]['value']
+                if 2020 in tech and tech.get("name") is not None:
+                    tech[2020]["value"] = tech[2020]["value"] * adjustment_factor
+                    adjusted_total += tech[2020]["value"]
 
         # Check if the adjusted total is close to 1.00, allowing a small margin for floating-point arithmetic
         if not math.isclose(adjusted_total, 1.00, rel_tol=1e-9):
             print(
-                f"Warning: Total of adjusted '2020' values in category '{category}' does not add up to 1.00 (Total: {adjusted_total})")
+                f"Warning: Total of adjusted '2020' values in category '{category}' does not add up to 1.00 (Total: {adjusted_total})"
+            )
+
 
 def get_visible_files(path):
     return [file for file in Path(path).iterdir() if not file.name.startswith(".")]
