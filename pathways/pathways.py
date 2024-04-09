@@ -7,10 +7,10 @@ LCA datasets, and LCA matrices.
 import csv
 import logging
 import uuid
+import warnings
 from collections import defaultdict
 from multiprocessing import Pool, cpu_count
 from typing import Any, List, Optional, Tuple
-import warnings
 
 import bw2calc as bc
 import numpy as np
@@ -25,30 +25,29 @@ from premise.geomap import Geomap
 
 from .data_validation import validate_datapackage
 from .filesystem_constants import DATA_DIR, DIR_CACHED_DB
-from .lca import (
-    fill_characterization_factors_matrices,
-    get_lca_matrices,
-)
+from .lca import fill_characterization_factors_matrices, get_lca_matrices
 from .lcia import get_lcia_method_names
 from .utils import (
     clean_cache_directory,
     create_lca_results_array,
     display_results,
+    fetch_indices,
+    fetch_inventories_locations,
     get_unit_conversion_factors,
     harmonize_units,
     load_classifications,
     load_numpy_array_from_disk,
     load_units_conversion,
     resize_scenario_data,
-    fetch_indices,
-    fetch_inventories_locations,
 )
-
 
 # remove warnings
 warnings.filterwarnings("ignore")
 
-def check_unclassified_activities(technosphere_indices: dict, classifications: dict) -> List:
+
+def check_unclassified_activities(
+    technosphere_indices: dict, classifications: dict
+) -> List:
     """
     Check if there are activities in the technosphere matrix that are not in the classifications.
     :param technosphere_indices: List of activities in the technosphere matrix.
@@ -68,7 +67,9 @@ def check_unclassified_activities(technosphere_indices: dict, classifications: d
     return missing_classifications
 
 
-def group_technosphere_indices(technosphere_indices: dict, group_by, group_values: list) -> dict:
+def group_technosphere_indices(
+    technosphere_indices: dict, group_by, group_values: list
+) -> dict:
     """
     Generalized function to group technosphere indices by an arbitrary attribute (category, location, etc.).
 
@@ -82,7 +83,11 @@ def group_technosphere_indices(technosphere_indices: dict, group_by, group_value
     acts_dict = {}
     for value in group_values:
         # Collect indices for activities belonging to the current group value
-        x = [int(technosphere_indices[a]) for a in technosphere_indices if group_by(a) == value]
+        x = [
+            int(technosphere_indices[a])
+            for a in technosphere_indices
+            if group_by(a) == value
+        ]
         acts_dict[value] = x
 
     return acts_dict
@@ -258,20 +263,16 @@ def _calculate_year(args):
     locations = lca_results.coords["location"].values.tolist()
     location_to_index = {location: index for index, location in enumerate(locations)}
 
-    acts_category_idx_dict = (
-        group_technosphere_indices(
-            technosphere_indices=technosphere_indices,
-            group_by=lambda x: classifications.get(x[:3], "unclassified"),
-            group_values=list(set(lca_results.coords["act_category"].values)),
-        )
+    acts_category_idx_dict = group_technosphere_indices(
+        technosphere_indices=technosphere_indices,
+        group_by=lambda x: classifications.get(x[:3], "unclassified"),
+        group_values=list(set(lca_results.coords["act_category"].values)),
     )
 
-    acts_location_idx_dict = (
-        group_technosphere_indices(
-            technosphere_indices=technosphere_indices,
-            group_by=lambda x: x[-1],
-            group_values=locations,
-        )
+    acts_location_idx_dict = group_technosphere_indices(
+        technosphere_indices=technosphere_indices,
+        group_by=lambda x: x[-1],
+        group_values=locations,
     )
 
     results["other"] = {
@@ -301,7 +302,7 @@ def _calculate_year(args):
         methods=methods,
         biosphere_matrix_dict=lca.dicts.biosphere,
         biosphere_dict=biosphere_indices,
-        debug=debug
+        debug=debug,
     )
 
     if debug:

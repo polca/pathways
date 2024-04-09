@@ -15,9 +15,11 @@ from .lcia import get_lcia_methods
 # If it isn't available, we fall back on scipy's spsolve.
 try:
     from pypardiso import spsolve
+
     print("Solver: pypardiso")
 except ImportError:
     from scikits.umfpack import spsolve
+
     print("Solver: scikits.umfpack")
 
 logging.basicConfig(
@@ -190,7 +192,11 @@ def fill_characterization_factors_matrices(
                     cfs.append((method, flow_name, idx, method_data[flow_name]))
 
     # Efficiently create the sparse matrix
-    matrix = sparse.csr_matrix((data, (cols, rows)), shape=(len(methods), len(biosphere_matrix_dict)), dtype=np.float64)
+    matrix = sparse.csr_matrix(
+        (data, (cols, rows)),
+        shape=(len(methods), len(biosphere_matrix_dict)),
+        dtype=np.float64,
+    )
 
     if debug:
         # sort l by method and flow

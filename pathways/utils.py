@@ -1,7 +1,7 @@
 import csv
+import logging
 from pathlib import Path
 from typing import Any, Dict, List, Tuple, Union
-import logging
 
 import numpy as np
 import xarray as xr
@@ -21,6 +21,7 @@ logging.basicConfig(
     format="%(asctime)s - %(levelname)s - %(module)s - %(message)s",
     datefmt="%Y-%m-%d %H:%M:%S",
 )
+
 
 def load_classifications():
     """Load the activities classifications."""
@@ -43,6 +44,7 @@ def load_classifications():
 
     return data
 
+
 def harmonize_units(scenario: xr.DataArray, variables: list) -> xr.DataArray:
     """
     Harmonize the units of a scenario. Some units are in PJ/yr, while others are in EJ/yr
@@ -59,7 +61,9 @@ def harmonize_units(scenario: xr.DataArray, variables: list) -> xr.DataArray:
         if all(x in ["PJ/yr", "EJ/yr", "PJ/yr."] for x in units):
             # convert to EJ/yr
             # create vector of conversion factors
-            conversion_factors = np.array([1e-3 if u in ("PJ/yr", "PJ/yr.") else 1 for u in units])
+            conversion_factors = np.array(
+                [1e-3 if u in ("PJ/yr", "PJ/yr.") else 1 for u in units]
+            )
             # multiply scenario by conversion factors
             scenario.loc[dict(variables=variables)] *= conversion_factors[
                 :, np.newaxis, np.newaxis
@@ -268,11 +272,12 @@ def resize_scenario_data(
 
     return scenario_data
 
+
 def _get_activity_indices(
-        activities: List[Tuple[str, str, str, str]],
-        technosphere_index: Dict[Tuple[str, str, str, str], Any],
-        geo: Geomap,
-        debug: bool = False
+    activities: List[Tuple[str, str, str, str]],
+    technosphere_index: Dict[Tuple[str, str, str, str], Any],
+    geo: Geomap,
+    debug: bool = False,
 ) -> List[int]:
     """
     Fetch the indices of activities in the technosphere matrix, optimized for efficiency.
@@ -310,12 +315,16 @@ def _get_activity_indices(
             indices.append(None)
 
             if debug:
-                logging.warning(f"Activity {activity} not found in the technosphere matrix.")
+                logging.warning(
+                    f"Activity {activity} not found in the technosphere matrix."
+                )
 
     return indices
 
 
-def fetch_indices(mapping: dict, regions: list, variables: list, technosphere_index: dict, geo: Geomap) -> dict:
+def fetch_indices(
+    mapping: dict, regions: list, variables: list, technosphere_index: dict, geo: Geomap
+) -> dict:
     """
     Fetch the indices for the given activities in the technosphere matrix.
 
@@ -338,7 +347,7 @@ def fetch_indices(mapping: dict, regions: list, variables: list, technosphere_in
         variable: (
             mapping[variable]["dataset"][0]["name"],
             mapping[variable]["dataset"][0]["reference product"],
-            mapping[variable]["dataset"][0]["unit"]
+            mapping[variable]["dataset"][0]["unit"],
         )
         for variable in variables
     }
@@ -348,7 +357,10 @@ def fetch_indices(mapping: dict, regions: list, variables: list, technosphere_in
 
     for region in regions:
         # Construct activities list for the current region
-        activities = [(name, ref_product, unit, region) for name, ref_product, unit in activities_info.values()]
+        activities = [
+            (name, ref_product, unit, region)
+            for name, ref_product, unit in activities_info.values()
+        ]
 
         # Use _get_activity_indices to fetch indices
         idxs = _get_activity_indices(activities, technosphere_index, geo)
@@ -368,7 +380,9 @@ def fetch_indices(mapping: dict, regions: list, variables: list, technosphere_in
     return vars_idx
 
 
-def fetch_inventories_locations(technosphere_indices: Dict[str, Tuple[str, str, str]]) -> List[str]:
+def fetch_inventories_locations(
+    technosphere_indices: Dict[str, Tuple[str, str, str]]
+) -> List[str]:
     """
     Fetch the locations of the inventories.
     :param technosphere_indices: Dictionary with the indices of the activities in the technosphere matrix.
