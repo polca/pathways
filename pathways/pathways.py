@@ -277,6 +277,7 @@ def process_region(data: Tuple) -> dict[str, ndarray[Any, dtype[Any]] | list[int
     d = []
 
     for v, variable in enumerate(variables):
+
         idx, dataset = vars_idx[variable]["idx"], vars_idx[variable]["dataset"]
         # Compute the unit conversion vector for the given activities
         dataset_unit = dataset[2]
@@ -295,8 +296,7 @@ def process_region(data: Tuple) -> dict[str, ndarray[Any, dtype[Any]] | list[int
             year=year,
         )
 
-        # If the total demand is zero, return None
-        if (
+        share = (
             demand
             / scenarios.sel(
                 region=region,
@@ -304,7 +304,10 @@ def process_region(data: Tuple) -> dict[str, ndarray[Any, dtype[Any]] | list[int
                 pathway=scenario,
                 year=year,
             ).sum(dim="variables")
-        ) < demand_cutoff:
+        )
+
+        # If the total demand is zero, return None
+        if share < demand_cutoff:
             continue
 
         variables_demand[variable] = {
@@ -346,7 +349,7 @@ def process_region(data: Tuple) -> dict[str, ndarray[Any, dtype[Any]] | list[int
                 f"ref.: {dataset[1]}, unit: {dataset[2][:50]}, idx: {idx},"
                 f"loc.: {dataset[3]}, demand: {round(float(demand.values * float(unit_vector)), 2)}, "
                 f"unit conv.: {unit_vector}, "
-                f"impact: {round(characterized_inventory.sum(axis=-1) / (demand.values * float(unit_vector)), 3)}. "
+                f"impact: {np.round(characterized_inventory.sum(axis=-1) / (demand.values * float(unit_vector)), 3)}. "
             )
 
     id_array = uuid.uuid4()
@@ -371,7 +374,7 @@ def _calculate_year(args):
         variables,
         methods,
         demand_cutoff,
-        datapackage,
+        filepaths,
         mapping,
         units,
         lca_results,
@@ -395,7 +398,7 @@ def _calculate_year(args):
     # Try to load LCA matrices for the given model, scenario, and year
     try:
         bw_datapackage, technosphere_indices, biosphere_indices = get_lca_matrices(
-            datapackage, model, scenario, year
+            filepaths, model, scenario, year
         )
 
     except FileNotFoundError:
@@ -544,7 +547,7 @@ class Pathways:
 
     def __init__(self, datapackage, debug=False):
         self.datapackage = datapackage
-        self.data, dataframe = validate_datapackage(self.read_datapackage())
+        self.data, dataframe, self.filepaths = validate_datapackage(self.read_datapackage())
         self.mapping = self.get_mapping()
         self.mapping.update(self.get_final_energy_mapping())
         self.debug = debug
@@ -809,7 +812,7 @@ class Pathways:
         # Create xarray for storing LCA results if not already present
         if self.lca_results is None:
             _, technosphere_index, biosphere_index = get_lca_matrices(
-                self.datapackage, models[0], scenarios[0], years[0]
+                self.filepaths, models[0], scenarios[0], years[0]
             )
             locations = fetch_inventories_locations(technosphere_index)
 
@@ -841,7 +844,7 @@ class Pathways:
                             variables,
                             methods,
                             demand_cutoff,
-                            self.datapackage,
+                            self.filepaths,
                             self.mapping,
                             self.units,
                             self.lca_results,
@@ -875,7 +878,7 @@ class Pathways:
                                 variables,
                                 methods,
                                 demand_cutoff,
-                                self.datapackage,
+                                self.filepaths,
                                 self.mapping,
                                 self.units,
                                 self.lca_results,

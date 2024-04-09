@@ -19,7 +19,7 @@ logging.basicConfig(
 )
 
 
-def validate_datapackage(datapackage: datapackage.DataPackage):
+def validate_datapackage(datapackage: datapackage.DataPackage) -> (datapackage.DataPackage, pd.DataFrame, list):
     """
     Validate the datapackage.json file.
     The datapackage must be valid according to the Frictionless Data.
@@ -69,7 +69,13 @@ def validate_datapackage(datapackage: datapackage.DataPackage):
     # Check that the mapping is valid
     validate_mapping(datapackage.get_resource("mapping"), dataframe)
 
-    return datapackage, dataframe
+    # fetch filepaths to resources
+    filepaths = []
+    for resource in datapackage.resources:
+        if "matrix" in resource.descriptor["name"]:
+            filepaths.append(resource.source)
+
+    return datapackage, dataframe, filepaths
 
 
 def validate_scenario_data(dataframe: pd.DataFrame) -> bool:

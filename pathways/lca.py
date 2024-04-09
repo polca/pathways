@@ -96,7 +96,7 @@ def load_matrix_and_index(
 
 
 def get_lca_matrices(
-    datapackage: str,
+    filepaths: List[str],
     model: str,
     scenario: str,
     year: int,
@@ -104,46 +104,57 @@ def get_lca_matrices(
     """
     Retrieve Life Cycle Assessment (LCA) matrices from disk.
 
-    ...
+    :param filepaths: A list of filepaths to the LCA matrices.
+    :type filepaths: List[str]
+    :param model: The name of the model.
+    :type model: str
+    :param scenario: The name of the scenario.
+    :type scenario: str
+    :param year: The year of the scenario.
+    :type year: int
 
     :rtype: Tuple[sparse.csr_matrix, sparse.csr_matrix, Dict, Dict]
     """
-    dirpath = (
-        Path(datapackage).parent / "inventories" / model.lower() / scenario / str(year)
-    )
 
-    # check that files exist
-    if not dirpath.exists():
-        raise FileNotFoundError(f"Directory {dirpath} does not exist.")
+    # find the correct filepaths in filepaths
+    # the correct filepath are the strings that contains
+    # the model, scenario and year
+    def filter_filepaths(suffix: str, contains: List[str]):
+        return [
+            Path(fp) for fp in filepaths
+            if all(kw in fp for kw in contains) and Path(fp).suffix == suffix and Path(fp).exists()
+        ]
 
-    A_inds = read_indices_csv(dirpath / "A_matrix_index.csv")
-    B_inds = read_indices_csv(dirpath / "B_matrix_index.csv")
+    def select_filepath(keyword: str, fps):
+        matches = [fp for fp in fps if keyword in fp.name]
+        if not matches:
+            raise FileNotFoundError(f"Expected file containing '{keyword}' not found.")
+        return matches[0]
 
-    # create brightway datapackage
+    fps = filter_filepaths(".csv", [model, scenario, str(year)])
+    if len(fps) != 4:
+        raise ValueError(f"Expected 4 filepaths, got {len(fps)}")
+
+    fp_A_inds = select_filepath("A_matrix_index", fps)
+    fp_B_inds = select_filepath("B_matrix_index", fps)
+    A_inds = read_indices_csv(fp_A_inds)
+    B_inds = read_indices_csv(fp_B_inds)
+
     dp = bwp.create_datapackage()
 
-    a_data, a_indices, a_sign, a_distributions = load_matrix_and_index(
-        dirpath / "A_matrix.csv",
-    )
+    fp_A = select_filepath("A_matrix", [fp for fp in fps if "index" not in fp.name])
+    fp_B = select_filepath("B_matrix", [fp for fp in fps if "index" not in fp.name])
 
-    b_data, b_indices, b_sign, b_distributions = load_matrix_and_index(
-        dirpath / "B_matrix.csv",
-    )
-
-    dp.add_persistent_vector(
-        matrix="technosphere_matrix",
-        indices_array=a_indices,
-        data_array=a_data,
-        flip_array=a_sign,
-        distributions_array=a_distributions,
-    )
-
-    dp.add_persistent_vector(
-        matrix="biosphere_matrix",
-        indices_array=b_indices,
-        data_array=b_data,
-        distributions_array=b_distributions,
-    )
+    # Load matrices and add them to the datapackage
+    for matrix_name, fp in [("technosphere_matrix", fp_A), ("biosphere_matrix", fp_B)]:
+        data, indices, sign, distributions = load_matrix_and_index(fp)
+        dp.add_persistent_vector(
+            matrix=matrix_name,
+            indices_array=indices,
+            data_array=data,
+            flip_array=sign if matrix_name == "technosphere_matrix" else None,
+            distributions_array=distributions,
+        )
 
     return dp, A_inds, B_inds
 
