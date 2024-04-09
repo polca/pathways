@@ -19,7 +19,9 @@ logging.basicConfig(
 )
 
 
-def validate_datapackage(datapackage: datapackage.DataPackage) -> (datapackage.DataPackage, pd.DataFrame, list):
+def validate_datapackage(
+    datapackage: datapackage.DataPackage,
+) -> (datapackage.DataPackage, pd.DataFrame, list):
     """
     Validate the datapackage.json file.
     The datapackage must be valid according to the Frictionless Data.

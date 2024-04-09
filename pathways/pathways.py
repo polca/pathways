@@ -296,15 +296,12 @@ def process_region(data: Tuple) -> dict[str, ndarray[Any, dtype[Any]] | list[int
             year=year,
         )
 
-        share = (
-            demand
-            / scenarios.sel(
-                region=region,
-                model=model,
-                pathway=scenario,
-                year=year,
-            ).sum(dim="variables")
-        )
+        share = demand / scenarios.sel(
+            region=region,
+            model=model,
+            pathway=scenario,
+            year=year,
+        ).sum(dim="variables")
 
         # If the total demand is zero, return None
         if share < demand_cutoff:
@@ -547,7 +544,9 @@ class Pathways:
 
     def __init__(self, datapackage, debug=False):
         self.datapackage = datapackage
-        self.data, dataframe, self.filepaths = validate_datapackage(self.read_datapackage())
+        self.data, dataframe, self.filepaths = validate_datapackage(
+            self.read_datapackage()
+        )
         self.mapping = self.get_mapping()
         self.mapping.update(self.get_final_energy_mapping())
         self.debug = debug

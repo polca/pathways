@@ -121,8 +121,11 @@ def get_lca_matrices(
     # the model, scenario and year
     def filter_filepaths(suffix: str, contains: List[str]):
         return [
-            Path(fp) for fp in filepaths
-            if all(kw in fp for kw in contains) and Path(fp).suffix == suffix and Path(fp).exists()
+            Path(fp)
+            for fp in filepaths
+            if all(kw in fp for kw in contains)
+            and Path(fp).suffix == suffix
+            and Path(fp).exists()
         ]
 
     def select_filepath(keyword: str, fps):
