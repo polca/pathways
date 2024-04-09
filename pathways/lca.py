@@ -12,14 +12,12 @@ from scipy.sparse import csr_matrix
 from .lcia import get_lcia_methods
 
 # Attempt to import pypardiso's spsolve function.
-# If it isn't available, fall back on scipy's spsolve.
+# If it isn't available, we fall back on scipy's spsolve.
 try:
     from pypardiso import spsolve
-
     print("Solver: pypardiso")
 except ImportError:
     from scikits.umfpack import spsolve
-
     print("Solver: scikits.umfpack")
 
 logging.basicConfig(
@@ -48,7 +46,7 @@ def read_indices_csv(file_path: Path) -> Dict[Tuple[str, str, str, str], str]:
     with open(file_path) as read_obj:
         csv_reader = csv.reader(read_obj, delimiter=";")
         for row in csv_reader:
-            indices[(row[0], row[1], row[2], row[3])] = row[4]
+            indices[(row[0], row[1], row[2], row[3])] = int(row[4])
     return indices
 
 
@@ -96,7 +94,7 @@ def load_matrix_and_index(
 
 
 def get_lca_matrices(
-    filepaths: List[str],
+    datapackage: str,
     model: str,
     scenario: str,
     year: int,
@@ -104,15 +102,14 @@ def get_lca_matrices(
     """
     Retrieve Life Cycle Assessment (LCA) matrices from disk.
 
-    :param filepaths: A list of filepaths to the LCA matrices.
-    :type filepaths: List[str]
+    :param datapackage: The path to the datapackage.
+    :type datapackage: str
     :param model: The name of the model.
     :type model: str
     :param scenario: The name of the scenario.
     :type scenario: str
     :param year: The year of the scenario.
     :type year: int
-
     :rtype: Tuple[sparse.csr_matrix, sparse.csr_matrix, Dict, Dict]
     """
 
@@ -140,8 +137,8 @@ def get_lca_matrices(
 
     fp_A_inds = select_filepath("A_matrix_index", fps)
     fp_B_inds = select_filepath("B_matrix_index", fps)
-    A_inds = read_indices_csv(fp_A_inds)
-    B_inds = read_indices_csv(fp_B_inds)
+    technosphere_inds = read_indices_csv(fp_A_inds)
+    biosphere_inds = read_indices_csv(fp_B_inds)
 
     dp = bwp.create_datapackage()
 
@@ -159,45 +156,46 @@ def get_lca_matrices(
             distributions_array=distributions,
         )
 
-    return dp, A_inds, B_inds
+    return dp, technosphere_inds, biosphere_inds
 
 
 def fill_characterization_factors_matrices(
-    biosphere_flows: dict, methods, biosphere_dict, debug=False
+    methods: list, biosphere_matrix_dict: dict, biosphere_dict: dict, debug=False
 ) -> csr_matrix:
     """
     Create one CSR matrix for all LCIA method, with the last dimension being the index of the method
-    :param biosphere_flows:
     :param methods: contains names of the methods to use.
-    :return:
+    :param biosphere_matrix_dict: dictionary with biosphere flows and their indices
+    :param debug: if True, log debug information
+    :return: a sparse matrix with the characterization factors
     """
 
     lcia_data = get_lcia_methods(methods=methods)
-    biosphere_flows = {k[:3]: v for k, v in biosphere_flows.items()}
-    reversed_biosphere_flows = {int(v): k for k, v in biosphere_flows.items()}
 
-    matrix = sparse.csr_matrix(
-        (len(methods), len(biosphere_dict)),
-        dtype=np.float64,
-    )
-
-    if debug:
-        logging.info(f"LCIA matrix shape: {matrix.shape}")
-
-    l = []
+    # Prepare data for efficient creation of the sparse matrix
+    data = []
+    rows = []
+    cols = []
+    cfs = []
 
     for m, method in enumerate(methods):
         method_data = lcia_data[method]
-        for flow_idx, f in biosphere_dict.items():
-            if flow_idx in reversed_biosphere_flows:
-                flow = reversed_biosphere_flows[flow_idx]
-                if flow in method_data:
-                    matrix[m, f] = method_data[flow]
-                    l.append((method, flow, f, method_data[flow]))
+        for flow_name in method_data:
+            if flow_name in biosphere_dict:
+                idx = biosphere_dict[flow_name]
+                if idx in biosphere_matrix_dict:
+                    data.append(method_data[flow_name])
+                    rows.append(biosphere_matrix_dict[idx])
+                    cols.append(m)
+                    cfs.append((method, flow_name, idx, method_data[flow_name]))
+
+    # Efficiently create the sparse matrix
+    matrix = sparse.csr_matrix((data, (cols, rows)), shape=(len(methods), len(biosphere_matrix_dict)), dtype=np.float64)
+
     if debug:
         # sort l by method and flow
-        l = sorted(l, key=lambda x: (x[0], x[1]))
-        for x in l:
+        cfs = sorted(cfs, key=lambda x: (x[0], x[1]))
+        for x in cfs:
             method, flow, f, value = x
             logging.info(
                 f"LCIA method: {method}, Flow: {flow}, Index: {f}, Value: {value}"

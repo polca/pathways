@@ -7,10 +7,10 @@ LCA datasets, and LCA matrices.
 import csv
 import logging
 import uuid
-import warnings
 from collections import defaultdict
 from multiprocessing import Pool, cpu_count
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, List, Optional, Tuple
+import warnings
 
 import bw2calc as bc
 import numpy as np
@@ -28,11 +28,9 @@ from .filesystem_constants import DATA_DIR, DIR_CACHED_DB
 from .lca import (
     fill_characterization_factors_matrices,
     get_lca_matrices,
-    remove_double_counting,
 )
 from .lcia import get_lcia_method_names
 from .utils import (
-    _get_activity_indices,
     clean_cache_directory,
     create_lca_results_array,
     display_results,
@@ -41,24 +39,28 @@ from .utils import (
     load_classifications,
     load_numpy_array_from_disk,
     load_units_conversion,
+    resize_scenario_data,
+    fetch_indices,
+    fetch_inventories_locations,
 )
 
+
+# remove warnings
 warnings.filterwarnings("ignore")
 
-
-def check_unclassified_activities(technosphere_indices, classifications) -> List:
+def check_unclassified_activities(technosphere_indices: dict, classifications: dict) -> List:
     """
     Check if there are activities in the technosphere matrix that are not in the classifications.
-    :param A:
-    :param classifications:
-    :return:
+    :param technosphere_indices: List of activities in the technosphere matrix.
+    :param classifications: Dictionary of activities classifications.
+    :return: List of activities not found in the classifications.
     """
     missing_classifications = []
     for act in technosphere_indices:
-        if act not in classifications:
-            missing_classifications.append(list(act))
-    if missing_classifications:
+        if act[:3] not in classifications:
+            missing_classifications.append(list(act[:3]))
 
+    if missing_classifications:
         with open("missing_classifications.csv", "a") as f:
             writer = csv.writer(f)
             writer.writerows(missing_classifications)
@@ -66,188 +68,33 @@ def check_unclassified_activities(technosphere_indices, classifications) -> List
     return missing_classifications
 
 
-def csv_to_dict(filename):
-    output_dict = {}
-
-    with open(filename, encoding="utf-8") as file:
-        reader = csv.reader(file, delimiter=";")
-        for row in reader:
-            # Making sure there are at least 5 items in the row
-            if len(row) >= 5:
-                # The first four items are the key, the fifth item is the value
-                key = tuple(row[:4])
-                value = row[4]
-                output_dict[int(value)] = key
-            else:
-                logging.warning(f"Row {row} has less than 5 items.")
-
-    return output_dict
-
-
-def resize_scenario_data(
-    scenario_data: xr.DataArray,
-    model: List[str],
-    scenario: List[str],
-    region: List[str],
-    year: List[int],
-    variables: List[str],
-):
+def group_technosphere_indices(technosphere_indices: dict, group_by, group_values: list) -> dict:
     """
-    Resize the scenario data to the given scenario, year, region, and variables.
-    :param model:
-    :param scenario_data:
-    :param scenario:
-    :param year:
-    :param region:
-    :param variables:
-    :return:
+    Generalized function to group technosphere indices by an arbitrary attribute (category, location, etc.).
+
+    :param technosphere_indices: Mapping of activities to their indices in the technosphere matrix.
+    :param group_by: A function that takes an activity and returns its group value (e.g., category or location).
+    :param group_values: The set of all possible group values (e.g., all categories or locations).
+    :return: A tuple containing a list of lists of indices, a dictionary mapping group values to lists of indices,
+             and a 2D numpy array of indices, where rows have been padded with -1 to ensure equal lengths.
     """
 
-    # Get the indices for the given scenario, year, region, and variables
-    model_idx = [scenario_data.coords["model"].values.tolist().index(x) for x in model]
-    scenario_idx = [
-        scenario_data.coords["pathway"].values.tolist().index(x) for x in scenario
-    ]
-    year_idx = [scenario_data.coords["year"].values.tolist().index(x) for x in year]
-    region_idx = [
-        scenario_data.coords["region"].values.tolist().index(x) for x in region
-    ]
-    variable_idx = [
-        scenario_data.coords["variables"].values.tolist().index(x) for x in variables
-    ]
-
-    # Resize the scenario data
-    scenario_data = scenario_data.isel(
-        model=model_idx,
-        pathway=scenario_idx,
-        year=year_idx,
-        region=region_idx,
-        variables=variable_idx,
-    )
-
-    return scenario_data
-
-
-def fetch_indices(mapping, regions, variables, A_index, geo):
-    """
-    Fetch the indices for the given activities in
-    the technosphere matrix.
-    :param variables:
-    :param A_index:
-    :param geo:
-    :return:
-    """
-
-    vars_idx = {}
-
-    for region in regions:
-
-        activities = []
-
-        for variable in variables:
-            if len(mapping[variable]["dataset"]) > 1:
-                print(
-                    f"Warning: multiple datasets found for variable {variable}. Using the first one."
-                )
-            activities.append(
-                (
-                    mapping[variable]["dataset"][0]["name"],
-                    mapping[variable]["dataset"][0]["reference product"],
-                    mapping[variable]["dataset"][0]["unit"],
-                    region,
-                )
-            )
-
-        if len(activities) != len(variables):
-            print("Warning: mismatch between activities and variables.")
-            print(f"Number of variables: {len(variables)}: {variables}")
-            print(f"Number of datasets: {len(activities)}: {activities}")
-            logging.warning(
-                f"Mismatch between activities and variables for region {region}."
-                f"Number of variables: {len(variables)}."
-                f"Number of datasets: {len(activities)}."
-            )
-
-        idxs = _get_activity_indices(activities, A_index, geo)
-
-        # Fetch the indices for the given activities in
-        # the technosphere matrix
-
-        vars_idx[region] = {
-            variable: {
-                "idx": idx,
-                "dataset": activity,
-            }
-            for variable, idx, activity in zip(variables, idxs, activities)
-        }
-
-    return vars_idx
-
-
-def fetch_inventories_locations(A_index: Dict[str, Tuple[str, str, str]]) -> List[str]:
-    """
-    Fetch the locations of the inventories.
-    :param A_index: Dictionary with the indices of the activities in the technosphere matrix.
-    :return: List of locations.
-    """
-
-    locations = list(set([act[3] for act in A_index]))
-    logging.info(f"Unique locations in LCA database: {locations}")
-
-    return locations
-
-
-def group_technosphere_indices_by_category(
-    technosphere_index, reverse_classifications, lca_results_coords
-) -> Tuple:
-    # Generate a list of activity indices for each activity category
-    acts_idx = []
     acts_dict = {}
-    for cat in lca_results_coords["act_category"].values:
-        x = [
-            int(technosphere_index[a])
-            for a in reverse_classifications[cat]
-            if a in technosphere_index
-        ]
-        acts_idx.append(x)
-        acts_dict[cat] = x
+    for value in group_values:
+        # Collect indices for activities belonging to the current group value
+        x = [int(technosphere_indices[a]) for a in technosphere_indices if group_by(a) == value]
+        acts_dict[value] = x
 
-    # Pad each list in acts_idx with -1 to make them all the same length
-    max_len = max([len(x) for x in acts_idx])
-    acts_idx = np.array(
-        [np.pad(x, (0, max_len - len(x)), constant_values=-1) for x in acts_idx]
-    )
-
-    # Swap the axes of acts_idx to align with the dimensionality of D
-    return acts_idx, acts_dict, np.swapaxes(acts_idx, 0, 1)
-
-
-def group_technosphere_indices_by_location(technosphere_index, locations) -> Tuple:
-    """
-    Group the technosphere indices by location.
-    :param technosphere_index:
-    :param locations:
-    :return:
-    """
-
-    act_indices_list = []
-    act_indices_dict = {}
-    for loc in locations:
-        x = [int(technosphere_index[a]) for a in technosphere_index if a[-1] == loc]
-
-        act_indices_list.append(x)
-        act_indices_dict[loc] = x
-
-    # Pad each list in act_indices_list with -1 to make them all the same length
-    max_len = max([len(x) for x in act_indices_list])
-    act_indices_array = np.array(
-        [np.pad(x, (0, max_len - len(x)), constant_values=-1) for x in act_indices_list]
-    )
-
-    return act_indices_list, act_indices_dict, act_indices_array
+    return acts_dict
 
 
 def process_region(data: Tuple) -> dict[str, ndarray[Any, dtype[Any]] | list[int]]:
+    """
+    Process the region data.
+    :param data: Tuple containing the model, scenario, year, region, variables, vars_idx, scenarios, units_map,
+                    demand_cutoff, lca, characterization_matrix, debug, use_distributions.
+    :return: Dictionary containing the region data.
+    """
     (
         model,
         scenario,
@@ -256,17 +103,8 @@ def process_region(data: Tuple) -> dict[str, ndarray[Any, dtype[Any]] | list[int
         variables,
         vars_idx,
         scenarios,
-        mapping,
         units_map,
-        dp,
-        A_index,
-        B_index,
-        reverse_classifications,
-        lca_results_coords,
         demand_cutoff,
-        locations,
-        location_to_index,
-        rev_A_index,
         lca,
         characterization_matrix,
         debug,
@@ -277,7 +115,6 @@ def process_region(data: Tuple) -> dict[str, ndarray[Any, dtype[Any]] | list[int
     d = []
 
     for v, variable in enumerate(variables):
-
         idx, dataset = vars_idx[variable]["idx"], vars_idx[variable]["dataset"]
         # Compute the unit conversion vector for the given activities
         dataset_unit = dataset[2]
@@ -322,7 +159,6 @@ def process_region(data: Tuple) -> dict[str, ndarray[Any, dtype[Any]] | list[int
         else:
             # Use distributions for LCA calculations
             # next(lca) is a generator that yields the inventory matrix
-
             results = np.array(
                 [
                     (characterization_matrix @ lca.inventory).toarray()
@@ -333,11 +169,6 @@ def process_region(data: Tuple) -> dict[str, ndarray[Any, dtype[Any]] | list[int
             # calculate quantiles along the first dimension
             characterized_inventory = np.quantile(results, [0.05, 0.5, 0.95], axis=0)
 
-        # vars_info = fetch_indices(mapping, regions, variables, A_index, Geomap(model))
-        # characterized_inventory = remove_double_counting(characterized_inventory=characterized_inventory,
-        #                                                  vars_info=vars_idx,
-        #                                                  activity_idx=idx
-        #                                                  )
         d.append(characterized_inventory)
 
         if debug:
@@ -422,53 +253,30 @@ def _calculate_year(args):
                 "See missing_classifications.csv for more details."
             )
 
-    # Initialize list to store activities not found in classifications
-    missing_class = []
-
-    # Check for activities not found in classifications
-    for act in technosphere_indices:
-        if act not in classifications:
-            missing_class.append(list(act))
-
     results = {}
 
     locations = lca_results.coords["location"].values.tolist()
     location_to_index = {location: index for index, location in enumerate(locations)}
-    reverse_technosphere_index = {int(v): k for k, v in technosphere_indices.items()}
-    loc_idx = np.array(
-        [
-            location_to_index[act[-1]]
-            for act in reverse_technosphere_index.values()
-            if act[-1] in locations
-        ]
-    )
 
-    acts_category_idx_list, acts_category_idx_dict, acts_category_idx_array = (
-        group_technosphere_indices_by_category(
-            technosphere_indices,
-            reverse_classifications,
-            lca_results.coords,
+    acts_category_idx_dict = (
+        group_technosphere_indices(
+            technosphere_indices=technosphere_indices,
+            group_by=lambda x: classifications.get(x[:3], "unclassified"),
+            group_values=list(set(lca_results.coords["act_category"].values)),
         )
     )
 
-    acts_location_idx_list, acts_location_idx_dict, acts_location_idx_array = (
-        group_technosphere_indices_by_location(
-            technosphere_indices,
-            locations,
+    acts_location_idx_dict = (
+        group_technosphere_indices(
+            technosphere_indices=technosphere_indices,
+            group_by=lambda x: x[-1],
+            group_values=locations,
         )
     )
 
     results["other"] = {
-        "locations": locations,
-        "location_to_index": location_to_index,
-        "reverse_technosphere_index": reverse_technosphere_index,
-        "activity_location_idx": loc_idx,
-        "acts_category_idx_list": acts_category_idx_list,
         "acts_category_idx_dict": acts_category_idx_dict,
-        "acts_category_idx_array": acts_category_idx_array,
-        "acts_location_idx_list": acts_location_idx_list,
         "acts_location_idx_dict": acts_location_idx_dict,
-        "acts_location_idx_array": acts_location_idx_array,
     }
 
     if use_distributions == 0:
@@ -490,7 +298,10 @@ def _calculate_year(args):
         lca.lci()
 
     characterization_matrix = fill_characterization_factors_matrices(
-        biosphere_indices, methods, lca.dicts.biosphere, debug
+        methods=methods,
+        biosphere_matrix_dict=lca.dicts.biosphere,
+        biosphere_dict=biosphere_indices,
+        debug=debug
     )
 
     if debug:
@@ -511,17 +322,8 @@ def _calculate_year(args):
                 variables,
                 vars_info[region],
                 scenarios,
-                mapping,
                 units,
-                bw_datapackage,
-                technosphere_indices,
-                biosphere_indices,
-                reverse_classifications,
-                lca_results.coords,
                 demand_cutoff,
-                locations,
-                location_to_index,
-                reverse_technosphere_index,
                 lca,
                 characterization_matrix,
                 debug,
@@ -935,6 +737,7 @@ class Pathways:
 
                         if idx.size > 0:
 
+                            summed_data = d[..., idx].sum(axis=-1)
                             try:
                                 self.lca_results.loc[
                                     {
@@ -961,23 +764,6 @@ class Pathways:
                                         "variable": list(variables.keys()),
                                     }
                                 ] = summed_data.transpose(0, 2, 1)
-
-    def characterize_planetary_boundaries(
-        self,
-        models: Optional[List[str]] = None,
-        scenarios: Optional[List[str]] = None,
-        regions: Optional[List[str]] = None,
-        years: Optional[List[int]] = None,
-        variables: Optional[List[str]] = None,
-    ):
-        self.calculate(
-            models=models,
-            scenarios=scenarios,
-            regions=regions,
-            years=years,
-            variables=variables,
-            characterization=False,
-        )
 
     def display_results(self, cutoff: float = 0.001) -> xr.DataArray:
         return display_results(self.lca_results, cutoff=cutoff)
