@@ -96,7 +96,7 @@ def load_matrix_and_index(
 
 
 def get_lca_matrices(
-    datapackage: str,
+    filepaths: list,
     model: str,
     scenario: str,
     year: int,
@@ -137,10 +137,12 @@ def get_lca_matrices(
     if len(fps) != 4:
         raise ValueError(f"Expected 4 filepaths, got {len(fps)}")
 
-    fp_A_inds = select_filepath("A_matrix_index", fps)
-    fp_B_inds = select_filepath("B_matrix_index", fps)
-    technosphere_inds = read_indices_csv(fp_A_inds)
-    biosphere_inds = read_indices_csv(fp_B_inds)
+    fp_technosphere_inds = select_filepath("A_matrix_index", fps)
+    fp_biosphere_inds = select_filepath("B_matrix_index", fps)
+    technosphere_inds = read_indices_csv(fp_technosphere_inds)
+    biosphere_inds = read_indices_csv(fp_biosphere_inds)
+    # remove the last element of the tuple, which is the index
+    biosphere_inds = {k[:-1]: v for k, v in biosphere_inds.items()}
 
     dp = bwp.create_datapackage()
 
@@ -182,6 +184,7 @@ def fill_characterization_factors_matrices(
 
     for m, method in enumerate(methods):
         method_data = lcia_data[method]
+
         for flow_name in method_data:
             if flow_name in biosphere_dict:
                 idx = biosphere_dict[flow_name]

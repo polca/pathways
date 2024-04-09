@@ -1,4 +1,4 @@
 include pathways/data/*.txt
-include premise/data/*.csv
-include premise/data/*.json
-include premise/data/*.yml
+include pathways/data/*.xlsx
+include pathways/data/*.json
+include pathways/data/*.yaml

@@ -29,19 +29,6 @@ def load_classifications():
     with open(CLASSIFICATIONS, "r") as f:
         data = yaml.full_load(f)
 
-    # ensure that "NO" is not interpreted as False
-    new_keys = []
-    old_keys = []
-    for key, value in data.items():
-        # check if last element of key is not nan
-        if not isinstance(key[-1], str):
-            new_entry = key[:-1] + ("NO",)
-            new_keys.append(new_entry)
-            old_keys.append(key)
-
-    for new_key, old_key in zip(new_keys, old_keys):
-        data[new_key] = data.pop(old_key)
-
     return data
 
 

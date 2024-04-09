@@ -261,7 +261,6 @@ def _calculate_year(args):
     results = {}
 
     locations = lca_results.coords["location"].values.tolist()
-    location_to_index = {location: index for index, location in enumerate(locations)}
 
     acts_category_idx_dict = group_technosphere_indices(
         technosphere_indices=technosphere_indices,

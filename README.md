@@ -5,14 +5,18 @@
 
 # pathways
 
-``pathways`` is a Python package that characterizes
-environmental impacts of energy systems and transition scenarios using
-Life Cycle Assessment (LCA).
+``pathways`` is a Python package that characterizes the
+environmental impacts of products, secctors or energy systems 
+and transition scenarios over time using Life Cycle Assessment (LCA).
+Compared to traditional scenario results from energy models, 
+``pathways`` provides a more detailed and transparent view of the
+environmental impacts of a scenario by resolving supply chains
+between producers and consumers (as an LCA does). Hence, direct
+and indirect emissions are accounted for, and double-counting
+issues are partially resolved. 
 
-``pathways`` is a work in progress. It reads in
-scenarios and corresponding premise-generated LCA databases,
-solve double-accounting issues and calculates the environmental 
-impacts over a defined period.
+``pathways`` is initially designed to work with data packages produced
+by ``premise``, but can be used with any IAM scenarios and LCA databases.
 
 ## Installation
 
@@ -21,7 +25,7 @@ can be installed from the Github repo  with ``pip``:
 
 ```bash
 
-  pip install git+https://github.com/polca/pathways.git
+  pip install pathways
 
 ```
 
@@ -36,7 +40,7 @@ or in a Python interpreter.
 ```python
 
 from pathways import Pathways
-p = Pathways(datapackage="sample/datapackage.json")
+p = Pathways(datapackage="some datapackage.zip")
 p.calculate(
     methods=[
             "EF v3.1 - acidification - accumulated exceedance (AE)"
@@ -48,7 +52,7 @@ p.calculate(
 
 ```
 
-The argument `datapackage` is the path to the datapackage.json file
+The argument `datapackage` is the path to the datapackage.zip file
 that describes the scenario and the LCA databases -- see dev/sample.
 The argument `methods` is a list of methods to be used for the LCA
 calculations. The argument `years` is a list of years for which the
@@ -62,13 +66,19 @@ defined in the datapackage.json file are used, which can be very
 time-consuming.
 
 Once calculated, the results of the LCA calculations are stored in the `.lcia_results`
-attribute of the `Pathways` object, and can be formatted in an array by calling `.display_results()`.
+attribute of the `Pathways` object as an ``xarray.DataArray``. 
 
 ```python
 
-p.display_results()
+p.lcia_results
 
 ```
+
+
+It can be further formatted
+to a pandas' DataFrame or export to a CSV/Excel file using the built-in
+methods of ``xarray``.
+
 
 which can then be visualized using your favorite plotting library.
 ![Screenshot](assets/screenshot.png)
@@ -104,11 +114,6 @@ Look through the GitHub issues for features. Anything tagged with
 "enhancement" and "help wanted" is open to whoever wants to
 implement it.
 
-#### Provide IAM scenarios
-
-The IAM scenarios are the core of the ``pathways`` package. If you
-have access to IAM scenarios, please consider sharing them with us.
-
 #### Write Documentation
 
 ``pathways`` could always use more documentation, whether as part of
@@ -117,15 +122,14 @@ blog posts, articles, and such.
 
 #### Submit Feedback
 
-The best way to send feedback is to file an issue on GitHub.
-
-
+The best way to send feedback is to file an issue on the GitHub repository.
 
 ## Credits
 
 ### Contributors
 
 * [Romain Sacchi](https://github.com/romainsacchi)
+* Alvaro Hahn Menacho (https://github.com/alvarojhahn)
 
 
 ### Financial Support
