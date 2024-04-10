@@ -1,11 +1,11 @@
 import csv
-import yaml
 import logging
 from pathlib import Path
 from typing import Any, Dict, List, Tuple
 
 import bw_processing as bwp
 import numpy as np
+import yaml
 from bw_processing import Datapackage
 from scipy import sparse
 from scipy.sparse import csr_matrix
@@ -52,6 +52,7 @@ def read_indices_csv(file_path: Path) -> Dict[Tuple[str, str, str, str], str]:
             indices[(row[0], row[1], row[2], row[3])] = row[4]
     return indices
 
+
 def load_matrix_and_index(
     file_path: Path,
 ) -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
@@ -94,6 +95,7 @@ def load_matrix_and_index(
 
     return data_array, indices_array, flip_array, distributions_array
 
+
 def get_matrix_arrays(
     dirpath: Path,
     matrix_type: str,
@@ -114,6 +116,7 @@ def get_matrix_arrays(
 
     return [data, indices, sign, distributions]
 
+
 def get_indices(
     dirpath: Path,
 ) -> Tuple[Dict, Dict]:
@@ -129,6 +132,7 @@ def get_indices(
     B_indices = read_indices_csv(dirpath / "B_matrix_index.csv")
 
     return A_indices, B_indices
+
 
 def get_lca_matrices(
     A_arrays: list,
@@ -165,6 +169,7 @@ def get_lca_matrices(
 
     return dp
 
+
 def get_subshares_matrix(
         correlated_array: list,
 ) -> Datapackage:
@@ -198,7 +203,7 @@ def adjust_matrix_based_on_shares(A_arrays, shares_dict, use_distributions, year
 
     data_array, indices_array, sign_array, _ = A_arrays
 
-    index_lookup = {(row['row'], row['col']): i for i, row in enumerate(indices_array)}
+    index_lookup = {(row["row"], row["col"]): i for i, row in enumerate(indices_array)}
 
     modified_data = []
     modified_indices = []
@@ -209,8 +214,8 @@ def adjust_matrix_based_on_shares(A_arrays, shares_dict, use_distributions, year
     for _, regions in shares_dict.items():
         for _, techs in regions.items():
             for _, details in techs.items():
-                if 'idx' in details:
-                    unique_product_indices_from_dict.add(details['idx'])
+                if "idx" in details:
+                    unique_product_indices_from_dict.add(details["idx"])
 
     # Helper function to find index using the lookup dictionary
     def find_index(activity_idx, product_idx):
@@ -218,21 +223,27 @@ def adjust_matrix_based_on_shares(A_arrays, shares_dict, use_distributions, year
 
     for tech_category, regions in shares_dict.items():
         for region, techs in regions.items():
-            all_tech_indices = [techs[tech]['idx'] for tech in techs if techs[tech]['idx'] is not None]
+            all_tech_indices = [
+                techs[tech]["idx"] for tech in techs if techs[tech]["idx"] is not None
+            ]
             all_product_indices = set()
 
             tech_indices = np.isin(indices_array['row'], all_tech_indices)
             all_product_indices.update(indices_array['col'][tech_indices])
-
+            
             for product_idx in all_product_indices:
                 # Vectorized operation to calculate total_output for each product_idx
-                relevant_indices = [find_index(tech_idx, product_idx) for tech_idx in all_tech_indices if
-                                    find_index(tech_idx, product_idx) is not None and tech_idx != product_idx]
+                relevant_indices = [
+                    find_index(tech_idx, product_idx)
+                    for tech_idx in all_tech_indices
+                    if find_index(tech_idx, product_idx) is not None
+                    and tech_idx != product_idx
+                ]
                 total_output = np.sum(data_array[relevant_indices])
 
                 for tech, details in techs.items():
-                    share = details.get(year, {}).get('value', 0)
-                    idx = details['idx']
+                    share = details.get(year, {}).get("value", 0)
+                    idx = details["idx"]
                     if idx is None or share == 0:
                         continue
 
@@ -241,13 +252,19 @@ def adjust_matrix_based_on_shares(A_arrays, shares_dict, use_distributions, year
                     index = find_index(idx, product_idx)
 
                     # Adjust value or add new exchange
-                    if index is not None and product_idx not in unique_product_indices_from_dict:  # Exclude diagonal and undesired exchanges
+                    if (
+                        index is not None
+                        and product_idx not in unique_product_indices_from_dict
+                    ):  # Exclude diagonal and undesired exchanges
                         data_array[index] = new_amount
                         # Append to modified_indices regardless of whether it's a new addition or an adjustment
                         modified_indices.append((idx, product_idx))
                         modified_data.append(new_amount)
                         modified_signs.append(sign_array[index])
                     elif product_idx not in unique_product_indices_from_dict:  # Exclude diagonal and undesired exchanges
+                    elif (
+                        product_idx not in unique_product_indices_from_dict
+                    ):  # Exclude diagonal and undesired exchanges
                         modified_data.append(new_amount)
                         modified_indices.append((idx, product_idx))
                         modified_signs.append(True) # CHECK: I am assuming new exchanges are always positive
@@ -257,6 +274,7 @@ def adjust_matrix_based_on_shares(A_arrays, shares_dict, use_distributions, year
     modified_signs_array = np.array(modified_signs, dtype=bool)
 
     return [modified_data_array, modified_indices_array, modified_signs_array]
+
 
 def fill_characterization_factors_matrices(
     biosphere_flows: dict, methods, biosphere_dict, debug=False
@@ -339,6 +357,7 @@ def fill_characterization_factors_matrices(
 #         characterized_inventory[:, idx] = 0
 #
 #     return characterized_inventory.tocsr()
+
 
 def remove_double_counting(A: csr_matrix, vars_info: dict) -> csr_matrix:
     """

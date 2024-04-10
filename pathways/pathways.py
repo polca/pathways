@@ -41,13 +41,13 @@ from .utils import (
     clean_cache_directory,
     create_lca_results_array,
     display_results,
+    get_dirpath,
     get_unit_conversion_factors,
     harmonize_units,
-    load_subshares,
     load_classifications,
     load_numpy_array_from_disk,
+    load_subshares,
     load_units_conversion,
-    get_dirpath
 )
 
 warnings.filterwarnings("ignore")
@@ -134,11 +134,11 @@ def resize_scenario_data(
 
     return scenario_data
 
+
 def subshares_indices(regions, A_index, geo):
     """
     Fetch the indices in the technosphere matrix from the activities in technologies_shares.yaml in
     the given regions.
-    others shares are resized.
     :param regions: List of regions
     :param A_index: Dictionary with the indices of the activities in the technosphere matrix.
     :param geo: Geomap object.
@@ -168,18 +168,17 @@ def subshares_indices(regions, A_index, geo):
                     if region not in indices_dict[tech_category]:
                         indices_dict[tech_category][region] = {}
                     indices_dict[tech_category][region][tech_type] = {
-                        'idx': activity_index,
-                        2020: {
-                            "value": value_2020
-                        },
+                        "idx": activity_index,
+                        2020: {"value": value_2020},
                         2050: {
                             "min": min_2050,
                             "max": max_2050,
-                            "distribution": distribution_2050
+                            "distribution": distribution_2050,
                         },
                     }
 
     return indices_dict
+
 
 def fetch_indices(mapping, regions, variables, A_index, geo):
     """
@@ -237,7 +236,6 @@ def fetch_indices(mapping, regions, variables, A_index, geo):
         }
 
     return vars_idx
-
 
 
 def fetch_inventories_locations(A_index: Dict[str, Tuple[str, str, str]]) -> List[str]:
@@ -435,7 +433,7 @@ def _calculate_year(args):
         reverse_classifications,
         debug,
         use_distributions,
-        subshares
+        subshares,
     ) = args
 
     print(f"------ Calculating LCA results for {year}...")
@@ -552,14 +550,11 @@ def _calculate_year(args):
 
         lca = MonteCarloLCA(
             demand={0: 1},
-            data_objs=[
-                bw_datapackage, bw_correlated
-            ],
+            data_objs=[bw_datapackage, bw_correlated],
             use_distributions=True,
             use_arrays=True,
         )
         lca.lci()
-
 
     characterization_matrix = fill_characterization_factors_matrices(
         biosphere_indices, methods, lca.dicts.biosphere, debug
@@ -941,7 +936,7 @@ class Pathways:
                             self.reverse_classifications,
                             self.debug,
                             use_distributions,
-                            subshares
+                            subshares,
                         )
                         for year in years
                     ]
@@ -976,7 +971,7 @@ class Pathways:
                                 self.reverse_classifications,
                                 self.debug,
                                 use_distributions,
-                                subshares
+                                subshares,
                             )
                         )
                         for year in years
