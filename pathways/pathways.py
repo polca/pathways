@@ -28,9 +28,11 @@ from .filesystem_constants import DATA_DIR, DIR_CACHED_DB
 from .lca import (
     fill_characterization_factors_matrices,
     get_lca_matrices,
+
     get_matrix_arrays,
     get_indices,
-    # get_subshares_matrix,
+    adjust_matrix_based_on_shares,
+    get_subshares_matrix,
     remove_double_counting,
 )
 from .lcia import get_lcia_method_names
@@ -136,6 +138,7 @@ def subshares_indices(regions, A_index, geo):
     """
     Fetch the indices in the technosphere matrix from the activities in technologies_shares.yaml in
     the given regions.
+    others shares are resized.
     :param regions: List of regions
     :param A_index: Dictionary with the indices of the activities in the technosphere matrix.
     :param geo: Geomap object.
@@ -542,9 +545,10 @@ def _calculate_year(args):
         lca.lci()
     else:
 
-        subshares_indices = subshares_indices(regions, technosphere_indices, geo)
+        shares_indices = subshares_indices(regions, technosphere_indices, geo)
+        correlated_arrays = adjust_matrix_based_on_shares(A_arrays, shares_indices, use_distributions, year)
 
-        bw_correlated = get_subshares_matrix(A_arrays, subshares_indices, year)
+        bw_correlated = get_subshares_matrix(correlated_arrays)
 
         lca = MonteCarloLCA(
             demand={0: 1},
@@ -598,6 +602,24 @@ def _calculate_year(args):
         )
 
     return results
+
+
+def correlated_uniform_montecarlo(ranges, defaults, iterations):
+    """
+        Adjusts randomly selected shares for parameters to sum to 1 while respecting their specified ranges.
+
+        :param ranges: Dict with parameter names as keys and (min, max) tuples as values.
+        :param defaults: Dict with default values for each parameter.
+        :param iterations: Number of iterations to attempt to find a valid distribution.
+        :return: A dict with the adjusted shares for each parameter.
+    """
+    for _ in range(iterations):
+        shares = {param: np.random.uniform(low, high) for param, (low, high) in ranges.items()}
+        total_share = sum(shares.values())
+        shares = {param: share / total_share for param, share in shares.items()}
+        if all(ranges[param][0] <= share <= ranges[param][1] for param, share in shares.items()):
+            return shares
+    return defaults
 
 
 class Pathways:

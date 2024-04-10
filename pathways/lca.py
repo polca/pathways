@@ -166,9 +166,7 @@ def get_lca_matrices(
     return dp
 
 def get_subshares_matrix(
-        A_array: list,
-        indices: Dict,
-        year: int,
+        correlated_array: list,
 ) -> Datapackage:
     """
     Add subshares samples to an LCA object.
@@ -177,21 +175,18 @@ def get_subshares_matrix(
 
     dp_correlated = bwp.create_datapackage()
 
-    a_data, a_indices, a_sign, _ = A_array
-
-    # adjusted_data = adjust_matrix_based_on_shares(data_array, indices_array, indices, year)
-
+    a_data_samples, a_indices, a_sign = correlated_array
 
     dp_correlated.add_persistent_array(
         matrix='technosphere_matrix',
-        indices_array= a_indices,
-        data_array= a_data,
-        flip_array= a_sign,
+        indices_array=a_indices,
+        data_array=a_data_samples.reshape((1, -1)),
+        flip_array=a_sign,
     )
 
     return dp_correlated
 
-def adjust_matrix_based_on_shares(data_array, indices_array, shares_dict, year):
+def adjust_matrix_based_on_shares(A_arrays, shares_dict, use_distributions, year):
     """
     Adjust the technosphere matrix based on shares.
     :param data_array:
@@ -200,13 +195,14 @@ def adjust_matrix_based_on_shares(data_array, indices_array, shares_dict, year):
     :param year:
     :return:
     """
-    ##### RIGHT NOW I AM ONLY MULTIPLYING BY THE SHARES IN 2020 - TO-DO: ADD THE SAMPLES
-    #                                                             TO-DO: RETURN THE LAST ARRAY NEEDED TO BUILD THE BW.PACKAGE
+
+    data_array, indices_array, sign_array, _ = A_arrays
 
     index_lookup = {(row['row'], row['col']): i for i, row in enumerate(indices_array)}
 
     modified_data = []
     modified_indices = []
+    modified_signs = []
 
     # Determine unique product indices from shares_dict to identify which shouldn't be automatically updated/added
     unique_product_indices_from_dict = set()
@@ -225,7 +221,6 @@ def adjust_matrix_based_on_shares(data_array, indices_array, shares_dict, year):
             all_tech_indices = [techs[tech]['idx'] for tech in techs if techs[tech]['idx'] is not None]
             all_product_indices = set()
 
-            # Optimization: Use np.isin for efficient filtering
             tech_indices = np.isin(indices_array['row'], all_tech_indices)
             all_product_indices.update(indices_array['col'][tech_indices])
 
@@ -251,15 +246,17 @@ def adjust_matrix_based_on_shares(data_array, indices_array, shares_dict, year):
                         # Append to modified_indices regardless of whether it's a new addition or an adjustment
                         modified_indices.append((idx, product_idx))
                         modified_data.append(new_amount)
+                        modified_signs.append(sign_array[index])
                     elif product_idx not in unique_product_indices_from_dict:  # Exclude diagonal and undesired exchanges
                         modified_data.append(new_amount)
                         modified_indices.append((idx, product_idx))
+                        modified_signs.append(True) # CHECK: I am assuming new exchanges are always positive
 
     modified_data_array = np.array(modified_data, dtype=np.float64)
     modified_indices_array = np.array(modified_indices, dtype=bwp.INDICES_DTYPE)
-    # modified_flip_array = np.array(modified_flip, dtype=flip_array.dtype)
+    modified_signs_array = np.array(modified_signs, dtype=bool)
 
-    return modified_data_array, modified_indices_array
+    return [modified_data_array, modified_indices_array, modified_signs_array]
 
 def fill_characterization_factors_matrices(
     biosphere_flows: dict, methods, biosphere_dict, debug=False
