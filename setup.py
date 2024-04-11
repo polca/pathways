@@ -53,7 +53,7 @@ setup(
         "bw_processing",
         "bw2calc==2.0.DEV16",
         "datapackage",
-        "platformdirs"
+        "platformdirs",
     ],
     url="https://github.com/polca/premise",
     description="Scenario-level LCA of energy systems and transition pathways",

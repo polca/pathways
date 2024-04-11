@@ -16,9 +16,9 @@ import pyprind
 from bw2calc.monte_carlo import MonteCarloLCA
 from bw_processing import Datapackage
 from numpy import dtype, ndarray
+from premise.geomap import Geomap
 from scipy import sparse
 from scipy.sparse import csr_matrix
-from premise.geomap import Geomap
 
 from .filesystem_constants import DIR_CACHED_DB
 from .lcia import fill_characterization_factors_matrices
