@@ -69,7 +69,7 @@ def validate_datapackage(
     validate_scenario_data(dataframe)
 
     # Check that the mapping is valid
-    validate_mapping(datapackage.get_resource("mapping"), dataframe)
+    validate_mapping(datapackage.get_resource("mapping"))
 
     # fetch filepaths to resources
     filepaths = []

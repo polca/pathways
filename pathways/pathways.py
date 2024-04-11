@@ -10,7 +10,6 @@ from collections import defaultdict
 from multiprocessing import Pool, cpu_count
 from typing import List, Optional
 
-import datapackage
 import numpy as np
 import pandas
 import pandas as pd
@@ -36,32 +35,6 @@ from .utils import (
 
 # remove warnings
 warnings.filterwarnings("ignore")
-
-
-def _group_technosphere_indices(
-    technosphere_indices: dict, group_by, group_values: list
-) -> dict:
-    """
-    Generalized function to group technosphere indices by an arbitrary attribute (category, location, etc.).
-
-    :param technosphere_indices: Mapping of activities to their indices in the technosphere matrix.
-    :param group_by: A function that takes an activity and returns its group value (e.g., category or location).
-    :param group_values: The set of all possible group values (e.g., all categories or locations).
-    :return: A tuple containing a list of lists of indices, a dictionary mapping group values to lists of indices,
-             and a 2D numpy array of indices, where rows have been padded with -1 to ensure equal lengths.
-    """
-
-    acts_dict = {}
-    for value in group_values:
-        # Collect indices for activities belonging to the current group value
-        x = [
-            int(technosphere_indices[a])
-            for a in technosphere_indices
-            if group_by(a) == value
-        ]
-        acts_dict[value] = x
-
-    return acts_dict
 
 
 def _get_mapping(data) -> dict:
@@ -91,7 +64,7 @@ def _read_scenario_data(data: dict, scenario: str):
         return pd.read_excel(filepath, index_col=0)
 
 
-def _read_datapackage(datapackage: DataPackage) -> DataPackage:
+def _read_datapackage(datapackage: str) -> DataPackage:
     """Read the datapackage.json file.
 
     :return: DataPackage
@@ -111,7 +84,7 @@ class Pathways:
     def __init__(self, datapackage, debug=False):
         self.datapackage = datapackage
         self.data, dataframe, self.filepaths = validate_datapackage(
-            _read_datapackage()
+            _read_datapackage(datapackage)
         )
         self.mapping = _get_mapping()
         self.mapping.update(self._get_final_energy_mapping())

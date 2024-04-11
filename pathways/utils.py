@@ -36,6 +36,10 @@ logging.basicConfig(
 def load_classifications():
     """Load the activities classifications."""
 
+    # check if file exists
+    if not Path(CLASSIFICATIONS).exists():
+        raise FileNotFoundError(f"File {CLASSIFICATIONS} not found")
+
     with open(CLASSIFICATIONS, "r") as f:
         data = yaml.full_load(f)
 
@@ -52,6 +56,9 @@ def harmonize_units(scenario: xr.DataArray, variables: list) -> xr.DataArray:
     """
 
     units = [scenario.attrs["units"][var] for var in variables]
+
+    if len(variables) == 0:
+        raise ValueError("Empty list of variables")
 
     # if not all units are the same, we need to convert
     if len(set(units)) > 1:
@@ -132,6 +139,10 @@ def create_lca_results_array(
     :return: An xarray DataArray with the appropriate coordinates and dimensions to store LCA results.
     :rtype: xr.DataArray
     """
+
+    # check if any of the list parameters is empty, and if so, throw an error
+    if not all([methods, years, regions, locations, models, scenarios]):
+        raise ValueError("Empty list parameter")
 
     # Define the coordinates for the xarray DataArray
     coords = {
@@ -450,3 +461,29 @@ def check_unclassified_activities(
             writer.writerows(missing_classifications)
 
     return missing_classifications
+
+
+def _group_technosphere_indices(
+    technosphere_indices: dict, group_by, group_values: list
+) -> dict:
+    """
+    Generalized function to group technosphere indices by an arbitrary attribute (category, location, etc.).
+
+    :param technosphere_indices: Mapping of activities to their indices in the technosphere matrix.
+    :param group_by: A function that takes an activity and returns its group value (e.g., category or location).
+    :param group_values: The set of all possible group values (e.g., all categories or locations).
+    :return: A tuple containing a list of lists of indices, a dictionary mapping group values to lists of indices,
+             and a 2D numpy array of indices, where rows have been padded with -1 to ensure equal lengths.
+    """
+
+    acts_dict = {}
+    for value in group_values:
+        # Collect indices for activities belonging to the current group value
+        x = [
+            int(technosphere_indices[a])
+            for a in technosphere_indices
+            if group_by(a) == value
+        ]
+        acts_dict[value] = x
+
+    return acts_dict

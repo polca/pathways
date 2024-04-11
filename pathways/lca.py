@@ -14,7 +14,7 @@ import bw2calc as bc
 import bw_processing as bwp
 import numpy as np
 import pyprind
-from bw2calc import MonteCarloLCA
+from bw2calc.monte_carlo import MonteCarloLCA
 from bw_processing import Datapackage
 from numpy import ndarray, dtype
 from scipy import sparse
@@ -22,9 +22,8 @@ from scipy.sparse import csr_matrix
 
 from .filesystem_constants import DIR_CACHED_DB
 from .lcia import fill_characterization_factors_matrices
-from .pathways import _group_technosphere_indices
-from .utils import get_unit_conversion_factors, fetch_indices, check_unclassified_activities
-
+from .utils import get_unit_conversion_factors, fetch_indices, check_unclassified_activities, \
+    _group_technosphere_indices
 
 logging.basicConfig(
     level=logging.DEBUG,
@@ -54,7 +53,11 @@ def read_indices_csv(file_path: Path) -> dict[tuple[str, str, str, str], int]:
     with open(file_path) as read_obj:
         csv_reader = csv.reader(read_obj, delimiter=";")
         for row in csv_reader:
-            indices[(row[0], row[1], row[2], row[3])] = int(row[4])
+            try:
+                indices[(row[0], row[1], row[2], row[3])] = int(row[4])
+            except IndexError as err:
+                logging.error(f"Error reading row {row} from {file_path}: {err}. "
+                              f"Could it be that the file uses commas instead of semicolons?")
     return indices
 
 
