@@ -3,11 +3,11 @@
 </p>
 
 
-# pathways
+# ``pathways``
 
 ``pathways`` is a Python package that characterizes the
-environmental impacts of products, secctors or energy systems 
-and transition scenarios over time using Life Cycle Assessment (LCA).
+environmental impacts of products, sectors or transition scenarios 
+over time using Life Cycle Assessment (LCA).
 Compared to traditional scenario results from energy models, 
 ``pathways`` provides a more detailed and transparent view of the
 environmental impacts of a scenario by resolving supply chains
@@ -17,6 +17,13 @@ issues are partially resolved.
 
 ``pathways`` is initially designed to work with data packages produced
 by ``premise``, but can be used with any IAM scenarios and LCA databases.
+
+``pathways`` reads a scenario and a corresponding set of scenario-based LCA matrices
+and calculates the environmental impacts of the scenario (or a subset of it) over time.
+
+<p align="center">
+<img src="https://github.com/polca/pathways/blob/main/assets/diagram_1.png" height="300"/>
+</p>
 
 ## Installation
 
