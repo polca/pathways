@@ -334,7 +334,7 @@ Battery-Stationary: ### Home storage uses NMC811 (w/o hyphen) in the current pre
       2020:
         value: 0.05
       2050:
-        min: 0.0.05
+        min: 0.05
         max: 0.33
         distribution: uniform
       create copy: False

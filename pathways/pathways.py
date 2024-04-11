@@ -532,29 +532,31 @@ def _calculate_year(args):
             ],
         )
         lca.lci(factorize=True)
-    elif use_distributions != 0 and subshares == False:
-        lca = MonteCarloLCA(
-            demand={0: 1},
-            data_objs=[
-                bw_datapackage,
-            ],
-            use_distributions=True,
-        )
-        lca.lci()
     else:
+        if subshares is False:
 
-        shares_indices = subshares_indices(regions, technosphere_indices, geo)
-        correlated_arrays = adjust_matrix_based_on_shares(A_arrays, shares_indices, use_distributions, year)
+            lca = MonteCarloLCA(
+                demand={0: 1},
+                data_objs=[
+                    bw_datapackage,
+                ],
+                use_distributions=True,
+            )
+            lca.lci()
+        else:
 
-        bw_correlated = get_subshares_matrix(correlated_arrays)
+            shares_indices = subshares_indices(regions, technosphere_indices, geo)
+            correlated_arrays = adjust_matrix_based_on_shares(A_arrays, shares_indices, use_distributions, year)
 
-        lca = MonteCarloLCA(
-            demand={0: 1},
-            data_objs=[bw_datapackage, bw_correlated],
-            use_distributions=True,
-            use_arrays=True,
-        )
-        lca.lci()
+            bw_correlated = get_subshares_matrix(correlated_arrays)
+
+            lca = MonteCarloLCA(
+                demand={0: 1},
+                data_objs=[bw_datapackage, bw_correlated],
+                use_distributions=True,
+                use_arrays=True,
+            )
+            lca.lci()
 
     characterization_matrix = fill_characterization_factors_matrices(
         biosphere_indices, methods, lca.dicts.biosphere, debug
@@ -597,25 +599,6 @@ def _calculate_year(args):
         )
 
     return results
-
-
-def correlated_uniform_montecarlo(ranges, defaults, iterations):
-    """
-        Adjusts randomly selected shares for parameters to sum to 1 while respecting their specified ranges.
-
-        :param ranges: Dict with parameter names as keys and (min, max) tuples as values.
-        :param defaults: Dict with default values for each parameter.
-        :param iterations: Number of iterations to attempt to find a valid distribution.
-        :return: A dict with the adjusted shares for each parameter.
-    """
-    for _ in range(iterations):
-        shares = {param: np.random.uniform(low, high) for param, (low, high) in ranges.items()}
-        total_share = sum(shares.values())
-        shares = {param: share / total_share for param, share in shares.items()}
-        if all(ranges[param][0] <= share <= ranges[param][1] for param, share in shares.items()):
-            return shares
-    return defaults
-
 
 class Pathways:
     """The Pathways class reads in a datapackage that contains scenario data,
@@ -894,9 +877,8 @@ class Pathways:
 
         # Create xarray for storing LCA results if not already present
         if self.lca_results is None:
-            _, technosphere_index, biosphere_index = get_lca_matrices(
-                self.datapackage, models[0], scenarios[0], years[0]
-            )
+            dirpath = get_dirpath(self.datapackage, models[0], scenarios[0], years[0])
+            technosphere_index, biosphere_index = get_indices(dirpath)
             locations = fetch_inventories_locations(technosphere_index)
 
             self.lca_results = create_lca_results_array(
@@ -979,9 +961,6 @@ class Pathways:
 
         # remove None values in results
         results = {k: v for k, v in results.items() if v is not None}
-
-        test = subshares_indices(regions, technosphere_index, Geomap(model=model))
-        print(test)
 
         self.fill_in_result_array(results)
 
