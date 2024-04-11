@@ -21,7 +21,7 @@ from datapackage import DataPackage
 
 from .data_validation import validate_datapackage
 from .filesystem_constants import DATA_DIR, DIR_CACHED_DB
-from .lca import get_lca_matrices, _calculate_year
+from .lca import _calculate_year, get_lca_matrices
 from .lcia import get_lcia_method_names
 from .utils import (
     clean_cache_directory,
@@ -32,7 +32,8 @@ from .utils import (
     load_classifications,
     load_numpy_array_from_disk,
     load_units_conversion,
-    resize_scenario_data, )
+    resize_scenario_data,
+)
 
 # remove warnings
 warnings.filterwarnings("ignore")
@@ -110,9 +111,7 @@ class Pathways:
 
     def __init__(self, datapackage, debug=False):
         self.datapackage = datapackage
-        self.data, dataframe, self.filepaths = validate_datapackage(
-            _read_datapackage()
-        )
+        self.data, dataframe, self.filepaths = validate_datapackage(_read_datapackage())
         self.mapping = _get_mapping()
         self.mapping.update(self._get_final_energy_mapping())
         self.debug = debug
@@ -176,7 +175,9 @@ class Pathways:
                 return dict_structure
             return None
 
-        def create_dict_with_specific_model(dataframe: pandas.DataFrame, model: str) -> dict:
+        def create_dict_with_specific_model(
+            dataframe: pandas.DataFrame, model: str
+        ) -> dict:
             """
             Create a dictionary for a specific model from the dataframe.
             :param dataframe: pandas.DataFrame
