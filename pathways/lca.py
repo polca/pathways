@@ -21,8 +21,12 @@ from scipy.sparse import csr_matrix
 
 from .filesystem_constants import DIR_CACHED_DB
 from .lcia import fill_characterization_factors_matrices
-from .utils import get_unit_conversion_factors, fetch_indices, check_unclassified_activities, \
-    _group_technosphere_indices
+from .utils import (
+    _group_technosphere_indices,
+    check_unclassified_activities,
+    fetch_indices,
+    get_unit_conversion_factors,
+)
 
 logging.basicConfig(
     level=logging.DEBUG,
@@ -55,8 +59,10 @@ def read_indices_csv(file_path: Path) -> dict[tuple[str, str, str, str], int]:
             try:
                 indices[(row[0], row[1], row[2], row[3])] = int(row[4])
             except IndexError as err:
-                logging.error(f"Error reading row {row} from {file_path}: {err}. "
-                              f"Could it be that the file uses commas instead of semicolons?")
+                logging.error(
+                    f"Error reading row {row} from {file_path}: {err}. "
+                    f"Could it be that the file uses commas instead of semicolons?"
+                )
     return indices
 
 
