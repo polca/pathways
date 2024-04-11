@@ -87,7 +87,7 @@ class Pathways:
         self.data, dataframe, self.filepaths = validate_datapackage(
             _read_datapackage(datapackage)
         )
-        self.mapping = _get_mapping()
+        self.mapping = _get_mapping(self.data)
         self.mapping.update(self._get_final_energy_mapping())
         self.debug = debug
         self.scenarios = self._get_scenarios(dataframe)

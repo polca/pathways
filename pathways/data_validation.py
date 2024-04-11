@@ -20,7 +20,7 @@ logging.basicConfig(
 
 
 def validate_datapackage(
-    datapackage: datapackage.DataPackage,
+    data_package: datapackage.DataPackage,
 ) -> (datapackage.DataPackage, pd.DataFrame, list):
     """
     Validate the datapackage.json file.
@@ -38,7 +38,7 @@ def validate_datapackage(
     # Validate datapackage according
     # to the Frictionless Data specifications
     try:
-        validate(datapackage.descriptor)
+        validate(data_package.descriptor)
     except DataPackageException as e:
         if e.multiple:
             for error in e.errors:
@@ -50,34 +50,34 @@ def validate_datapackage(
     required_resources = ["scenario_data", "exchanges", "labels", "mapping"]
     for resource in required_resources:
         try:
-            datapackage.get_resource(resource)
+            data_package.get_resource(resource)
         except DataPackageException:
             raise ValueError(f"Missing resource: {resource}")
 
     # Check that the datapackage contains the required metadata
     required_metadata = ["contributors", "description"]
     for metadata in required_metadata:
-        if metadata not in datapackage.descriptor:
+        if metadata not in data_package.descriptor:
             raise ValueError(f"Missing metadata: {metadata}")
 
     # extract the scenario data
-    data = datapackage.get_resource("scenario_data").read()
-    headers = datapackage.get_resource("scenario_data").headers
+    data = data_package.get_resource("scenario_data").read()
+    headers = data_package.get_resource("scenario_data").headers
     dataframe = pd.DataFrame(data, columns=headers)
 
     # Check that the scenario data is valid
     validate_scenario_data(dataframe)
 
     # Check that the mapping is valid
-    validate_mapping(datapackage.get_resource("mapping"))
+    validate_mapping(data_package.get_resource("mapping"))
 
     # fetch filepaths to resources
     filepaths = []
-    for resource in datapackage.resources:
+    for resource in data_package.resources:
         if "matrix" in resource.descriptor["name"]:
             filepaths.append(resource.source)
 
-    return datapackage, dataframe, filepaths
+    return data_package, dataframe, filepaths
 
 
 def validate_scenario_data(dataframe: pd.DataFrame) -> bool:
