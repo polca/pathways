@@ -22,7 +22,7 @@ by ``premise``, but can be used with any IAM scenarios and LCA databases.
 and calculates the environmental impacts of the scenario (or a subset of it) over time.
 
 <p align="center">
-<img src="https://github.com/polca/pathways/blob/main/assets/diagram_1.png" height="300"/>
+<img src="https://github.com/polca/pathways/blob/main/assets/diagram_1.png" />
 </p>
 
 ## Installation
