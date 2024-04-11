@@ -3,7 +3,6 @@ This module contains functions to calculate the Life Cycle Assessment (LCA) resu
 
 """
 
-
 import csv
 import logging
 import uuid
@@ -16,7 +15,7 @@ import numpy as np
 import pyprind
 from bw2calc.monte_carlo import MonteCarloLCA
 from bw_processing import Datapackage
-from numpy import ndarray, dtype
+from numpy import dtype, ndarray
 from scipy import sparse
 from scipy.sparse import csr_matrix
 
