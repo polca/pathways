@@ -26,12 +26,11 @@ from premise.geomap import Geomap
 from .data_validation import validate_datapackage
 from .filesystem_constants import DATA_DIR, DIR_CACHED_DB
 from .lca import (
-    fill_characterization_factors_matrices,
-    get_lca_matrices,
-
-    get_matrix_arrays,
-    get_indices,
     adjust_matrix_based_on_shares,
+    fill_characterization_factors_matrices,
+    get_indices,
+    get_lca_matrices,
+    get_matrix_arrays,
     get_subshares_matrix,
     remove_double_counting,
 )
@@ -546,7 +545,9 @@ def _calculate_year(args):
         else:
 
             shares_indices = subshares_indices(regions, technosphere_indices, geo)
-            correlated_arrays = adjust_matrix_based_on_shares(A_arrays, shares_indices, use_distributions, year)
+            correlated_arrays = adjust_matrix_based_on_shares(
+                A_arrays, shares_indices, use_distributions, year
+            )
 
             bw_correlated = get_subshares_matrix(correlated_arrays)
 
@@ -599,6 +600,7 @@ def _calculate_year(args):
         )
 
     return results
+
 
 class Pathways:
     """The Pathways class reads in a datapackage that contains scenario data,

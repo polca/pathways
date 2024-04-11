@@ -111,10 +111,14 @@ def get_matrix_arrays(
     matrix_filename = f"{matrix_type}_matrix.csv"
 
     if matrix_type == "A":
-        data, indices, sign, distributions = load_matrix_and_index(dirpath / matrix_filename,)
+        data, indices, sign, distributions = load_matrix_and_index(
+            dirpath / matrix_filename,
+        )
         arrays = [data, indices, sign, distributions]
     elif matrix_type == "B":
-        data, indices, _, distributions = load_matrix_and_index(dirpath / matrix_filename,)
+        data, indices, _, distributions = load_matrix_and_index(
+            dirpath / matrix_filename,
+        )
         arrays = [data, indices, distributions]
 
     return arrays
@@ -174,7 +178,7 @@ def get_lca_matrices(
 
 
 def get_subshares_matrix(
-        correlated_array: list,
+    correlated_array: list,
 ) -> Datapackage:
     """
     Add subshares samples to an LCA object.
@@ -186,13 +190,14 @@ def get_subshares_matrix(
     a_data_samples, a_indices, a_sign = correlated_array
 
     dp_correlated.add_persistent_array(
-        matrix='technosphere_matrix',
+        matrix="technosphere_matrix",
         indices_array=a_indices,
         data_array=a_data_samples,
         flip_array=a_sign,
     )
 
     return dp_correlated
+
 
 def adjust_matrix_based_on_shares(A_arrays, shares_dict, use_distributions, year):
     """
@@ -225,48 +230,82 @@ def adjust_matrix_based_on_shares(A_arrays, shares_dict, use_distributions, year
 
     for tech_category, regions in shares_dict.items():
         for region, techs in regions.items():
-            all_tech_indices = [details["idx"] for _, details in techs.items() if "idx" in details]
-            all_product_indices = set(indices_array['col'][np.isin(indices_array['row'], all_tech_indices)])
+            all_tech_indices = [
+                details["idx"] for _, details in techs.items() if "idx" in details
+            ]
+            all_product_indices = set(
+                indices_array["col"][np.isin(indices_array["row"], all_tech_indices)]
+            )
 
             tech_group_ranges = {}
             tech_group_defaults = {}
 
             for tech, details in techs.items():
                 if year != 2020:
-                    if details[2050]['distribution'] == 'uniform':
-                        tech_group_ranges[tech] = (details[2050]['min'], details[year]['max'])
-                        tech_group_defaults[tech] = details.get(2020, {}).get('value', 0)
+                    if details[2050]["distribution"] == "uniform":
+                        tech_group_ranges[tech] = (
+                            details[2050]["min"],
+                            details[year]["max"],
+                        )
+                        tech_group_defaults[tech] = details.get(2020, {}).get(
+                            "value", 0
+                        )
                     else:
-                        print('At this point, only uniform distributions are supported. Exiting.')
+                        print(
+                            "At this point, only uniform distributions are supported. Exiting."
+                        )
                         exit(1)
 
             if year != 2020 and tech_group_ranges:
-                group_shares = correlated_uniform_samples(tech_group_ranges, tech_group_defaults)
-                print('Tech group', tech_category, 'shares: ', group_shares)
+                group_shares = correlated_uniform_samples(
+                    tech_group_ranges, tech_group_defaults
+                )
+                print("Tech group", tech_category, "shares: ", group_shares)
             else:
-                group_shares = {tech: details.get(year, {}).get("value", 0) for tech, details in techs.items()}
-                print('Tech group', tech_category, 'shares: ', group_shares)
+                group_shares = {
+                    tech: details.get(year, {}).get("value", 0)
+                    for tech, details in techs.items()
+                }
+                print("Tech group", tech_category, "shares: ", group_shares)
 
             for product_idx in all_product_indices:
-                relevant_indices = [find_index(idx, product_idx) for idx in all_tech_indices if find_index(idx, product_idx) is not None]
+                relevant_indices = [
+                    find_index(idx, product_idx)
+                    for idx in all_tech_indices
+                    if find_index(idx, product_idx) is not None
+                ]
                 total_output = np.sum(data_array[relevant_indices])
 
                 for tech, share in group_shares.items():
-                    if tech in techs and 'idx' in techs[tech] and techs[tech]['idx'] is not None:
-                        idx = techs[tech]['idx']
+                    if (
+                        tech in techs
+                        and "idx" in techs[tech]
+                        and techs[tech]["idx"] is not None
+                    ):
+                        idx = techs[tech]["idx"]
 
                         if year == 2020:
                             share_value = details.get(year, {}).get("value", 0)
-                            new_amounts = np.array([total_output * share_value]).reshape((1, -1))
+                            new_amounts = np.array(
+                                [total_output * share_value]
+                            ).reshape((1, -1))
                         else:
-                            new_amounts = np.array([total_output * share for _ in range(use_distributions)]).reshape((1, -1))
+                            new_amounts = np.array(
+                                [total_output * share for _ in range(use_distributions)]
+                            ).reshape((1, -1))
                         index = find_index(idx, product_idx)
 
-                        if index is not None and product_idx not in unique_product_indices_from_dict:
+                        if (
+                            index is not None
+                            and product_idx not in unique_product_indices_from_dict
+                        ):
                             modified_indices.append((idx, product_idx))
                             modified_data.append(new_amounts)
                             modified_signs.append(sign_array[index])
-                        elif index is None and product_idx not in unique_product_indices_from_dict:
+                        elif (
+                            index is None
+                            and product_idx not in unique_product_indices_from_dict
+                        ):
                             modified_data.append(new_amounts)
                             modified_indices.append((idx, product_idx))
                             modified_signs.append(True)
@@ -277,6 +316,7 @@ def adjust_matrix_based_on_shares(A_arrays, shares_dict, use_distributions, year
     modified_signs_array = np.array(modified_signs, dtype=bool)
 
     return [modified_data_array, modified_indices_array, modified_signs_array]
+
 
 # def adjust_matrix_based_on_shares(A_arrays, shares_dict, use_distributions, year):
 #     """
@@ -388,18 +428,23 @@ def adjust_matrix_based_on_shares(A_arrays, shares_dict, use_distributions, year
 
 def correlated_uniform_samples(ranges, defaults, iterations=1000):
     """
-        Adjusts randomly selected shares for parameters to sum to 1 while respecting their specified ranges.
+    Adjusts randomly selected shares for parameters to sum to 1 while respecting their specified ranges.
 
-        :param ranges: Dict with parameter names as keys and (min, max) tuples as values.
-        :param defaults: Dict with default values for each parameter.
-        :param iterations: Number of iterations to attempt to find a valid distribution.
-        :return: A dict with the adjusted shares for each parameter.
+    :param ranges: Dict with parameter names as keys and (min, max) tuples as values.
+    :param defaults: Dict with default values for each parameter.
+    :param iterations: Number of iterations to attempt to find a valid distribution.
+    :return: A dict with the adjusted shares for each parameter.
     """
     for _ in range(iterations):
-        shares = {param: np.random.uniform(low, high) for param, (low, high) in ranges.items()}
+        shares = {
+            param: np.random.uniform(low, high) for param, (low, high) in ranges.items()
+        }
         total_share = sum(shares.values())
         shares = {param: share / total_share for param, share in shares.items()}
-        if all(ranges[param][0] <= share <= ranges[param][1] for param, share in shares.items()):
+        if all(
+            ranges[param][0] <= share <= ranges[param][1]
+            for param, share in shares.items()
+        ):
             return shares
 
     print("Failed to find a valid distribution after {} iterations".format(iterations))
