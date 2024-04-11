@@ -35,7 +35,7 @@ from .utils import (
 )
 
 # remove warnings
-warnings.filterwarnings("ignore")
+#warnings.filterwarnings("ignore")
 
 
 def _get_mapping(data) -> dict:
@@ -88,10 +88,20 @@ class Pathways:
             _read_datapackage(datapackage)
         )
         self.mapping = _get_mapping(self.data)
-        self.mapping.update(self._get_final_energy_mapping())
+        try:
+            self.mapping.update(self._get_final_energy_mapping())
+        except KeyError:
+            pass
         self.debug = debug
         self.scenarios = self._get_scenarios(dataframe)
         self.classifications = load_classifications()
+
+        if self.data.get_resource("classifications"):
+            self.classifications.update(
+                yaml.full_load(
+                    self.data.get_resource("classifications").raw_read()
+                )
+            )
 
         # create a reverse mapping
         self.reverse_classifications = defaultdict(list)
@@ -188,7 +198,7 @@ class Pathways:
         for var in mapping_vars:
             if var not in scenario_data["variables"].values:
                 if self.debug:
-                    logging.warning(f"Variable {var} not found in scenario data.")
+                    logging.warning(f"Variable {var} not found in scenario data among: {scenario_data['variables'].values.tolist()}.")
 
         # remove rows which do not have a value under the `variable`
         # column that correspond to any value in self.mapping for `scenario variable`
@@ -442,10 +452,8 @@ class Pathways:
                     for loc, act_loc_idx in acts_location_idx_dict.items():
                         idx = np.intersect1d(act_cat_idx, act_loc_idx)
                         idx = idx[idx != -1]
-                        summed_data = d[..., idx].sum(axis=-1)
 
                         if idx.size > 0:
-
                             summed_data = d[..., idx].sum(axis=-1)
                             try:
                                 self.lca_results.loc[

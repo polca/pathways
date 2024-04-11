@@ -87,10 +87,8 @@ p.calculate(
     regions=regions,
     years=years,
     variables=variables,
-    characterization=True,
-    multiprocessing=True,
-    demand_cutoff=0.001,
-    use_distributions=0
+    multiprocessing=True, # optional, use multiprocessing to speed up the calculation
+    use_distributions=0 # optional, number of iterations for Monte Carlo analysis
 )
 
 ```

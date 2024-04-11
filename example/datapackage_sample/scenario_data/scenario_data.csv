@@ -1,0 +1,9 @@
+region,variables,year,value,unit,model,pathway
+EU,technology A,2020,1000,kilogram,some model,Scenario A
+EU,technology A,2030,1000,kilogram,some model,Scenario A
+EU,technology A,2040,1000,kilogram,some model,Scenario A
+EU,technology A,2050,1000,kilogram,some model,Scenario A
+EU,technology A,2020,1000,kilogram,some model,Scenario B
+EU,technology A,2030,1000,kilogram,some model,Scenario B
+EU,technology A,2040,1000,kilogram,some model,Scenario B
+EU,technology A,2050,1000,kilogram,some model,Scenario B

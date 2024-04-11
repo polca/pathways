@@ -175,6 +175,8 @@ def get_lca_matrices(
             distributions_array=distributions,
         )
 
+        print(distributions)
+
     return dp, technosphere_inds, biosphere_inds
 
 
@@ -250,6 +252,8 @@ def process_region(data: Tuple) -> dict[str, ndarray[Any, dtype[Any]] | list[int
         idx, dataset = vars_idx[variable]["idx"], vars_idx[variable]["dataset"]
         # Compute the unit conversion vector for the given activities
         dataset_unit = dataset[2]
+
+        # check if we need units conversion
         unit_vector = get_unit_conversion_factors(
             scenarios.attrs["units"][variable],
             dataset_unit,
@@ -361,7 +365,13 @@ def _calculate_year(args: tuple):
             f"###############################"
         )
 
-    geo = Geomap(model=model)
+    try:
+        geo = Geomap(model=model)
+    except FileNotFoundError:
+        from constructive_geometries import Geomatcher
+        geo = Geomatcher()
+        geo.model = model
+        geo.geo = geo
 
     # Try to load LCA matrices for the given model, scenario, and year
     try:

@@ -89,7 +89,9 @@ def get_unit_conversion_factors(
     :return:
     """
 
-    return np.array(unit_mapping[scenario_unit][dataset_unit])
+    if scenario_unit != dataset_unit:
+        return np.array(unit_mapping.get(scenario_unit, {})[dataset_unit])
+    return np.array([1])
 
 
 def load_units_conversion() -> dict:

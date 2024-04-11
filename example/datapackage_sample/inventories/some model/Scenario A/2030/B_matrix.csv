@@ -1,0 +1,6 @@
+index of activity;index of biosphere flow;value;uncertainty type;loc;scale;shape;minimum;maximum;negative;flip
+0;0;1.4;5;;;;1.0;1.7;0;1
+1;0;1;5;;;;0.5;1.7;0;1
+2;0;2.3;5;;;;1.0;2.7;0;1
+3;0;1.1;5;;;;1.0;1.7;0;1
+4;0;1.4;5;;;;1.0;1.5;0;1

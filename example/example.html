@@ -1,0 +1,217 @@
+
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>PivotTable.js</title>
+
+        <!-- external libs from cdnjs -->
+        <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/c3/0.4.11/c3.min.css">
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min.js"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/c3/0.4.11/c3.min.js"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-csv/0.71/jquery.csv-0.71.min.js"></script>
+
+
+        <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/pivottable/2.19.0/pivot.min.css">
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pivottable/2.19.0/pivot.min.js"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pivottable/2.19.0/d3_renderers.min.js"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pivottable/2.19.0/c3_renderers.min.js"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pivottable/2.19.0/export_renderers.min.js"></script>
+
+        <style>
+            body {font-family: Verdana;}
+            .node {
+              border: solid 1px white;
+              font: 10px sans-serif;
+              line-height: 12px;
+              overflow: hidden;
+              position: absolute;
+              text-indent: 2px;
+            }
+            .c3-line, .c3-focused {stroke-width: 3px !important;}
+            .c3-bar {stroke: white !important; stroke-width: 1;}
+            .c3 text { font-size: 12px; color: grey;}
+            .tick line {stroke: white;}
+            .c3-axis path {stroke: grey;}
+            .c3-circle { opacity: 1 !important; }
+            .c3-xgrid-focus {visibility: hidden !important;}
+        </style>
+    </head>
+    <body>
+        <script type="text/javascript">
+            $(function(){
+                if(window.location != window.parent.location)
+                    $("<a>", {target:"_blank", href:""})
+                        .text("[pop out]").prependTo($("body"));
+
+                $("#output").pivotUI(
+                    $.csv.toArrays($("#output").text()),
+                    $.extend({
+                        renderers: $.extend(
+                            $.pivotUtilities.renderers,
+                            $.pivotUtilities.c3_renderers,
+                            $.pivotUtilities.d3_renderers,
+                            $.pivotUtilities.export_renderers
+                            ),
+                        hiddenAttributes: [""]
+                    }, {})
+                ).show();
+             });
+        </script>
+        <div id="output" style="display: none;">,act_category,variable,year,region,location,model,scenario,impact_category,quantile,value
+0,Manufacture of product D,technology A,2020,EU,FR,some model,Scenario A,EF v3.1 EN15804 - climate change - global warming potential (GWP100),0.05,56.11194011732934
+1,Manufacture of product D,technology A,2020,EU,FR,some model,Scenario A,EF v3.1 EN15804 - climate change - global warming potential (GWP100),0.5,86.75249395319801
+2,Manufacture of product D,technology A,2020,EU,FR,some model,Scenario A,EF v3.1 EN15804 - climate change - global warming potential (GWP100),0.95,135.14286940385324
+3,Manufacture of product D,technology A,2021,EU,FR,some model,Scenario A,EF v3.1 EN15804 - climate change - global warming potential (GWP100),0.05,50.500746105596406
+4,Manufacture of product D,technology A,2021,EU,FR,some model,Scenario A,EF v3.1 EN15804 - climate change - global warming potential (GWP100),0.5,78.07724455787822
+5,Manufacture of product D,technology A,2021,EU,FR,some model,Scenario A,EF v3.1 EN15804 - climate change - global warming potential (GWP100),0.95,121.62858246346792
+6,Manufacture of product D,technology A,2022,EU,FR,some model,Scenario A,EF v3.1 EN15804 - climate change - global warming potential (GWP100),0.05,44.88955209386347
+7,Manufacture of product D,technology A,2022,EU,FR,some model,Scenario A,EF v3.1 EN15804 - climate change - global warming potential (GWP100),0.5,69.4019951625584
+8,Manufacture of product D,technology A,2022,EU,FR,some model,Scenario A,EF v3.1 EN15804 - climate change - global warming potential (GWP100),0.95,108.11429552308259
+9,Manufacture of product D,technology A,2023,EU,FR,some model,Scenario A,EF v3.1 EN15804 - climate change - global warming potential (GWP100),0.05,39.27835808213054
+10,Manufacture of product D,technology A,2023,EU,FR,some model,Scenario A,EF v3.1 EN15804 - climate change - global warming potential (GWP100),0.5,60.72674576723861
+11,Manufacture of product D,technology A,2023,EU,FR,some model,Scenario A,EF v3.1 EN15804 - climate change - global warming potential (GWP100),0.95,94.60000858269727
+12,Manufacture of product D,technology A,2024,EU,FR,some model,Scenario A,EF v3.1 EN15804 - climate change - global warming potential (GWP100),0.05,33.667164070397604
+13,Manufacture of product D,technology A,2024,EU,FR,some model,Scenario A,EF v3.1 EN15804 - climate change - global warming potential (GWP100),0.5,52.05149637191881
+14,Manufacture of product D,technology A,2024,EU,FR,some model,Scenario A,EF v3.1 EN15804 - climate change - global warming potential (GWP100),0.95,81.08572164231194
+15,Manufacture of product D,technology A,2025,EU,FR,some model,Scenario A,EF v3.1 EN15804 - climate change - global warming potential (GWP100),0.05,28.05597005866467
+16,Manufacture of product D,technology A,2025,EU,FR,some model,Scenario A,EF v3.1 EN15804 - climate change - global warming potential (GWP100),0.5,43.376246976599006
+17,Manufacture of product D,technology A,2025,EU,FR,some model,Scenario A,EF v3.1 EN15804 - climate change - global warming potential (GWP100),0.95,67.57143470192662
+18,Manufacture of product D,technology A,2026,EU,FR,some model,Scenario A,EF v3.1 EN15804 - climate change - global warming potential (GWP100),0.05,22.444776046931736
+19,Manufacture of product D,technology A,2026,EU,FR,some model,Scenario A,EF v3.1 EN15804 - climate change - global warming potential (GWP100),0.5,34.70099758127921
+20,Manufacture of product D,technology A,2026,EU,FR,some model,Scenario A,EF v3.1 EN15804 - climate change - global warming potential (GWP100),0.95,54.0571477615413
+21,Manufacture of product D,technology A,2027,EU,FR,some model,Scenario A,EF v3.1 EN15804 - climate change - global warming potential (GWP100),0.05,16.833582035198802
+22,Manufacture of product D,technology A,2027,EU,FR,some model,Scenario A,EF v3.1 EN15804 - climate change - global warming potential (GWP100),0.5,26.025748185959408
+23,Manufacture of product D,technology A,2027,EU,FR,some model,Scenario A,EF v3.1 EN15804 - climate change - global warming potential (GWP100),0.95,40.54286082115597
+24,Manufacture of product D,technology A,2028,EU,FR,some model,Scenario A,EF v3.1 EN15804 - climate change - global warming potential (GWP100),0.05,11.222388023465868
+25,Manufacture of product D,technology A,2028,EU,FR,some model,Scenario A,EF v3.1 EN15804 - climate change - global warming potential (GWP100),0.5,17.350498790639605
+26,Manufacture of product D,technology A,2028,EU,FR,some model,Scenario A,EF v3.1 EN15804 - climate change - global warming potential (GWP100),0.95,27.02857388077065
+27,Manufacture of product D,technology A,2029,EU,FR,some model,Scenario A,EF v3.1 EN15804 - climate change - global warming potential (GWP100),0.05,5.611194011732934
+28,Manufacture of product D,technology A,2029,EU,FR,some model,Scenario A,EF v3.1 EN15804 - climate change - global warming potential (GWP100),0.5,8.67524939531981
+29,Manufacture of product D,technology A,2029,EU,FR,some model,Scenario A,EF v3.1 EN15804 - climate change - global warming potential (GWP100),0.95,13.514286940385333
+30,Manufacture of product C,technology A,2020,EU,FR,some model,Scenario A,EF v3.1 EN15804 - climate change - global warming potential (GWP100),0.05,685.2273691883929
+31,Manufacture of product C,technology A,2020,EU,FR,some model,Scenario A,EF v3.1 EN15804 - climate change - global warming potential (GWP100),0.5,1124.0369799662462
+32,Manufacture of product C,technology A,2020,EU,FR,some model,Scenario A,EF v3.1 EN15804 - climate change - global warming potential (GWP100),0.95,1440.7364833116253
+33,Manufacture of product C,technology A,2021,EU,FR,some model,Scenario A,EF v3.1 EN15804 - climate change - global warming potential (GWP100),0.05,616.7046322695536
+34,Manufacture of product C,technology A,2021,EU,FR,some model,Scenario A,EF v3.1 EN15804 - climate change - global warming potential (GWP100),0.5,1011.6332819696216
+35,Manufacture of product C,technology A,2021,EU,FR,some model,Scenario A,EF v3.1 EN15804 - climate change - global warming potential (GWP100),0.95,1296.6628349804628
+36,Manufacture of product C,technology A,2022,EU,FR,some model,Scenario A,EF v3.1 EN15804 - climate change - global warming potential (GWP100),0.05,548.1818953507143
+37,Manufacture of product C,technology A,2022,EU,FR,some model,Scenario A,EF v3.1 EN15804 - climate change - global warming potential (GWP100),0.5,899.229583972997
+38,Manufacture of product C,technology A,2022,EU,FR,some model,Scenario A,EF v3.1 EN15804 - climate change - global warming potential (GWP100),0.95,1152.5891866493002
+39,Manufacture of product C,technology A,2023,EU,FR,some model,Scenario A,EF v3.1 EN15804 - climate change - global warming potential (GWP100),0.05,479.6591584318751
+40,Manufacture of product C,technology A,2023,EU,FR,some model,Scenario A,EF v3.1 EN15804 - climate change - global warming potential (GWP100),0.5,786.8258859763723
+41,Manufacture of product C,technology A,2023,EU,FR,some model,Scenario A,EF v3.1 EN15804 - climate change - global warming potential (GWP100),0.95,1008.5155383181377
+42,Manufacture of product C,technology A,2024,EU,FR,some model,Scenario A,EF v3.1 EN15804 - climate change - global warming potential (GWP100),0.05,411.13642151303577
+43,Manufacture of product C,technology A,2024,EU,FR,some model,Scenario A,EF v3.1 EN15804 - climate change - global warming potential (GWP100),0.5,674.4221879797477
+44,Manufacture of product C,technology A,2024,EU,FR,some model,Scenario A,EF v3.1 EN15804 - climate change - global warming potential (GWP100),0.95,864.4418899869752
+45,Manufacture of product C,technology A,2025,EU,FR,some model,Scenario A,EF v3.1 EN15804 - climate change - global warming potential (GWP100),0.05,342.61368459419646
+46,Manufacture of product C,technology A,2025,EU,FR,some model,Scenario A,EF v3.1 EN15804 - climate change - global warming potential (GWP100),0.5,562.0184899831231
+47,Manufacture of product C,technology A,2025,EU,FR,some model,Scenario A,EF v3.1 EN15804 - climate change - global warming potential (GWP100),0.95,720.3682416558127
+48,Manufacture of product C,technology A,2026,EU,FR,some model,Scenario A,EF v3.1 EN15804 - climate change - global warming potential (GWP100),0.05,274.0909476753572
+49,Manufacture of product C,technology A,2026,EU,FR,some model,Scenario A,EF v3.1 EN15804 - climate change - global warming potential (GWP100),0.5,449.6147919864984
+50,Manufacture of product C,technology A,2026,EU,FR,some model,Scenario A,EF v3.1 EN15804 - climate change - global warming potential (GWP100),0.95,576.2945933246501
+51,Manufacture of product C,technology A,2027,EU,FR,some model,Scenario A,EF v3.1 EN15804 - climate change - global warming potential (GWP100),0.05,205.56821075651794
+52,Manufacture of product C,technology A,2027,EU,FR,some model,Scenario A,EF v3.1 EN15804 - climate change - global warming potential (GWP100),0.5,337.2110939898738
+53,Manufacture of product C,technology A,2027,EU,FR,some model,Scenario A,EF v3.1 EN15804 - climate change - global warming potential (GWP100),0.95,432.2209449934876
+54,Manufacture of product C,technology A,2028,EU,FR,some model,Scenario A,EF v3.1 EN15804 - climate change - global warming potential (GWP100),0.05,137.04547383767863
+55,Manufacture of product C,technology A,2028,EU,FR,some model,Scenario A,EF v3.1 EN15804 - climate change - global warming potential (GWP100),0.5,224.8073959932492
+56,Manufacture of product C,technology A,2028,EU,FR,some model,Scenario A,EF v3.1 EN15804 - climate change - global warming potential (GWP100),0.95,288.14729666232506
+57,Manufacture of product C,technology A,2029,EU,FR,some model,Scenario A,EF v3.1 EN15804 - climate change - global warming potential (GWP100),0.05,68.52273691883931
+58,Manufacture of product C,technology A,2029,EU,FR,some model,Scenario A,EF v3.1 EN15804 - climate change - global warming potential (GWP100),0.5,112.4036979966246
+59,Manufacture of product C,technology A,2029,EU,FR,some model,Scenario A,EF v3.1 EN15804 - climate change - global warming potential (GWP100),0.95,144.07364833116253
+60,Manufacture of product A,technology A,2020,EU,EU,some model,Scenario A,EF v3.1 EN15804 - climate change - global warming potential (GWP100),0.05,1260.5784299390625
+61,Manufacture of product A,technology A,2020,EU,EU,some model,Scenario A,EF v3.1 EN15804 - climate change - global warming potential (GWP100),0.5,1604.9692277772629
+62,Manufacture of product A,technology A,2020,EU,EU,some model,Scenario A,EF v3.1 EN15804 - climate change - global warming potential (GWP100),0.95,1836.2808642013174
+63,Manufacture of product A,technology A,2021,EU,EU,some model,Scenario A,EF v3.1 EN15804 - climate change - global warming potential (GWP100),0.05,1134.5205869451563
+64,Manufacture of product A,technology A,2021,EU,EU,some model,Scenario A,EF v3.1 EN15804 - climate change - global warming potential (GWP100),0.5,1444.4723049995366
+65,Manufacture of product A,technology A,2021,EU,EU,some model,Scenario A,EF v3.1 EN15804 - climate change - global warming potential (GWP100),0.95,1652.6527777811857
+66,Manufacture of product A,technology A,2022,EU,EU,some model,Scenario A,EF v3.1 EN15804 - climate change - global warming potential (GWP100),0.05,1008.46274395125
+67,Manufacture of product A,technology A,2022,EU,EU,some model,Scenario A,EF v3.1 EN15804 - climate change - global warming potential (GWP100),0.5,1283.9753822218104
+68,Manufacture of product A,technology A,2022,EU,EU,some model,Scenario A,EF v3.1 EN15804 - climate change - global warming potential (GWP100),0.95,1469.024691361054
+69,Manufacture of product A,technology A,2023,EU,EU,some model,Scenario A,EF v3.1 EN15804 - climate change - global warming potential (GWP100),0.05,882.4049009573438
+70,Manufacture of product A,technology A,2023,EU,EU,some model,Scenario A,EF v3.1 EN15804 - climate change - global warming potential (GWP100),0.5,1123.478459444084
+71,Manufacture of product A,technology A,2023,EU,EU,some model,Scenario A,EF v3.1 EN15804 - climate change - global warming potential (GWP100),0.95,1285.396604940922
+72,Manufacture of product A,technology A,2024,EU,EU,some model,Scenario A,EF v3.1 EN15804 - climate change - global warming potential (GWP100),0.05,756.3470579634375
+73,Manufacture of product A,technology A,2024,EU,EU,some model,Scenario A,EF v3.1 EN15804 - climate change - global warming potential (GWP100),0.5,962.9815366663577
+74,Manufacture of product A,technology A,2024,EU,EU,some model,Scenario A,EF v3.1 EN15804 - climate change - global warming potential (GWP100),0.95,1101.7685185207904
+75,Manufacture of product A,technology A,2025,EU,EU,some model,Scenario A,EF v3.1 EN15804 - climate change - global warming potential (GWP100),0.05,630.2892149695313
+76,Manufacture of product A,technology A,2025,EU,EU,some model,Scenario A,EF v3.1 EN15804 - climate change - global warming potential (GWP100),0.5,802.4846138886314
+77,Manufacture of product A,technology A,2025,EU,EU,some model,Scenario A,EF v3.1 EN15804 - climate change - global warming potential (GWP100),0.95,918.1404321006587
+78,Manufacture of product A,technology A,2026,EU,EU,some model,Scenario A,EF v3.1 EN15804 - climate change - global warming potential (GWP100),0.05,504.23137197562505
+79,Manufacture of product A,technology A,2026,EU,EU,some model,Scenario A,EF v3.1 EN15804 - climate change - global warming potential (GWP100),0.5,641.9876911109051
+80,Manufacture of product A,technology A,2026,EU,EU,some model,Scenario A,EF v3.1 EN15804 - climate change - global warming potential (GWP100),0.95,734.5123456805268
+81,Manufacture of product A,technology A,2027,EU,EU,some model,Scenario A,EF v3.1 EN15804 - climate change - global warming potential (GWP100),0.05,378.17352898171873
+82,Manufacture of product A,technology A,2027,EU,EU,some model,Scenario A,EF v3.1 EN15804 - climate change - global warming potential (GWP100),0.5,481.4907683331787
+83,Manufacture of product A,technology A,2027,EU,EU,some model,Scenario A,EF v3.1 EN15804 - climate change - global warming potential (GWP100),0.95,550.8842592603951
+84,Manufacture of product A,technology A,2028,EU,EU,some model,Scenario A,EF v3.1 EN15804 - climate change - global warming potential (GWP100),0.05,252.11568598781253
+85,Manufacture of product A,technology A,2028,EU,EU,some model,Scenario A,EF v3.1 EN15804 - climate change - global warming potential (GWP100),0.5,320.9938455554525
+86,Manufacture of product A,technology A,2028,EU,EU,some model,Scenario A,EF v3.1 EN15804 - climate change - global warming potential (GWP100),0.95,367.2561728402634
+87,Manufacture of product A,technology A,2029,EU,EU,some model,Scenario A,EF v3.1 EN15804 - climate change - global warming potential (GWP100),0.05,126.0578429939062
+88,Manufacture of product A,technology A,2029,EU,EU,some model,Scenario A,EF v3.1 EN15804 - climate change - global warming potential (GWP100),0.5,160.49692277772624
+89,Manufacture of product A,technology A,2029,EU,EU,some model,Scenario A,EF v3.1 EN15804 - climate change - global warming potential (GWP100),0.95,183.6280864201317
+90,Manufacture of product E,technology A,2020,EU,DE,some model,Scenario A,EF v3.1 EN15804 - climate change - global warming potential (GWP100),0.05,618.3836226347582
+91,Manufacture of product E,technology A,2020,EU,DE,some model,Scenario A,EF v3.1 EN15804 - climate change - global warming potential (GWP100),0.5,1002.9505142680334
+92,Manufacture of product E,technology A,2020,EU,DE,some model,Scenario A,EF v3.1 EN15804 - climate change - global warming potential (GWP100),0.95,1642.0732667997868
+93,Manufacture of product E,technology A,2021,EU,DE,some model,Scenario A,EF v3.1 EN15804 - climate change - global warming potential (GWP100),0.05,556.5452603712824
+94,Manufacture of product E,technology A,2021,EU,DE,some model,Scenario A,EF v3.1 EN15804 - climate change - global warming potential (GWP100),0.5,902.6554628412301
+95,Manufacture of product E,technology A,2021,EU,DE,some model,Scenario A,EF v3.1 EN15804 - climate change - global warming potential (GWP100),0.95,1477.865940119808
+96,Manufacture of product E,technology A,2022,EU,DE,some model,Scenario A,EF v3.1 EN15804 - climate change - global warming potential (GWP100),0.05,494.7068981078066
+97,Manufacture of product E,technology A,2022,EU,DE,some model,Scenario A,EF v3.1 EN15804 - climate change - global warming potential (GWP100),0.5,802.3604114144267
+98,Manufacture of product E,technology A,2022,EU,DE,some model,Scenario A,EF v3.1 EN15804 - climate change - global warming potential (GWP100),0.95,1313.6586134398294
+99,Manufacture of product E,technology A,2023,EU,DE,some model,Scenario A,EF v3.1 EN15804 - climate change - global warming potential (GWP100),0.05,432.8685358443308
+100,Manufacture of product E,technology A,2023,EU,DE,some model,Scenario A,EF v3.1 EN15804 - climate change - global warming potential (GWP100),0.5,702.0653599876234
+101,Manufacture of product E,technology A,2023,EU,DE,some model,Scenario A,EF v3.1 EN15804 - climate change - global warming potential (GWP100),0.95,1149.4512867598507
+102,Manufacture of product E,technology A,2024,EU,DE,some model,Scenario A,EF v3.1 EN15804 - climate change - global warming potential (GWP100),0.05,371.0301735808549
+103,Manufacture of product E,technology A,2024,EU,DE,some model,Scenario A,EF v3.1 EN15804 - climate change - global warming potential (GWP100),0.5,601.77030856082
+104,Manufacture of product E,technology A,2024,EU,DE,some model,Scenario A,EF v3.1 EN15804 - climate change - global warming potential (GWP100),0.95,985.2439600798721
+105,Manufacture of product E,technology A,2025,EU,DE,some model,Scenario A,EF v3.1 EN15804 - climate change - global warming potential (GWP100),0.05,309.1918113173791
+106,Manufacture of product E,technology A,2025,EU,DE,some model,Scenario A,EF v3.1 EN15804 - climate change - global warming potential (GWP100),0.5,501.4752571340167
+107,Manufacture of product E,technology A,2025,EU,DE,some model,Scenario A,EF v3.1 EN15804 - climate change - global warming potential (GWP100),0.95,821.0366333998934
+108,Manufacture of product E,technology A,2026,EU,DE,some model,Scenario A,EF v3.1 EN15804 - climate change - global warming potential (GWP100),0.05,247.35344905390332
+109,Manufacture of product E,technology A,2026,EU,DE,some model,Scenario A,EF v3.1 EN15804 - climate change - global warming potential (GWP100),0.5,401.1802057072134
+110,Manufacture of product E,technology A,2026,EU,DE,some model,Scenario A,EF v3.1 EN15804 - climate change - global warming potential (GWP100),0.95,656.8293067199147
+111,Manufacture of product E,technology A,2027,EU,DE,some model,Scenario A,EF v3.1 EN15804 - climate change - global warming potential (GWP100),0.05,185.51508679042746
+112,Manufacture of product E,technology A,2027,EU,DE,some model,Scenario A,EF v3.1 EN15804 - climate change - global warming potential (GWP100),0.5,300.88515428041
+113,Manufacture of product E,technology A,2027,EU,DE,some model,Scenario A,EF v3.1 EN15804 - climate change - global warming potential (GWP100),0.95,492.62198003993603
+114,Manufacture of product E,technology A,2028,EU,DE,some model,Scenario A,EF v3.1 EN15804 - climate change - global warming potential (GWP100),0.05,123.67672452695166
+115,Manufacture of product E,technology A,2028,EU,DE,some model,Scenario A,EF v3.1 EN15804 - climate change - global warming potential (GWP100),0.5,200.5901028536067
+116,Manufacture of product E,technology A,2028,EU,DE,some model,Scenario A,EF v3.1 EN15804 - climate change - global warming potential (GWP100),0.95,328.41465335995736
+117,Manufacture of product E,technology A,2029,EU,DE,some model,Scenario A,EF v3.1 EN15804 - climate change - global warming potential (GWP100),0.05,61.8383622634758
+118,Manufacture of product E,technology A,2029,EU,DE,some model,Scenario A,EF v3.1 EN15804 - climate change - global warming potential (GWP100),0.5,100.29505142680341
+119,Manufacture of product E,technology A,2029,EU,DE,some model,Scenario A,EF v3.1 EN15804 - climate change - global warming potential (GWP100),0.95,164.20732667997868
+120,Manufacture of product B,technology A,2020,EU,CH,some model,Scenario A,EF v3.1 EN15804 - climate change - global warming potential (GWP100),0.05,180.1930899012014
+121,Manufacture of product B,technology A,2020,EU,CH,some model,Scenario A,EF v3.1 EN15804 - climate change - global warming potential (GWP100),0.5,399.9933007800338
+122,Manufacture of product B,technology A,2020,EU,CH,some model,Scenario A,EF v3.1 EN15804 - climate change - global warming potential (GWP100),0.95,903.7472349108808
+123,Manufacture of product B,technology A,2021,EU,CH,some model,Scenario A,EF v3.1 EN15804 - climate change - global warming potential (GWP100),0.05,162.17378091108125
+124,Manufacture of product B,technology A,2021,EU,CH,some model,Scenario A,EF v3.1 EN15804 - climate change - global warming potential (GWP100),0.5,359.9939707020304
+125,Manufacture of product B,technology A,2021,EU,CH,some model,Scenario A,EF v3.1 EN15804 - climate change - global warming potential (GWP100),0.95,813.3725114197928
+126,Manufacture of product B,technology A,2022,EU,CH,some model,Scenario A,EF v3.1 EN15804 - climate change - global warming potential (GWP100),0.05,144.15447192096113
+127,Manufacture of product B,technology A,2022,EU,CH,some model,Scenario A,EF v3.1 EN15804 - climate change - global warming potential (GWP100),0.5,319.99464062402706
+128,Manufacture of product B,technology A,2022,EU,CH,some model,Scenario A,EF v3.1 EN15804 - climate change - global warming potential (GWP100),0.95,722.9977879287046
+129,Manufacture of product B,technology A,2023,EU,CH,some model,Scenario A,EF v3.1 EN15804 - climate change - global warming potential (GWP100),0.05,126.13516293084098
+130,Manufacture of product B,technology A,2023,EU,CH,some model,Scenario A,EF v3.1 EN15804 - climate change - global warming potential (GWP100),0.5,279.99531054602363
+131,Manufacture of product B,technology A,2023,EU,CH,some model,Scenario A,EF v3.1 EN15804 - climate change - global warming potential (GWP100),0.95,632.6230644376166
+132,Manufacture of product B,technology A,2024,EU,CH,some model,Scenario A,EF v3.1 EN15804 - climate change - global warming potential (GWP100),0.05,108.11585394072084
+133,Manufacture of product B,technology A,2024,EU,CH,some model,Scenario A,EF v3.1 EN15804 - climate change - global warming potential (GWP100),0.5,239.99598046802026
+134,Manufacture of product B,technology A,2024,EU,CH,some model,Scenario A,EF v3.1 EN15804 - climate change - global warming potential (GWP100),0.95,542.2483409465285
+135,Manufacture of product B,technology A,2025,EU,CH,some model,Scenario A,EF v3.1 EN15804 - climate change - global warming potential (GWP100),0.05,90.0965449506007
+136,Manufacture of product B,technology A,2025,EU,CH,some model,Scenario A,EF v3.1 EN15804 - climate change - global warming potential (GWP100),0.5,199.9966503900169
+137,Manufacture of product B,technology A,2025,EU,CH,some model,Scenario A,EF v3.1 EN15804 - climate change - global warming potential (GWP100),0.95,451.87361745544047
+138,Manufacture of product B,technology A,2026,EU,CH,some model,Scenario A,EF v3.1 EN15804 - climate change - global warming potential (GWP100),0.05,72.07723596048055
+139,Manufacture of product B,technology A,2026,EU,CH,some model,Scenario A,EF v3.1 EN15804 - climate change - global warming potential (GWP100),0.5,159.9973203120135
+140,Manufacture of product B,technology A,2026,EU,CH,some model,Scenario A,EF v3.1 EN15804 - climate change - global warming potential (GWP100),0.95,361.4988939643523
+141,Manufacture of product B,technology A,2027,EU,CH,some model,Scenario A,EF v3.1 EN15804 - climate change - global warming potential (GWP100),0.05,54.05792697036041
+142,Manufacture of product B,technology A,2027,EU,CH,some model,Scenario A,EF v3.1 EN15804 - climate change - global warming potential (GWP100),0.5,119.9979902340101
+143,Manufacture of product B,technology A,2027,EU,CH,some model,Scenario A,EF v3.1 EN15804 - climate change - global warming potential (GWP100),0.95,271.12417047326426
+144,Manufacture of product B,technology A,2028,EU,CH,some model,Scenario A,EF v3.1 EN15804 - climate change - global warming potential (GWP100),0.05,36.038617980240275
+145,Manufacture of product B,technology A,2028,EU,CH,some model,Scenario A,EF v3.1 EN15804 - climate change - global warming potential (GWP100),0.5,79.99866015600674
+146,Manufacture of product B,technology A,2028,EU,CH,some model,Scenario A,EF v3.1 EN15804 - climate change - global warming potential (GWP100),0.95,180.7494469821762
+147,Manufacture of product B,technology A,2029,EU,CH,some model,Scenario A,EF v3.1 EN15804 - climate change - global warming potential (GWP100),0.05,18.019308990120123
+148,Manufacture of product B,technology A,2029,EU,CH,some model,Scenario A,EF v3.1 EN15804 - climate change - global warming potential (GWP100),0.5,39.99933007800337
+149,Manufacture of product B,technology A,2029,EU,CH,some model,Scenario A,EF v3.1 EN15804 - climate change - global warming potential (GWP100),0.95,90.37472349108816
+150,Manufacture of product B,technology A,2030,EU,CH,some model,Scenario A,EF v3.1 EN15804 - climate change - global warming potential (GWP100),0.95,1.1368683772161603e-13
+</div>
+    </body>
+</html>

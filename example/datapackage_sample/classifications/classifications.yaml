@@ -1,0 +1,30 @@
+? !!python/tuple
+- activity A
+- product A
+- kilogram
+: Manufacture of product A
+? !!python/tuple
+- activity B
+- product B
+- kilogram
+: Manufacture of product B
+? !!python/tuple
+- activity C
+- product C
+- kilogram
+: Manufacture of product C
+? !!python/tuple
+- activity D
+- product D
+- kilogram
+: Manufacture of product D
+? !!python/tuple
+- activity E
+- product E
+- kilogram
+: Manufacture of product E
+? !!python/tuple
+- activity F
+- product F
+- kilogram
+: Manufacture of product F
