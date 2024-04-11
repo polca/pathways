@@ -35,7 +35,7 @@ from .utils import (
 )
 
 # remove warnings
-#warnings.filterwarnings("ignore")
+# warnings.filterwarnings("ignore")
 
 
 def _get_mapping(data) -> dict:
@@ -98,9 +98,7 @@ class Pathways:
 
         if self.data.get_resource("classifications"):
             self.classifications.update(
-                yaml.full_load(
-                    self.data.get_resource("classifications").raw_read()
-                )
+                yaml.full_load(self.data.get_resource("classifications").raw_read())
             )
 
         # create a reverse mapping
@@ -198,7 +196,9 @@ class Pathways:
         for var in mapping_vars:
             if var not in scenario_data["variables"].values:
                 if self.debug:
-                    logging.warning(f"Variable {var} not found in scenario data among: {scenario_data['variables'].values.tolist()}.")
+                    logging.warning(
+                        f"Variable {var} not found in scenario data among: {scenario_data['variables'].values.tolist()}."
+                    )
 
         # remove rows which do not have a value under the `variable`
         # column that correspond to any value in self.mapping for `scenario variable`

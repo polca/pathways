@@ -369,6 +369,7 @@ def _calculate_year(args: tuple):
         geo = Geomap(model=model)
     except FileNotFoundError:
         from constructive_geometries import Geomatcher
+
         geo = Geomatcher()
         geo.model = model
         geo.geo = geo
