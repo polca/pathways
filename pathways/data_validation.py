@@ -92,7 +92,7 @@ def validate_scenario_data(dataframe: pd.DataFrame) -> bool:
         - year: integer
         - value: float
 
-    :param resource: Datapackage resource.
+    :param dataframe: pandas DataFrame containing the scenario data.
     :return: True if the data is valid, False otherwise.
     """
 
@@ -106,7 +106,7 @@ def validate_scenario_data(dataframe: pd.DataFrame) -> bool:
     return True
 
 
-def validate_mapping(resource: datapackage.Resource, dataframe: pd.DataFrame):
+def validate_mapping(resource: datapackage.Resource):
     """
     Validates the mapping between scenario variables and LCA datasets.
     The mapping must be a YAML file.
@@ -116,7 +116,7 @@ def validate_mapping(resource: datapackage.Resource, dataframe: pd.DataFrame):
       dataset: string
       scenario variable: string
 
-    :param filepath: relative path to the mapping file.
+    :param resource: datapackage.Resource
     :return: boolean
     """
 

@@ -4,70 +4,41 @@ that contains scenario data, mapping between scenario variables and
 LCA datasets, and LCA matrices.
 """
 
-import csv
 import logging
-import uuid
 import warnings
 from collections import defaultdict
 from multiprocessing import Pool, cpu_count
-from typing import Any, List, Optional, Tuple
+from typing import List, Optional
 
-import bw2calc as bc
+import datapackage
 import numpy as np
+import pandas
 import pandas as pd
 import pyprind
 import xarray as xr
 import yaml
-from bw2calc.monte_carlo import MonteCarloLCA
 from datapackage import DataPackage
-from numpy import dtype, ndarray
-from premise.geomap import Geomap
 
 from .data_validation import validate_datapackage
 from .filesystem_constants import DATA_DIR, DIR_CACHED_DB
-from .lca import fill_characterization_factors_matrices, get_lca_matrices
+from .lca import get_lca_matrices, _calculate_year
 from .lcia import get_lcia_method_names
 from .utils import (
     clean_cache_directory,
     create_lca_results_array,
     display_results,
-    fetch_indices,
     fetch_inventories_locations,
-    get_unit_conversion_factors,
     harmonize_units,
     load_classifications,
     load_numpy_array_from_disk,
     load_units_conversion,
-    resize_scenario_data,
-)
+    resize_scenario_data, )
 
 # remove warnings
 warnings.filterwarnings("ignore")
 
 
-def check_unclassified_activities(
-    technosphere_indices: dict, classifications: dict
-) -> List:
-    """
-    Check if there are activities in the technosphere matrix that are not in the classifications.
-    :param technosphere_indices: List of activities in the technosphere matrix.
-    :param classifications: Dictionary of activities classifications.
-    :return: List of activities not found in the classifications.
-    """
-    missing_classifications = []
-    for act in technosphere_indices:
-        if act[:3] not in classifications:
-            missing_classifications.append(list(act[:3]))
-
-    if missing_classifications:
-        with open("missing_classifications.csv", "a") as f:
-            writer = csv.writer(f)
-            writer.writerows(missing_classifications)
-
-    return missing_classifications
-
-
-def group_technosphere_indices(
+def _group_technosphere_indices(
     technosphere_indices: dict, group_by, group_values: list
 ) -> dict:
     """
@@ -93,266 +64,59 @@ def group_technosphere_indices(
     return acts_dict
 
 
-def process_region(data: Tuple) -> dict[str, ndarray[Any, dtype[Any]] | list[int]]:
+def _get_mapping(data) -> dict:
     """
-    Process the region data.
-    :param data: Tuple containing the model, scenario, year, region, variables, vars_idx, scenarios, units_map,
-                    demand_cutoff, lca, characterization_matrix, debug, use_distributions.
-    :return: Dictionary containing the region data.
+    Read the mapping file which maps scenario variables to LCA datasets.
+    It's a YAML file.
+    :return: dict
+
     """
-    (
-        model,
-        scenario,
-        year,
-        region,
-        variables,
-        vars_idx,
-        scenarios,
-        units_map,
-        demand_cutoff,
-        lca,
-        characterization_matrix,
-        debug,
-        use_distributions,
-    ) = data
-
-    variables_demand = {}
-    d = []
-
-    for v, variable in enumerate(variables):
-        idx, dataset = vars_idx[variable]["idx"], vars_idx[variable]["dataset"]
-        # Compute the unit conversion vector for the given activities
-        dataset_unit = dataset[2]
-        unit_vector = get_unit_conversion_factors(
-            scenarios.attrs["units"][variable],
-            dataset_unit,
-            units_map,
-        )
-
-        # Fetch the demand for the given region, model, pathway, and year
-        demand = scenarios.sel(
-            variables=variable,
-            region=region,
-            model=model,
-            pathway=scenario,
-            year=year,
-        )
-
-        share = demand / scenarios.sel(
-            region=region,
-            model=model,
-            pathway=scenario,
-            year=year,
-        ).sum(dim="variables")
-
-        # If the total demand is zero, return None
-        if share < demand_cutoff:
-            continue
-
-        variables_demand[variable] = {
-            "id": idx,
-            "demand": demand.values * float(unit_vector),
-        }
-
-        lca.lci(demand={idx: demand.values * float(unit_vector)})
-
-        if use_distributions == 0:
-            characterized_inventory = (
-                characterization_matrix @ lca.inventory
-            ).toarray()
-
-        else:
-            # Use distributions for LCA calculations
-            # next(lca) is a generator that yields the inventory matrix
-            results = np.array(
-                [
-                    (characterization_matrix @ lca.inventory).toarray()
-                    for _ in zip(range(use_distributions), lca)
-                ]
-            )
-
-            # calculate quantiles along the first dimension
-            characterized_inventory = np.quantile(results, [0.05, 0.5, 0.95], axis=0)
-
-        d.append(characterized_inventory)
-
-        if debug:
-            logging.info(
-                f"var.: {variable}, name: {dataset[0][:50]}, "
-                f"ref.: {dataset[1]}, unit: {dataset[2][:50]}, idx: {idx},"
-                f"loc.: {dataset[3]}, demand: {round(float(demand.values * float(unit_vector)), 2)}, "
-                f"unit conv.: {unit_vector}, "
-                f"impact: {np.round(characterized_inventory.sum(axis=-1) / (demand.values * float(unit_vector)), 3)}. "
-            )
-
-    id_array = uuid.uuid4()
-    np.save(file=DIR_CACHED_DB / f"{id_array}.npy", arr=np.stack(d))
-
-    del d
-
-    # concatenate the list of sparse matrices and
-    # add a third dimension and concatenate along it
-    return {
-        "id_array": id_array,
-        "variables": {k: v["demand"] for k, v in variables_demand.items()},
-    }
+    return yaml.safe_load(data.get_resource("mapping").raw_read())
 
 
-def _calculate_year(args):
-    (
-        model,
-        scenario,
-        year,
-        regions,
-        variables,
-        methods,
-        demand_cutoff,
-        filepaths,
-        mapping,
-        units,
-        lca_results,
-        classifications,
-        scenarios,
-        reverse_classifications,
-        debug,
-        use_distributions,
-    ) = args
+def _read_scenario_data(data: dict, scenario: str):
+    """
+    Read the scenario data.
+    The scenario data describes scenario variables with production volumes for each time step.
+    :param scenario: str. Scenario name.
+    :return: pd.DataFrame
 
-    print(f"------ Calculating LCA results for {year}...")
-    if debug:
-        logging.info(
-            f"############################### "
-            f"{model}, {scenario}, {year} "
-            f"###############################"
-        )
-
-    geo = Geomap(model=model)
-
-    # Try to load LCA matrices for the given model, scenario, and year
-    try:
-        bw_datapackage, technosphere_indices, biosphere_indices = get_lca_matrices(
-            filepaths, model, scenario, year
-        )
-
-    except FileNotFoundError:
-        # If LCA matrices can't be loaded, skip to the next iteration
-        if debug:
-            logging.warning(f"Skipping {model}, {scenario}, {year}, as data not found.")
-        return
-
-    # Fetch indices
-    vars_info = fetch_indices(mapping, regions, variables, technosphere_indices, geo)
-
-    # Remove contribution from activities in other activities
-    # A = remove_double_counting(A, vars_info)
-
-    # check unclassified activities
-    missing_classifications = check_unclassified_activities(
-        technosphere_indices, classifications
-    )
-
-    if missing_classifications:
-        if debug:
-            logging.warning(
-                f"{len(missing_classifications)} activities are not found in the classifications."
-                "See missing_classifications.csv for more details."
-            )
-
-    results = {}
-
-    locations = lca_results.coords["location"].values.tolist()
-
-    acts_category_idx_dict = group_technosphere_indices(
-        technosphere_indices=technosphere_indices,
-        group_by=lambda x: classifications.get(x[:3], "unclassified"),
-        group_values=list(set(lca_results.coords["act_category"].values)),
-    )
-
-    acts_location_idx_dict = group_technosphere_indices(
-        technosphere_indices=technosphere_indices,
-        group_by=lambda x: x[-1],
-        group_values=locations,
-    )
-
-    results["other"] = {
-        "acts_category_idx_dict": acts_category_idx_dict,
-        "acts_location_idx_dict": acts_location_idx_dict,
-    }
-
-    if use_distributions == 0:
-        lca = bc.LCA(
-            demand={0: 1},
-            data_objs=[
-                bw_datapackage,
-            ],
-        )
-        lca.lci(factorize=True)
+    """
+    filepath = data["scenarios"][scenario]["path"]
+    # if CSV file
+    if filepath.endswith(".csv"):
+        return pd.read_csv(filepath, index_col=0)
     else:
-        lca = MonteCarloLCA(
-            demand={0: 1},
-            data_objs=[
-                bw_datapackage,
-            ],
-            use_distributions=True,
-        )
-        lca.lci()
+        # Excel file
+        return pd.read_excel(filepath, index_col=0)
 
-    characterization_matrix = fill_characterization_factors_matrices(
-        methods=methods,
-        biosphere_matrix_dict=lca.dicts.biosphere,
-        biosphere_dict=biosphere_indices,
-        debug=debug,
-    )
 
-    if debug:
-        logging.info(
-            f"Characterization matrix created. Shape: {characterization_matrix.shape}"
-        )
+def _read_datapackage(datapackage: DataPackage) -> DataPackage:
+    """Read the datapackage.json file.
 
-    bar = pyprind.ProgBar(len(regions))
-    for region in regions:
-        bar.update()
-        # Iterate over each region
-        results[region] = process_region(
-            (
-                model,
-                scenario,
-                year,
-                region,
-                variables,
-                vars_info[region],
-                scenarios,
-                units,
-                demand_cutoff,
-                lca,
-                characterization_matrix,
-                debug,
-                use_distributions,
-            )
-        )
-
-    return results
+    :return: DataPackage
+    """
+    return DataPackage(datapackage)
 
 
 class Pathways:
     """The Pathways class reads in a datapackage that contains scenario data,
     mapping between scenario variables and LCA datasets, and LCA matrices.
 
-    Parameters
-    ----------
-    datapackage : str
-        Path to the datapackage.json file.
+    :param datapackage: Path to the datapackage.zip file.
+    :type datapackage: str
+
     """
 
     def __init__(self, datapackage, debug=False):
         self.datapackage = datapackage
         self.data, dataframe, self.filepaths = validate_datapackage(
-            self.read_datapackage()
+            _read_datapackage()
         )
-        self.mapping = self.get_mapping()
-        self.mapping.update(self.get_final_energy_mapping())
+        self.mapping = _get_mapping()
+        self.mapping.update(self._get_final_energy_mapping())
         self.debug = debug
-        self.scenarios = self.get_scenarios(dataframe)
+        self.scenarios = self._get_scenarios(dataframe)
         self.classifications = load_classifications()
 
         # create a reverse mapping
@@ -378,23 +142,19 @@ class Pathways:
             logging.info("#" * 600)
             logging.info(f"Pathways initialized with datapackage: {datapackage}")
 
-    def read_datapackage(self) -> DataPackage:
-        """Read the datapackage.json file.
-
-        Returns
-        -------
-        dict
-            The datapackage as a dictionary.
-        """
-        return DataPackage(self.datapackage)
-
-    def get_final_energy_mapping(self):
+    def _get_final_energy_mapping(self):
         """
         Read the final energy mapping file, which is an Excel file
         :return: dict
         """
 
-        def create_dict_for_specific_model(row, model):
+        def create_dict_for_specific_model(row: dict, model: str) -> dict:
+            """
+            Create a dictionary for a specific model from the row.
+            :param row: dict
+            :param model: str
+            :return: dict
+            """
             # Construct the key from 'sector', 'variable', and 'fuel'
             key = f"{row['sector']}_{row['variable']}_{row['fuel']}"
 
@@ -416,7 +176,13 @@ class Pathways:
                 return dict_structure
             return None
 
-        def create_dict_with_specific_model(dataframe, model):
+        def create_dict_with_specific_model(dataframe: pandas.DataFrame, model: str) -> dict:
+            """
+            Create a dictionary for a specific model from the dataframe.
+            :param dataframe: pandas.DataFrame
+            :param model: str
+            :return: dict
+            """
             model_dict = {}
             for index, row in dataframe.iterrows():
                 row_dict = create_dict_for_specific_model(row, model)
@@ -425,47 +191,19 @@ class Pathways:
             return model_dict
 
         # Read the Excel file
-        df = pd.read_excel(
+        mapping_dataframe = pd.read_excel(
             DATA_DIR / "final_energy_mapping.xlsx",
         )
         model = self.data.descriptor["scenarios"][0]["name"].split(" - ")[0]
 
-        return create_dict_with_specific_model(df, model)
+        return create_dict_with_specific_model(mapping_dataframe, model)
 
-    def get_mapping(self) -> dict:
-        """
-        Read the mapping file.
-        It's a YAML file.
-        :return: dict
-
-        """
-        return yaml.safe_load(self.data.get_resource("mapping").raw_read())
-
-    def read_scenario_data(self, scenario):
-        """Read the scenario data.
-
-        Parameters
-        ----------
-        scenario : str
-            Scenario name.
-
-        Returns
-        -------
-        pd.DataFrame
-            The scenario data as a pandas DataFrame.
-        """
-        filepath = self.data["scenarios"][scenario]["path"]
-        # if CSV file
-        if filepath.endswith(".csv"):
-            return pd.read_csv(filepath, index_col=0)
-        else:
-            # Excel file
-            return pd.read_excel(filepath, index_col=0)
-
-    def get_scenarios(self, scenario_data: pd.DataFrame) -> xr.DataArray:
+    def _get_scenarios(self, scenario_data: pd.DataFrame) -> xr.DataArray:
         """
         Load scenarios from filepaths as pandas DataFrame.
         Concatenate them into an xarray DataArray.
+        :param scenario_data: pd.DataFrame
+        :return: xr.DataArray
         """
 
         mapping_vars = [item["scenario variable"] for item in self.mapping.values()]
@@ -525,7 +263,6 @@ class Pathways:
         years: Optional[List[int]] = None,
         variables: Optional[List[str]] = None,
         characterization: bool = True,
-        flows: Optional[List[str]] = None,
         multiprocessing: bool = False,
         demand_cutoff: float = 1e-3,
         use_distributions: int = 0,
@@ -552,12 +289,8 @@ class Pathways:
         :type years: Optional[List[int]], default is None
         :param variables: List of variables. If None, all available variables will be used.
         :type variables: Optional[List[str]], default is None
-        :param flows: List of biosphere flows. If None, all available flows will be used.
-        :type flows: Optional[List[str]], default is None
         :param multiprocessing: Boolean. If True, process each region in parallel.
         :type multiprocessing: bool, default is False
-        :param data_type: Data type to use for storing LCA results.
-        :type data_type: np.dtype, default is np.float64
         :param demand_cutoff: Float. If the total demand for a given variable is less than this value, the variable is skipped.
         :type demand_cutoff: float, default is 1e-3
         :param use_distributions: Integer. If non zero, use distributions for LCA calculations.
@@ -696,9 +429,9 @@ class Pathways:
         # remove None values in results
         results = {k: v for k, v in results.items() if v is not None}
 
-        self.fill_in_result_array(results)
+        self._fill_in_result_array(results)
 
-    def fill_in_result_array(self, results: dict):
+    def _fill_in_result_array(self, results: dict):
 
         # Assuming DIR_CACHED_DB, results, and self.lca_results are already defined
 

@@ -1,26 +1,30 @@
+"""
+This module contains functions to calculate the Life Cycle Assessment (LCA) results for a given model, scenario, and year.
+
+"""
+
+
 import csv
 import logging
+import uuid
 from pathlib import Path
 from typing import Any, Dict, List, Tuple
 
+import bw2calc as bc
 import bw_processing as bwp
 import numpy as np
+import pyprind
+from bw2calc import MonteCarloLCA
 from bw_processing import Datapackage
+from numpy import ndarray, dtype
 from scipy import sparse
 from scipy.sparse import csr_matrix
 
-from .lcia import get_lcia_methods
+from .filesystem_constants import DIR_CACHED_DB
+from .lcia import fill_characterization_factors_matrices
+from .pathways import _group_technosphere_indices
+from .utils import get_unit_conversion_factors, fetch_indices, check_unclassified_activities
 
-# Attempt to import pypardiso's spsolve function.
-# If it isn't available, we fall back on scipy's spsolve.
-try:
-    from pypardiso import spsolve
-
-    print("Solver: pypardiso")
-except ImportError:
-    from scikits.umfpack import spsolve
-
-    print("Solver: scikits.umfpack")
 
 logging.basicConfig(
     level=logging.DEBUG,
@@ -31,7 +35,7 @@ logging.basicConfig(
 )
 
 
-def read_indices_csv(file_path: Path) -> Dict[Tuple[str, str, str, str], str]:
+def read_indices_csv(file_path: Path) -> dict[tuple[str, str, str, str], int]:
     """
     Reads a CSV file and returns its contents as a dictionary.
 
@@ -42,6 +46,8 @@ def read_indices_csv(file_path: Path) -> Dict[Tuple[str, str, str, str], str]:
     :type file_path: Path
 
     :return: A dictionary mapping tuples of four strings to indices.
+    For technosphere indices, the four strings are the activity name, product name, location, and unit.
+    For biosphere indices, the four strings are the flow name, category, subcategory, and unit.
     :rtype: Dict[Tuple[str, str, str, str], str]
     """
     indices = dict()
@@ -104,8 +110,8 @@ def get_lca_matrices(
     """
     Retrieve Life Cycle Assessment (LCA) matrices from disk.
 
-    :param datapackage: The path to the datapackage.
-    :type datapackage: str
+    :param filepaths: A list of filepaths containing the LCA matrices.
+    :type filepaths: List[str]
     :param model: The name of the model.
     :type model: str
     :param scenario: The name of the scenario.
@@ -163,56 +169,6 @@ def get_lca_matrices(
     return dp, technosphere_inds, biosphere_inds
 
 
-def fill_characterization_factors_matrices(
-    methods: list, biosphere_matrix_dict: dict, biosphere_dict: dict, debug=False
-) -> csr_matrix:
-    """
-    Create one CSR matrix for all LCIA method, with the last dimension being the index of the method
-    :param methods: contains names of the methods to use.
-    :param biosphere_matrix_dict: dictionary with biosphere flows and their indices
-    :param debug: if True, log debug information
-    :return: a sparse matrix with the characterization factors
-    """
-
-    lcia_data = get_lcia_methods(methods=methods)
-
-    # Prepare data for efficient creation of the sparse matrix
-    data = []
-    rows = []
-    cols = []
-    cfs = []
-
-    for m, method in enumerate(methods):
-        method_data = lcia_data[method]
-
-        for flow_name in method_data:
-            if flow_name in biosphere_dict:
-                idx = biosphere_dict[flow_name]
-                if idx in biosphere_matrix_dict:
-                    data.append(method_data[flow_name])
-                    rows.append(biosphere_matrix_dict[idx])
-                    cols.append(m)
-                    cfs.append((method, flow_name, idx, method_data[flow_name]))
-
-    # Efficiently create the sparse matrix
-    matrix = sparse.csr_matrix(
-        (data, (cols, rows)),
-        shape=(len(methods), len(biosphere_matrix_dict)),
-        dtype=np.float64,
-    )
-
-    if debug:
-        # sort l by method and flow
-        cfs = sorted(cfs, key=lambda x: (x[0], x[1]))
-        for x in cfs:
-            method, flow, f, value = x
-            logging.info(
-                f"LCIA method: {method}, Flow: {flow}, Index: {f}, Value: {value}"
-            )
-
-    return matrix
-
-
 def remove_double_counting(
     characterized_inventory: csr_matrix, vars_info: dict, activity_idx: int
 ) -> csr_matrix:
@@ -224,6 +180,9 @@ def remove_double_counting(
     :param vars_info: Dictionary with information about which indices to zero out.
     :param activity_idx: Index of the activity being evaluated, which should not be zeroed out.
     :return: Characterized inventory with double counting removed for all but the evaluated activity.
+
+    TODO: This function is not used in the current implementation. It was used in the previous implementation. Needs improvement.
+
     """
 
     print("Removing double counting")
@@ -250,3 +209,252 @@ def remove_double_counting(
         characterized_inventory[:, idx] = 0
 
     return characterized_inventory.tocsr()
+
+
+def process_region(data: Tuple) -> dict[str, ndarray[Any, dtype[Any]] | list[int]]:
+    """
+    Process the region data.
+    :param data: Tuple containing the model, scenario, year, region, variables, vars_idx, scenarios, units_map,
+                    demand_cutoff, lca, characterization_matrix, debug, use_distributions.
+    :return: Dictionary containing the region data.
+    """
+    (
+        model,
+        scenario,
+        year,
+        region,
+        variables,
+        vars_idx,
+        scenarios,
+        units_map,
+        demand_cutoff,
+        lca,
+        characterization_matrix,
+        debug,
+        use_distributions,
+    ) = data
+
+    variables_demand = {}
+    d = []
+
+    for v, variable in enumerate(variables):
+        idx, dataset = vars_idx[variable]["idx"], vars_idx[variable]["dataset"]
+        # Compute the unit conversion vector for the given activities
+        dataset_unit = dataset[2]
+        unit_vector = get_unit_conversion_factors(
+            scenarios.attrs["units"][variable],
+            dataset_unit,
+            units_map,
+        )
+
+        # Fetch the demand for the given region, model, pathway, and year
+        demand = scenarios.sel(
+            variables=variable,
+            region=region,
+            model=model,
+            pathway=scenario,
+            year=year,
+        )
+
+        # If the demand is below the cut-off criteria, skip to the next iteration
+        share = demand / scenarios.sel(
+            region=region,
+            model=model,
+            pathway=scenario,
+            year=year,
+        ).sum(dim="variables")
+
+        # If the total demand is zero, return None
+        if share < demand_cutoff:
+            continue
+
+        variables_demand[variable] = {
+            "id": idx,
+            "demand": demand.values * float(unit_vector),
+        }
+
+        lca.lci(demand={idx: demand.values * float(unit_vector)})
+
+        if use_distributions == 0:
+            # Regular LCA
+            characterized_inventory = (
+                characterization_matrix @ lca.inventory
+            ).toarray()
+
+        else:
+            # Use distributions for LCA calculations
+            # next(lca) is a generator that yields the inventory matrix
+            results = np.array(
+                [
+                    (characterization_matrix @ lca.inventory).toarray()
+                    for _ in zip(range(use_distributions), lca)
+                ]
+            )
+
+            # calculate quantiles along the first dimension
+            characterized_inventory = np.quantile(results, [0.05, 0.5, 0.95], axis=0)
+
+        d.append(characterized_inventory)
+
+        if debug:
+            logging.info(
+                f"var.: {variable}, name: {dataset[0][:50]}, "
+                f"ref.: {dataset[1]}, unit: {dataset[2][:50]}, idx: {idx},"
+                f"loc.: {dataset[3]}, demand: {round(float(demand.values * float(unit_vector)), 2)}, "
+                f"unit conv.: {unit_vector}, "
+                f"impact: {np.round(characterized_inventory.sum(axis=-1) / (demand.values * float(unit_vector)), 3)}. "
+            )
+
+    # Save the characterization vectors to disk
+    id_array = uuid.uuid4()
+    np.save(file=DIR_CACHED_DB / f"{id_array}.npy", arr=np.stack(d))
+
+    # just making sure that the memory is freed. Maybe not needed- check later
+    del d
+
+    # returning a dictionary containing the id_array and the variables
+    # to be able to fetch them back later
+    return {
+        "id_array": id_array,
+        "variables": {k: v["demand"] for k, v in variables_demand.items()},
+    }
+
+
+def _calculate_year(args: tuple):
+    """
+    Prepares the data for the calculation of LCA results for a given year
+    and calls the process_region function to calculate the results for each region.
+    """
+    (
+        model,
+        scenario,
+        year,
+        regions,
+        variables,
+        methods,
+        demand_cutoff,
+        filepaths,
+        mapping,
+        units,
+        lca_results,
+        classifications,
+        scenarios,
+        reverse_classifications,
+        debug,
+        use_distributions,
+    ) = args
+
+    print(f"------ Calculating LCA results for {year}...")
+    if debug:
+        logging.info(
+            f"############################### "
+            f"{model}, {scenario}, {year} "
+            f"###############################"
+        )
+
+    geo = Geomap(model=model)
+
+    # Try to load LCA matrices for the given model, scenario, and year
+    try:
+        bw_datapackage, technosphere_indices, biosphere_indices = get_lca_matrices(
+            filepaths, model, scenario, year
+        )
+
+    except FileNotFoundError:
+        # If LCA matrices can't be loaded, skip to the next iteration
+        if debug:
+            logging.warning(f"Skipping {model}, {scenario}, {year}, as data not found.")
+        return
+
+    # Fetch indices
+    vars_info = fetch_indices(mapping, regions, variables, technosphere_indices, geo)
+
+    # Remove contribution from activities in other activities
+    # A = remove_double_counting(A, vars_info)
+
+    # check unclassified activities
+    missing_classifications = check_unclassified_activities(
+        technosphere_indices, classifications
+    )
+
+    if missing_classifications:
+        if debug:
+            logging.warning(
+                f"{len(missing_classifications)} activities are not found in the classifications."
+                "See missing_classifications.csv for more details."
+            )
+
+    results = {}
+
+    locations = lca_results.coords["location"].values.tolist()
+
+    acts_category_idx_dict = _group_technosphere_indices(
+        technosphere_indices=technosphere_indices,
+        group_by=lambda x: classifications.get(x[:3], "unclassified"),
+        group_values=list(set(lca_results.coords["act_category"].values)),
+    )
+
+    acts_location_idx_dict = _group_technosphere_indices(
+        technosphere_indices=technosphere_indices,
+        group_by=lambda x: x[-1],
+        group_values=locations,
+    )
+
+    results["other"] = {
+        "acts_category_idx_dict": acts_category_idx_dict,
+        "acts_location_idx_dict": acts_location_idx_dict,
+    }
+
+    if use_distributions == 0:
+        lca = bc.LCA(
+            demand={0: 1},
+            data_objs=[
+                bw_datapackage,
+            ],
+        )
+        lca.lci(factorize=True)
+    else:
+        lca = MonteCarloLCA(
+            demand={0: 1},
+            data_objs=[
+                bw_datapackage,
+            ],
+            use_distributions=True,
+        )
+        lca.lci()
+
+    characterization_matrix = fill_characterization_factors_matrices(
+        methods=methods,
+        biosphere_matrix_dict=lca.dicts.biosphere,
+        biosphere_dict=biosphere_indices,
+        debug=debug,
+    )
+
+    if debug:
+        logging.info(
+            f"Characterization matrix created. Shape: {characterization_matrix.shape}"
+        )
+
+    bar = pyprind.ProgBar(len(regions))
+    for region in regions:
+        bar.update()
+        # Iterate over each region
+        results[region] = process_region(
+            (
+                model,
+                scenario,
+                year,
+                region,
+                variables,
+                vars_info[region],
+                scenarios,
+                units,
+                demand_cutoff,
+                lca,
+                characterization_matrix,
+                debug,
+                use_distributions,
+            )
+        )
+
+    return results

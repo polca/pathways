@@ -1,3 +1,13 @@
+"""
+Utilities for the pathways module.
+
+These utilities include functions for loading activities classifications and units conversion, harmonizing units,
+creating an LCA results array, displaying results, loading a numpy array from disk, getting visible files, cleaning the
+cache directory, resizing scenario data, fetching indices, fetching inventories locations, converting a CSV file to a
+dictionary, checking unclassified activities, and getting activity indices.
+
+"""
+
 import csv
 import logging
 from pathlib import Path
@@ -75,7 +85,7 @@ def get_unit_conversion_factors(
     return np.array(unit_mapping[scenario_unit][dataset_unit])
 
 
-def load_units_conversion():
+def load_units_conversion() -> dict:
     """Load the units conversion."""
 
     with open(UNITS_CONVERSION, "r") as f:
@@ -136,6 +146,7 @@ def create_lca_results_array(
     }
 
     if use_distributions is True:
+        # we calculate the 5th, 50th, and 95th percentiles
         coords.update({"quantile": [0.05, 0.5, 0.95]})
 
     dims = (
@@ -162,6 +173,15 @@ def display_results(
     cutoff: float = 0.001,
     interpolate: bool = False,
 ) -> xr.DataArray:
+    """
+    Display the LCA results.
+    Remove results below a cutoff value and aggregate them into a single category.
+    :param lca_results: The LCA results.
+    :param cutoff: The cutoff value.
+    :param interpolate: A boolean indicating whether to interpolate the results.
+    :return: The LCA results.
+    :rtype: xr.DataArray
+    """
     if lca_results is None:
         raise ValueError("No results to display")
 
@@ -206,7 +226,12 @@ def load_numpy_array_from_disk(filepath):
     return np.load(filepath, allow_pickle=True)
 
 
-def get_visible_files(path):
+def get_visible_files(path: str) -> list[Path]:
+    """
+    Get visible files in a directory.
+    :param path: The path to the directory.
+    :return: List of visible files.
+    """
     return [file for file in Path(path).iterdir() if not file.name.startswith(".")]
 
 
@@ -260,7 +285,7 @@ def resize_scenario_data(
     return scenario_data
 
 
-def _get_activity_indices(
+def get_activity_indices(
     activities: List[Tuple[str, str, str, str]],
     technosphere_index: Dict[Tuple[str, str, str, str], Any],
     geo: Geomap,
@@ -350,7 +375,7 @@ def fetch_indices(
         ]
 
         # Use _get_activity_indices to fetch indices
-        idxs = _get_activity_indices(activities, technosphere_index, geo)
+        idxs = get_activity_indices(activities, technosphere_index, geo)
 
         # Map variables to their indices and associated dataset information
         vars_idx[region] = {
@@ -403,3 +428,25 @@ def csv_to_dict(filename: str) -> dict[int, tuple[str, ...]]:
                 logging.warning(f"Row {row} has less than 5 items.")
 
     return output_dict
+
+
+def check_unclassified_activities(
+    technosphere_indices: dict, classifications: dict
+) -> List:
+    """
+    Check if there are activities in the technosphere matrix that are not in the classifications.
+    :param technosphere_indices: List of activities in the technosphere matrix.
+    :param classifications: Dictionary of activities classifications.
+    :return: List of activities not found in the classifications.
+    """
+    missing_classifications = []
+    for act in technosphere_indices:
+        if act[:3] not in classifications:
+            missing_classifications.append(list(act[:3]))
+
+    if missing_classifications:
+        with open("missing_classifications.csv", "a") as f:
+            writer = csv.writer(f)
+            writer.writerows(missing_classifications)
+
+    return missing_classifications
