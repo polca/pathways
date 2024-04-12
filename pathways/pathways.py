@@ -5,13 +5,11 @@ LCA datasets, and LCA matrices.
 """
 
 import logging
-import warnings
 from collections import defaultdict
 from multiprocessing import Pool, cpu_count
-from typing import List, Optional
+from typing import List, Optional, Any
 
 import numpy as np
-import pandas
 import pandas as pd
 import pyprind
 import xarray as xr
@@ -33,10 +31,6 @@ from .utils import (
     load_units_conversion,
     resize_scenario_data,
 )
-
-# remove warnings
-# warnings.filterwarnings("ignore")
-
 
 def _get_mapping(data) -> dict:
     """
@@ -60,9 +54,9 @@ def _read_scenario_data(data: dict, scenario: str):
     # if CSV file
     if filepath.endswith(".csv"):
         return pd.read_csv(filepath, index_col=0)
-    else:
-        # Excel file
-        return pd.read_excel(filepath, index_col=0)
+
+    # Excel file
+    return pd.read_excel(filepath, index_col=0)
 
 
 def _read_datapackage(datapackage: str) -> DataPackage:
@@ -130,7 +124,7 @@ class Pathways:
         :return: dict
         """
 
-        def create_dict_for_specific_model(row: dict, model: str) -> dict:
+        def create_dict_for_specific_model(row: pd.Series, model: str) -> dict[Any, Any] | None:
             """
             Create a dictionary for a specific model from the row.
             :param row: dict
@@ -159,7 +153,7 @@ class Pathways:
             return None
 
         def create_dict_with_specific_model(
-            dataframe: pandas.DataFrame, model: str
+            dataframe: pd.DataFrame, model: str
         ) -> dict:
             """
             Create a dictionary for a specific model from the dataframe.
@@ -168,7 +162,7 @@ class Pathways:
             :return: dict
             """
             model_dict = {}
-            for index, row in dataframe.iterrows():
+            for _, row in dataframe.iterrows():
                 row_dict = create_dict_for_specific_model(row, model)
                 if row_dict:
                     model_dict.update(row_dict)
@@ -327,7 +321,7 @@ class Pathways:
 
         # Create xarray for storing LCA results if not already present
         if self.lca_results is None:
-            _, technosphere_index, biosphere_index = get_lca_matrices(
+            _, technosphere_index, _ = get_lca_matrices(
                 self.filepaths, models[0], scenarios[0], years[0]
             )
             locations = fetch_inventories_locations(technosphere_index)
@@ -341,7 +335,7 @@ class Pathways:
                 scenarios=scenarios,
                 classifications=self.classifications,
                 mapping=self.mapping,
-                use_distributions=True if use_distributions > 0 else False,
+                use_distributions=use_distributions > 0,
             )
 
         # Iterate over each combination of model, scenario, and year
@@ -430,9 +424,9 @@ class Pathways:
         }
 
         # use pyprint to display progress
-        bar = pyprind.ProgBar(len(results))
+        progress_bar = pyprind.ProgBar(len(results))
         for coord, result in results.items():
-            bar.update()
+            progress_bar.update()
             model, scenario, year = coord
             acts_category_idx_dict = result["other"]["acts_category_idx_dict"]
             acts_location_idx_dict = result["other"]["acts_location_idx_dict"]
