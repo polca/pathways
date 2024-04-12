@@ -7,7 +7,7 @@ LCA datasets, and LCA matrices.
 import logging
 from collections import defaultdict
 from multiprocessing import Pool, cpu_count
-from typing import List, Optional, Any
+from typing import Any, List, Optional
 
 import numpy as np
 import pandas as pd
@@ -31,6 +31,7 @@ from .utils import (
     load_units_conversion,
     resize_scenario_data,
 )
+
 
 def _get_mapping(data) -> dict:
     """
@@ -124,7 +125,9 @@ class Pathways:
         :return: dict
         """
 
-        def create_dict_for_specific_model(row: pd.Series, model: str) -> dict[Any, Any] | None:
+        def create_dict_for_specific_model(
+            row: pd.Series, model: str
+        ) -> dict[Any, Any] | None:
             """
             Create a dictionary for a specific model from the row.
             :param row: dict
