@@ -133,12 +133,12 @@ It can be further formatted
 to a pandas' DataFrame or export to a CSV/Excel file using the built-in
 methods of ``xarray``.
     
-    ```python
-    
-        df = results.to_dataframe()
-        df.to_csv("results.csv")
-    
-    ```
+```python
+
+    df = results.to_dataframe()
+    df.to_csv("results.csv")
+
+```
 
 Results can be visualized using your favorite plotting library.
 ![Screenshot](example/fig5.png)
