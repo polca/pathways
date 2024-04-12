@@ -405,7 +405,7 @@ class Pathways:
                                     self.reverse_classifications,
                                     self.debug,
                                     use_distributions,
-                                    subshares
+                                    subshares,
                                 )
                             )
                             for year in years

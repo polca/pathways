@@ -22,12 +22,17 @@ from scipy.sparse import csr_matrix
 
 from .filesystem_constants import DIR_CACHED_DB
 from .lcia import fill_characterization_factors_matrices
+from .subshares import (
+    adjust_matrix_based_on_shares,
+    get_subshares_matrix,
+    subshares_indices,
+)
 from .utils import (
     _group_technosphere_indices,
     check_unclassified_activities,
     fetch_indices,
-    get_unit_conversion_factors, )
-from .subshares import subshares_indices, get_subshares_matrix, adjust_matrix_based_on_shares
+    get_unit_conversion_factors,
+)
 
 logging.basicConfig(
     level=logging.DEBUG,
@@ -68,7 +73,7 @@ def read_indices_csv(file_path: Path) -> dict[tuple[str, str, str, str], int]:
 
 
 def load_matrix_and_index(
-        file_path: Path,
+    file_path: Path,
 ) -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
     """
     Reads a CSV file and returns its contents as a CSR sparse matrix.
@@ -111,10 +116,10 @@ def load_matrix_and_index(
 
 
 def get_lca_matrices(
-        filepaths: list,
-        model: str,
-        scenario: str,
-        year: int,
+    filepaths: list,
+    model: str,
+    scenario: str,
+    year: int,
 ) -> Tuple[Datapackage, Dict, Dict]:
     """
     Retrieve Life Cycle Assessment (LCA) matrices from disk.
@@ -138,8 +143,8 @@ def get_lca_matrices(
             Path(fp)
             for fp in filepaths
             if all(kw in fp for kw in contains)
-               and Path(fp).suffix == suffix
-               and Path(fp).exists()
+            and Path(fp).suffix == suffix
+            and Path(fp).exists()
         ]
 
     def select_filepath(keyword: str, fps):
@@ -272,7 +277,7 @@ def process_region(data: Tuple) -> dict[str, ndarray[Any, dtype[Any]] | list[int
         if use_distributions == 0:
             # Regular LCA
             characterized_inventory = (
-                    characterization_matrix @ lca.inventory
+                characterization_matrix @ lca.inventory
             ).toarray()
 
         else:
@@ -336,7 +341,7 @@ def _calculate_year(args: tuple):
         reverse_classifications,
         debug,
         use_distributions,
-        subshares
+        subshares,
     ) = args
 
     print(f"------ Calculating LCA results for {year}...")

@@ -1,8 +1,8 @@
 import bw2calc
 import bw_processing
 import bw_processing as bwp
-import yaml
 import numpy as np
+import yaml
 from bw_processing import Datapackage
 from premise.geomap import Geomap
 
@@ -43,10 +43,20 @@ def adjust_subshares(data: dict) -> dict:
             total_value, total_adjustable_value = compute_totals(technologies, year)
             if total_value == 0 or total_adjustable_value == 0:
                 continue
-            values_to_adjust.append((technologies, total_value, total_adjustable_value, category, year))
+            values_to_adjust.append(
+                (technologies, total_value, total_adjustable_value, category, year)
+            )
 
-    for technologies, total_value, total_adjustable_value, category, year in values_to_adjust:
-        technologies = adjust_values(technologies, total_value, total_adjustable_value, category, year)
+    for (
+        technologies,
+        total_value,
+        total_adjustable_value,
+        category,
+        year,
+    ) in values_to_adjust:
+        technologies = adjust_values(
+            technologies, total_value, total_adjustable_value, category, year
+        )
         data[category] = technologies
 
     return data
@@ -61,7 +71,11 @@ def identify_years(technologies: dict) -> set:
     years = set()
     for subcategory, tech_list in technologies.items():
         for tech in tech_list:
-            year_keys = [key for key in tech.keys() if isinstance(key, int) and 'value' in tech[key]]
+            year_keys = [
+                key
+                for key in tech.keys()
+                if isinstance(key, int) and "value" in tech[key]
+            ]
             years.update(year_keys)
     return years
 
@@ -78,7 +92,7 @@ def compute_totals(technologies: dict, year: int) -> tuple:
     for subcategory, tech_list in technologies.items():
         for tech in tech_list:
             if year in tech:
-                value = tech[year].get('value', 0)
+                value = tech[year].get("value", 0)
                 total_value += value
                 if tech.get("name") is not None:
                     total_adjustable_value += value
@@ -86,11 +100,11 @@ def compute_totals(technologies: dict, year: int) -> tuple:
 
 
 def adjust_values(
-        technologies: dict,
-        total_value: float,
-        total_adjustable_value: float,
-        category: str,
-        year: int
+    technologies: dict,
+    total_value: float,
+    total_adjustable_value: float,
+    category: str,
+    year: int,
 ) -> dict:
     """
     Adjust the values in the technologies dictionary for the given year.
@@ -113,7 +127,8 @@ def adjust_values(
     if not np.isclose(adjusted_total, 1.00, rtol=1e-9):
         print(
             f"Warning: Total of adjusted '{year}' values in category '{category}' "
-            f"does not add up to 1.00 (Total: {adjusted_total})")
+            f"does not add up to 1.00 (Total: {adjusted_total})"
+        )
 
     return technologies
 
@@ -142,9 +157,13 @@ def subshares_indices(regions: list, technosphere_indices: dict, geo: Geomap) ->
 
                 for tech in tech_list:
                     activity_key = create_activity_key(tech, region)
-                    activity_index = get_activity_indices([activity_key], technosphere_indices, geo)[0]
+                    activity_index = get_activity_indices(
+                        [activity_key], technosphere_indices, geo
+                    )[0]
 
-                    tech_data = regional_indices.setdefault(tech_type, {"idx": activity_index})
+                    tech_data = regional_indices.setdefault(
+                        tech_type, {"idx": activity_index}
+                    )
 
                     # Populate dynamic year data
                     for key, value in tech.items():
@@ -164,16 +183,11 @@ def create_activity_key(tech, region):
     :param region: String representing the region.
     :return: Tuple of technology name, reference product, unit, and region.
     """
-    return (
-        tech.get("name"),
-        tech.get("reference product"),
-        tech.get("unit"),
-        region
-    )
+    return (tech.get("name"), tech.get("reference product"), tech.get("unit"), region)
 
 
 def get_subshares_matrix(
-        correlated_array: list,
+    correlated_array: list,
 ) -> bwp.datapackage.Datapackage:
     """
     Add subshares samples to a bw_processing.datapackage object.
@@ -193,7 +207,9 @@ def get_subshares_matrix(
     return dp_correlated
 
 
-def adjust_matrix_based_on_shares(lca: bw2calc.LCA, shares_dict, use_distributions, year):
+def adjust_matrix_based_on_shares(
+    lca: bw2calc.LCA, shares_dict, use_distributions, year
+):
     """
     Adjust the technosphere matrix based on shares.
     :param data_array:
@@ -238,12 +254,6 @@ def adjust_matrix_based_on_shares(lca: bw2calc.LCA, shares_dict, use_distributio
                 (nonzeros_row[a], nonzeros_column[a]), dtype=bwp.INDICES_DTYPE
             )
 
-
-
-
-
-
-
             all_product_indices = set(
                 indices_array["col"][np.isin(indices_array["row"], all_tech_indices)]
             )
@@ -285,13 +295,15 @@ def adjust_matrix_based_on_shares(lca: bw2calc.LCA, shares_dict, use_distributio
                     for idx in all_tech_indices
                     if lca.dicts.product[idx] is not None
                 ]
-                total_output = np.sum(lca.technosphere_matrix[product_idx, relevant_indices])
+                total_output = np.sum(
+                    lca.technosphere_matrix[product_idx, relevant_indices]
+                )
 
                 for tech, share in group_shares.items():
                     if (
-                            tech in techs
-                            and "idx" in techs[tech]
-                            and techs[tech]["idx"] is not None
+                        tech in techs
+                        and "idx" in techs[tech]
+                        and techs[tech]["idx"] is not None
                     ):
                         idx = techs[tech]["idx"]
 
@@ -307,15 +319,15 @@ def adjust_matrix_based_on_shares(lca: bw2calc.LCA, shares_dict, use_distributio
                         index = find_index(idx, product_idx)
 
                         if (
-                                index is not None
-                                and product_idx not in unique_product_indices_from_dict
+                            index is not None
+                            and product_idx not in unique_product_indices_from_dict
                         ):
                             modified_indices.append((idx, product_idx))
                             modified_data.append(new_amounts)
                             modified_signs.append(sign_array[index])
                         elif (
-                                index is None
-                                and product_idx not in unique_product_indices_from_dict
+                            index is None
+                            and product_idx not in unique_product_indices_from_dict
                         ):
                             modified_data.append(new_amounts)
                             modified_indices.append((idx, product_idx))
@@ -341,14 +353,13 @@ def correlated_samples(ranges: dict, defaults: dict, iterations=1000):
     """
     for _ in range(iterations):
         shares = {
-            param: np.random.uniform(low, high)
-            for param, (low, high) in ranges.items()
+            param: np.random.uniform(low, high) for param, (low, high) in ranges.items()
         }
         total_share = sum(shares.values())
         shares = {param: share / total_share for param, share in shares.items()}
         if all(
-                ranges[param][0] <= share <= ranges[param][1]
-                for param, share in shares.items()
+            ranges[param][0] <= share <= ranges[param][1]
+            for param, share in shares.items()
         ):
             return shares
 
