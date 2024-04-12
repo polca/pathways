@@ -384,29 +384,31 @@ class Pathways:
                             }
                         )
                 else:
-                    results.update({
-                        (model, scenario, year): _calculate_year(
-                            (
-                                model,
-                                scenario,
-                                year,
-                                regions,
-                                variables,
-                                methods,
-                                demand_cutoff,
-                                self.filepaths,
-                                self.mapping,
-                                self.units,
-                                self.lca_results,
-                                self.classifications,
-                                self.scenarios,
-                                self.reverse_classifications,
-                                self.debug,
-                                use_distributions,
+                    results.update(
+                        {
+                            (model, scenario, year): _calculate_year(
+                                (
+                                    model,
+                                    scenario,
+                                    year,
+                                    regions,
+                                    variables,
+                                    methods,
+                                    demand_cutoff,
+                                    self.filepaths,
+                                    self.mapping,
+                                    self.units,
+                                    self.lca_results,
+                                    self.classifications,
+                                    self.scenarios,
+                                    self.reverse_classifications,
+                                    self.debug,
+                                    use_distributions,
+                                )
                             )
-                        )
-                        for year in years
-                    })
+                            for year in years
+                        }
+                    )
 
         # remove None values in results
         results = {k: v for k, v in results.items() if v is not None}
