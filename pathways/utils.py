@@ -1,156 +1,73 @@
-import math
+"""
+Utilities for the pathways module.
+
+These utilities include functions for loading activities classifications and units conversion, harmonizing units,
+creating an LCA results array, displaying results, loading a numpy array from disk, getting visible files, cleaning the
+cache directory, resizing scenario data, fetching indices, fetching inventories locations, converting a CSV file to a
+dictionary, checking unclassified activities, and getting activity indices.
+
+"""
+
+import csv
+import logging
 from pathlib import Path
 from typing import Any, Dict, List, Tuple, Union
 
 import numpy as np
 import xarray as xr
 import yaml
+from premise.geomap import Geomap
 
 from .filesystem_constants import DATA_DIR, DIR_CACHED_DB
 
 CLASSIFICATIONS = DATA_DIR / "activities_classifications.yaml"
 UNITS_CONVERSION = DATA_DIR / "units_conversion.yaml"
-SUBSHARES = DATA_DIR / "technologies_shares.yaml"
 
 
-def get_dirpath(
-    datapackage: str,
-    model: str,
-    scenario: str,
-    year: int,
-) -> Path:
-    """
-    Get the directory path for a specific year.
-
-    ...
-
-    :rtype: Path
-    """
-
-    dirpath = (
-        Path(datapackage).parent / "inventories" / model.lower() / scenario / str(year)
-    )
-
-    if not dirpath.exists():
-        raise FileNotFoundError(f"Directory {dirpath} does not exist.")
-
-    return dirpath
+logging.basicConfig(
+    level=logging.DEBUG,
+    filename="pathways.log",  # Log file to save the entries
+    filemode="a",  # Append to the log file if it exists, 'w' to overwrite
+    format="%(asctime)s - %(levelname)s - %(module)s - %(message)s",
+    datefmt="%Y-%m-%d %H:%M:%S",
+)
 
 
 def load_classifications():
     """Load the activities classifications."""
 
-    with open(CLASSIFICATIONS, "r") as f:
+    # check if file exists
+    if not Path(CLASSIFICATIONS).exists():
+        raise FileNotFoundError(f"File {CLASSIFICATIONS} not found")
+
+    with open(CLASSIFICATIONS) as f:
         data = yaml.full_load(f)
-
-    # ensure that "NO" is not interpreted as False
-    new_keys = []
-    old_keys = []
-    for key, value in data.items():
-        # check if last element of key is not nan
-        if not isinstance(key[-1], str):
-            new_entry = key[:-1] + ("NO",)
-            new_keys.append(new_entry)
-            old_keys.append(key)
-
-    for new_key, old_key in zip(new_keys, old_keys):
-        data[new_key] = data.pop(old_key)
 
     return data
 
 
-def _get_activity_indices(
-    activities: List[Tuple[str, str, str, str]],
-    A_index: Dict[Tuple[str, str, str, str], int],
-    geo: Any,
-) -> List[int]:
-    """
-    Fetch the indices of activities in the technosphere matrix.
-
-    This function iterates over the provided list of activities. For each activity, it first tries to find the activity
-    index in the technosphere matrix for the specific region. If the activity is not found, it looks for the activity
-    in possible locations based on the IAM to Ecoinvent mapping. If still not found, it tries to find the activity index
-    for some default locations ("RoW", "GLO", "RER", "CH").
-
-    :param activities: A list of tuples, each representing an activity. Each tuple contains four elements: the name of
-                       the activity, the reference product, the unit, and the region.
-    :type activities: List[Tuple[str, str, str, str]]
-    :param A_index: A dictionary mapping activity tuples to their indices in the technosphere matrix.
-    :type A_index: Dict[Tuple[str, str, str, str], int]
-    :param geo: An object providing an IAM to Ecoinvent location mapping.
-    :type geo: Any
-    :param region: The region for which to fetch activity indices.
-    :type region: str
-
-    :return: A list of activity indices in the technosphere matrix.
-    :rtype: List[int]
-    """
-
-    indices = []  # List to hold the found indices
-
-    # Iterate over each activity in the provided list
-    for a, activity in enumerate(activities):
-        # Try to find the index for the specific region
-        idx = A_index.get(activity)
-        if idx is not None:
-            indices.append(int(idx))  # If found, add to the list
-        else:
-            # If not found, look for the activity in possible locations
-            # find out if the location is an IAM location or just an ecoinvent location
-
-            if (geo.model.upper(), activity[-1]) not in geo.geo.keys():
-                print(f"{activity[-1]} is not an IAM location.")
-                possible_locations = [activity[-1]]
-            else:
-                possible_locations = geo.iam_to_ecoinvent_location(activity[-1])
-
-            for loc in possible_locations:
-                idx = A_index.get((activity[0], activity[1], activity[2], loc))
-                if idx is not None:
-                    indices.append(int(idx))  # If found, add to the list
-                    activities[a] = (activity[0], activity[1], activity[2], loc)
-                    break  # Exit the loop as the index was found
-            else:
-                # If still not found, try some default locations
-                for default_loc in ["RoW", "GLO", "RER", "CH"]:
-                    idx = A_index.get(
-                        (activity[0], activity[1], activity[2], default_loc)
-                    )
-                    if idx is not None:
-                        indices.append(int(idx))  # If found, add to the list
-                        activities[a] = (
-                            activity[0],
-                            activity[1],
-                            activity[2],
-                            default_loc,
-                        )
-                        break  # Exit the loop as the index was found
-                else:
-                    # If still not found, print a message and add None to the list
-                    print(f"Activity {activity} not found in the technosphere matrix.")
-                    indices.append(None)
-        if idx is None:
-            print(f"Activity {activity} not found in the technosphere matrix.")
-
-    return indices  # Return the list of indices
-
-
 def harmonize_units(scenario: xr.DataArray, variables: list) -> xr.DataArray:
     """
-    Harmonize the units of a scenario. Some units ar ein PJ/yr, while others are in EJ/yr
+    Harmonize the units of a scenario. Some units are in PJ/yr, while others are in EJ/yr
     We want to convert everything to the same unit - preferably the largest one.
-    :param scenario:
-    :return:
+    :param scenario: xr.DataArray
+    :param variables: list of variables
+    :return: xr.DataArray
     """
 
     units = [scenario.attrs["units"][var] for var in variables]
 
+    if len(variables) == 0:
+        raise ValueError("Empty list of variables")
+
     # if not all units are the same, we need to convert
     if len(set(units)) > 1:
-        if all(x in ["PJ/yr", "EJ/yr"] for x in units):
+        if all(x in ["PJ/yr", "EJ/yr", "PJ/yr."] for x in units):
             # convert to EJ/yr
             # create vector of conversion factors
-            conversion_factors = np.array([1e-3 if u == "PJ/yr" else 1 for u in units])
+            conversion_factors = np.array(
+                [1e-3 if u in ("PJ/yr", "PJ/yr.") else 1 for u in units]
+            )
             # multiply scenario by conversion factors
             scenario.loc[dict(variables=variables)] *= conversion_factors[
                 :, np.newaxis, np.newaxis
@@ -172,13 +89,15 @@ def get_unit_conversion_factors(
     :return:
     """
 
-    return np.array(unit_mapping[scenario_unit][dataset_unit])
+    if scenario_unit != dataset_unit:
+        return np.array(unit_mapping.get(scenario_unit, {})[dataset_unit])
+    return np.array([1])
 
 
-def load_units_conversion():
+def load_units_conversion() -> dict:
     """Load the units conversion."""
 
-    with open(UNITS_CONVERSION, "r") as f:
+    with open(UNITS_CONVERSION) as f:
         data = yaml.full_load(f)
 
     return data
@@ -223,6 +142,10 @@ def create_lca_results_array(
     :rtype: xr.DataArray
     """
 
+    # check if any of the list parameters is empty, and if so, throw an error
+    if not all([methods, years, regions, locations, models, scenarios]):
+        raise ValueError("Empty list parameter")
+
     # Define the coordinates for the xarray DataArray
     coords = {
         "act_category": list(set(classifications.values())),
@@ -236,6 +159,7 @@ def create_lca_results_array(
     }
 
     if use_distributions is True:
+        # we calculate the 5th, 50th, and 95th percentiles
         coords.update({"quantile": [0.05, 0.5, 0.95]})
 
     dims = (
@@ -262,6 +186,15 @@ def display_results(
     cutoff: float = 0.001,
     interpolate: bool = False,
 ) -> xr.DataArray:
+    """
+    Display the LCA results.
+    Remove results below a cutoff value and aggregate them into a single category.
+    :param lca_results: The LCA results.
+    :param cutoff: The cutoff value.
+    :param interpolate: A boolean indicating whether to interpolate the results.
+    :return: The LCA results.
+    :rtype: xr.DataArray
+    """
     if lca_results is None:
         raise ValueError("No results to display")
 
@@ -269,7 +202,6 @@ def display_results(
         lca_results = lca_results.interp(
             year=np.arange(lca_results.year.min(), lca_results.year.max() + 1),
             kwargs={"fill_value": "extrapolate"},
-            method="linear",
         )
 
     above_cutoff = lca_results.where(lca_results > cutoff)
@@ -306,63 +238,12 @@ def load_numpy_array_from_disk(filepath):
     return np.load(filepath, allow_pickle=True)
 
 
-def load_subshares() -> dict:
+def get_visible_files(path: str) -> list[Path]:
     """
-    Load a YAML file and return its content as a Python dictionary.
-    :param filepath: Path to the YAML file.
-    :return: A dictionary with the categories, technologies and market shares data.
+    Get visible files in a directory.
+    :param path: The path to the directory.
+    :return: List of visible files.
     """
-    with open(SUBSHARES, "r") as stream:
-        data = yaml.safe_load(stream)
-
-    adjust_subshares(data)
-    return data
-
-
-def adjust_subshares(data):
-    """
-    Adjust the subshares data to ensure that the sum of the 2020 values is equal to 1, after neglecting the technologies
-    with no name.
-    :param data: Dictionary with the categories, technologies and market shares data.
-    :return: Adjusted dictionary.
-    """
-    for category, technologies in data.items():
-
-        # Initialize totals
-        total_2020_value = 0
-        total_adjustable_value = 0
-
-        # First pass to calculate totals
-        for subcategory, tech_list in technologies.items():
-            for tech in tech_list:
-                if 2020 in tech:
-                    value = tech[2020].get("value", 0)
-                    total_2020_value += value
-                    if tech.get("name") is not None:
-                        total_adjustable_value += value
-
-        # Skip adjustment if no values or all values are named
-        if total_2020_value == 0 or total_adjustable_value == 0:
-            continue
-
-        adjustment_factor = total_2020_value / total_adjustable_value
-
-        # Second pass to adjust values
-        adjusted_total = 0
-        for subcategory, tech_list in technologies.items():
-            for tech in tech_list:
-                if 2020 in tech and tech.get("name") is not None:
-                    tech[2020]["value"] = tech[2020]["value"] * adjustment_factor
-                    adjusted_total += tech[2020]["value"]
-
-        # Check if the adjusted total is close to 1.00, allowing a small margin for floating-point arithmetic
-        if not math.isclose(adjusted_total, 1.00, rel_tol=1e-9):
-            print(
-                f"Warning: Total of adjusted '2020' values in category '{category}' does not add up to 1.00 (Total: {adjusted_total})"
-            )
-
-
-def get_visible_files(path):
     return [file for file in Path(path).iterdir() if not file.name.startswith(".")]
 
 
@@ -370,3 +251,240 @@ def clean_cache_directory():
     # clean up the cache directory
     for file in get_visible_files(DIR_CACHED_DB):
         file.unlink()
+
+
+def resize_scenario_data(
+    scenario_data: xr.DataArray,
+    model: List[str],
+    scenario: List[str],
+    region: List[str],
+    year: List[int],
+    variables: List[str],
+) -> xr.DataArray:
+    """
+    Resize the scenario data to the given scenario, year, region, and variables.
+    :param model: List of models.
+    :param scenario_data: xarray DataArray with scenario data.
+    :param scenario: List of scenarios.
+    :param year: List of years.
+    :param region: List of regions.
+    :param variables: List of variables.
+    :return: Resized scenario data.
+    """
+
+    # Get the indices for the given scenario, year, region, and variables
+    model_idx = [scenario_data.coords["model"].values.tolist().index(x) for x in model]
+    scenario_idx = [
+        scenario_data.coords["pathway"].values.tolist().index(x) for x in scenario
+    ]
+    year_idx = [scenario_data.coords["year"].values.tolist().index(x) for x in year]
+    region_idx = [
+        scenario_data.coords["region"].values.tolist().index(x) for x in region
+    ]
+    variable_idx = [
+        scenario_data.coords["variables"].values.tolist().index(x) for x in variables
+    ]
+
+    # Resize the scenario data
+    scenario_data = scenario_data.isel(
+        model=model_idx,
+        pathway=scenario_idx,
+        year=year_idx,
+        region=region_idx,
+        variables=variable_idx,
+    )
+
+    return scenario_data
+
+
+def get_activity_indices(
+    activities: List[Tuple[str, str, str, str]],
+    technosphere_index: Dict[Tuple[str, str, str, str], Any],
+    geo: Geomap,
+    debug: bool = False,
+) -> List[int]:
+    """
+    Fetch the indices of activities in the technosphere matrix, optimized for efficiency.
+    """
+
+    # Cache for previously computed IAM to Ecoinvent mappings
+    location_cache = {}
+
+    indices = []  # Output list of indices
+
+    for activity in activities:
+        possible_locations = [activity[-1]]  # Start with the activity's own region
+
+        # Extend possible locations with IAM mappings, if applicable
+        if (geo.model.upper(), activity[-1]) in geo.geo:
+            # Use cached result if available
+            if activity[-1] in location_cache:
+                possible_locations.extend(location_cache[activity[-1]])
+            else:
+                mappings = geo.iam_to_ecoinvent_location(activity[-1])
+                location_cache[activity[-1]] = mappings
+                possible_locations.extend(mappings)
+
+        # Add default locations to the end of the search list
+        possible_locations.extend(["RoW", "GLO", "RER", "CH"])
+
+        # Attempt to find the index in technosphere_index
+        for loc in possible_locations:
+            idx = technosphere_index.get((activity[0], activity[1], activity[2], loc))
+            if idx is not None:
+                indices.append(int(idx))
+                break
+        else:
+            # If the index was not found, append None and optionally log
+            indices.append(None)
+
+            if debug:
+                logging.warning(
+                    f"Activity {activity} not found in the technosphere matrix."
+                )
+
+    return indices
+
+
+def fetch_indices(
+    mapping: dict, regions: list, variables: list, technosphere_index: dict, geo: Geomap
+) -> dict:
+    """
+    Fetch the indices for the given activities in the technosphere matrix.
+
+    :param mapping: Mapping of scenario variables to LCA datasets.
+    :type mapping: dict
+    :param regions: List of regions.
+    :type regions: list
+    :param variables: List of variables.
+    :type variables: list
+    :param technosphere_index: Technosphere index.
+    :type technosphere_index: dict
+    :param geo: Geomap object.
+    :type geo: Geomap
+    :return: Dictionary of indices.
+    :rtype: dict
+    """
+
+    # Pre-process mapping data to minimize repetitive data access
+    activities_info = {
+        variable: (
+            mapping[variable]["dataset"][0]["name"],
+            mapping[variable]["dataset"][0]["reference product"],
+            mapping[variable]["dataset"][0]["unit"],
+        )
+        for variable in variables
+    }
+
+    # Initialize dictionary to hold indices
+    vars_idx = {}
+
+    for region in regions:
+        # Construct activities list for the current region
+        activities = [
+            (name, ref_product, unit, region)
+            for name, ref_product, unit in activities_info.values()
+        ]
+
+        # Use _get_activity_indices to fetch indices
+        idxs = get_activity_indices(activities, technosphere_index, geo)
+
+        # Map variables to their indices and associated dataset information
+        vars_idx[region] = {
+            variable: {
+                "idx": idx,
+                "dataset": activities[i],
+            }
+            for i, (variable, idx) in enumerate(zip(variables, idxs))
+        }
+
+        if len(variables) != len(idxs):
+            logging.warning(f"Could not find all activities for region {region}.")
+
+    return vars_idx
+
+
+def fetch_inventories_locations(
+    technosphere_indices: Dict[str, Tuple[str, str, str]]
+) -> List[str]:
+    """
+    Fetch the locations of the inventories.
+    :param technosphere_indices: Dictionary with the indices of the activities in the technosphere matrix.
+    :return: List of locations.
+    """
+
+    locations = list(set([act[3] for act in technosphere_indices]))
+    logging.info(f"Unique locations in LCA database: {locations}")
+
+    return locations
+
+
+def csv_to_dict(filename: str) -> dict[int, tuple[str, ...]]:
+    """
+    Convert a CSV file to a dictionary.
+    :param filename: The name of the CSV file.
+    :return: A dictionary with the data from the CSV file.
+    """
+    output_dict = {}
+
+    with open(filename, encoding="utf-8") as file:
+        reader = csv.reader(file, delimiter=";")
+        for row in reader:
+            # Making sure there are at least 5 items in the row
+            if len(row) >= 5:
+                # The first four items are the key, the fifth item is the value
+                key = tuple(row[:4])
+                value = row[4]
+                output_dict[int(value)] = key
+            else:
+                logging.warning(f"Row {row} has less than 5 items.")
+
+    return output_dict
+
+
+def check_unclassified_activities(
+    technosphere_indices: dict, classifications: dict
+) -> List:
+    """
+    Check if there are activities in the technosphere matrix that are not in the classifications.
+    :param technosphere_indices: List of activities in the technosphere matrix.
+    :param classifications: Dictionary of activities classifications.
+    :return: List of activities not found in the classifications.
+    """
+    missing_classifications = []
+    for act in technosphere_indices:
+        if act[:3] not in classifications:
+            missing_classifications.append(list(act[:3]))
+
+    if missing_classifications:
+        with open("missing_classifications.csv", "a") as f:
+            writer = csv.writer(f)
+            writer.writerows(missing_classifications)
+
+    return missing_classifications
+
+
+def _group_technosphere_indices(
+    technosphere_indices: dict, group_by, group_values: list
+) -> dict:
+    """
+    Generalized function to group technosphere indices by an arbitrary attribute (category, location, etc.).
+
+    :param technosphere_indices: Mapping of activities to their indices in the technosphere matrix.
+    :param group_by: A function that takes an activity and returns its group value (e.g., category or location).
+    :param group_values: The set of all possible group values (e.g., all categories or locations).
+    :return: A tuple containing a list of lists of indices, a dictionary mapping group values to lists of indices,
+             and a 2D numpy array of indices, where rows have been padded with -1 to ensure equal lengths.
+    """
+
+    acts_dict = {}
+    for value in group_values:
+        # Collect indices for activities belonging to the current group value
+        x = [
+            int(technosphere_indices[a])
+            for a in technosphere_indices
+            if group_by(a) == value
+        ]
+        acts_dict[value] = x
+
+    return acts_dict

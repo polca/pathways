@@ -1,27 +1,33 @@
+"""
+This module contains functions to calculate the Life Cycle Assessment (LCA) results for a given model, scenario, and year.
+
+"""
+
 import csv
 import logging
+import uuid
 from pathlib import Path
 from typing import Any, Dict, List, Tuple
 
+import bw2calc as bc
 import bw_processing as bwp
 import numpy as np
-import yaml
+import pyprind
+from bw2calc.monte_carlo import MonteCarloLCA
 from bw_processing import Datapackage
+from numpy import dtype, ndarray
+from premise.geomap import Geomap
 from scipy import sparse
 from scipy.sparse import csr_matrix
 
-from .lcia import get_lcia_methods
-
-# Attempt to import pypardiso's spsolve function.
-# If it isn't available, fall back on scipy's spsolve.
-try:
-    from pypardiso import spsolve
-
-    print("Solver: pypardiso")
-except ImportError:
-    from scikits.umfpack import spsolve
-
-    print("Solver: scikits.umfpack")
+from .filesystem_constants import DIR_CACHED_DB
+from .lcia import fill_characterization_factors_matrices
+from .utils import (
+    _group_technosphere_indices,
+    check_unclassified_activities,
+    fetch_indices,
+    get_unit_conversion_factors, )
+from .subshares import subshares_indices, get_subshares_matrix, adjust_matrix_based_on_shares
 
 logging.basicConfig(
     level=logging.DEBUG,
@@ -32,7 +38,7 @@ logging.basicConfig(
 )
 
 
-def read_indices_csv(file_path: Path) -> Dict[Tuple[str, str, str, str], str]:
+def read_indices_csv(file_path: Path) -> dict[tuple[str, str, str, str], int]:
     """
     Reads a CSV file and returns its contents as a dictionary.
 
@@ -43,18 +49,26 @@ def read_indices_csv(file_path: Path) -> Dict[Tuple[str, str, str, str], str]:
     :type file_path: Path
 
     :return: A dictionary mapping tuples of four strings to indices.
+    For technosphere indices, the four strings are the activity name, product name, location, and unit.
+    For biosphere indices, the four strings are the flow name, category, subcategory, and unit.
     :rtype: Dict[Tuple[str, str, str, str], str]
     """
     indices = dict()
     with open(file_path) as read_obj:
         csv_reader = csv.reader(read_obj, delimiter=";")
         for row in csv_reader:
-            indices[(row[0], row[1], row[2], row[3])] = row[4]
+            try:
+                indices[(row[0], row[1], row[2], row[3])] = int(row[4])
+            except IndexError as err:
+                logging.error(
+                    f"Error reading row {row} from {file_path}: {err}. "
+                    f"Could it be that the file uses commas instead of semicolons?"
+                )
     return indices
 
 
 def load_matrix_and_index(
-    file_path: Path,
+        file_path: Path,
 ) -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
     """
     Reads a CSV file and returns its contents as a CSR sparse matrix.
@@ -96,442 +110,72 @@ def load_matrix_and_index(
     return data_array, indices_array, flip_array, distributions_array
 
 
-def get_matrix_arrays(
-    dirpath: Path,
-    matrix_type: str,
-) -> list:
-    """
-    Retrieve matrix arrays from disk.
-
-    ...
-
-    :rtype: List of np.ndarrays
-    """
-
-    matrix_filename = f"{matrix_type}_matrix.csv"
-
-    if matrix_type == "A":
-        data, indices, sign, distributions = load_matrix_and_index(
-            dirpath / matrix_filename,
-        )
-        arrays = [data, indices, sign, distributions]
-    elif matrix_type == "B":
-        data, indices, _, distributions = load_matrix_and_index(
-            dirpath / matrix_filename,
-        )
-        arrays = [data, indices, distributions]
-
-    return arrays
-
-
-def get_indices(
-    dirpath: Path,
-) -> Tuple[Dict, Dict]:
-    """
-    Build the technosphere and biosphere indices.
-
-    ...
-
-    :rtype: Tuple[Dict, Dict]
-    """
-
-    A_indices = read_indices_csv(dirpath / "A_matrix_index.csv")
-    B_indices = read_indices_csv(dirpath / "B_matrix_index.csv")
-
-    return A_indices, B_indices
-
-
 def get_lca_matrices(
-    A_arrays: list,
-    B_arrays: list,
-) -> Datapackage:
+        filepaths: list,
+        model: str,
+        scenario: str,
+        year: int,
+) -> Tuple[Datapackage, Dict, Dict]:
     """
-    Build the technosphere and biosphere matrices from matrix arrays.
+    Retrieve Life Cycle Assessment (LCA) matrices from disk.
 
-    ...
-
+    :param filepaths: A list of filepaths containing the LCA matrices.
+    :type filepaths: List[str]
+    :param model: The name of the model.
+    :type model: str
+    :param scenario: The name of the scenario.
+    :type scenario: str
+    :param year: The year of the scenario.
+    :type year: int
     :rtype: Tuple[sparse.csr_matrix, sparse.csr_matrix, Dict, Dict]
     """
 
-    # create brightway datapackage
+    # find the correct filepaths in filepaths
+    # the correct filepath are the strings that contains
+    # the model, scenario and year
+    def filter_filepaths(suffix: str, contains: List[str]):
+        return [
+            Path(fp)
+            for fp in filepaths
+            if all(kw in fp for kw in contains)
+               and Path(fp).suffix == suffix
+               and Path(fp).exists()
+        ]
+
+    def select_filepath(keyword: str, fps):
+        matches = [fp for fp in fps if keyword in fp.name]
+        if not matches:
+            raise FileNotFoundError(f"Expected file containing '{keyword}' not found.")
+        return matches[0]
+
+    fps = filter_filepaths(".csv", [model, scenario, str(year)])
+    if len(fps) != 4:
+        raise ValueError(f"Expected 4 filepaths, got {len(fps)}")
+
+    fp_technosphere_inds = select_filepath("A_matrix_index", fps)
+    fp_biosphere_inds = select_filepath("B_matrix_index", fps)
+    technosphere_inds = read_indices_csv(fp_technosphere_inds)
+    biosphere_inds = read_indices_csv(fp_biosphere_inds)
+    # remove the last element of the tuple, which is the index
+    biosphere_inds = {k[:-1]: v for k, v in biosphere_inds.items()}
+
     dp = bwp.create_datapackage()
 
-    a_data, a_indices, a_sign, a_distributions = A_arrays
-    b_data, b_indices, b_distributions = B_arrays
+    fp_A = select_filepath("A_matrix", [fp for fp in fps if "index" not in fp.name])
+    fp_B = select_filepath("B_matrix", [fp for fp in fps if "index" not in fp.name])
 
-    dp.add_persistent_vector(
-        matrix="technosphere_matrix",
-        indices_array=a_indices,
-        data_array=a_data,
-        flip_array=a_sign,
-        distributions_array=a_distributions,
-    )
+    # Load matrices and add them to the datapackage
+    for matrix_name, fp in [("technosphere_matrix", fp_A), ("biosphere_matrix", fp_B)]:
+        data, indices, sign, distributions = load_matrix_and_index(fp)
+        dp.add_persistent_vector(
+            matrix=matrix_name,
+            indices_array=indices,
+            data_array=data,
+            flip_array=sign if matrix_name == "technosphere_matrix" else None,
+            distributions_array=distributions,
+        )
 
-    dp.add_persistent_vector(
-        matrix="biosphere_matrix",
-        indices_array=b_indices,
-        data_array=b_data,
-        distributions_array=b_distributions,
-    )
-
-    return dp
-
-
-def get_subshares_matrix(
-    correlated_array: list,
-) -> Datapackage:
-    """
-    Add subshares samples to an LCA object.
-    :
-    """
-
-    dp_correlated = bwp.create_datapackage()
-
-    a_data_samples, a_indices, a_sign = correlated_array
-
-    dp_correlated.add_persistent_array(
-        matrix="technosphere_matrix",
-        indices_array=a_indices,
-        data_array=a_data_samples,
-        flip_array=a_sign,
-    )
-
-    return dp_correlated
-
-
-def adjust_matrix_based_on_shares(A_arrays, shares_dict, use_distributions, year):
-    """
-    Adjust the technosphere matrix based on shares.
-    :param data_array:
-    :param indices_array:
-    :param shares_dict:
-    :param year:
-    :return:
-    """
-
-    data_array, indices_array, sign_array, _ = A_arrays
-    index_lookup = {(row["row"], row["col"]): i for i, row in enumerate(indices_array)}
-
-    modified_data = []
-    modified_indices = []
-    modified_signs = []
-
-    # Determine unique product indices from shares_dict to identify which shouldn't be automatically updated/added
-    unique_product_indices_from_dict = set()
-    for _, regions in shares_dict.items():
-        for _, techs in regions.items():
-            for _, details in techs.items():
-                if "idx" in details:
-                    unique_product_indices_from_dict.add(details["idx"])
-
-    # Helper function to find index using the lookup dictionary
-    def find_index(activity_idx, product_idx):
-        return index_lookup.get((activity_idx, product_idx))
-
-    for tech_category, regions in shares_dict.items():
-        for region, techs in regions.items():
-            all_tech_indices = [
-                details["idx"] for _, details in techs.items() if "idx" in details
-            ]
-            all_product_indices = set(
-                indices_array["col"][np.isin(indices_array["row"], all_tech_indices)]
-            )
-
-            tech_group_ranges = {}
-            tech_group_defaults = {}
-
-            for tech, details in techs.items():
-                if year != 2020:
-                    if details[2050]["distribution"] == "uniform":
-                        tech_group_ranges[tech] = (
-                            details[2050]["min"],
-                            details[year]["max"],
-                        )
-                        tech_group_defaults[tech] = details.get(2020, {}).get(
-                            "value", 0
-                        )
-                    else:
-                        print(
-                            "At this point, only uniform distributions are supported. Exiting."
-                        )
-                        exit(1)
-
-            if year != 2020 and tech_group_ranges:
-                group_shares = correlated_uniform_samples(
-                    tech_group_ranges, tech_group_defaults
-                )
-                print("Tech group", tech_category, "shares: ", group_shares)
-            else:
-                group_shares = {
-                    tech: details.get(year, {}).get("value", 0)
-                    for tech, details in techs.items()
-                }
-                print("Tech group", tech_category, "shares: ", group_shares)
-
-            for product_idx in all_product_indices:
-                relevant_indices = [
-                    find_index(idx, product_idx)
-                    for idx in all_tech_indices
-                    if find_index(idx, product_idx) is not None
-                ]
-                total_output = np.sum(data_array[relevant_indices])
-
-                for tech, share in group_shares.items():
-                    if (
-                        tech in techs
-                        and "idx" in techs[tech]
-                        and techs[tech]["idx"] is not None
-                    ):
-                        idx = techs[tech]["idx"]
-
-                        if year == 2020:
-                            share_value = details.get(year, {}).get("value", 0)
-                            new_amounts = np.array(
-                                [total_output * share_value]
-                            ).reshape((1, -1))
-                        else:
-                            new_amounts = np.array(
-                                [total_output * share for _ in range(use_distributions)]
-                            ).reshape((1, -1))
-                        index = find_index(idx, product_idx)
-
-                        if (
-                            index is not None
-                            and product_idx not in unique_product_indices_from_dict
-                        ):
-                            modified_indices.append((idx, product_idx))
-                            modified_data.append(new_amounts)
-                            modified_signs.append(sign_array[index])
-                        elif (
-                            index is None
-                            and product_idx not in unique_product_indices_from_dict
-                        ):
-                            modified_data.append(new_amounts)
-                            modified_indices.append((idx, product_idx))
-                            modified_signs.append(True)
-
-    # modified_data_array = np.array(modified_data, dtype=object)
-    modified_data_array = np.concatenate(modified_data, axis=0)
-    modified_indices_array = np.array(modified_indices, dtype=bwp.INDICES_DTYPE)
-    modified_signs_array = np.array(modified_signs, dtype=bool)
-
-    return [modified_data_array, modified_indices_array, modified_signs_array]
-
-
-# def adjust_matrix_based_on_shares(A_arrays, shares_dict, use_distributions, year):
-#     """
-#     Adjust the technosphere matrix based on shares.
-#     :param data_array:
-#     :param indices_array:
-#     :param shares_dict:
-#     :param year:
-#     :return:
-#     """
-#
-#     data_array, indices_array, sign_array, _ = A_arrays
-#     index_lookup = {(row["row"], row["col"]): i for i, row in enumerate(indices_array)}
-#
-#     modified_data = []
-#     modified_indices = []
-#     modified_signs = []
-#
-#     # Determine unique product indices from shares_dict to identify which shouldn't be automatically updated/added
-#     unique_product_indices_from_dict = set()
-#     for _, regions in shares_dict.items():
-#         for _, techs in regions.items():
-#             for _, details in techs.items():
-#                 if "idx" in details:
-#                     unique_product_indices_from_dict.add(details["idx"])
-#
-#     # Helper function to find index using the lookup dictionary
-#     def find_index(activity_idx, product_idx):
-#         return index_lookup.get((activity_idx, product_idx))
-#
-#     for tech_category, regions in shares_dict.items():
-#         for region, techs in regions.items():
-#             if year != 2020:
-#                 tech_group_ranges = {}
-#                 tech_group_defaults = {}
-#                 all_tech_indices = []
-#
-#                 # Collect data for this technology group for correlated sampling
-#                 for tech, details in techs.items():
-#                     if 'idx' in details and details['idx'] is not None:
-#                         all_tech_indices.append(details['idx'])
-#                         print(f'All tech indices: {all_tech_indices}')
-#                     if details[2050]['distribution'] == 'uniform':
-#                         tech_group_ranges[tech] = (details[2050]['min'], details[year]['max'])
-#                         tech_group_defaults[tech] = details.get(2020, {}).get('value', 0)
-#                         print(f'Tech: {tech}, ranges: {tech_group_ranges[tech]}, defaults: {tech_group_defaults[tech]}')
-#                     else:
-#                         print('At this point, only uniform distributions are supported. Exiting.')
-#                         exit(1)
-#
-#                 # Generate correlated samples for this technology group
-#                 if tech_group_ranges:
-#                     group_shares = correlated_uniform_samples(tech_group_ranges, tech_group_defaults)
-#                     print(group_shares)
-#                 else:
-#                     print('No tech_group_ranges found. Exiting.')
-#
-#                 all_product_indices = set(indices_array['col'][np.isin(indices_array['row'], all_tech_indices)])
-#                 for product_idx in all_product_indices:
-#                     relevant_indices = [find_index(idx, product_idx) for idx in all_tech_indices if
-#                                         find_index(idx, product_idx) is not None]
-#                     total_output = np.sum(data_array[relevant_indices])
-#
-#                     for tech, share in group_shares.items():
-#                         if tech in techs and 'idx' in techs[tech] and techs[tech]['idx'] is not None:
-#                             idx = techs[tech]['idx']
-#                             new_amounts = np.array([total_output * share for _ in range(use_distributions)]).reshape((1, -1))
-#                             index = find_index(idx, product_idx)
-#                             if index is not None and product_idx not in unique_product_indices_from_dict:
-#                                 modified_indices.append((idx, product_idx))
-#                                 modified_data.append(new_amounts)
-#                                 modified_signs.append(sign_array[index])
-#                             elif index is None and product_idx not in unique_product_indices_from_dict:
-#                                 modified_data.append(new_amounts)
-#                                 modified_indices.append((idx, product_idx))
-#                                 modified_signs.append(True)
-#             else:
-#                 for tech, details in techs.items():
-#                     share = details.get(year, {}).get("value", 0)
-#                     idx = details["idx"]
-#                     if idx is None or share == 0:
-#                         continue
-#                     # Calculate new amount
-#                     new_amount = total_output * share
-#                     index = find_index(idx, product_idx)
-#
-#                     # Adjust value or add new exchange
-#                     if (
-#                         index is not None
-#                         and product_idx not in unique_product_indices_from_dict
-#                     ):  # Exclude diagonal and undesired exchanges
-#                         data_array[index] = new_amount
-#                         # Append to modified_indices regardless of whether it's a new addition or an adjustment
-#                         modified_indices.append((idx, product_idx))
-#                         modified_data.append(np.array([[new_amount]]))
-#                         modified_signs.append(sign_array[index])
-#                     elif product_idx not in unique_product_indices_from_dict:  # Exclude diagonal and undesired exchanges
-#                         modified_data.append(np.array([[new_amount]]))
-#                         modified_indices.append((idx, product_idx))
-#                         modified_signs.append(True) # Assuming new exchanges are positive
-#
-#     # modified_data_array = np.array(modified_data, dtype=object)
-#     modified_data_array = np.concatenate(modified_data, axis=0)
-#     modified_indices_array = np.array(modified_indices, dtype=bwp.INDICES_DTYPE)
-#     modified_signs_array = np.array(modified_signs, dtype=bool)
-#
-#     return [modified_data_array, modified_indices_array, modified_signs_array]
-
-
-def correlated_uniform_samples(ranges, defaults, iterations=1000):
-    """
-    Adjusts randomly selected shares for parameters to sum to 1 while respecting their specified ranges.
-
-    :param ranges: Dict with parameter names as keys and (min, max) tuples as values.
-    :param defaults: Dict with default values for each parameter.
-    :param iterations: Number of iterations to attempt to find a valid distribution.
-    :return: A dict with the adjusted shares for each parameter.
-    """
-    for _ in range(iterations):
-        shares = {
-            param: np.random.uniform(low, high) for param, (low, high) in ranges.items()
-        }
-        total_share = sum(shares.values())
-        shares = {param: share / total_share for param, share in shares.items()}
-        if all(
-            ranges[param][0] <= share <= ranges[param][1]
-            for param, share in shares.items()
-        ):
-            return shares
-
-    print("Failed to find a valid distribution after {} iterations".format(iterations))
-    return defaults
-
-
-def fill_characterization_factors_matrices(
-    biosphere_flows: dict, methods, biosphere_dict, debug=False
-) -> csr_matrix:
-    """
-    Create one CSR matrix for all LCIA method, with the last dimension being the index of the method
-    :param biosphere_flows:
-    :param methods: contains names of the methods to use.
-    :return:
-    """
-
-    lcia_data = get_lcia_methods(methods=methods)
-    biosphere_flows = {k[:3]: v for k, v in biosphere_flows.items()}
-    reversed_biosphere_flows = {int(v): k for k, v in biosphere_flows.items()}
-
-    matrix = sparse.csr_matrix(
-        (len(methods), len(biosphere_dict)),
-        dtype=np.float64,
-    )
-
-    if debug:
-        logging.info(f"LCIA matrix shape: {matrix.shape}")
-
-    l = []
-
-    for m, method in enumerate(methods):
-        method_data = lcia_data[method]
-        for flow_idx, f in biosphere_dict.items():
-            if flow_idx in reversed_biosphere_flows:
-                flow = reversed_biosphere_flows[flow_idx]
-                if flow in method_data:
-                    matrix[m, f] = method_data[flow]
-                    l.append((method, flow, f, method_data[flow]))
-    if debug:
-        # sort l by method and flow
-        l = sorted(l, key=lambda x: (x[0], x[1]))
-        for x in l:
-            method, flow, f, value = x
-            logging.info(
-                f"LCIA method: {method}, Flow: {flow}, Index: {f}, Value: {value}"
-            )
-
-    return matrix
-
-
-# def remove_double_counting(
-#     characterized_inventory: csr_matrix, vars_info: dict, activity_idx: int
-# ) -> csr_matrix:
-#     """
-#     Remove double counting from a characterized inventory matrix for all activities except
-#     the activity being evaluated, across all methods.
-#
-#     :param characterized_inventory: Characterized inventory matrix with rows for different methods and columns for different activities.
-#     :param vars_info: Dictionary with information about which indices to zero out.
-#     :param activity_idx: Index of the activity being evaluated, which should not be zeroed out.
-#     :return: Characterized inventory with double counting removed for all but the evaluated activity.
-#     """
-#
-#     print("Removing double counting")
-#     if isinstance(characterized_inventory, np.ndarray):
-#         characterized_inventory = csr_matrix(characterized_inventory)
-#     elif not isinstance(characterized_inventory, csr_matrix):
-#         raise TypeError(
-#             "characterized_inventory must be a csr_matrix or a numpy array."
-#         )
-#
-#     # Gather all indices for which we want to avoid double counting, except the evaluated activity
-#     list_of_idx_to_remove = []
-#     for region in vars_info:
-#         for variable in vars_info[region]:
-#             idx = vars_info[region][variable]
-#             if idx != activity_idx:
-#                 list_of_idx_to_remove.append(idx)
-#
-#     # Convert to lil_matrix for more efficient element-wise operations - CHECK IF THIS IS ACTUALLY FASTER
-#     characterized_inventory = characterized_inventory.tolil()
-#
-#     # Zero out the specified indices for all methods, except for the activity being evaluated
-#     for idx in list_of_idx_to_remove:
-#         characterized_inventory[:, idx] = 0
-#
-#     return characterized_inventory.tocsr()
+    return dp, technosphere_inds, biosphere_inds
 
 
 def remove_double_counting(A: csr_matrix, vars_info: dict) -> csr_matrix:
@@ -557,3 +201,280 @@ def remove_double_counting(A: csr_matrix, vars_info: dict) -> csr_matrix:
 
     A_coo.eliminate_zeros()
     return A_coo.tocsr()
+
+
+def process_region(data: Tuple) -> dict[str, ndarray[Any, dtype[Any]] | list[int]]:
+    """
+    Process the region data.
+    :param data: Tuple containing the model, scenario, year, region, variables, vars_idx, scenarios, units_map,
+                    demand_cutoff, lca, characterization_matrix, debug, use_distributions.
+    :return: Dictionary containing the region data.
+    """
+    (
+        model,
+        scenario,
+        year,
+        region,
+        variables,
+        vars_idx,
+        scenarios,
+        units_map,
+        demand_cutoff,
+        lca,
+        characterization_matrix,
+        debug,
+        use_distributions,
+    ) = data
+
+    variables_demand = {}
+    d = []
+
+    for v, variable in enumerate(variables):
+        idx, dataset = vars_idx[variable]["idx"], vars_idx[variable]["dataset"]
+        # Compute the unit conversion vector for the given activities
+        dataset_unit = dataset[2]
+
+        # check if we need units conversion
+        unit_vector = get_unit_conversion_factors(
+            scenarios.attrs["units"][variable],
+            dataset_unit,
+            units_map,
+        )
+
+        # Fetch the demand for the given region, model, pathway, and year
+        demand = scenarios.sel(
+            variables=variable,
+            region=region,
+            model=model,
+            pathway=scenario,
+            year=year,
+        )
+
+        # If the demand is below the cut-off criteria, skip to the next iteration
+        share = demand / scenarios.sel(
+            region=region,
+            model=model,
+            pathway=scenario,
+            year=year,
+        ).sum(dim="variables")
+
+        # If the total demand is zero, return None
+        if share < demand_cutoff:
+            continue
+
+        variables_demand[variable] = {
+            "id": idx,
+            "demand": demand.values * float(unit_vector),
+        }
+
+        lca.lci(demand={idx: demand.values * float(unit_vector)})
+
+        if use_distributions == 0:
+            # Regular LCA
+            characterized_inventory = (
+                    characterization_matrix @ lca.inventory
+            ).toarray()
+
+        else:
+            # Use distributions for LCA calculations
+            # next(lca) is a generator that yields the inventory matrix
+            results = np.array(
+                [
+                    (characterization_matrix @ lca.inventory).toarray()
+                    for _ in zip(range(use_distributions), lca)
+                ]
+            )
+
+            # calculate quantiles along the first dimension
+            characterized_inventory = np.quantile(results, [0.05, 0.5, 0.95], axis=0)
+
+        d.append(characterized_inventory)
+
+        if debug:
+            logging.info(
+                f"var.: {variable}, name: {dataset[0][:50]}, "
+                f"ref.: {dataset[1]}, unit: {dataset[2][:50]}, idx: {idx},"
+                f"loc.: {dataset[3]}, demand: {round(float(demand.values * float(unit_vector)), 2)}, "
+                f"unit conv.: {unit_vector}, "
+                f"impact: {np.round(characterized_inventory.sum(axis=-1) / (demand.values * float(unit_vector)), 3)}. "
+            )
+
+    # Save the characterization vectors to disk
+    id_array = uuid.uuid4()
+    np.save(file=DIR_CACHED_DB / f"{id_array}.npy", arr=np.stack(d))
+
+    # just making sure that the memory is freed. Maybe not needed- check later
+    del d
+
+    # returning a dictionary containing the id_array and the variables
+    # to be able to fetch them back later
+    return {
+        "id_array": id_array,
+        "variables": {k: v["demand"] for k, v in variables_demand.items()},
+    }
+
+
+def _calculate_year(args: tuple):
+    """
+    Prepares the data for the calculation of LCA results for a given year
+    and calls the process_region function to calculate the results for each region.
+    """
+    (
+        model,
+        scenario,
+        year,
+        regions,
+        variables,
+        methods,
+        demand_cutoff,
+        filepaths,
+        mapping,
+        units,
+        lca_results,
+        classifications,
+        scenarios,
+        reverse_classifications,
+        debug,
+        use_distributions,
+        subshares
+    ) = args
+
+    print(f"------ Calculating LCA results for {year}...")
+    if debug:
+        logging.info(
+            f"############################### "
+            f"{model}, {scenario}, {year} "
+            f"###############################"
+        )
+
+    try:
+        geo = Geomap(model=model)
+    except FileNotFoundError:
+        from constructive_geometries import Geomatcher
+
+        geo = Geomatcher()
+        geo.model = model
+        geo.geo = geo
+
+    # Try to load LCA matrices for the given model, scenario, and year
+    try:
+        bw_datapackage, technosphere_indices, biosphere_indices = get_lca_matrices(
+            filepaths, model, scenario, year
+        )
+
+    except FileNotFoundError:
+        # If LCA matrices can't be loaded, skip to the next iteration
+        if debug:
+            logging.warning(f"Skipping {model}, {scenario}, {year}, as data not found.")
+        return
+
+    # Fetch indices
+    vars_info = fetch_indices(mapping, regions, variables, technosphere_indices, geo)
+
+    # Remove contribution from activities in other activities
+    # A = remove_double_counting(A, vars_info)
+
+    # check unclassified activities
+    missing_classifications = check_unclassified_activities(
+        technosphere_indices, classifications
+    )
+
+    if missing_classifications:
+        if debug:
+            logging.warning(
+                f"{len(missing_classifications)} activities are not found in the classifications."
+                "See missing_classifications.csv for more details."
+            )
+
+    results = {}
+
+    locations = lca_results.coords["location"].values.tolist()
+
+    acts_category_idx_dict = _group_technosphere_indices(
+        technosphere_indices=technosphere_indices,
+        group_by=lambda x: classifications.get(x[:3], "unclassified"),
+        group_values=list(set(lca_results.coords["act_category"].values)),
+    )
+
+    acts_location_idx_dict = _group_technosphere_indices(
+        technosphere_indices=technosphere_indices,
+        group_by=lambda x: x[-1],
+        group_values=locations,
+    )
+
+    results["other"] = {
+        "acts_category_idx_dict": acts_category_idx_dict,
+        "acts_location_idx_dict": acts_location_idx_dict,
+    }
+
+    if use_distributions == 0:
+        lca = bc.LCA(
+            demand={0: 1},
+            data_objs=[
+                bw_datapackage,
+            ],
+        )
+        lca.lci(factorize=True)
+    else:
+        if subshares is False:
+
+            lca = MonteCarloLCA(
+                demand={0: 1},
+                data_objs=[
+                    bw_datapackage,
+                ],
+                use_distributions=True,
+            )
+            lca.lci()
+        else:
+
+            shares_indices = subshares_indices(regions, technosphere_indices, geo)
+            correlated_arrays = adjust_matrix_based_on_shares(
+                A_arrays, shares_indices, use_distributions, year
+            )
+
+            bw_correlated = get_subshares_matrix(correlated_arrays)
+
+            lca = MonteCarloLCA(
+                demand={0: 1},
+                data_objs=[bw_datapackage, bw_correlated],
+                use_distributions=True,
+                use_arrays=True,
+            )
+            lca.lci()
+
+    characterization_matrix = fill_characterization_factors_matrices(
+        methods=methods,
+        biosphere_matrix_dict=lca.dicts.biosphere,
+        biosphere_dict=biosphere_indices,
+        debug=debug,
+    )
+
+    if debug:
+        logging.info(
+            f"Characterization matrix created. Shape: {characterization_matrix.shape}"
+        )
+
+    bar = pyprind.ProgBar(len(regions))
+    for region in regions:
+        bar.update()
+        # Iterate over each region
+        results[region] = process_region(
+            (
+                model,
+                scenario,
+                year,
+                region,
+                variables,
+                vars_info[region],
+                scenarios,
+                units,
+                demand_cutoff,
+                lca,
+                characterization_matrix,
+                debug,
+                use_distributions,
+            )
+        )
+
+    return results

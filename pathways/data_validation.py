@@ -19,7 +19,9 @@ logging.basicConfig(
 )
 
 
-def validate_datapackage(datapackage: datapackage.DataPackage):
+def validate_datapackage(
+    data_package: datapackage.DataPackage,
+) -> (datapackage.DataPackage, pd.DataFrame, list):
     """
     Validate the datapackage.json file.
     The datapackage must be valid according to the Frictionless Data.
@@ -36,7 +38,7 @@ def validate_datapackage(datapackage: datapackage.DataPackage):
     # Validate datapackage according
     # to the Frictionless Data specifications
     try:
-        validate(datapackage.descriptor)
+        validate(data_package.descriptor)
     except DataPackageException as e:
         if e.multiple:
             for error in e.errors:
@@ -48,28 +50,34 @@ def validate_datapackage(datapackage: datapackage.DataPackage):
     required_resources = ["scenario_data", "exchanges", "labels", "mapping"]
     for resource in required_resources:
         try:
-            datapackage.get_resource(resource)
+            data_package.get_resource(resource)
         except DataPackageException:
             raise ValueError(f"Missing resource: {resource}")
 
     # Check that the datapackage contains the required metadata
     required_metadata = ["contributors", "description"]
     for metadata in required_metadata:
-        if metadata not in datapackage.descriptor:
+        if metadata not in data_package.descriptor:
             raise ValueError(f"Missing metadata: {metadata}")
 
     # extract the scenario data
-    data = datapackage.get_resource("scenario_data").read()
-    headers = datapackage.get_resource("scenario_data").headers
+    data = data_package.get_resource("scenario_data").read()
+    headers = data_package.get_resource("scenario_data").headers
     dataframe = pd.DataFrame(data, columns=headers)
 
     # Check that the scenario data is valid
     validate_scenario_data(dataframe)
 
     # Check that the mapping is valid
-    validate_mapping(datapackage.get_resource("mapping"), dataframe)
+    validate_mapping(data_package.get_resource("mapping"))
 
-    return datapackage, dataframe
+    # fetch filepaths to resources
+    filepaths = []
+    for resource in data_package.resources:
+        if "matrix" in resource.descriptor["name"]:
+            filepaths.append(resource.source)
+
+    return data_package, dataframe, filepaths
 
 
 def validate_scenario_data(dataframe: pd.DataFrame) -> bool:
@@ -84,7 +92,7 @@ def validate_scenario_data(dataframe: pd.DataFrame) -> bool:
         - year: integer
         - value: float
 
-    :param resource: Datapackage resource.
+    :param dataframe: pandas DataFrame containing the scenario data.
     :return: True if the data is valid, False otherwise.
     """
 
@@ -98,7 +106,7 @@ def validate_scenario_data(dataframe: pd.DataFrame) -> bool:
     return True
 
 
-def validate_mapping(resource: datapackage.Resource, dataframe: pd.DataFrame):
+def validate_mapping(resource: datapackage.Resource):
     """
     Validates the mapping between scenario variables and LCA datasets.
     The mapping must be a YAML file.
@@ -108,7 +116,7 @@ def validate_mapping(resource: datapackage.Resource, dataframe: pd.DataFrame):
       dataset: string
       scenario variable: string
 
-    :param filepath: relative path to the mapping file.
+    :param resource: datapackage.Resource
     :return: boolean
     """
 

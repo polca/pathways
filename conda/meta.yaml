@@ -18,12 +18,18 @@ requirements:
     - python
     - setuptools
   run:
-    - numpy==1.24.0
-    - pandas
-    - xarray
-    - scipy
+    - numpy
     - pathlib
-    - scikit-umfpack
+    - pandas
+    - scipy
+    - xarray
+    - premise
+    - pyyaml
+    - bw_processing
+    - bw2calc=2.0.DEV16
+    - datapackage
+    - pyprind
+    - platformdirs
 test:
   imports:
     - pathways

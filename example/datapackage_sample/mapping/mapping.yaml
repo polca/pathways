@@ -1,0 +1,6 @@
+technology A:
+  dataset:
+  - name: activity A
+    reference product: product A
+    unit: kilogram
+  scenario variable: technology A
