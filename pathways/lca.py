@@ -175,8 +175,6 @@ def get_lca_matrices(
             distributions_array=distributions,
         )
 
-        print(distributions)
-
     return dp, technosphere_inds, biosphere_inds
 
 

@@ -248,7 +248,6 @@ class Pathways:
         regions: Optional[List[str]] = None,
         years: Optional[List[int]] = None,
         variables: Optional[List[str]] = None,
-        characterization: bool = True,
         multiprocessing: bool = False,
         demand_cutoff: float = 1e-3,
         use_distributions: int = 0,
@@ -284,14 +283,11 @@ class Pathways:
 
         self.scenarios = harmonize_units(self.scenarios, variables)
 
-        if characterization is False:
-            methods = None
+        # if no methods are provided, use all those available
+        methods = methods or get_lcia_method_names()
+        if self.debug:
+            logging.info(f"Using the following LCIA methods: {methods}")
 
-        # Set default values if arguments are not provided
-        if methods is None and characterization is True:
-            methods = get_lcia_method_names()
-            if self.debug:
-                logging.info(f"Using the following LCIA methods: {methods}")
         if models is None:
             models = self.scenarios.coords["model"].values
             models = [m.lower() for m in models]
@@ -388,7 +384,7 @@ class Pathways:
                             }
                         )
                 else:
-                    results = {
+                    results.update({
                         (model, scenario, year): _calculate_year(
                             (
                                 model,
@@ -410,7 +406,7 @@ class Pathways:
                             )
                         )
                         for year in years
-                    }
+                    })
 
         # remove None values in results
         results = {k: v for k, v in results.items() if v is not None}

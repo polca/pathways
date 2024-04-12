@@ -932,6 +932,886 @@
             }
         },
         {
+            "path": "inventories/some model/Scenario B/2020/A_matrix_index.csv",
+            "profile": "tabular-data-resource",
+            "name": "a_matrix_index",
+            "format": "csv",
+            "mediatype": "text/csv",
+            "encoding": "utf-8",
+            "schema": {
+                "fields": [
+                    {
+                        "name": "activity",
+                        "type": "string",
+                        "format": "default"
+                    },
+                    {
+                        "name": "product",
+                        "type": "string",
+                        "format": "default"
+                    },
+                    {
+                        "name": "unit",
+                        "type": "string",
+                        "format": "default"
+                    },
+                    {
+                        "name": "location",
+                        "type": "string",
+                        "format": "default"
+                    },
+                    {
+                        "name": "value",
+                        "type": "integer",
+                        "format": "default"
+                    }
+                ],
+                "missingValues": [
+                    ""
+                ]
+            }
+        },
+        {
+            "path": "inventories/some model/Scenario B/2020/B_matrix.csv",
+            "profile": "tabular-data-resource",
+            "name": "b_matrix",
+            "format": "csv",
+            "mediatype": "text/csv",
+            "encoding": "utf-8",
+            "schema": {
+                "fields": [
+                    {
+                        "name": "index of activity",
+                        "type": "integer",
+                        "format": "default"
+                    },
+                    {
+                        "name": "index of biosphere flow",
+                        "type": "date",
+                        "format": "%d%m%y"
+                    },
+                    {
+                        "name": "value",
+                        "type": "number",
+                        "format": "default"
+                    },
+                    {
+                        "name": "uncertainty type",
+                        "type": "integer",
+                        "format": "default"
+                    },
+                    {
+                        "name": "loc",
+                        "type": "number",
+                        "format": "default"
+                    },
+                    {
+                        "name": "scale",
+                        "type": "number",
+                        "format": "default"
+                    },
+                    {
+                        "name": "shape",
+                        "type": "number",
+                        "format": "default"
+                    },
+                    {
+                        "name": "minimum",
+                        "type": "number",
+                        "format": "default"
+                    },
+                    {
+                        "name": "maximum",
+                        "type": "number",
+                        "format": "default"
+                    },
+                    {
+                        "name": "negative",
+                        "type": "integer",
+                        "format": "default"
+                    },
+                    {
+                        "name": "flip",
+                        "type": "integer",
+                        "format": "default"
+                    }
+                ],
+                "missingValues": [
+                    ""
+                ]
+            }
+        },
+        {
+            "path": "inventories/some model/Scenario B/2020/A_matrix.csv",
+            "profile": "tabular-data-resource",
+            "name": "a_matrix",
+            "format": "csv",
+            "mediatype": "text/csv",
+            "encoding": "utf-8",
+            "schema": {
+                "fields": [
+                    {
+                        "name": "index of activity",
+                        "type": "integer",
+                        "format": "default"
+                    },
+                    {
+                        "name": "index of product",
+                        "type": "date",
+                        "format": "%d%m%y"
+                    },
+                    {
+                        "name": "value",
+                        "type": "number",
+                        "format": "default"
+                    },
+                    {
+                        "name": "uncertainty type",
+                        "type": "integer",
+                        "format": "default"
+                    },
+                    {
+                        "name": "loc",
+                        "type": "number",
+                        "format": "default"
+                    },
+                    {
+                        "name": "scale",
+                        "type": "number",
+                        "format": "default"
+                    },
+                    {
+                        "name": "shape",
+                        "type": "number",
+                        "format": "default"
+                    },
+                    {
+                        "name": "minimum",
+                        "type": "number",
+                        "format": "default"
+                    },
+                    {
+                        "name": "maximum",
+                        "type": "number",
+                        "format": "default"
+                    },
+                    {
+                        "name": "negative",
+                        "type": "integer",
+                        "format": "default"
+                    },
+                    {
+                        "name": "flip",
+                        "type": "integer",
+                        "format": "default"
+                    }
+                ],
+                "missingValues": [
+                    ""
+                ]
+            }
+        },
+        {
+            "path": "inventories/some model/Scenario B/2020/B_matrix_index.csv",
+            "profile": "tabular-data-resource",
+            "name": "b_matrix_index",
+            "format": "csv",
+            "mediatype": "text/csv",
+            "encoding": "utf-8",
+            "schema": {
+                "fields": [
+                    {
+                        "name": "name",
+                        "type": "string",
+                        "format": "default"
+                    },
+                    {
+                        "name": "category",
+                        "type": "string",
+                        "format": "default"
+                    },
+                    {
+                        "name": "sub category",
+                        "type": "string",
+                        "format": "default"
+                    },
+                    {
+                        "name": "unit",
+                        "type": "string",
+                        "format": "default"
+                    },
+                    {
+                        "name": "value",
+                        "type": "integer",
+                        "format": "default"
+                    }
+                ],
+                "missingValues": [
+                    ""
+                ]
+            }
+        },
+        {
+            "path": "inventories/some model/Scenario B/2030/A_matrix_index.csv",
+            "profile": "tabular-data-resource",
+            "name": "a_matrix_index",
+            "format": "csv",
+            "mediatype": "text/csv",
+            "encoding": "utf-8",
+            "schema": {
+                "fields": [
+                    {
+                        "name": "activity",
+                        "type": "string",
+                        "format": "default"
+                    },
+                    {
+                        "name": "product",
+                        "type": "string",
+                        "format": "default"
+                    },
+                    {
+                        "name": "unit",
+                        "type": "string",
+                        "format": "default"
+                    },
+                    {
+                        "name": "location",
+                        "type": "string",
+                        "format": "default"
+                    },
+                    {
+                        "name": "value",
+                        "type": "integer",
+                        "format": "default"
+                    }
+                ],
+                "missingValues": [
+                    ""
+                ]
+            }
+        },
+        {
+            "path": "inventories/some model/Scenario B/2030/B_matrix.csv",
+            "profile": "tabular-data-resource",
+            "name": "b_matrix",
+            "format": "csv",
+            "mediatype": "text/csv",
+            "encoding": "utf-8",
+            "schema": {
+                "fields": [
+                    {
+                        "name": "index of activity",
+                        "type": "integer",
+                        "format": "default"
+                    },
+                    {
+                        "name": "index of biosphere flow",
+                        "type": "date",
+                        "format": "%d%m%y"
+                    },
+                    {
+                        "name": "value",
+                        "type": "number",
+                        "format": "default"
+                    },
+                    {
+                        "name": "uncertainty type",
+                        "type": "integer",
+                        "format": "default"
+                    },
+                    {
+                        "name": "loc",
+                        "type": "number",
+                        "format": "default"
+                    },
+                    {
+                        "name": "scale",
+                        "type": "number",
+                        "format": "default"
+                    },
+                    {
+                        "name": "shape",
+                        "type": "number",
+                        "format": "default"
+                    },
+                    {
+                        "name": "minimum",
+                        "type": "number",
+                        "format": "default"
+                    },
+                    {
+                        "name": "maximum",
+                        "type": "number",
+                        "format": "default"
+                    },
+                    {
+                        "name": "negative",
+                        "type": "integer",
+                        "format": "default"
+                    },
+                    {
+                        "name": "flip",
+                        "type": "integer",
+                        "format": "default"
+                    }
+                ],
+                "missingValues": [
+                    ""
+                ]
+            }
+        },
+        {
+            "path": "inventories/some model/Scenario B/2030/A_matrix.csv",
+            "profile": "tabular-data-resource",
+            "name": "a_matrix",
+            "format": "csv",
+            "mediatype": "text/csv",
+            "encoding": "utf-8",
+            "schema": {
+                "fields": [
+                    {
+                        "name": "index of activity",
+                        "type": "integer",
+                        "format": "default"
+                    },
+                    {
+                        "name": "index of product",
+                        "type": "date",
+                        "format": "%d%m%y"
+                    },
+                    {
+                        "name": "value",
+                        "type": "number",
+                        "format": "default"
+                    },
+                    {
+                        "name": "uncertainty type",
+                        "type": "integer",
+                        "format": "default"
+                    },
+                    {
+                        "name": "loc",
+                        "type": "number",
+                        "format": "default"
+                    },
+                    {
+                        "name": "scale",
+                        "type": "number",
+                        "format": "default"
+                    },
+                    {
+                        "name": "shape",
+                        "type": "number",
+                        "format": "default"
+                    },
+                    {
+                        "name": "minimum",
+                        "type": "number",
+                        "format": "default"
+                    },
+                    {
+                        "name": "maximum",
+                        "type": "number",
+                        "format": "default"
+                    },
+                    {
+                        "name": "negative",
+                        "type": "integer",
+                        "format": "default"
+                    },
+                    {
+                        "name": "flip",
+                        "type": "integer",
+                        "format": "default"
+                    }
+                ],
+                "missingValues": [
+                    ""
+                ]
+            }
+        },
+        {
+            "path": "inventories/some model/Scenario B/2030/B_matrix_index.csv",
+            "profile": "tabular-data-resource",
+            "name": "b_matrix_index",
+            "format": "csv",
+            "mediatype": "text/csv",
+            "encoding": "utf-8",
+            "schema": {
+                "fields": [
+                    {
+                        "name": "name",
+                        "type": "string",
+                        "format": "default"
+                    },
+                    {
+                        "name": "category",
+                        "type": "string",
+                        "format": "default"
+                    },
+                    {
+                        "name": "sub category",
+                        "type": "string",
+                        "format": "default"
+                    },
+                    {
+                        "name": "unit",
+                        "type": "string",
+                        "format": "default"
+                    },
+                    {
+                        "name": "value",
+                        "type": "integer",
+                        "format": "default"
+                    }
+                ],
+                "missingValues": [
+                    ""
+                ]
+            }
+        },
+        {
+            "path": "inventories/some model/Scenario B/2040/A_matrix_index.csv",
+            "profile": "tabular-data-resource",
+            "name": "a_matrix_index",
+            "format": "csv",
+            "mediatype": "text/csv",
+            "encoding": "utf-8",
+            "schema": {
+                "fields": [
+                    {
+                        "name": "activity",
+                        "type": "string",
+                        "format": "default"
+                    },
+                    {
+                        "name": "product",
+                        "type": "string",
+                        "format": "default"
+                    },
+                    {
+                        "name": "unit",
+                        "type": "string",
+                        "format": "default"
+                    },
+                    {
+                        "name": "location",
+                        "type": "string",
+                        "format": "default"
+                    },
+                    {
+                        "name": "value",
+                        "type": "integer",
+                        "format": "default"
+                    }
+                ],
+                "missingValues": [
+                    ""
+                ]
+            }
+        },
+        {
+            "path": "inventories/some model/Scenario B/2040/B_matrix.csv",
+            "profile": "tabular-data-resource",
+            "name": "b_matrix",
+            "format": "csv",
+            "mediatype": "text/csv",
+            "encoding": "utf-8",
+            "schema": {
+                "fields": [
+                    {
+                        "name": "index of activity",
+                        "type": "integer",
+                        "format": "default"
+                    },
+                    {
+                        "name": "index of biosphere flow",
+                        "type": "date",
+                        "format": "%d%m%y"
+                    },
+                    {
+                        "name": "value",
+                        "type": "number",
+                        "format": "default"
+                    },
+                    {
+                        "name": "uncertainty type",
+                        "type": "integer",
+                        "format": "default"
+                    },
+                    {
+                        "name": "loc",
+                        "type": "number",
+                        "format": "default"
+                    },
+                    {
+                        "name": "scale",
+                        "type": "number",
+                        "format": "default"
+                    },
+                    {
+                        "name": "shape",
+                        "type": "number",
+                        "format": "default"
+                    },
+                    {
+                        "name": "minimum",
+                        "type": "number",
+                        "format": "default"
+                    },
+                    {
+                        "name": "maximum",
+                        "type": "number",
+                        "format": "default"
+                    },
+                    {
+                        "name": "negative",
+                        "type": "integer",
+                        "format": "default"
+                    },
+                    {
+                        "name": "flip",
+                        "type": "integer",
+                        "format": "default"
+                    }
+                ],
+                "missingValues": [
+                    ""
+                ]
+            }
+        },
+        {
+            "path": "inventories/some model/Scenario B/2040/A_matrix.csv",
+            "profile": "tabular-data-resource",
+            "name": "a_matrix",
+            "format": "csv",
+            "mediatype": "text/csv",
+            "encoding": "utf-8",
+            "schema": {
+                "fields": [
+                    {
+                        "name": "index of activity",
+                        "type": "integer",
+                        "format": "default"
+                    },
+                    {
+                        "name": "index of product",
+                        "type": "date",
+                        "format": "%d%m%y"
+                    },
+                    {
+                        "name": "value",
+                        "type": "number",
+                        "format": "default"
+                    },
+                    {
+                        "name": "uncertainty type",
+                        "type": "integer",
+                        "format": "default"
+                    },
+                    {
+                        "name": "loc",
+                        "type": "number",
+                        "format": "default"
+                    },
+                    {
+                        "name": "scale",
+                        "type": "number",
+                        "format": "default"
+                    },
+                    {
+                        "name": "shape",
+                        "type": "number",
+                        "format": "default"
+                    },
+                    {
+                        "name": "minimum",
+                        "type": "number",
+                        "format": "default"
+                    },
+                    {
+                        "name": "maximum",
+                        "type": "number",
+                        "format": "default"
+                    },
+                    {
+                        "name": "negative",
+                        "type": "integer",
+                        "format": "default"
+                    },
+                    {
+                        "name": "flip",
+                        "type": "integer",
+                        "format": "default"
+                    }
+                ],
+                "missingValues": [
+                    ""
+                ]
+            }
+        },
+        {
+            "path": "inventories/some model/Scenario B/2040/B_matrix_index.csv",
+            "profile": "tabular-data-resource",
+            "name": "b_matrix_index",
+            "format": "csv",
+            "mediatype": "text/csv",
+            "encoding": "utf-8",
+            "schema": {
+                "fields": [
+                    {
+                        "name": "name",
+                        "type": "string",
+                        "format": "default"
+                    },
+                    {
+                        "name": "category",
+                        "type": "string",
+                        "format": "default"
+                    },
+                    {
+                        "name": "sub category",
+                        "type": "string",
+                        "format": "default"
+                    },
+                    {
+                        "name": "unit",
+                        "type": "string",
+                        "format": "default"
+                    },
+                    {
+                        "name": "value",
+                        "type": "integer",
+                        "format": "default"
+                    }
+                ],
+                "missingValues": [
+                    ""
+                ]
+            }
+        },
+        {
+            "path": "inventories/some model/Scenario B/2050/A_matrix_index.csv",
+            "profile": "tabular-data-resource",
+            "name": "a_matrix_index",
+            "format": "csv",
+            "mediatype": "text/csv",
+            "encoding": "utf-8",
+            "schema": {
+                "fields": [
+                    {
+                        "name": "activity",
+                        "type": "string",
+                        "format": "default"
+                    },
+                    {
+                        "name": "product",
+                        "type": "string",
+                        "format": "default"
+                    },
+                    {
+                        "name": "unit",
+                        "type": "string",
+                        "format": "default"
+                    },
+                    {
+                        "name": "location",
+                        "type": "string",
+                        "format": "default"
+                    },
+                    {
+                        "name": "value",
+                        "type": "integer",
+                        "format": "default"
+                    }
+                ],
+                "missingValues": [
+                    ""
+                ]
+            }
+        },
+        {
+            "path": "inventories/some model/Scenario B/2050/B_matrix.csv",
+            "profile": "tabular-data-resource",
+            "name": "b_matrix",
+            "format": "csv",
+            "mediatype": "text/csv",
+            "encoding": "utf-8",
+            "schema": {
+                "fields": [
+                    {
+                        "name": "index of activity",
+                        "type": "integer",
+                        "format": "default"
+                    },
+                    {
+                        "name": "index of biosphere flow",
+                        "type": "date",
+                        "format": "%d%m%y"
+                    },
+                    {
+                        "name": "value",
+                        "type": "number",
+                        "format": "default"
+                    },
+                    {
+                        "name": "uncertainty type",
+                        "type": "integer",
+                        "format": "default"
+                    },
+                    {
+                        "name": "loc",
+                        "type": "number",
+                        "format": "default"
+                    },
+                    {
+                        "name": "scale",
+                        "type": "number",
+                        "format": "default"
+                    },
+                    {
+                        "name": "shape",
+                        "type": "number",
+                        "format": "default"
+                    },
+                    {
+                        "name": "minimum",
+                        "type": "number",
+                        "format": "default"
+                    },
+                    {
+                        "name": "maximum",
+                        "type": "number",
+                        "format": "default"
+                    },
+                    {
+                        "name": "negative",
+                        "type": "integer",
+                        "format": "default"
+                    },
+                    {
+                        "name": "flip",
+                        "type": "integer",
+                        "format": "default"
+                    }
+                ],
+                "missingValues": [
+                    ""
+                ]
+            }
+        },
+        {
+            "path": "inventories/some model/Scenario B/2050/A_matrix.csv",
+            "profile": "tabular-data-resource",
+            "name": "a_matrix",
+            "format": "csv",
+            "mediatype": "text/csv",
+            "encoding": "utf-8",
+            "schema": {
+                "fields": [
+                    {
+                        "name": "index of activity",
+                        "type": "integer",
+                        "format": "default"
+                    },
+                    {
+                        "name": "index of product",
+                        "type": "date",
+                        "format": "%d%m%y"
+                    },
+                    {
+                        "name": "value",
+                        "type": "number",
+                        "format": "default"
+                    },
+                    {
+                        "name": "uncertainty type",
+                        "type": "integer",
+                        "format": "default"
+                    },
+                    {
+                        "name": "loc",
+                        "type": "number",
+                        "format": "default"
+                    },
+                    {
+                        "name": "scale",
+                        "type": "number",
+                        "format": "default"
+                    },
+                    {
+                        "name": "shape",
+                        "type": "number",
+                        "format": "default"
+                    },
+                    {
+                        "name": "minimum",
+                        "type": "number",
+                        "format": "default"
+                    },
+                    {
+                        "name": "maximum",
+                        "type": "number",
+                        "format": "default"
+                    },
+                    {
+                        "name": "negative",
+                        "type": "integer",
+                        "format": "default"
+                    },
+                    {
+                        "name": "flip",
+                        "type": "integer",
+                        "format": "default"
+                    }
+                ],
+                "missingValues": [
+                    ""
+                ]
+            }
+        },
+        {
+            "path": "inventories/some model/Scenario B/2050/B_matrix_index.csv",
+            "profile": "tabular-data-resource",
+            "name": "b_matrix_index",
+            "format": "csv",
+            "mediatype": "text/csv",
+            "encoding": "utf-8",
+            "schema": {
+                "fields": [
+                    {
+                        "name": "name",
+                        "type": "string",
+                        "format": "default"
+                    },
+                    {
+                        "name": "category",
+                        "type": "string",
+                        "format": "default"
+                    },
+                    {
+                        "name": "sub category",
+                        "type": "string",
+                        "format": "default"
+                    },
+                    {
+                        "name": "unit",
+                        "type": "string",
+                        "format": "default"
+                    },
+                    {
+                        "name": "value",
+                        "type": "integer",
+                        "format": "default"
+                    }
+                ],
+                "missingValues": [
+                    ""
+                ]
+            }
+        },
+        {
             "path": "mapping/mapping.yaml",
             "profile": "data-resource",
             "name": "mapping",
