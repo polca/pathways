@@ -430,7 +430,7 @@ def _calculate_year(args: tuple):
 
             shares_indices = subshares_indices(regions, technosphere_indices, geo)
             correlated_arrays = adjust_matrix_based_on_shares(
-                A_arrays, shares_indices, use_distributions, year
+                lca, shares_indices, use_distributions, year
             )
 
             bw_correlated = get_subshares_matrix(correlated_arrays)
