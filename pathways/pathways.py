@@ -194,7 +194,7 @@ class Pathways:
             if var not in scenario_data["variables"].values:
                 if self.debug:
                     logging.warning(
-                        f"Variable {var} not found in scenario data among: {scenario_data['variables'].values.tolist()}."
+                        f"Variable {var} not found in scenario data."
                     )
 
         # remove rows which do not have a value under the `variable`

@@ -3,21 +3,10 @@ This module contains functions that validate the data contained
 in the datapackage.json file.
 """
 
-import logging
-
 import datapackage
 import pandas as pd
 import yaml
 from datapackage import DataPackageException, validate
-
-logging.basicConfig(
-    level=logging.DEBUG,
-    filename="pathways.log",  # Log file to save the entries
-    filemode="a",  # Append to the log file if it exists, 'w' to overwrite
-    format="%(asctime)s - %(levelname)s - %(module)s - %(message)s",
-    datefmt="%Y-%m-%d %H:%M:%S",
-)
-
 
 def validate_datapackage(
     data_package: datapackage.DataPackage,

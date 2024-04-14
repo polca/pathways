@@ -8,12 +8,14 @@ import logging
 import uuid
 from pathlib import Path
 from typing import Any, Dict, List, Tuple
+import warnings
 
 import bw2calc as bc
 import bw_processing as bwp
 import numpy as np
 import pyprind
 from bw2calc.monte_carlo import MonteCarloLCA
+from bw2calc.utils import get_datapackage
 from bw_processing import Datapackage
 from numpy import dtype, ndarray
 from premise.geomap import Geomap
@@ -25,7 +27,7 @@ from .lcia import fill_characterization_factors_matrices
 from .subshares import (
     adjust_matrix_based_on_shares,
     get_subshares_matrix,
-    subshares_indices,
+    find_technology_indices,
 )
 from .utils import (
     _group_technosphere_indices,
@@ -33,6 +35,9 @@ from .utils import (
     fetch_indices,
     get_unit_conversion_factors,
 )
+
+# disable warnings
+warnings.filterwarnings("ignore")
 
 logging.basicConfig(
     level=logging.DEBUG,
@@ -413,6 +418,7 @@ def _calculate_year(args: tuple):
     }
 
     if use_distributions == 0:
+        logging.info("Calculating LCA results without distributions.")
         lca = bc.LCA(
             demand={0: 1},
             data_objs=[
@@ -420,33 +426,31 @@ def _calculate_year(args: tuple):
             ],
         )
         lca.lci(factorize=True)
+
     else:
-        if subshares is False:
+        logging.info("Calculating LCA results with distributions.")
+        lca = MonteCarloLCA(
+            demand={0: 1},
+            data_objs=[
+                bw_datapackage,
+            ],
+            use_distributions=True,
+        )
+        lca.lci()
 
-            lca = MonteCarloLCA(
-                demand={0: 1},
-                data_objs=[
-                    bw_datapackage,
-                ],
-                use_distributions=True,
-            )
-            lca.lci()
-        else:
-
-            shares_indices = subshares_indices(regions, technosphere_indices, geo)
+        if subshares:
+            logging.info("Calculating LCA results with subshares.")
+            shares_indices = find_technology_indices(regions, technosphere_indices, geo)
             correlated_arrays = adjust_matrix_based_on_shares(
                 lca, shares_indices, use_distributions, year
             )
-
             bw_correlated = get_subshares_matrix(correlated_arrays)
 
-            lca = MonteCarloLCA(
-                demand={0: 1},
-                data_objs=[bw_datapackage, bw_correlated],
-                use_distributions=True,
-                use_arrays=True,
+            lca.packages.append(
+                get_datapackage(bw_correlated)
             )
-            lca.lci()
+            lca.use_arrays = True
+
 
     characterization_matrix = fill_characterization_factors_matrices(
         methods=methods,
