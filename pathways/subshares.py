@@ -1,3 +1,4 @@
+import logging
 from collections import defaultdict
 
 import bw2calc
@@ -5,11 +6,10 @@ import bw_processing
 import bw_processing as bwp
 import numpy as np
 import yaml
-import logging
 from bw_processing import Datapackage
 from premise.geomap import Geomap
-from stats_arrays import *
 from scipy.interpolate import interp1d
+from stats_arrays import *
 
 from pathways.filesystem_constants import DATA_DIR
 from pathways.utils import get_activity_indices
@@ -63,15 +63,19 @@ def check_uncertainty_params(data):
         for technology in technologies.values():
             if "share" in technology:
                 for year, params in technology["share"].items():
-                    params["uncertainty_type"] = UNCERTAINTY.get(params.get("uncertainty_type", "undefined"), UndefinedUncertainty.id)
-
+                    params["uncertainty_type"] = UNCERTAINTY.get(
+                        params.get("uncertainty_type", "undefined"),
+                        UndefinedUncertainty.id,
+                    )
 
                     if not all(
-                            key in params for key in MANDATORY_UNCERTAINTY_FIELDS[params["uncertainty_type"]]
+                        key in params
+                        for key in MANDATORY_UNCERTAINTY_FIELDS[
+                            params["uncertainty_type"]
+                        ]
                     ):
                         logging.warning(
                             f"Missing mandatory uncertainty parameters for '{year}' in '{group}'"
-
                         )
     return data
 
@@ -96,7 +100,9 @@ def check_subshares(data: dict) -> dict:
                     if "loc" in share:
                         totals[year] += share["loc"]
             else:
-                logging.warning(f"Technology '{technology}' in category '{category}' does not have a 'share' key")
+                logging.warning(
+                    f"Technology '{technology}' in category '{category}' does not have a 'share' key"
+                )
 
         # if any values of totals is not equal to 1, we log it
         for year, total_value in totals.items():
@@ -107,7 +113,9 @@ def check_subshares(data: dict) -> dict:
     return data
 
 
-def find_technology_indices(regions: list, technosphere_indices: dict, geo: Geomap) -> dict:
+def find_technology_indices(
+    regions: list, technosphere_indices: dict, geo: Geomap
+) -> dict:
     """
     Fetch the indices in the technosphere matrix for the specified technologies and regions.
     The function dynamically adapts to any integer year keys in the data, and populates details
@@ -137,9 +145,7 @@ def find_technology_indices(regions: list, technosphere_indices: dict, geo: Geom
                 if activity_index is None:
                     continue
 
-                tech_data = regional_indices.setdefault(
-                    tech, {"idx": activity_index}
-                )
+                tech_data = regional_indices.setdefault(tech, {"idx": activity_index})
                 tech_data["share"] = info.get("share", {})
 
     return indices_dict
@@ -159,7 +165,7 @@ def create_activity_key(tech: dict, region: str) -> tuple:
 
 
 def get_subshares_matrix(
-        correlated_array: list,
+    correlated_array: list,
 ) -> bwp.datapackage.Datapackage:
     """
     Add subshares samples to a bw_processing.datapackage object.
@@ -180,11 +186,11 @@ def get_subshares_matrix(
 
 
 def adjust_matrix_based_on_shares(
-        lca: bw2calc.LCA,
-        shares_dict: dict,
-        subshares: dict,
-        use_distributions: int,
-        year: int,
+    lca: bw2calc.LCA,
+    shares_dict: dict,
+    subshares: dict,
+    use_distributions: int,
+    year: int,
 ):
     """
     Adjust the technosphere matrix based on shares.
@@ -208,7 +214,7 @@ def adjust_matrix_based_on_shares(
     for tech_category, regions in shares_dict.items():
         for region, technologies in regions.items():
             for technology in technologies.values():
-                technology["consumer_idx"] = get_nz_col_indices(technology['idx'])
+                technology["consumer_idx"] = get_nz_col_indices(technology["idx"])
 
     list_indices, list_amounts = [], []
 
@@ -222,8 +228,13 @@ def adjust_matrix_based_on_shares(
                     list_amounts.append(amounts * -1)
                     for other_supplier, other_supplier_tech in technologies.items():
                         if other_supplier != name:
-                            amounts = initial_amount * subshares[tech_category][year][other_supplier]
-                            list_indices.append([(other_supplier_tech["idx"], consumer)])
+                            amounts = (
+                                initial_amount
+                                * subshares[tech_category][year][other_supplier]
+                            )
+                            list_indices.append(
+                                [(other_supplier_tech["idx"], consumer)]
+                            )
                             list_amounts.append(amounts * -1)
 
     indices = np.array(list_indices, dtype=bwp.INDICES_DTYPE)
@@ -246,13 +257,18 @@ def load_and_normalize_shares(ranges: dict, iterations: int) -> dict:
             for y, share in params["share"].items():
                 uncertainty_base = UncertaintyBase.from_dicts(share)
                 random_generator = MCRandomNumberGenerator(uncertainty_base)
-                shares[technology_group][y][technology] = np.squeeze(np.array([random_generator.next() for _ in range(iterations)]))
+                shares[technology_group][y][technology] = np.squeeze(
+                    np.array([random_generator.next() for _ in range(iterations)])
+                )
 
     totals = defaultdict(lambda: np.array([]))
 
     for technology_group, years in shares.items():
         for year, technologies in years.items():
-            arrays = [shares[technology_group][year][technology] for technology in technologies]
+            arrays = [
+                shares[technology_group][year][technology]
+                for technology in technologies
+            ]
             if len(arrays) > 0:
                 if year not in totals[(technology_group, year)]:
                     totals[(technology_group, year)] = np.sum(arrays, axis=0)
@@ -262,11 +278,14 @@ def load_and_normalize_shares(ranges: dict, iterations: int) -> dict:
     for technology_group, technologies in ranges.items():
         for technology, params in technologies.items():
             for y, share in params["share"].items():
-                normalized = shares[technology_group][y][technology] / totals[(technology_group, y)]
+                normalized = (
+                    shares[technology_group][y][technology]
+                    / totals[(technology_group, y)]
+                )
                 normalized = np.clip(
                     normalized,
                     ranges[technology_group][technology]["share"][y].get("minimum", 0),
-                    ranges[technology_group][technology]["share"][y].get("maximum", 1)
+                    ranges[technology_group][technology]["share"][y].get("maximum", 1),
                 )
                 shares[technology_group][y][technology] = normalized
 
@@ -288,10 +307,18 @@ def interpolate_shares(shares: dict, years: list) -> None:
             lower_year = max((y for y in all_years if y <= year), default=None)
             upper_year = min((y for y in all_years if y >= year), default=None)
             if lower_year and upper_year:
-                interpolate_for_year(shares, technology_group, lower_year, upper_year, year)
+                interpolate_for_year(
+                    shares, technology_group, lower_year, upper_year, year
+                )
 
 
-def interpolate_for_year(shares: dict, technology_group: str, lower_year: int, upper_year: int, target_year: int) -> None:
+def interpolate_for_year(
+    shares: dict,
+    technology_group: str,
+    lower_year: int,
+    upper_year: int,
+    target_year: int,
+) -> None:
     """
     Interpolates shares for a specific year.
     :param shares: A dictionary with categories, technologies and market shares data.
@@ -314,7 +341,7 @@ def interpolate_for_year(shares: dict, technology_group: str, lower_year: int, u
         # Stack arrays vertically and ensure it is 2xN (2 rows, N columns)
         s = np.vstack((shares_lower, shares_upper)).T
 
-        f = interp1d([lower_year, upper_year], s, kind='linear')
+        f = interp1d([lower_year, upper_year], s, kind="linear")
         shares[technology_group][target_year][technology] = f(target_year)
 
 

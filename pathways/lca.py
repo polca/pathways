@@ -6,9 +6,9 @@ This module contains functions to calculate the Life Cycle Assessment (LCA) resu
 import csv
 import logging
 import uuid
+import warnings
 from pathlib import Path
 from typing import Any, Dict, List, Tuple
-import warnings
 
 import bw2calc as bc
 import bw_processing as bwp
@@ -26,8 +26,8 @@ from .filesystem_constants import DIR_CACHED_DB
 from .lcia import fill_characterization_factors_matrices
 from .subshares import (
     adjust_matrix_based_on_shares,
-    get_subshares_matrix,
     find_technology_indices,
+    get_subshares_matrix,
 )
 from .utils import (
     _group_technosphere_indices,
@@ -446,11 +446,8 @@ def _calculate_year(args: tuple):
             )
             bw_correlated = get_subshares_matrix(correlated_arrays)
 
-            lca.packages.append(
-                get_datapackage(bw_correlated)
-            )
+            lca.packages.append(get_datapackage(bw_correlated))
             lca.use_arrays = True
-
 
     characterization_matrix = fill_characterization_factors_matrices(
         methods=methods,

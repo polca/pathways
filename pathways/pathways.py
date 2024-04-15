@@ -20,6 +20,7 @@ from .data_validation import validate_datapackage
 from .filesystem_constants import DATA_DIR, DIR_CACHED_DB
 from .lca import _calculate_year, get_lca_matrices
 from .lcia import get_lcia_method_names
+from .subshares import generate_samples
 from .utils import (
     clean_cache_directory,
     create_lca_results_array,
@@ -31,7 +32,6 @@ from .utils import (
     load_units_conversion,
     resize_scenario_data,
 )
-from .subshares import generate_samples
 
 
 def _get_mapping(data) -> dict:
@@ -194,9 +194,7 @@ class Pathways:
         for var in mapping_vars:
             if var not in scenario_data["variables"].values:
                 if self.debug:
-                    logging.warning(
-                        f"Variable {var} not found in scenario data."
-                    )
+                    logging.warning(f"Variable {var} not found in scenario data.")
 
         # remove rows which do not have a value under the `variable`
         # column that correspond to any value in self.mapping for `scenario variable`

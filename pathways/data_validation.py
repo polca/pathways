@@ -8,6 +8,7 @@ import pandas as pd
 import yaml
 from datapackage import DataPackageException, validate
 
+
 def validate_datapackage(
     data_package: datapackage.DataPackage,
 ) -> (datapackage.DataPackage, pd.DataFrame, list):
