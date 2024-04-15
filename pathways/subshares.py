@@ -33,7 +33,7 @@ def load_subshares() -> dict:
     with open(SUBSHARES) as stream:
         data = yaml.safe_load(stream)
 
-    return adjust_subshares(check_uncertainty_params(data))
+    return check_subshares(check_uncertainty_params(data))
 
 
 def check_uncertainty_params(data):
@@ -76,7 +76,7 @@ def check_uncertainty_params(data):
     return data
 
 
-def adjust_subshares(data: dict) -> dict:
+def check_subshares(data: dict) -> dict:
     """
     Adjusts the values in 'data' for each year ensuring the sum equals 1
     for each category, excluding technologies without a name.
@@ -182,6 +182,7 @@ def get_subshares_matrix(
 def adjust_matrix_based_on_shares(
         lca: bw2calc.LCA,
         shares_dict: dict,
+        subshares: dict,
         use_distributions: int,
         year: int,
 ):
@@ -193,10 +194,6 @@ def adjust_matrix_based_on_shares(
     :param year: Integer representing the year.
     :return:
     """
-
-    modified_data = []
-    modified_indices = []
-    modified_signs = []
 
     # get coordinates of nonzero values in the technosphere matrix
     nz_row, nz_col = lca.technosphere_matrix.nonzero()
@@ -212,150 +209,125 @@ def adjust_matrix_based_on_shares(
         for region, technologies in regions.items():
             for technology in technologies.values():
                 technology["consumer_idx"] = get_nz_col_indices(technology['idx'])
-            correlated_samples(ranges=technologies, year=year, iterations=use_distributions)
+
+    list_indices, list_amounts = [], []
 
     for tech_category, regions in shares_dict.items():
         for region, technologies in regions.items():
-            for tech in technologies.values():
+            for name, tech in technologies.items():
                 for consumer in tech["consumer_idx"]:
-                    logging.debug(f"Consumer: {consumer} receiving from {tech['idx']}: {lca.technosphere_matrix[tech['idx'], consumer]}")
-                total_amount = lca.technosphere_matrix[np.ix_(
-                    np.array([tech["idx"] for tech in technologies.values()]),
-                    np.hstack([tech["consumer_idx"] for tech in technologies.values()]),
-                )].sum()
+                    initial_amount = lca.technosphere_matrix[tech["idx"], consumer]
+                    amounts = initial_amount * subshares[tech_category][year][name]
+                    list_indices.append([(tech["idx"], consumer)])
+                    list_amounts.append(amounts * -1)
+                    for other_supplier, other_supplier_tech in technologies.items():
+                        if other_supplier != name:
+                            amounts = initial_amount * subshares[tech_category][year][other_supplier]
+                            list_indices.append([(other_supplier_tech["idx"], consumer)])
+                            list_amounts.append(amounts * -1)
 
-                logging.debug(f"Tech: {technologies}, Total amount: {total_amount}")
+    indices = np.array(list_indices, dtype=bwp.INDICES_DTYPE)
+    data = np.array(list_amounts)
+    signs = np.ones_like(indices, dtype=bool)
+
+    return data, indices, signs
 
 
-    for tech, details in tech.items():
-        if year != 2020:
-            if details[2050]["distribution"] == "uniform":
-                tech_group_ranges[tech] = (
-                    details[2050]["min"],
-                    details[year]["max"],
-                )
-                tech_group_defaults[tech] = details.get(2020, {}).get(
-                    "value", 0
-                )
-            else:
-                print(
-                    "At this point, only uniform distributions are supported. Exiting."
-                )
-                exit(1)
+def load_and_normalize_shares(ranges: dict, iterations: int) -> dict:
+    """
+    Load and normalize shares for parameters to sum to 1 while respecting their specified ranges.
+    :param ranges: A dictionary with categories, technologies and market shares data.
+    :param iterations: Number of iterations for random generation.
+    :return: A dict with normalized shares for each technology and year.
+    """
+    shares = defaultdict(lambda: defaultdict(dict))
+    for technology_group, technologies in ranges.items():
+        for technology, params in technologies.items():
+            for y, share in params["share"].items():
+                uncertainty_base = UncertaintyBase.from_dicts(share)
+                random_generator = MCRandomNumberGenerator(uncertainty_base)
+                shares[technology_group][y][technology] = np.squeeze(np.array([random_generator.next() for _ in range(iterations)]))
 
-    if year != 2020 and tech_group_ranges:
-        group_shares = correlated_samples(
-            tech_group_ranges, tech_group_defaults
-        )
-        print("Tech group", tech_category, "shares: ", group_shares)
-    else:
-        group_shares = {
-            tech: details.get(year, {}).get("value", 0)
-            for tech, details in tech.items()
-        }
-        print("Tech group", tech_category, "shares: ", group_shares)
+    totals = defaultdict(lambda: np.array([]))
 
-    for product_idx in all_product_indices:
-        relevant_indices = [
-            lca.dicts.product[idx]
-            for idx in all_tech_indices
-            if lca.dicts.product[idx] is not None
-        ]
-        total_output = np.sum(
-            lca.technosphere_matrix[product_idx, relevant_indices]
-        )
-
-        for tech, share in group_shares.items():
-            if (
-                    tech in tech
-                    and "idx" in tech[tech]
-                    and tech[tech]["idx"] is not None
-            ):
-                idx = tech[tech]["idx"]
-
-                if year == 2020:
-                    share_value = details.get(year, {}).get("value", 0)
-                    new_amounts = np.array(
-                        [total_output * share_value]
-                    ).reshape((1, -1))
+    for technology_group, years in shares.items():
+        for year, technologies in years.items():
+            arrays = [shares[technology_group][year][technology] for technology in technologies]
+            if len(arrays) > 0:
+                if year not in totals[(technology_group, year)]:
+                    totals[(technology_group, year)] = np.sum(arrays, axis=0)
                 else:
-                    new_amounts = np.array(
-                        [total_output * share for _ in range(use_distributions)]
-                    ).reshape((1, -1))
-                index = find_index(idx, product_idx)
+                    totals[(technology_group, year)] += np.sum(arrays, axis=0)
 
-                if (
-                        index is not None
-                        and product_idx not in unique_product_indices_from_dict
-                ):
-                    modified_indices.append((idx, product_idx))
-                    modified_data.append(new_amounts)
-                    modified_signs.append(sign_array[index])
-                elif (
-                        index is None
-                        and product_idx not in unique_product_indices_from_dict
-                ):
-                    modified_data.append(new_amounts)
-                    modified_indices.append((idx, product_idx))
-                    modified_signs.append(True)
-
-    # modified_data_array = np.array(modified_data, dtype=object)
-    modified_data_array = np.concatenate(modified_data, axis=0)
-    modified_indices_array = np.array(modified_indices, dtype=bwp.INDICES_DTYPE)
-    modified_signs_array = np.array(modified_signs, dtype=bool)
-
-    return [modified_data_array, modified_indices_array, modified_signs_array]
-
-
-def correlated_samples(ranges: dict, year: int, iterations=10):
-    """
-    Adjusts randomly selected shares for parameters to sum to 1
-    while respecting their specified ranges.
-
-    :param ranges: Dict with parameter names as keys and (min, max) tuples as values.
-    :param defaults: Dict with default values for each parameter.
-    :param iterations: Number of iterations to attempt to find a valid distribution.
-    :return: A dict with the adjusted shares for each parameter.
-    """
-
-    shares = defaultdict(dict)
-    for technology, params in ranges.items():
-        for y, share in params["share"].items():
-            u = UncertaintyBase.from_dicts(share)
-            r = MCRandomNumberGenerator(u)
-            shares[y][technology] = np.array([r.next() for _ in range(iterations)])
-
-    for y in shares:
-        total = np.hstack([shares[y][technology] for technology in shares[y]])
-        # normalize by the sum of all shares
-        shares[y] = {technology: np.clip(
-            np.squeeze(share) / total.sum(axis=1),
-            ranges[technology]["share"].get("min", 0),
-            ranges[technology]["share"].get("max", 1),
-        ) for technology, share in shares[y].items()}
-
-    # interpolate the values to `year`
-    # find the lowest year
-    lowest_year = min(shares.keys())
-    # find the highest year
-    highest_year = max(shares.keys())
-
-    # update the ranges with the new values
-    for technology, params in ranges.items():
-        if year == lowest_year:
-            shares["iterations"][technology] = shares[lowest_year][technology]
-        elif year == highest_year:
-            shares["iterations"][technology] = shares[highest_year][technology]
-        else:
-            interpolator = interp1d(
-                [lowest_year, highest_year],
-                np.array([
-                    shares[lowest_year][technology],
-                    shares[highest_year][technology]
-                ]),
-                axis=0
-            )
-            shares["iterations"][technology] = interpolator(year)
+    for technology_group, technologies in ranges.items():
+        for technology, params in technologies.items():
+            for y, share in params["share"].items():
+                normalized = shares[technology_group][y][technology] / totals[(technology_group, y)]
+                normalized = np.clip(
+                    normalized,
+                    ranges[technology_group][technology]["share"][y].get("minimum", 0),
+                    ranges[technology_group][technology]["share"][y].get("maximum", 1)
+                )
+                shares[technology_group][y][technology] = normalized
 
     return shares
 
+
+def interpolate_shares(shares: dict, years: list) -> None:
+    """
+    Interpolates missing years in the shares data.
+    :param shares: A dictionary with categories, technologies and market shares data.
+    :param years: List of years for which to interpolate shares.
+    :return: None
+    """
+    for technology_group in shares:
+        all_years = sorted(shares[technology_group])
+        for year in years:
+            if year in shares[technology_group]:
+                continue
+            lower_year = max((y for y in all_years if y <= year), default=None)
+            upper_year = min((y for y in all_years if y >= year), default=None)
+            if lower_year and upper_year:
+                interpolate_for_year(shares, technology_group, lower_year, upper_year, year)
+
+
+def interpolate_for_year(shares: dict, technology_group: str, lower_year: int, upper_year: int, target_year: int) -> None:
+    """
+    Interpolates shares for a specific year.
+    :param shares: A dictionary with categories, technologies and market shares data.
+    :param technology_group: A string representing the technology group.
+    :param lower_year: An integer representing the lower year.
+    :param upper_year: An integer representing the upper year.
+    :param target_year: An integer representing the target year.
+    :return: None
+    """
+    for technology in shares[technology_group][lower_year]:
+
+        shares_lower = shares[technology_group][lower_year][technology]
+        shares_upper = shares[technology_group][upper_year][technology]
+
+        if shares_lower.ndim == 1:
+            shares_lower = shares_lower.reshape(1, -1)
+        if shares_upper.ndim == 1:
+            shares_upper = shares_upper.reshape(1, -1)
+
+        # Stack arrays vertically and ensure it is 2xN (2 rows, N columns)
+        s = np.vstack((shares_lower, shares_upper)).T
+
+        f = interp1d([lower_year, upper_year], s, kind='linear')
+        shares[technology_group][target_year][technology] = f(target_year)
+
+
+def generate_samples(years: list, iterations: int = 10) -> dict:
+    """
+    Generates and adjusts randomly selected shares for parameters to sum to 1
+    while respecting their specified ranges, and interpolates missing years.
+
+    :param years: List of years for which to generate/interpolate shares.
+    :param iterations: Number of iterations for random generation.
+    :return: A dict with adjusted and interpolated shares for each technology and year.
+    """
+    ranges = load_subshares()
+    shares = load_and_normalize_shares(ranges, iterations)
+    interpolate_shares(shares, years)
+    return shares

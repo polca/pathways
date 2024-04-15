@@ -31,6 +31,7 @@ from .utils import (
     load_units_conversion,
     resize_scenario_data,
 )
+from .subshares import generate_samples
 
 
 def _get_mapping(data) -> dict:
@@ -344,6 +345,13 @@ class Pathways:
                 use_distributions=use_distributions > 0,
             )
 
+        # generate share of sub-technologies
+        if subshares:
+            shares = generate_samples(
+                years=self.scenarios.coords["year"].values.tolist(),
+                iterations=use_distributions,
+            )
+
         # Iterate over each combination of model, scenario, and year
         results = {}
         for model in models:
@@ -369,7 +377,7 @@ class Pathways:
                             self.reverse_classifications,
                             self.debug,
                             use_distributions,
-                            subshares,
+                            shares or None,
                         )
                         for year in years
                     ]
@@ -405,7 +413,7 @@ class Pathways:
                                     self.reverse_classifications,
                                     self.debug,
                                     use_distributions,
-                                    subshares,
+                                    shares or None,
                                 )
                             )
                             for year in years
