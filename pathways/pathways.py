@@ -349,6 +349,8 @@ class Pathways:
                 years=self.scenarios.coords["year"].values.tolist(),
                 iterations=use_distributions,
             )
+        else:
+            shares = None
 
         # Iterate over each combination of model, scenario, and year
         results = {}
@@ -375,7 +377,7 @@ class Pathways:
                             self.reverse_classifications,
                             self.debug,
                             use_distributions,
-                            shares or None,
+                            shares,
                         )
                         for year in years
                     ]
