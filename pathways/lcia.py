@@ -26,7 +26,7 @@ def format_lcia_method_exchanges(method):
     """
     Format LCIA method data to fit such structure:
     (name, unit, type, category, subcategory, amount, uncertainty type, uncertainty amount)
-
+-
     :param method: LCIA method
     :return: list of tuples
     """

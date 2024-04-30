@@ -4,6 +4,7 @@ from collections import defaultdict
 import bw2calc
 import bw_processing
 import bw_processing as bwp
+import pandas as pd
 import numpy as np
 import yaml
 from bw_processing import Datapackage
@@ -13,6 +14,7 @@ from stats_arrays import *
 
 from pathways.filesystem_constants import DATA_DIR
 from pathways.utils import get_activity_indices
+
 
 SUBSHARES = DATA_DIR / "technologies_shares.yaml"
 
@@ -186,10 +188,13 @@ def get_subshares_matrix(
 
 
 def adjust_matrix_based_on_shares(
+    filepaths: list,
     lca: bw2calc.LCA,
     shares_dict: dict,
     subshares: dict,
     use_distributions: int,
+    model: str,
+    scenario: str,
     year: int,
 ):
     """

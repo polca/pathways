@@ -259,7 +259,6 @@ Battery-Mobile:
         minimum: 0.0
         maximum: 0.1
         uncertainty_type: uniform
-#### ON BATTERIES, WE WILL BE WORKING WITH KILOGRAMS... FORGETTING ABOUT ENERGY DENSITIES :(
 Battery-Stationary: ### Home storage uses NMC811 (w/o hyphen) in the current premise version
   NMC111:
     name: market for battery cell, Li-ion, NMC111
