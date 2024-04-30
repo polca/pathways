@@ -381,8 +381,8 @@ class Pathways:
                             self.reverse_classifications,
                             self.debug,
                             use_distributions,
-                            shares or None,
                             uncertain_parameters,
+                            shares,
                         )
                         for year in years
                     ]
