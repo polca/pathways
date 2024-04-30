@@ -4,8 +4,8 @@ from collections import defaultdict
 import bw2calc
 import bw_processing
 import bw_processing as bwp
-import pandas as pd
 import numpy as np
+import pandas as pd
 import yaml
 from bw_processing import Datapackage
 from premise.geomap import Geomap
@@ -14,7 +14,6 @@ from stats_arrays import *
 
 from pathways.filesystem_constants import DATA_DIR
 from pathways.utils import get_activity_indices
-
 
 SUBSHARES = DATA_DIR / "technologies_shares.yaml"
 

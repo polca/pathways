@@ -102,6 +102,7 @@ def load_units_conversion() -> dict:
 
     return data
 
+
 def read_indices_csv(file_path: Path) -> dict[tuple[str, str, str, str], int]:
     """
     Reads a CSV file and returns its contents as a dictionary.
@@ -327,6 +328,7 @@ def clean_cache_directory():
 #     scenario_data = scenario_data.isel(**indices)
 #
 #     return scenario_data
+
 
 def resize_scenario_data(
     scenario_data: xr.DataArray,

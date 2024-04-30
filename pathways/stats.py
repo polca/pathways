@@ -1,7 +1,8 @@
-import pandas as pd
-from pathlib import Path
-import statsmodels.api as sm
 import re
+from pathlib import Path
+
+import pandas as pd
+import statsmodels.api as sm
 from openpyxl import load_workbook
 
 
@@ -26,24 +27,32 @@ def log_subshares_to_excel(model, scenario, year, shares):
     sample_tech = next(iter(shares), None)
     if sample_tech and year in shares[sample_tech]:
         # Create data for each iteration
-        num_iterations = len(shares[sample_tech][year][next(iter(shares[sample_tech][year]))])
+        num_iterations = len(
+            shares[sample_tech][year][next(iter(shares[sample_tech][year]))]
+        )
         for i in range(num_iterations):
-            iteration_data = {'Iteration': i + 1, 'Year': year}
+            iteration_data = {"Iteration": i + 1, "Year": year}
             for tech, years_data in shares.items():
                 if year in years_data:
                     for subtype, values in years_data[year].items():
-                        iteration_data[f'{tech}_{subtype}'] = values[i]
+                        iteration_data[f"{tech}_{subtype}"] = values[i]
             data.append(iteration_data)
 
         new_df = pd.DataFrame(data)
         try:
             # Try to load the existing Excel file
-            with pd.ExcelWriter(filename, mode='a', engine='openpyxl', if_sheet_exists='overlay') as writer:
+            with pd.ExcelWriter(
+                filename, mode="a", engine="openpyxl", if_sheet_exists="overlay"
+            ) as writer:
                 existing_df = pd.read_excel(filename)
                 # Combine the old data with the new data, aligning on 'Iteration' and 'Year'
-                final_df = pd.merge(existing_df, new_df, on=['Iteration', 'Year'], how='outer')
+                final_df = pd.merge(
+                    existing_df, new_df, on=["Iteration", "Year"], how="outer"
+                )
                 # Reorder columns to ensure 'Iteration' and 'Year' are first, followed by any new columns
-                column_order = ['Iteration', 'Year'] + [c for c in new_df.columns if c not in ['Iteration', 'Year']]
+                column_order = ["Iteration", "Year"] + [
+                    c for c in new_df.columns if c not in ["Iteration", "Year"]
+                ]
                 final_df = final_df[column_order]
                 final_df.to_excel(writer, index=False)
         except FileNotFoundError:
@@ -62,37 +71,39 @@ def log_intensities_to_excel(model: str, scenario: str, year: int, new_data: dic
     :param year: The year for which the data is logged.
     :param new_data: Dictionary where keys are the new column names and values are lists of data for each column.
     """
-    filename = f'stats_report_{model}_{scenario}_{year}.xlsx'
+    filename = f"stats_report_{model}_{scenario}_{year}.xlsx"
 
     try:
         df = pd.read_excel(filename)
     except FileNotFoundError:
         df = pd.DataFrame()
 
-    if 'Iteration' not in df.columns or df.empty:
+    if "Iteration" not in df.columns or df.empty:
         max_length = max(len(data) for data in new_data.values())
-        df['Iteration'] = range(1, max_length + 1)
-        df['Year'] = [year] * max_length
+        df["Iteration"] = range(1, max_length + 1)
+        df["Year"] = [year] * max_length
 
     if not df.empty and len(df) != len(new_data[next(iter(new_data))]):
-        df = df.iloc[:len(new_data[next(iter(new_data))])]
+        df = df.iloc[: len(new_data[next(iter(new_data))])]
 
     for column_name, data in new_data.items():
         if len(data) != len(df):
-            raise ValueError(f"Length of data for '{column_name}' ({len(data)}) does not match DataFrame length ({len(df)}).")
+            raise ValueError(
+                f"Length of data for '{column_name}' ({len(data)}) does not match DataFrame length ({len(df)})."
+            )
         df[column_name] = data
 
     df.to_excel(filename, index=False)
 
 
-
 def log_results_to_excel(
-        model: str,
-        scenario: str,
-        year: int,
-        total_impacts_by_method: dict,
-        methods: list,
-        filepath=None):
+    model: str,
+    scenario: str,
+    year: int,
+    total_impacts_by_method: dict,
+    methods: list,
+    filepath=None,
+):
     """
     Log the characterized inventory results for each LCIA method into separate columns in an Excel file.
 
@@ -117,14 +128,16 @@ def log_results_to_excel(
     for method, impacts in total_impacts_by_method.items():
         df[method] = pd.Series(impacts)
 
-    base_cols = ['Iteration', 'Year'] if 'Iteration' in df.columns else []
+    base_cols = ["Iteration", "Year"] if "Iteration" in df.columns else []
     other_cols = [col for col in df.columns if col not in base_cols + methods]
     df = df[base_cols + methods + other_cols]
 
     df.to_excel(filepath, index=False)
 
 
-def create_mapping_sheet(filepaths: list, model: str, scenario: str, year: int, parameter_keys: list):
+def create_mapping_sheet(
+    filepaths: list, model: str, scenario: str, year: int, parameter_keys: list
+):
     """
     Create a mapping sheet for the activities with uncertainties.
     :param filepaths: List of paths to data files.
@@ -139,12 +152,12 @@ def create_mapping_sheet(filepaths: list, model: str, scenario: str, year: int, 
             Path(fp)
             for fp in filepaths
             if all(kw in fp for kw in contains)
-               and Path(fp).suffix == suffix
-               and Path(fp).exists()
+            and Path(fp).suffix == suffix
+            and Path(fp).exists()
         ]
 
     # Convert parameter keys into a set of unique indices
-    unique_indices = {int(idx) for key in parameter_keys for idx in key.split('_to_')}
+    unique_indices = {int(idx) for key in parameter_keys for idx in key.split("_to_")}
 
     fps = filter_filepaths(".csv", [model, scenario, str(year)])
     if len(fps) < 1:
@@ -163,13 +176,17 @@ def create_mapping_sheet(filepaths: list, model: str, scenario: str, year: int, 
     technosphere_inds.columns = ["Activity", "Product", "Unit", "Location", "Index"]
 
     # Filter the DataFrame using unique indices
-    mapping_df = technosphere_inds[technosphere_inds['Index'].isin(unique_indices)]
-    mapping_df = mapping_df[["Activity", "Product", "Location", "Unit", "Index"]]  # Restrict columns if necessary
+    mapping_df = technosphere_inds[technosphere_inds["Index"].isin(unique_indices)]
+    mapping_df = mapping_df[
+        ["Activity", "Product", "Location", "Unit", "Index"]
+    ]  # Restrict columns if necessary
 
     excel_path = f"stats_report_{model}_{scenario}_{year}.xlsx"
 
     try:
-        with pd.ExcelWriter(excel_path, mode='a', engine='openpyxl', if_sheet_exists='replace') as writer:
+        with pd.ExcelWriter(
+            excel_path, mode="a", engine="openpyxl", if_sheet_exists="replace"
+        ) as writer:
             mapping_df.to_excel(writer, index=False, sheet_name="Mapping")
     except Exception as e:
         print(f"Error writing mapping sheet to {excel_path}: {str(e)}")
@@ -183,7 +200,7 @@ def escape_formula(text: str):
     :param text: The string to be adjusted.
     :return: The adjusted string.
     """
-    return "'" + text if text.startswith(('=', '-', '+')) else text
+    return "'" + text if text.startswith(("=", "-", "+")) else text
 
 
 def run_stats_analysis(model: str, scenario: str, year: int, methods: list):
@@ -199,17 +216,19 @@ def run_stats_analysis(model: str, scenario: str, year: int, methods: list):
     :param methods: Methods corresponding to dataset columns.
     """
 
-    filename = f'stats_report_{model}_{scenario}_{year}.xlsx'
+    filename = f"stats_report_{model}_{scenario}_{year}.xlsx"
 
     # Attempt to load the existing workbook
     try:
         book = load_workbook(filename)
     except FileNotFoundError:
-        book = pd.ExcelWriter(filename, engine='openpyxl')  # Create a new workbook if not found
+        book = pd.ExcelWriter(
+            filename, engine="openpyxl"
+        )  # Create a new workbook if not found
         book.close()
         book = load_workbook(filename)
 
-    data = pd.read_excel(filename, sheet_name='Sheet1')
+    data = pd.read_excel(filename, sheet_name="Sheet1")
 
     for idx, method in enumerate(methods):
         if method not in data.columns:
@@ -217,7 +236,7 @@ def run_stats_analysis(model: str, scenario: str, year: int, methods: list):
             continue
 
         Y = data[method]
-        X = data.drop(columns=['Iteration', 'Year'] + methods)
+        X = data.drop(columns=["Iteration", "Year"] + methods)
         X = sm.add_constant(X)
 
         model_results = sm.OLS(Y, X).fit()
@@ -236,7 +255,7 @@ def run_stats_analysis(model: str, scenario: str, year: int, methods: list):
         ws = book.create_sheet(sheet_name)
 
         # Split summary into lines and write upper part to the sheet
-        summary_lines = summary.split('\n')
+        summary_lines = summary.split("\n")
         upper_part = summary_lines[:10]
         lower_part = summary_lines[10:]
 
@@ -249,11 +268,8 @@ def run_stats_analysis(model: str, scenario: str, year: int, methods: list):
         for line in summary_lines:
             line = escape_formula(line)
             # Split line based on consecutive spaces for proper column separation
-            columns = re.split(r'\s{2,}', line)
+            columns = re.split(r"\s{2,}", line)
             ws.append(columns)
 
     book.save(filename)
     print("Analysis complete and results saved.")
-
-
-
