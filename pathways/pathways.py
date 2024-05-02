@@ -176,7 +176,7 @@ class Pathways:
         mapping_dataframe = pd.read_excel(
             DATA_DIR / "final_energy_mapping.xlsx",
         )
-        model = self.data.descriptor["scenarios"][0]["name"].split(" - ")[0]
+        model = self.data.descriptor["scenarios"][0].split(" - ")[0]
 
         return create_dict_with_specific_model(mapping_dataframe, model)
 

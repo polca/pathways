@@ -62901,3 +62901,4914 @@
 - hydrogen
 - kilogram
 : Manufacture of refined petroleum products
+? !!python/tuple
+- Heavy duty truck, compressed gas, 32t gross weight, EURO-III, long haul
+- Heavy duty truck, EURO-III
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Heavy duty truck, compressed gas, 32t gross weight, EURO-IV, long haul
+- Heavy duty truck, EURO-IV
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Heavy duty truck, compressed gas, 32t gross weight, EURO-V, long haul
+- Heavy duty truck, EURO-V
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Heavy duty truck, compressed gas, 32t gross weight, EURO-VI, long haul
+- Heavy duty truck, EURO-VI
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Heavy duty truck, compressed gas, 40t gross weight, EURO-III, long haul
+- Heavy duty truck, EURO-III
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Heavy duty truck, compressed gas, 40t gross weight, EURO-IV, long haul
+- Heavy duty truck, EURO-IV
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Heavy duty truck, compressed gas, 40t gross weight, EURO-V, long haul
+- Heavy duty truck, EURO-V
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Heavy duty truck, compressed gas, 40t gross weight, EURO-VI, long haul
+- Heavy duty truck, EURO-VI
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Heavy duty truck, compressed gas, 60t gross weight, EURO-III, long haul
+- Heavy duty truck, EURO-III
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Heavy duty truck, compressed gas, 60t gross weight, EURO-IV, long haul
+- Heavy duty truck, EURO-IV
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Heavy duty truck, compressed gas, 60t gross weight, EURO-V, long haul
+- Heavy duty truck, EURO-V
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Heavy duty truck, compressed gas, 60t gross weight, EURO-VI, long haul
+- Heavy duty truck, EURO-VI
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Heavy duty truck, diesel hybrid, 32t gross weight, EURO-VI, long haul
+- Heavy duty truck, EURO-VI
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Heavy duty truck, diesel hybrid, 40t gross weight, EURO-VI, long haul
+- Heavy duty truck, EURO-VI
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Heavy duty truck, diesel hybrid, 60t gross weight, EURO-VI, long haul
+- Heavy duty truck, EURO-VI
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Heavy duty truck, diesel, 32t gross weight, EURO-III, long haul
+- Heavy duty truck, EURO-III
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Heavy duty truck, diesel, 32t gross weight, EURO-IV, long haul
+- Heavy duty truck, EURO-IV
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Heavy duty truck, diesel, 32t gross weight, EURO-V, long haul
+- Heavy duty truck, EURO-V
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Heavy duty truck, diesel, 32t gross weight, EURO-VI, long haul
+- Heavy duty truck, EURO-VI
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Heavy duty truck, diesel, 40t gross weight, EURO-III, long haul
+- Heavy duty truck, EURO-III
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Heavy duty truck, diesel, 40t gross weight, EURO-IV, long haul
+- Heavy duty truck, EURO-IV
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Heavy duty truck, diesel, 40t gross weight, EURO-V, long haul
+- Heavy duty truck, EURO-V
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Heavy duty truck, diesel, 40t gross weight, EURO-VI, long haul
+- Heavy duty truck, EURO-VI
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Heavy duty truck, diesel, 60t gross weight, EURO-III, long haul
+- Heavy duty truck, EURO-III
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Heavy duty truck, diesel, 60t gross weight, EURO-IV, long haul
+- Heavy duty truck, EURO-IV
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Heavy duty truck, diesel, 60t gross weight, EURO-V, long haul
+- Heavy duty truck, EURO-V
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Heavy duty truck, diesel, 60t gross weight, EURO-VI, long haul
+- Heavy duty truck, EURO-VI
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Heavy duty truck, plugin diesel hybrid, 32t gross weight, EURO-VI, long haul
+- Heavy duty truck, EURO-VI
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Heavy duty truck, plugin diesel hybrid, 40t gross weight, EURO-VI, long haul
+- Heavy duty truck, EURO-VI
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Heavy duty truck, plugin diesel hybrid, 60t gross weight, EURO-VI, long haul
+- Heavy duty truck, EURO-VI
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Light duty truck, compressed gas, 3.5t gross weight, EURO-III, long haul
+- Light duty truck, EURO-III
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Light duty truck, compressed gas, 3.5t gross weight, EURO-IV, long haul
+- Light duty truck, EURO-IV
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Light duty truck, compressed gas, 3.5t gross weight, EURO-V, long haul
+- Light duty truck, EURO-V
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Light duty truck, compressed gas, 3.5t gross weight, EURO-VI, long haul
+- Light duty truck, EURO-VI
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Light duty truck, compressed gas, 7.5t gross weight, EURO-III, long haul
+- Light duty truck, EURO-III
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Light duty truck, compressed gas, 7.5t gross weight, EURO-IV, long haul
+- Light duty truck, EURO-IV
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Light duty truck, compressed gas, 7.5t gross weight, EURO-V, long haul
+- Light duty truck, EURO-V
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Light duty truck, compressed gas, 7.5t gross weight, EURO-VI, long haul
+- Light duty truck, EURO-VI
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Light duty truck, diesel hybrid, 3.5t gross weight, EURO-VI, long haul
+- Light duty truck, EURO-VI
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Light duty truck, diesel hybrid, 7.5t gross weight, EURO-VI, long haul
+- Light duty truck, EURO-VI
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Light duty truck, diesel, 3.5t gross weight, EURO-III, long haul
+- Light duty truck, EURO-III
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Light duty truck, diesel, 3.5t gross weight, EURO-IV, long haul
+- Light duty truck, EURO-IV
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Light duty truck, diesel, 3.5t gross weight, EURO-V, long haul
+- Light duty truck, EURO-V
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Light duty truck, diesel, 3.5t gross weight, EURO-VI, long haul
+- Light duty truck, EURO-VI
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Light duty truck, diesel, 7.5t gross weight, EURO-III, long haul
+- Light duty truck, EURO-III
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Light duty truck, diesel, 7.5t gross weight, EURO-IV, long haul
+- Light duty truck, EURO-IV
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Light duty truck, diesel, 7.5t gross weight, EURO-V, long haul
+- Light duty truck, EURO-V
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Light duty truck, diesel, 7.5t gross weight, EURO-VI, long haul
+- Light duty truck, EURO-VI
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Light duty truck, plugin diesel hybrid, 3.5t gross weight, EURO-VI, long haul
+- Light duty truck, EURO-VI
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Light duty truck, plugin diesel hybrid, 7.5t gross weight, EURO-VI, long haul
+- Light duty truck, EURO-VI
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Medium duty truck, compressed gas, 18t gross weight, EURO-III, long haul
+- Medium duty truck, EURO-III
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Medium duty truck, compressed gas, 18t gross weight, EURO-IV, long haul
+- Medium duty truck, EURO-IV
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Medium duty truck, compressed gas, 18t gross weight, EURO-V, long haul
+- Medium duty truck, EURO-V
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Medium duty truck, compressed gas, 18t gross weight, EURO-VI, long haul
+- Medium duty truck, EURO-VI
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Medium duty truck, compressed gas, 26t gross weight, EURO-III, long haul
+- Medium duty truck, EURO-III
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Medium duty truck, compressed gas, 26t gross weight, EURO-IV, long haul
+- Medium duty truck, EURO-IV
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Medium duty truck, compressed gas, 26t gross weight, EURO-V, long haul
+- Medium duty truck, EURO-V
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Medium duty truck, compressed gas, 26t gross weight, EURO-VI, long haul
+- Medium duty truck, EURO-VI
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Medium duty truck, diesel hybrid, 18t gross weight, EURO-VI, long haul
+- Medium duty truck, EURO-VI
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Medium duty truck, diesel hybrid, 26t gross weight, EURO-VI, long haul
+- Medium duty truck, EURO-VI
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Medium duty truck, diesel, 18t gross weight, EURO-III, long haul
+- Medium duty truck, EURO-III
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Medium duty truck, diesel, 18t gross weight, EURO-IV, long haul
+- Medium duty truck, EURO-IV
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Medium duty truck, diesel, 18t gross weight, EURO-V, long haul
+- Medium duty truck, EURO-V
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Medium duty truck, diesel, 18t gross weight, EURO-VI, long haul
+- Medium duty truck, EURO-VI
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Medium duty truck, diesel, 26t gross weight, EURO-III, long haul
+- Medium duty truck, EURO-III
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Medium duty truck, diesel, 26t gross weight, EURO-IV, long haul
+- Medium duty truck, EURO-IV
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Medium duty truck, diesel, 26t gross weight, EURO-V, long haul
+- Medium duty truck, EURO-V
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Medium duty truck, diesel, 26t gross weight, EURO-VI, long haul
+- Medium duty truck, EURO-VI
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Medium duty truck, plugin diesel hybrid, 18t gross weight, EURO-VI, long haul
+- Medium duty truck, EURO-VI
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Medium duty truck, plugin diesel hybrid, 26t gross weight, EURO-VI, long haul
+- Medium duty truck, EURO-VI
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Moped, gasoline, <4kW, EURO-3
+- Moped, gasoline, <4kW, EURO-3
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Moped, gasoline, <4kW, EURO-4
+- Moped, gasoline, <4kW, EURO-4
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Moped, gasoline, <4kW, EURO-5
+- Moped, gasoline, <4kW, EURO-5
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Motorbike, gasoline, 11-35kW, EURO-3
+- Motorbike, gasoline, 11-35kW, EURO-3
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Motorbike, gasoline, 11-35kW, EURO-4
+- Motorbike, gasoline, 11-35kW, EURO-4
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Motorbike, gasoline, 11-35kW, EURO-5
+- Motorbike, gasoline, 11-35kW, EURO-5
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Motorbike, gasoline, 4-11kW, EURO-3
+- Motorbike, gasoline, 4-11kW, EURO-3
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Motorbike, gasoline, 4-11kW, EURO-4
+- Motorbike, gasoline, 4-11kW, EURO-4
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Motorbike, gasoline, 4-11kW, EURO-5
+- Motorbike, gasoline, 4-11kW, EURO-5
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Motorbike, gasoline, >35kW, EURO-3
+- Motorbike, gasoline, >35kW, EURO-3
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Motorbike, gasoline, >35kW, EURO-4
+- Motorbike, gasoline, >35kW, EURO-4
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Motorbike, gasoline, >35kW, EURO-5
+- Motorbike, gasoline, >35kW, EURO-5
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- NMC622 hydroxide
+- NMC622 hydroxide
+- kilogram
+: Manufacture of batteries and accumulators
+? !!python/tuple
+- NMC622 oxide
+- NMC622 oxide
+- kilogram
+: Manufacture of batteries and accumulators
+? !!python/tuple
+- Passenger bus, compressed gas, 13m double deck coach bus, EURO-III
+- Passenger bus, EURO-III
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger bus, compressed gas, 13m double deck coach bus, EURO-IV
+- Passenger bus, EURO-IV
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger bus, compressed gas, 13m double deck coach bus, EURO-V
+- Passenger bus, EURO-V
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger bus, compressed gas, 13m double deck coach bus, EURO-VI
+- Passenger bus, EURO-VI
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger bus, compressed gas, 13m double deck urban bus, EURO-III
+- Passenger bus, EURO-III
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger bus, compressed gas, 13m double deck urban bus, EURO-IV
+- Passenger bus, EURO-IV
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger bus, compressed gas, 13m double deck urban bus, EURO-V
+- Passenger bus, EURO-V
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger bus, compressed gas, 13m double deck urban bus, EURO-VI
+- Passenger bus, EURO-VI
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger bus, compressed gas, 13m single deck coach bus, EURO-III
+- Passenger bus, EURO-III
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger bus, compressed gas, 13m single deck coach bus, EURO-IV
+- Passenger bus, EURO-IV
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger bus, compressed gas, 13m single deck coach bus, EURO-V
+- Passenger bus, EURO-V
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger bus, compressed gas, 13m single deck coach bus, EURO-VI
+- Passenger bus, EURO-VI
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger bus, compressed gas, 13m single deck urban bus, EURO-III
+- Passenger bus, EURO-III
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger bus, compressed gas, 13m single deck urban bus, EURO-IV
+- Passenger bus, EURO-IV
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger bus, compressed gas, 13m single deck urban bus, EURO-V
+- Passenger bus, EURO-V
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger bus, compressed gas, 13m single deck urban bus, EURO-VI
+- Passenger bus, EURO-VI
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger bus, compressed gas, 18m articulated urban bus, EURO-III
+- Passenger bus, EURO-III
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger bus, compressed gas, 18m articulated urban bus, EURO-IV
+- Passenger bus, EURO-IV
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger bus, compressed gas, 18m articulated urban bus, EURO-V
+- Passenger bus, EURO-V
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger bus, compressed gas, 18m articulated urban bus, EURO-VI
+- Passenger bus, EURO-VI
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger bus, compressed gas, 9m midibus, EURO-III
+- Passenger bus, EURO-III
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger bus, compressed gas, 9m midibus, EURO-IV
+- Passenger bus, EURO-IV
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger bus, compressed gas, 9m midibus, EURO-V
+- Passenger bus, EURO-V
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger bus, compressed gas, 9m midibus, EURO-VI
+- Passenger bus, EURO-VI
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger bus, diesel hybrid, 13m double deck coach bus, EURO-VI
+- Passenger bus, EURO-VI
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger bus, diesel hybrid, 13m double deck urban bus, EURO-VI
+- Passenger bus, EURO-VI
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger bus, diesel hybrid, 13m single deck coach bus, EURO-VI
+- Passenger bus, EURO-VI
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger bus, diesel hybrid, 13m single deck urban bus, EURO-VI
+- Passenger bus, EURO-VI
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger bus, diesel hybrid, 18m articulated urban bus, EURO-VI
+- Passenger bus, EURO-VI
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger bus, diesel hybrid, 9m midibus, EURO-VI
+- Passenger bus, EURO-VI
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger bus, diesel, 13m double deck coach bus, EURO-III
+- Passenger bus, EURO-III
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger bus, diesel, 13m double deck coach bus, EURO-IV
+- Passenger bus, EURO-IV
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger bus, diesel, 13m double deck coach bus, EURO-V
+- Passenger bus, EURO-V
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger bus, diesel, 13m double deck coach bus, EURO-VI
+- Passenger bus, EURO-VI
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger bus, diesel, 13m double deck urban bus, EURO-III
+- Passenger bus, EURO-III
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger bus, diesel, 13m double deck urban bus, EURO-IV
+- Passenger bus, EURO-IV
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger bus, diesel, 13m double deck urban bus, EURO-V
+- Passenger bus, EURO-V
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger bus, diesel, 13m double deck urban bus, EURO-VI
+- Passenger bus, EURO-VI
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger bus, diesel, 13m single deck coach bus, EURO-III
+- Passenger bus, EURO-III
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger bus, diesel, 13m single deck coach bus, EURO-IV
+- Passenger bus, EURO-IV
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger bus, diesel, 13m single deck coach bus, EURO-V
+- Passenger bus, EURO-V
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger bus, diesel, 13m single deck coach bus, EURO-VI
+- Passenger bus, EURO-VI
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger bus, diesel, 13m single deck urban bus, EURO-III
+- Passenger bus, EURO-III
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger bus, diesel, 13m single deck urban bus, EURO-IV
+- Passenger bus, EURO-IV
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger bus, diesel, 13m single deck urban bus, EURO-V
+- Passenger bus, EURO-V
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger bus, diesel, 13m single deck urban bus, EURO-VI
+- Passenger bus, EURO-VI
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger bus, diesel, 18m articulated urban bus, EURO-III
+- Passenger bus, EURO-III
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger bus, diesel, 18m articulated urban bus, EURO-IV
+- Passenger bus, EURO-IV
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger bus, diesel, 18m articulated urban bus, EURO-V
+- Passenger bus, EURO-V
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger bus, diesel, 18m articulated urban bus, EURO-VI
+- Passenger bus, EURO-VI
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger bus, diesel, 9m midibus, EURO-III
+- Passenger bus, EURO-III
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger bus, diesel, 9m midibus, EURO-IV
+- Passenger bus, EURO-IV
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger bus, diesel, 9m midibus, EURO-V
+- Passenger bus, EURO-V
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger bus, diesel, 9m midibus, EURO-VI
+- Passenger bus, EURO-VI
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger car, compressed gas, Large SUV, EURO-2
+- Passenger car, EURO-2
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger car, compressed gas, Large SUV, EURO-3
+- Passenger car, EURO-3
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger car, compressed gas, Large SUV, EURO-4
+- Passenger car, EURO-4
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger car, compressed gas, Large SUV, EURO-6ab
+- Passenger car, EURO-6ab
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger car, compressed gas, Large SUV, EURO-6d
+- Passenger car, EURO-6d
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger car, compressed gas, Large, EURO-2
+- Passenger car, EURO-2
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger car, compressed gas, Large, EURO-3
+- Passenger car, EURO-3
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger car, compressed gas, Large, EURO-4
+- Passenger car, EURO-4
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger car, compressed gas, Large, EURO-6ab
+- Passenger car, EURO-6ab
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger car, compressed gas, Large, EURO-6d
+- Passenger car, EURO-6d
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger car, compressed gas, Lower medium, EURO-2
+- Passenger car, EURO-2
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger car, compressed gas, Lower medium, EURO-3
+- Passenger car, EURO-3
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger car, compressed gas, Lower medium, EURO-4
+- Passenger car, EURO-4
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger car, compressed gas, Lower medium, EURO-6ab
+- Passenger car, EURO-6ab
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger car, compressed gas, Lower medium, EURO-6d
+- Passenger car, EURO-6d
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger car, compressed gas, Medium SUV, EURO-2
+- Passenger car, EURO-2
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger car, compressed gas, Medium SUV, EURO-3
+- Passenger car, EURO-3
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger car, compressed gas, Medium SUV, EURO-4
+- Passenger car, EURO-4
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger car, compressed gas, Medium SUV, EURO-6ab
+- Passenger car, EURO-6ab
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger car, compressed gas, Medium SUV, EURO-6d
+- Passenger car, EURO-6d
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger car, compressed gas, Medium, EURO-2
+- Passenger car, EURO-2
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger car, compressed gas, Medium, EURO-3
+- Passenger car, EURO-3
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger car, compressed gas, Medium, EURO-4
+- Passenger car, EURO-4
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger car, compressed gas, Medium, EURO-6ab
+- Passenger car, EURO-6ab
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger car, compressed gas, Medium, EURO-6d
+- Passenger car, EURO-6d
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger car, compressed gas, Mini, EURO-2
+- Passenger car, EURO-2
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger car, compressed gas, Mini, EURO-3
+- Passenger car, EURO-3
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger car, compressed gas, Mini, EURO-4
+- Passenger car, EURO-4
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger car, compressed gas, Mini, EURO-6ab
+- Passenger car, EURO-6ab
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger car, compressed gas, Mini, EURO-6d
+- Passenger car, EURO-6d
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger car, compressed gas, Small, EURO-2
+- Passenger car, EURO-2
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger car, compressed gas, Small, EURO-3
+- Passenger car, EURO-3
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger car, compressed gas, Small, EURO-4
+- Passenger car, EURO-4
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger car, compressed gas, Small, EURO-6ab
+- Passenger car, EURO-6ab
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger car, compressed gas, Small, EURO-6d
+- Passenger car, EURO-6d
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger car, compressed gas, Van, EURO-2
+- Passenger car, EURO-2
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger car, compressed gas, Van, EURO-3
+- Passenger car, EURO-3
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger car, compressed gas, Van, EURO-4
+- Passenger car, EURO-4
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger car, compressed gas, Van, EURO-6ab
+- Passenger car, EURO-6ab
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger car, compressed gas, Van, EURO-6d
+- Passenger car, EURO-6d
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger car, diesel hybrid, Large SUV, EURO-6ab
+- Passenger car, EURO-6ab
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger car, diesel hybrid, Large SUV, EURO-6d
+- Passenger car, EURO-6d
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger car, diesel hybrid, Large, EURO-6ab
+- Passenger car, EURO-6ab
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger car, diesel hybrid, Large, EURO-6d
+- Passenger car, EURO-6d
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger car, diesel hybrid, Lower medium, EURO-6ab
+- Passenger car, EURO-6ab
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger car, diesel hybrid, Lower medium, EURO-6d
+- Passenger car, EURO-6d
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger car, diesel hybrid, Medium SUV, EURO-6ab
+- Passenger car, EURO-6ab
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger car, diesel hybrid, Medium SUV, EURO-6d
+- Passenger car, EURO-6d
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger car, diesel hybrid, Medium, EURO-6ab
+- Passenger car, EURO-6ab
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger car, diesel hybrid, Medium, EURO-6d
+- Passenger car, EURO-6d
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger car, diesel hybrid, Mini, EURO-6ab
+- Passenger car, EURO-6ab
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger car, diesel hybrid, Mini, EURO-6d
+- Passenger car, EURO-6d
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger car, diesel hybrid, Small, EURO-6ab
+- Passenger car, EURO-6ab
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger car, diesel hybrid, Small, EURO-6d
+- Passenger car, EURO-6d
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger car, diesel hybrid, Van, EURO-6ab
+- Passenger car, EURO-6ab
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger car, diesel hybrid, Van, EURO-6d
+- Passenger car, EURO-6d
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger car, diesel, Large SUV, EURO-2
+- Passenger car, EURO-2
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger car, diesel, Large SUV, EURO-3
+- Passenger car, EURO-3
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger car, diesel, Large SUV, EURO-4
+- Passenger car, EURO-4
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger car, diesel, Large SUV, EURO-6ab
+- Passenger car, EURO-6ab
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger car, diesel, Large SUV, EURO-6d
+- Passenger car, EURO-6d
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger car, diesel, Large, EURO-2
+- Passenger car, EURO-2
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger car, diesel, Large, EURO-3
+- Passenger car, EURO-3
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger car, diesel, Large, EURO-4
+- Passenger car, EURO-4
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger car, diesel, Large, EURO-6ab
+- Passenger car, EURO-6ab
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger car, diesel, Large, EURO-6d
+- Passenger car, EURO-6d
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger car, diesel, Lower medium, EURO-2
+- Passenger car, EURO-2
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger car, diesel, Lower medium, EURO-3
+- Passenger car, EURO-3
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger car, diesel, Lower medium, EURO-4
+- Passenger car, EURO-4
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger car, diesel, Lower medium, EURO-6ab
+- Passenger car, EURO-6ab
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger car, diesel, Lower medium, EURO-6d
+- Passenger car, EURO-6d
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger car, diesel, Medium SUV, EURO-2
+- Passenger car, EURO-2
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger car, diesel, Medium SUV, EURO-3
+- Passenger car, EURO-3
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger car, diesel, Medium SUV, EURO-4
+- Passenger car, EURO-4
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger car, diesel, Medium SUV, EURO-6ab
+- Passenger car, EURO-6ab
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger car, diesel, Medium SUV, EURO-6d
+- Passenger car, EURO-6d
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger car, diesel, Medium, EURO-2
+- Passenger car, EURO-2
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger car, diesel, Medium, EURO-3
+- Passenger car, EURO-3
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger car, diesel, Medium, EURO-4
+- Passenger car, EURO-4
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger car, diesel, Medium, EURO-6ab
+- Passenger car, EURO-6ab
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger car, diesel, Medium, EURO-6d
+- Passenger car, EURO-6d
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger car, diesel, Mini, EURO-2
+- Passenger car, EURO-2
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger car, diesel, Mini, EURO-3
+- Passenger car, EURO-3
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger car, diesel, Mini, EURO-4
+- Passenger car, EURO-4
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger car, diesel, Mini, EURO-6ab
+- Passenger car, EURO-6ab
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger car, diesel, Mini, EURO-6d
+- Passenger car, EURO-6d
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger car, diesel, Small, EURO-2
+- Passenger car, EURO-2
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger car, diesel, Small, EURO-3
+- Passenger car, EURO-3
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger car, diesel, Small, EURO-4
+- Passenger car, EURO-4
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger car, diesel, Small, EURO-6ab
+- Passenger car, EURO-6ab
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger car, diesel, Small, EURO-6d
+- Passenger car, EURO-6d
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger car, diesel, Van, EURO-2
+- Passenger car, EURO-2
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger car, diesel, Van, EURO-3
+- Passenger car, EURO-3
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger car, diesel, Van, EURO-4
+- Passenger car, EURO-4
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger car, diesel, Van, EURO-6ab
+- Passenger car, EURO-6ab
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger car, diesel, Van, EURO-6d
+- Passenger car, EURO-6d
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger car, gasoline hybrid, Large SUV, EURO-6ab
+- Passenger car, EURO-6ab
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger car, gasoline hybrid, Large SUV, EURO-6d
+- Passenger car, EURO-6d
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger car, gasoline hybrid, Large, EURO-6ab
+- Passenger car, EURO-6ab
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger car, gasoline hybrid, Large, EURO-6d
+- Passenger car, EURO-6d
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger car, gasoline hybrid, Lower medium, EURO-6ab
+- Passenger car, EURO-6ab
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger car, gasoline hybrid, Lower medium, EURO-6d
+- Passenger car, EURO-6d
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger car, gasoline hybrid, Medium SUV, EURO-6ab
+- Passenger car, EURO-6ab
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger car, gasoline hybrid, Medium SUV, EURO-6d
+- Passenger car, EURO-6d
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger car, gasoline hybrid, Medium, EURO-6ab
+- Passenger car, EURO-6ab
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger car, gasoline hybrid, Medium, EURO-6d
+- Passenger car, EURO-6d
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger car, gasoline hybrid, Mini, EURO-6ab
+- Passenger car, EURO-6ab
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger car, gasoline hybrid, Mini, EURO-6d
+- Passenger car, EURO-6d
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger car, gasoline hybrid, Small, EURO-6ab
+- Passenger car, EURO-6ab
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger car, gasoline hybrid, Small, EURO-6d
+- Passenger car, EURO-6d
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger car, gasoline hybrid, Van, EURO-6ab
+- Passenger car, EURO-6ab
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger car, gasoline hybrid, Van, EURO-6d
+- Passenger car, EURO-6d
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger car, gasoline, Large SUV, EURO-2
+- Passenger car, EURO-2
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger car, gasoline, Large SUV, EURO-3
+- Passenger car, EURO-3
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger car, gasoline, Large SUV, EURO-4
+- Passenger car, EURO-4
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger car, gasoline, Large SUV, EURO-6ab
+- Passenger car, EURO-6ab
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger car, gasoline, Large SUV, EURO-6d
+- Passenger car, EURO-6d
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger car, gasoline, Large, EURO-2
+- Passenger car, EURO-2
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger car, gasoline, Large, EURO-3
+- Passenger car, EURO-3
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger car, gasoline, Large, EURO-4
+- Passenger car, EURO-4
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger car, gasoline, Large, EURO-6ab
+- Passenger car, EURO-6ab
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger car, gasoline, Large, EURO-6d
+- Passenger car, EURO-6d
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger car, gasoline, Lower medium, EURO-2
+- Passenger car, EURO-2
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger car, gasoline, Lower medium, EURO-3
+- Passenger car, EURO-3
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger car, gasoline, Lower medium, EURO-4
+- Passenger car, EURO-4
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger car, gasoline, Lower medium, EURO-6ab
+- Passenger car, EURO-6ab
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger car, gasoline, Lower medium, EURO-6d
+- Passenger car, EURO-6d
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger car, gasoline, Medium SUV, EURO-2
+- Passenger car, EURO-2
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger car, gasoline, Medium SUV, EURO-3
+- Passenger car, EURO-3
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger car, gasoline, Medium SUV, EURO-4
+- Passenger car, EURO-4
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger car, gasoline, Medium SUV, EURO-6ab
+- Passenger car, EURO-6ab
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger car, gasoline, Medium SUV, EURO-6d
+- Passenger car, EURO-6d
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger car, gasoline, Medium, EURO-2
+- Passenger car, EURO-2
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger car, gasoline, Medium, EURO-3
+- Passenger car, EURO-3
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger car, gasoline, Medium, EURO-4
+- Passenger car, EURO-4
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger car, gasoline, Medium, EURO-6ab
+- Passenger car, EURO-6ab
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger car, gasoline, Medium, EURO-6d
+- Passenger car, EURO-6d
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger car, gasoline, Mini, EURO-2
+- Passenger car, EURO-2
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger car, gasoline, Mini, EURO-3
+- Passenger car, EURO-3
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger car, gasoline, Mini, EURO-4
+- Passenger car, EURO-4
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger car, gasoline, Mini, EURO-6ab
+- Passenger car, EURO-6ab
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger car, gasoline, Mini, EURO-6d
+- Passenger car, EURO-6d
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger car, gasoline, Small, EURO-2
+- Passenger car, EURO-2
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger car, gasoline, Small, EURO-3
+- Passenger car, EURO-3
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger car, gasoline, Small, EURO-4
+- Passenger car, EURO-4
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger car, gasoline, Small, EURO-6ab
+- Passenger car, EURO-6ab
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger car, gasoline, Small, EURO-6d
+- Passenger car, EURO-6d
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger car, gasoline, Van, EURO-2
+- Passenger car, EURO-2
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger car, gasoline, Van, EURO-3
+- Passenger car, EURO-3
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger car, gasoline, Van, EURO-4
+- Passenger car, EURO-4
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger car, gasoline, Van, EURO-6ab
+- Passenger car, EURO-6ab
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger car, gasoline, Van, EURO-6d
+- Passenger car, EURO-6d
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger car, plugin diesel hybrid, Large SUV, EURO-6ab
+- Passenger car, EURO-6ab
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger car, plugin diesel hybrid, Large SUV, EURO-6d
+- Passenger car, EURO-6d
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger car, plugin diesel hybrid, Large, EURO-6ab
+- Passenger car, EURO-6ab
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger car, plugin diesel hybrid, Large, EURO-6d
+- Passenger car, EURO-6d
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger car, plugin diesel hybrid, Lower medium, EURO-6ab
+- Passenger car, EURO-6ab
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger car, plugin diesel hybrid, Lower medium, EURO-6d
+- Passenger car, EURO-6d
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger car, plugin diesel hybrid, Medium SUV, EURO-6ab
+- Passenger car, EURO-6ab
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger car, plugin diesel hybrid, Medium SUV, EURO-6d
+- Passenger car, EURO-6d
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger car, plugin diesel hybrid, Medium, EURO-6ab
+- Passenger car, EURO-6ab
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger car, plugin diesel hybrid, Medium, EURO-6d
+- Passenger car, EURO-6d
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger car, plugin diesel hybrid, Mini, EURO-6ab
+- Passenger car, EURO-6ab
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger car, plugin diesel hybrid, Mini, EURO-6d
+- Passenger car, EURO-6d
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger car, plugin diesel hybrid, Small, EURO-6ab
+- Passenger car, EURO-6ab
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger car, plugin diesel hybrid, Small, EURO-6d
+- Passenger car, EURO-6d
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger car, plugin diesel hybrid, Van, EURO-6ab
+- Passenger car, EURO-6ab
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger car, plugin diesel hybrid, Van, EURO-6d
+- Passenger car, EURO-6d
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger car, plugin gasoline hybrid, Large SUV, EURO-6ab
+- Passenger car, EURO-6ab
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger car, plugin gasoline hybrid, Large SUV, EURO-6d
+- Passenger car, EURO-6d
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger car, plugin gasoline hybrid, Large, EURO-6ab
+- Passenger car, EURO-6ab
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger car, plugin gasoline hybrid, Large, EURO-6d
+- Passenger car, EURO-6d
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger car, plugin gasoline hybrid, Lower medium, EURO-6ab
+- Passenger car, EURO-6ab
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger car, plugin gasoline hybrid, Lower medium, EURO-6d
+- Passenger car, EURO-6d
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger car, plugin gasoline hybrid, Medium SUV, EURO-6ab
+- Passenger car, EURO-6ab
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger car, plugin gasoline hybrid, Medium SUV, EURO-6d
+- Passenger car, EURO-6d
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger car, plugin gasoline hybrid, Medium, EURO-6ab
+- Passenger car, EURO-6ab
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger car, plugin gasoline hybrid, Medium, EURO-6d
+- Passenger car, EURO-6d
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger car, plugin gasoline hybrid, Mini, EURO-6ab
+- Passenger car, EURO-6ab
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger car, plugin gasoline hybrid, Mini, EURO-6d
+- Passenger car, EURO-6d
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger car, plugin gasoline hybrid, Small, EURO-6ab
+- Passenger car, EURO-6ab
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger car, plugin gasoline hybrid, Small, EURO-6d
+- Passenger car, EURO-6d
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger car, plugin gasoline hybrid, Van, EURO-6ab
+- Passenger car, EURO-6ab
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Passenger car, plugin gasoline hybrid, Van, EURO-6d
+- Passenger car, EURO-6d
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Scooter, gasoline, 4-11kW, EURO-3
+- Scooter, gasoline, 4-11kW, EURO-3
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Scooter, gasoline, 4-11kW, EURO-4
+- Scooter, gasoline, 4-11kW, EURO-4
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Scooter, gasoline, 4-11kW, EURO-5
+- Scooter, gasoline, 4-11kW, EURO-5
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Scooter, gasoline, <4kW, EURO-3
+- Scooter, gasoline, <4kW, EURO-3
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Scooter, gasoline, <4kW, EURO-4
+- Scooter, gasoline, <4kW, EURO-4
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- Scooter, gasoline, <4kW, EURO-5
+- Scooter, gasoline, <4kW, EURO-5
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- battery cell assembly, Li-S
+- battery cell
+- kilogram
+: Manufacture of batteries and accumulators
+? !!python/tuple
+- battery cell production, Li-O2
+- battery cell
+- kilogram
+: Manufacture of batteries and accumulators
+? !!python/tuple
+- battery cell production, Li-S
+- battery cell, LiS
+- kilogram
+: Manufacture of batteries and accumulators
+? !!python/tuple
+- battery cell production, Li-ion, LTO
+- battery cell, Li-ion, LTO
+- kilogram
+: Manufacture of batteries and accumulators
+? !!python/tuple
+- battery cell production, Li-ion, NMC622
+- battery cell, Li-ion, NMC622
+- kilogram
+: Manufacture of batteries and accumulators
+? !!python/tuple
+- battery cell production, SIB, with NMMT cathode and fossil-HC anode
+- battery cell
+- kilogram
+: Manufacture of batteries and accumulators
+? !!python/tuple
+- battery cell production, SIB, with NVPF cathode and fossil-HC anode
+- battery cell
+- kilogram
+: Manufacture of batteries and accumulators
+? !!python/tuple
+- battery cell production, SIB, with NaPBA cathode and fossil-HC anode
+- battery cell
+- kilogram
+: Manufacture of batteries and accumulators
+? !!python/tuple
+- bicycle, conventional, urban
+- bicycle, conventional, urban
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- bicycle, electric (<25 km/h), LFP battery
+- bicycle, electric (<25 km/h)
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- bicycle, electric (<25 km/h), NCA battery
+- bicycle, electric (<25 km/h)
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- bicycle, electric (<25 km/h), NMC battery
+- bicycle, electric (<25 km/h)
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- bicycle, electric (<45 km/h), LFP battery
+- bicycle, electric (<45 km/h)
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- bicycle, electric (<45 km/h), NCA battery
+- bicycle, electric (<45 km/h)
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- bicycle, electric (<45 km/h), NMC battery
+- bicycle, electric (<45 km/h)
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- bicycle, electric, cargo bike, LFP battery
+- bicycle, electric, cargo bike
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- bicycle, electric, cargo bike, NCA battery
+- bicycle, electric, cargo bike
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- bicycle, electric, cargo bike, NMC battery
+- bicycle, electric, cargo bike
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- buffer tank
+- buffer tank
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- cables
+- cables
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- catenary masts
+- catenary masts
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- catenary system
+- catenary system
+- kilometer
+: Manufacture of motor vehicles
+? !!python/tuple
+- cathode, NMC622, for Li-ion battery
+- cathode, NMC622, for Li-ion battery
+- kilogram
+: Manufacture of batteries and accumulators
+? !!python/tuple
+- charging station, 100W
+- charging station, 100W
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- charging station, 3kW
+- charging station, 3kW
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- charging station, 500W
+- charging station, 500W
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- compressed gas, burned in heavy duty vehicle
+- heat
+- megajoule
+: Steam and air conditioning supply
+? !!python/tuple
+- compressed gas, burned in passenger car vehicle
+- heat
+- megajoule
+: Steam and air conditioning supply
+? !!python/tuple
+- compressed gas, burned in passenger car vehicle_FE_light_duty_truck_gas
+- heat
+- megajoule
+: Steam and air conditioning supply
+? !!python/tuple
+- compressed gas, burned in single deck coach or urban bus
+- heat
+- megajoule
+: Steam and air conditioning supply
+? !!python/tuple
+- compressed gas, burned in single deck coach or urban bus_FE_coach_gas
+- heat
+- megajoule
+: Steam and air conditioning supply
+? !!python/tuple
+- diesel, burned in heavy duty vehicle
+- heat
+- megajoule
+: Steam and air conditioning supply
+? !!python/tuple
+- diesel, burned in passenger car vehicle
+- heat
+- megajoule
+: Steam and air conditioning supply
+? !!python/tuple
+- diesel, burned in passenger car vehicle_FE_light_duty_truck_diesel
+- heat
+- megajoule
+: Steam and air conditioning supply
+? !!python/tuple
+- diesel, burned in passenger car vehicle_FE_other_transport_diesel
+- heat
+- megajoule
+: Steam and air conditioning supply
+? !!python/tuple
+- diesel, burned in single deck coach or urban bus
+- heat
+- megajoule
+: Steam and air conditioning supply
+? !!python/tuple
+- diesel, burned in single deck coach or urban bus_FE_coach_diesel
+- heat
+- megajoule
+: Steam and air conditioning supply
+? !!python/tuple
+- distribution sheds
+- distribution sheds
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- electric bicycle production, without battery and motor
+- electric bicycle, without battery and motor
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- electricity production, at co-generation biowaste-fired power plant, post, pipeline
+  200km, storage 1000m_waste incineration, non-fossil (industrial, CCS)
+- electricity, from biowaste, municipal incineration, energy allocation
+- kilowatt hour
+: Electric power generation transmission and distribution
+? !!python/tuple
+- electricity production, at co-generation plastic waste-fired power plant, post,
+  pipeline 200km, storage 1000m_waste incineration, fossil (industrial, CCS)
+- electricity, from plastic waste mixture, municipal incineration, energy allocation
+- kilowatt hour
+: Electric power generation transmission and distribution
+? !!python/tuple
+- electricity production, from biowaste, municipal incineration, energy allocation_waste
+  incineration, non-fossil (industrial)
+- electricity, from biowaste, municipal incineration, energy allocation
+- kilowatt hour
+: Electric power generation transmission and distribution
+? !!python/tuple
+- electricity production, from incineration of plastic waste mixture, energy allocation_waste
+  incineration, fossil (industrial)
+- electricity, from incineration of plastic waste mixture, energy allocation
+- kilowatt hour
+: Electric power generation transmission and distribution
+? !!python/tuple
+- electricity production, photovoltaic, commercial_pv (industry)
+- electricity, low voltage
+- kilowatt hour
+: Electric power generation transmission and distribution
+? !!python/tuple
+- electricity production, photovoltaic, commercial_pv (services)
+- electricity, low voltage
+- kilowatt hour
+: Electric power generation transmission and distribution
+? !!python/tuple
+- electricity production, photovoltaic, residential_pv residential (single family)
+- electricity, low voltage
+- kilowatt hour
+: Electric power generation transmission and distribution
+? !!python/tuple
+- electricity supply, from stationary 19.5 kWh NMC battery_battery (multi family)
+- electricity, high voltage
+- kilowatt hour
+: Electric power generation transmission and distribution
+? !!python/tuple
+- electricity supply, high voltage, from vanadium-redox flow battery system_battery
+  (industry)
+- electricity, high voltage
+- kilowatt hour
+: Electric power generation transmission and distribution
+? !!python/tuple
+- electricity supply, high voltage, from vanadium-redox flow battery system_battery
+  (medium)
+- electricity, high voltage
+- kilowatt hour
+: Electric power generation transmission and distribution
+? !!python/tuple
+- electricity supply, high voltage, from vanadium-redox flow battery system_battery
+  (services)
+- electricity, high voltage
+- kilowatt hour
+: Electric power generation transmission and distribution
+? !!python/tuple
+- electricity, residential, by conversion of hydrogen using fuel cell, PEM, allocated
+  by exergy, distributed by pipeline, produced by Electrolysis, PEM using electricity
+  from grid_hydrogen fuel cell (industrial CHP)
+- electricity, from residential heating system
+- kilowatt hour
+: Electric power generation transmission and distribution
+? !!python/tuple
+- electricity, residential, by conversion of hydrogen using fuel cell, PEM, allocated
+  by exergy, distributed by pipeline, produced by Electrolysis, PEM using electricity
+  from grid_hydrogen fuel cell (services CHP)
+- electricity, from residential heating system
+- kilowatt hour
+: Electric power generation transmission and distribution
+? !!python/tuple
+- electricity, used in battery electric motorcycle
+- electricity, low voltage
+- megajoule
+: Electric power generation transmission and distribution
+? !!python/tuple
+- electricity, used in heavy duty vehicle
+- electricity, low voltage
+- megajoule
+: Electric power generation transmission and distribution
+? !!python/tuple
+- electricity, used in industrial electric boiler
+- electricity, low voltage
+- megajoule
+: Electric power generation transmission and distribution
+? !!python/tuple
+- electricity, used in industrial electric boiler_FE_services_electric_boiler
+- electricity, low voltage
+- megajoule
+: Electric power generation transmission and distribution
+? !!python/tuple
+- electricity, used in industrial electric processes
+- electricity, low voltage
+- megajoule
+: Electric power generation transmission and distribution
+? !!python/tuple
+- electricity, used in industrial electric processes_FE_services_FE_other_electric
+- electricity, low voltage
+- megajoule
+: Electric power generation transmission and distribution
+? !!python/tuple
+- electricity, used in industrial heat pump
+- electricity, low voltage
+- megajoule
+: Electric power generation transmission and distribution
+? !!python/tuple
+- electricity, used in industrial heat pump_FE_services_heat_pump
+- electricity, low voltage
+- megajoule
+: Electric power generation transmission and distribution
+? !!python/tuple
+- electricity, used in passenger car vehicle
+- electricity, low voltage
+- megajoule
+: Electric power generation transmission and distribution
+? !!python/tuple
+- electricity, used in passenger car vehicle_FE_light_duty_truck_electricity
+- electricity, low voltage
+- megajoule
+: Electric power generation transmission and distribution
+? !!python/tuple
+- electricity, used in passenger car vehicle_FE_other_transport_electric
+- electricity, low voltage
+- megajoule
+: Electric power generation transmission and distribution
+? !!python/tuple
+- electricity, used in residential electric appliances
+- electricity, low voltage
+- megajoule
+: Electric power generation transmission and distribution
+? !!python/tuple
+- electricity, used in residential electric boiler
+- electricity, low voltage
+- megajoule
+: Electric power generation transmission and distribution
+? !!python/tuple
+- electricity, used in residential electric boiler_FE_residential_water_heating_electric_boiler
+- electricity, low voltage
+- megajoule
+: Electric power generation transmission and distribution
+? !!python/tuple
+- electricity, used in residential heat pump
+- electricity, low voltage
+- megajoule
+: Electric power generation transmission and distribution
+? !!python/tuple
+- electricity, used in residential heat pump_FE_residential_water_heating_heat_pump
+- electricity, low voltage
+- megajoule
+: Electric power generation transmission and distribution
+? !!python/tuple
+- electricity, used in single deck coach or urban bus
+- electricity, low voltage
+- megajoule
+: Electric power generation transmission and distribution
+? !!python/tuple
+- electricity, used in single deck coach or urban bus_FE_coach_electricity
+- electricity, low voltage
+- megajoule
+: Electric power generation transmission and distribution
+? !!python/tuple
+- electricity, used in single deck trolleybus
+- electricity, low voltage
+- megajoule
+: Electric power generation transmission and distribution
+? !!python/tuple
+- electricity, used in tram
+- electricity, low voltage
+- megajoule
+: Electric power generation transmission and distribution
+? !!python/tuple
+- fuel supply for gasoline vehicles
+- gasoline blend
+- kilogram
+: Manufacture of refined petroleum products
+? !!python/tuple
+- fuel tank assembly, compressed hydrogen gas, 700bar
+- fuel tank, compressed hydrogen gas, 700bar
+- kilogram
+: Manufacture of motor vehicles
+? !!python/tuple
+- fuel tank assembly, compressed natural gas, 200 bar
+- fuel tank, compressed natural gas, 200 bar
+- kilogram
+: Manufacture of motor vehicles
+? !!python/tuple
+- hard coal, burned in hard coal residential boiler 5-15kW
+- heat
+- megajoule
+: Electric power generation transmission and distribution
+? !!python/tuple
+- hard coal, burned in hard coal residential boiler 5-15kW_FE_residential_water_heating_coal
+- heat
+- megajoule
+: Electric power generation transmission and distribution
+? !!python/tuple
+- heat and power co-generation, natural gas, 160kW electrical, Jakobsberg_gas (multi
+  family CHP fuel cell)
+- electricity, low voltage
+- kilowatt hour
+: Electric power generation transmission and distribution
+? !!python/tuple
+- heat and power co-generation, natural gas, 160kW electrical, Jakobsberg_gas (multi
+  family CHP)
+- electricity, low voltage
+- kilowatt hour
+: Electric power generation transmission and distribution
+? !!python/tuple
+- heat and power co-generation, natural gas, 160kW electrical, Jakobsberg_gas (services
+  CHP fuel cell)
+- electricity, low voltage
+- kilowatt hour
+: Electric power generation transmission and distribution
+? !!python/tuple
+- heat and power co-generation, natural gas, 160kW electrical, Jakobsberg_gas (services
+  CHP)
+- electricity, low voltage
+- kilowatt hour
+: Electric power generation transmission and distribution
+? !!python/tuple
+- heat and power co-generation, natural gas, 160kW electrical, Jakobsberg_gas (single
+  family CHP fuel cell)
+- electricity, low voltage
+- kilowatt hour
+: Electric power generation transmission and distribution
+? !!python/tuple
+- heat and power co-generation, natural gas, 1MW electrical, lean burn_gas (CHP fuel
+  cell reformer)
+- electricity, high voltage
+- kilowatt hour
+: Electric power generation transmission and distribution
+? !!python/tuple
+- heat and power co-generation, natural gas, 1MW electrical, lean burn_gas (CHP industry)
+- electricity, high voltage
+- kilowatt hour
+: Electric power generation transmission and distribution
+? !!python/tuple
+- heat and power co-generation, natural gas, 1MW electrical, lean burn_gas (fuel cell
+  DH)
+- electricity, high voltage
+- kilowatt hour
+: Electric power generation transmission and distribution
+? !!python/tuple
+- heat and power co-generation, oil_oil (industry CHP)
+- electricity, high voltage
+- kilowatt hour
+: Electric power generation transmission and distribution
+? !!python/tuple
+- heat, from nuclear power plant
+- heat
+- megajoule
+: Steam and air conditioning supply
+? !!python/tuple
+- heat, from on-site industrial biogas-fired CHP
+- heat
+- megajoule
+: Steam and air conditioning supply
+? !!python/tuple
+- heat, from on-site industrial fuel cell CHP
+- heat
+- megajoule
+: Steam and air conditioning supply
+? !!python/tuple
+- heat, from on-site industrial fuel cell CHP_FE_services_CHP_fuel_cell
+- heat
+- megajoule
+: Steam and air conditioning supply
+? !!python/tuple
+- heat, from on-site industrial gas-fired CHP
+- heat
+- megajoule
+: Steam and air conditioning supply
+? !!python/tuple
+- heat, from on-site industrial gas-fired CHP with CCS
+- heat
+- megajoule
+: Steam and air conditioning supply
+? !!python/tuple
+- heat, from on-site industrial gas-fired CHP_FE_services_CHP_gas
+- heat
+- megajoule
+: Steam and air conditioning supply
+? !!python/tuple
+- heat, from on-site industrial hydrogen-fired CHP
+- heat
+- megajoule
+: Steam and air conditioning supply
+? !!python/tuple
+- heat, from on-site industrial hydrogen-fired CHP_FE_services_CHP_hydrogen
+- heat
+- megajoule
+: Steam and air conditioning supply
+? !!python/tuple
+- heat, from on-site industrial non-renewable waste-fired CHP
+- heat
+- megajoule
+: Steam and air conditioning supply
+? !!python/tuple
+- heat, from on-site industrial non-renewable waste-fired CHP with CCS
+- heat
+- megajoule
+: Steam and air conditioning supply
+? !!python/tuple
+- heat, from on-site industrial oil-fired CHP
+- heat
+- megajoule
+: Steam and air conditioning supply
+? !!python/tuple
+- heat, from on-site industrial wood-fired CHP
+- heat
+- megajoule
+: Steam and air conditioning supply
+? !!python/tuple
+- heat, from on-site industrial wood-fired CHP with CCS
+- heat
+- megajoule
+: Steam and air conditioning supply
+? !!python/tuple
+- heat, from on-site industrial wood-fired CHP_FE_services_CHP_wood
+- heat
+- megajoule
+: Steam and air conditioning supply
+? !!python/tuple
+- heat, from on-site residential fuel cell CHP
+- heat
+- megajoule
+: Steam and air conditioning supply
+? !!python/tuple
+- heat, from on-site residential gas-fired CHP
+- heat
+- megajoule
+: Steam and air conditioning supply
+? !!python/tuple
+- heat, from on-site residential wood-fired CHP
+- heat
+- megajoule
+: Steam and air conditioning supply
+? !!python/tuple
+- heavy duty truck, battery electric, NMC-622 battery, 32t gross weight, long haul
+- heavy duty truck
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- heavy duty truck, battery electric, NMC-622 battery, 40t gross weight, long haul
+- heavy duty truck
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- heavy duty truck, battery electric, NMC-622 battery, 60t gross weight, long haul
+- heavy duty truck
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- heavy duty truck, fuel cell electric, 32t gross weight, long haul
+- heavy duty truck
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- heavy duty truck, fuel cell electric, 40t gross weight, long haul
+- heavy duty truck
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- heavy duty truck, fuel cell electric, 60t gross weight, long haul
+- heavy duty truck
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- heavy fuel oil, burned in industrial furnace 1MW
+- heat
+- megajoule
+: Steam and air conditioning supply
+? !!python/tuple
+- hydrogen burned, in hydrogen boiler
+- heat
+- megajoule
+: Steam and air conditioning supply
+? !!python/tuple
+- hydrogen burned, in hydrogen boiler_FE_residential_space_heating_hydrogen
+- heat
+- megajoule
+: Steam and air conditioning supply
+? !!python/tuple
+- hydrogen burned, in hydrogen boiler_FE_residential_water_heating_hydrogen
+- heat
+- megajoule
+: Steam and air conditioning supply
+? !!python/tuple
+- hydrogen burned, in hydrogen boiler_FE_services_hydrogen
+- heat
+- megajoule
+: Steam and air conditioning supply
+? !!python/tuple
+- hydrogen production, gaseous, 30 bar, from PEM electrolysis, from grid electricity_hydrogen,
+  PEM, large (domestic)
+- hydrogen, gaseous, 30 bar
+- kilogram
+: Steam and air conditioning supply
+? !!python/tuple
+- hydrogen, used in heavy duty vehicle
+- heat
+- megajoule
+: Steam and air conditioning supply
+? !!python/tuple
+- hydrogen, used in hydrogen motorcycle
+- heat
+- megajoule
+: Steam and air conditioning supply
+? !!python/tuple
+- hydrogen, used in passenger car vehicle
+- heat
+- megajoule
+: Steam and air conditioning supply
+? !!python/tuple
+- hydrogen, used in passenger car vehicle_FE_light_duty_truck_hydrogen
+- heat
+- megajoule
+: Steam and air conditioning supply
+? !!python/tuple
+- hydrogen, used in passenger car vehicle_FE_other_transport_hydrogen
+- heat
+- megajoule
+: Steam and air conditioning supply
+? !!python/tuple
+- hydrogen, used in single deck coach or urban bus
+- heat
+- megajoule
+: Steam and air conditioning supply
+? !!python/tuple
+- hydrogen, used in single deck coach or urban bus_FE_coach_hydrogen
+- heat
+- megajoule
+: Steam and air conditioning supply
+? !!python/tuple
+- kick Scooter, electric, <1kW, LFP battery
+- kick Scooter, electric, <1kW
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- kick Scooter, electric, <1kW, NCA battery
+- kick Scooter, electric, <1kW
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- kick Scooter, electric, <1kW, NMC battery
+- kick Scooter, electric, <1kW
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- light duty truck, battery electric, NMC-622 battery, 3.5t gross weight, long haul
+- light duty truck
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- light duty truck, battery electric, NMC-622 battery, 7.5t gross weight, long haul
+- light duty truck
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- light duty truck, fuel cell electric, 3.5t gross weight, long haul
+- light duty truck
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- light duty truck, fuel cell electric, 7.5t gross weight, long haul
+- light duty truck
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- light fuel oil, burned in industrial furnace 1MW_FE_services_light_fuel_oil
+- heat
+- megajoule
+: Steam and air conditioning supply
+? !!python/tuple
+- maintenance, electric bicycle, without battery
+- maintenance, electric bicycle, without battery
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- market for battery cell, Li-ion, LTO
+- battery cell, Li-ion, LTO
+- kilogram
+: Manufacture of batteries and accumulators
+? !!python/tuple
+- market for district heating (SPS)
+- heat, district or industrial, other than natural gas
+- megajoule
+: Manufacture of refined petroleum products
+? !!python/tuple
+- market for energy carriers for buses (SPS)
+- heat
+- megajoule
+: Manufacture of refined petroleum products
+? !!python/tuple
+- market for energy carriers for cars (SPS)
+- heat
+- megajoule
+: Manufacture of refined petroleum products
+? !!python/tuple
+- market for energy carriers for coaches (SPS)
+- heat
+- megajoule
+: Manufacture of refined petroleum products
+? !!python/tuple
+- market for energy carriers for heavy duty trucks (SPS)
+- heat
+- megajoule
+: Manufacture of refined petroleum products
+? !!python/tuple
+- market for energy carriers for light duty trucks (SPS)
+- heat
+- megajoule
+: Manufacture of refined petroleum products
+? !!python/tuple
+- market for energy carriers for motorcycles (SPS)
+- heat
+- megajoule
+: Manufacture of refined petroleum products
+? !!python/tuple
+- market for energy carriers for other transport (SPS)
+- heat
+- megajoule
+: Manufacture of refined petroleum products
+? !!python/tuple
+- market for forest residue_wood (landscape maintenance)
+- forest residue
+- kilogram
+: Manufacture of refined petroleum products
+? !!python/tuple
+- market for forest residue_wood (residues)
+- forest residue
+- kilogram
+: Manufacture of refined petroleum products
+? !!python/tuple
+- market for process heat and space heating in industry (SPS)
+- heat
+- megajoule
+: Manufacture of refined petroleum products
+? !!python/tuple
+- market for process heat in industry (SPS)
+- heat
+- megajoule
+: Manufacture of refined petroleum products
+? !!python/tuple
+- market for space and water heating in residential (SPS)
+- heat
+- megajoule
+: Manufacture of refined petroleum products
+? !!python/tuple
+- market for space heating in industry (SPS)
+- heat
+- megajoule
+: Manufacture of refined petroleum products
+? !!python/tuple
+- market for space heating in residential (SPS)
+- heat
+- megajoule
+: Manufacture of refined petroleum products
+? !!python/tuple
+- market for space heating in services (SPS)
+- heat
+- megajoule
+: Manufacture of refined petroleum products
+? !!python/tuple
+- market for water heating in residential (SPS)
+- heat
+- megajoule
+: Manufacture of refined petroleum products
+? !!python/tuple
+- medium duty truck, battery electric, NMC-622 battery, 18t gross weight, long haul
+- medium duty truck
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- medium duty truck, battery electric, NMC-622 battery, 26t gross weight, long haul
+- medium duty truck
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- medium duty truck, fuel cell electric, 18t gross weight, long haul
+- medium duty truck
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- medium duty truck, fuel cell electric, 26t gross weight, long haul
+- medium duty truck
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- motorbike, electric, 11-35kW, LFP battery
+- motorbike, electric, 11-35kW
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- motorbike, electric, 11-35kW, NCA battery
+- motorbike, electric, 11-35kW
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- motorbike, electric, 11-35kW, NMC battery
+- motorbike, electric, 11-35kW
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- motorbike, electric, 4-11kW, LFP battery
+- motorbike, electric, 4-11kW
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- motorbike, electric, 4-11kW, NCA battery
+- motorbike, electric, 4-11kW
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- motorbike, electric, 4-11kW, NMC battery
+- motorbike, electric, 4-11kW
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- motorbike, electric, <4kW, LFP battery
+- motorbike, electric, <4kW
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- motorbike, electric, <4kW, NCA battery
+- motorbike, electric, <4kW
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- motorbike, electric, <4kW, NMC battery
+- motorbike, electric, <4kW
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- motorbike, electric, >35kW, LFP battery
+- motorbike, electric, >35kW
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- motorbike, electric, >35kW, NCA battery
+- motorbike, electric, >35kW
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- motorbike, electric, >35kW, NMC battery
+- motorbike, electric, >35kW
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- natural gas, burned in industrial furnace >100kW
+- heat
+- megajoule
+: Steam and air conditioning supply
+? !!python/tuple
+- natural gas, burned in industrial furnace >100kW_FE_services_natural_gas
+- heat
+- megajoule
+: Steam and air conditioning supply
+? !!python/tuple
+- natural gas, burned in residential natural gas boiler <100kW
+- heat
+- megajoule
+: Steam and air conditioning supply
+? !!python/tuple
+- natural gas, burned in residential natural gas boiler <100kW_FE_residential_space_heating_heat_pump_gas
+- heat
+- megajoule
+: Steam and air conditioning supply
+? !!python/tuple
+- natural gas, burned in residential natural gas boiler <100kW_FE_residential_water_heating_gas
+- heat
+- megajoule
+: Steam and air conditioning supply
+? !!python/tuple
+- natural gas, burned in residential natural gas boiler <100kW_FE_residential_water_heating_heat_pump_gas
+- heat
+- megajoule
+: Steam and air conditioning supply
+? !!python/tuple
+- non-renewable waste, burned in industrial furnace
+- heat
+- megajoule
+: Steam and air conditioning supply
+? !!python/tuple
+- overhead lines
+- overhead lines
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- passenger bus, battery electric - battery-equipped trolleybus, LTO battery, 13m
+  single deck urban bus
+- passenger bus
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- passenger bus, battery electric - battery-equipped trolleybus, LTO battery, 18m
+  articulated urban bus
+- passenger bus
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- passenger bus, battery electric - opportunity charging, LTO battery, 13m double
+  deck urban bus
+- passenger bus
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- passenger bus, battery electric - opportunity charging, LTO battery, 13m single
+  deck urban bus
+- passenger bus
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- passenger bus, battery electric - opportunity charging, LTO battery, 18m articulated
+  urban bus
+- passenger bus
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- passenger bus, battery electric - opportunity charging, LTO battery, 9m midibus
+- passenger bus
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- passenger bus, battery electric - overnight charging, NMC-622 battery, 13m double
+  deck urban bus
+- passenger bus
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- passenger bus, battery electric - overnight charging, NMC-622 battery, 13m single
+  deck urban bus
+- passenger bus
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- passenger bus, battery electric - overnight charging, NMC-622 battery, 18m articulated
+  urban bus
+- passenger bus
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- passenger bus, battery electric - overnight charging, NMC-622 battery, 9m midibus
+- passenger bus
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- passenger bus, fuel cell electric, 13m double deck coach bus
+- passenger bus
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- passenger bus, fuel cell electric, 13m double deck urban bus
+- passenger bus
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- passenger bus, fuel cell electric, 13m single deck coach bus
+- passenger bus
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- passenger bus, fuel cell electric, 13m single deck urban bus
+- passenger bus
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- passenger bus, fuel cell electric, 18m articulated urban bus
+- passenger bus
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- passenger bus, fuel cell electric, 9m midibus
+- passenger bus
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- passenger car, battery electric, NMC-622 battery, Large
+- passenger car
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- passenger car, battery electric, NMC-622 battery, Large SUV
+- passenger car
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- passenger car, battery electric, NMC-622 battery, Lower medium
+- passenger car
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- passenger car, battery electric, NMC-622 battery, Medium
+- passenger car
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- passenger car, battery electric, NMC-622 battery, Medium SUV
+- passenger car
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- passenger car, battery electric, NMC-622 battery, Micro
+- passenger car
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- passenger car, battery electric, NMC-622 battery, Mini
+- passenger car
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- passenger car, battery electric, NMC-622 battery, Small
+- passenger car
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- passenger car, battery electric, NMC-622 battery, Van
+- passenger car
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- passenger car, fuel cell electric, Large
+- passenger car
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- passenger car, fuel cell electric, Large SUV
+- passenger car
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- passenger car, fuel cell electric, Lower medium
+- passenger car
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- passenger car, fuel cell electric, Medium
+- passenger car
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- passenger car, fuel cell electric, Medium SUV
+- passenger car
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- passenger car, fuel cell electric, Mini
+- passenger car
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- passenger car, fuel cell electric, Small
+- passenger car
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- passenger car, fuel cell electric, Van
+- passenger car
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- pellet, burned in pellet industrial furnace 300kW
+- heat
+- megajoule
+: Steam and air conditioning supply
+? !!python/tuple
+- pellet, burned in pellet industrial furnace 300kW_FE_services_pellet
+- heat
+- megajoule
+: Steam and air conditioning supply
+? !!python/tuple
+- pellet, burned in residential pellet stove 5-15kW
+- heat
+- megajoule
+: Steam and air conditioning supply
+? !!python/tuple
+- pellet, burned in residential pellet stove 5-15kW_FE_residential_water_heating_pellet
+- heat
+- megajoule
+: Steam and air conditioning supply
+? !!python/tuple
+- petrol, burned in motorcycle
+- heat
+- megajoule
+: Steam and air conditioning supply
+? !!python/tuple
+- petrol, burned in passenger car vehicle
+- heat
+- megajoule
+: Steam and air conditioning supply
+? !!python/tuple
+- petrol, burned in passenger car vehicle_FE_heavy_duty_truck_gasoline
+- heat
+- megajoule
+: Steam and air conditioning supply
+? !!python/tuple
+- petrol, burned in passenger car vehicle_FE_light_duty_truck_gasoline
+- heat
+- megajoule
+: Steam and air conditioning supply
+? !!python/tuple
+- petrol, burned in passenger car vehicle_FE_other_transport_gasoline
+- heat
+- megajoule
+: Steam and air conditioning supply
+? !!python/tuple
+- renewable waste, burned in industrial furnace
+- heat
+- megajoule
+: Steam and air conditioning supply
+? !!python/tuple
+- scooter, electric, 4-11kW, LFP battery
+- scooter, electric, 4-11kW
+- unit
+: Other passenger land transport
+? !!python/tuple
+- scooter, electric, 4-11kW, NCA battery
+- scooter, electric, 4-11kW
+- unit
+: Other passenger land transport
+? !!python/tuple
+- scooter, electric, 4-11kW, NMC battery
+- scooter, electric, 4-11kW
+- unit
+: Other passenger land transport
+? !!python/tuple
+- scooter, electric, <4kW, LFP battery
+- scooter, electric, <4kW
+- unit
+: Other passenger land transport
+? !!python/tuple
+- scooter, electric, <4kW, NCA battery
+- scooter, electric, <4kW
+- unit
+: Other passenger land transport
+? !!python/tuple
+- scooter, electric, <4kW, NMC battery
+- scooter, electric, <4kW
+- unit
+: Other passenger land transport
+? !!python/tuple
+- selective coating, sputtering
+- selective coating, sputtering
+- square meter
+: Other passenger land transport
+? !!python/tuple
+- semi-rigid roadside barriers
+- semi-rigid roadside barriers
+- unit
+: Other passenger land transport
+? !!python/tuple
+- solar energy, from industrial hot water tank
+- heat
+- megajoule
+: Other passenger land transport
+? !!python/tuple
+- solar energy, from industrial hot water tank_FE_services_solar
+- heat
+- megajoule
+: Other passenger land transport
+? !!python/tuple
+- solar energy, from residential hot water tank
+- heat
+- megajoule
+: Other passenger land transport
+? !!python/tuple
+- solar energy, from residential hot water tank_FE_residential_water_heating_solar
+- heat
+- megajoule
+: Other passenger land transport
+? !!python/tuple
+- synthetic diesel import, from neighboring countries
+- diesel, synthetic
+- kilogram
+: Other passenger land transport
+? !!python/tuple
+- synthetic natural gas import, from neighboring countries
+- natural gas, synthetic
+- kilogram
+: Other passenger land transport
+? !!python/tuple
+- tram, electric
+- tram, electric
+- unit
+: Other passenger land transport
+? !!python/tuple
+- transport, Bicycle, conventional, urban
+- transport, Bicycle, conventional, urban
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, Bicycle, electric (<25 km/h), LFP battery
+- transport, Bicycle, electric (<25 km/h)
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, Bicycle, electric (<25 km/h), NCA battery
+- transport, Bicycle, electric (<25 km/h)
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, Bicycle, electric (<25 km/h), NMC battery
+- transport, Bicycle, electric (<25 km/h)
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, Bicycle, electric (<45 km/h), LFP battery
+- transport, Bicycle, electric (<45 km/h)
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, Bicycle, electric (<45 km/h), NCA battery
+- transport, Bicycle, electric (<45 km/h)
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, Bicycle, electric (<45 km/h), NMC battery
+- transport, Bicycle, electric (<45 km/h)
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, Bicycle, electric, cargo bike, LFP battery
+- transport, Bicycle, electric, cargo bike
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, Bicycle, electric, cargo bike, NCA battery
+- transport, Bicycle, electric, cargo bike
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, Bicycle, electric, cargo bike, NMC battery
+- transport, Bicycle, electric, cargo bike
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, Kick Scooter, electric, <1kW, LFP battery
+- transport, Kick Scooter, electric, <1kW
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, Kick Scooter, electric, <1kW, NCA battery
+- transport, Kick Scooter, electric, <1kW
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, Kick Scooter, electric, <1kW, NMC battery
+- transport, Kick Scooter, electric, <1kW
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, Moped, gasoline, <4kW, EURO-3
+- transport, Moped, gasoline, <4kW, EURO-3
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, Moped, gasoline, <4kW, EURO-4
+- transport, Moped, gasoline, <4kW, EURO-4
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, Moped, gasoline, <4kW, EURO-5
+- transport, Moped, gasoline, <4kW, EURO-5
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, Motorbike, electric, 11-35kW, LFP battery
+- transport, Motorbike, electric, 11-35kW
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, Motorbike, electric, 11-35kW, NCA battery
+- transport, Motorbike, electric, 11-35kW
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, Motorbike, electric, 11-35kW, NMC battery
+- transport, Motorbike, electric, 11-35kW
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, Motorbike, electric, 4-11kW, LFP battery
+- transport, Motorbike, electric, 4-11kW
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, Motorbike, electric, 4-11kW, NCA battery
+- transport, Motorbike, electric, 4-11kW
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, Motorbike, electric, 4-11kW, NMC battery
+- transport, Motorbike, electric, 4-11kW
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, Motorbike, electric, <4kW, LFP battery
+- transport, Motorbike, electric, <4kW
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, Motorbike, electric, <4kW, NCA battery
+- transport, Motorbike, electric, <4kW
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, Motorbike, electric, <4kW, NMC battery
+- transport, Motorbike, electric, <4kW
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, Motorbike, electric, >35kW, LFP battery
+- transport, Motorbike, electric, >35kW
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, Motorbike, electric, >35kW, NCA battery
+- transport, Motorbike, electric, >35kW
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, Motorbike, electric, >35kW, NMC battery
+- transport, Motorbike, electric, >35kW
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, Motorbike, gasoline, 11-35kW, EURO-3
+- transport, Motorbike, gasoline, 11-35kW, EURO-3
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, Motorbike, gasoline, 11-35kW, EURO-4
+- transport, Motorbike, gasoline, 11-35kW, EURO-4
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, Motorbike, gasoline, 11-35kW, EURO-5
+- transport, Motorbike, gasoline, 11-35kW, EURO-5
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, Motorbike, gasoline, 4-11kW, EURO-3
+- transport, Motorbike, gasoline, 4-11kW, EURO-3
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, Motorbike, gasoline, 4-11kW, EURO-4
+- transport, Motorbike, gasoline, 4-11kW, EURO-4
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, Motorbike, gasoline, 4-11kW, EURO-5
+- transport, Motorbike, gasoline, 4-11kW, EURO-5
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, Motorbike, gasoline, >35kW, EURO-3
+- transport, Motorbike, gasoline, >35kW, EURO-3
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, Motorbike, gasoline, >35kW, EURO-4
+- transport, Motorbike, gasoline, >35kW, EURO-4
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, Motorbike, gasoline, >35kW, EURO-5
+- transport, Motorbike, gasoline, >35kW, EURO-5
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, Scooter, electric, 4-11kW, LFP battery
+- transport, Scooter, electric, 4-11kW
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, Scooter, electric, 4-11kW, NCA battery
+- transport, Scooter, electric, 4-11kW
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, Scooter, electric, 4-11kW, NMC battery
+- transport, Scooter, electric, 4-11kW
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, Scooter, electric, <4kW, LFP battery
+- transport, Scooter, electric, <4kW
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, Scooter, electric, <4kW, NCA battery
+- transport, Scooter, electric, <4kW
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, Scooter, electric, <4kW, NMC battery
+- transport, Scooter, electric, <4kW
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, Scooter, gasoline, 4-11kW, EURO-3
+- transport, Scooter, gasoline, 4-11kW, EURO-3
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, Scooter, gasoline, 4-11kW, EURO-4
+- transport, Scooter, gasoline, 4-11kW, EURO-4
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, Scooter, gasoline, 4-11kW, EURO-5
+- transport, Scooter, gasoline, 4-11kW, EURO-5
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, Scooter, gasoline, <4kW, EURO-3
+- transport, Scooter, gasoline, <4kW, EURO-3
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, Scooter, gasoline, <4kW, EURO-4
+- transport, Scooter, gasoline, <4kW, EURO-4
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, Scooter, gasoline, <4kW, EURO-5
+- transport, Scooter, gasoline, <4kW, EURO-5
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, Tram, electric
+- transport, Tram, electric
+- person-kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, freight, lorry, battery electric, NMC-622 battery, 18t gross weight,
+  long haul
+- transport, freight, lorry
+- ton kilometer
+: Freight transport by road
+? !!python/tuple
+- transport, freight, lorry, battery electric, NMC-622 battery, 26t gross weight,
+  long haul
+- transport, freight, lorry
+- ton kilometer
+: Freight transport by road
+? !!python/tuple
+- transport, freight, lorry, battery electric, NMC-622 battery, 3.5t gross weight,
+  long haul
+- transport, freight, lorry
+- ton kilometer
+: Freight transport by road
+? !!python/tuple
+- transport, freight, lorry, battery electric, NMC-622 battery, 32t gross weight,
+  long haul
+- transport, freight, lorry
+- ton kilometer
+: Freight transport by road
+? !!python/tuple
+- transport, freight, lorry, battery electric, NMC-622 battery, 40t gross weight,
+  long haul
+- transport, freight, lorry
+- ton kilometer
+: Freight transport by road
+? !!python/tuple
+- transport, freight, lorry, battery electric, NMC-622 battery, 60t gross weight,
+  long haul
+- transport, freight, lorry
+- ton kilometer
+: Freight transport by road
+? !!python/tuple
+- transport, freight, lorry, battery electric, NMC-622 battery, 7.5t gross weight,
+  long haul
+- transport, freight, lorry
+- ton kilometer
+: Freight transport by road
+? !!python/tuple
+- transport, freight, lorry, compressed gas, 18t gross weight, EURO-III, long haul
+- transport, freight, lorry, EURO-III
+- ton kilometer
+: Freight transport by road
+? !!python/tuple
+- transport, freight, lorry, compressed gas, 18t gross weight, EURO-IV, long haul
+- transport, freight, lorry, EURO-IV
+- ton kilometer
+: Freight transport by road
+? !!python/tuple
+- transport, freight, lorry, compressed gas, 18t gross weight, EURO-V, long haul
+- transport, freight, lorry, EURO-V
+- ton kilometer
+: Freight transport by road
+? !!python/tuple
+- transport, freight, lorry, compressed gas, 18t gross weight, EURO-VI, long haul
+- transport, freight, lorry, EURO-VI
+- ton kilometer
+: Freight transport by road
+? !!python/tuple
+- transport, freight, lorry, compressed gas, 26t gross weight, EURO-III, long haul
+- transport, freight, lorry, EURO-III
+- ton kilometer
+: Freight transport by road
+? !!python/tuple
+- transport, freight, lorry, compressed gas, 26t gross weight, EURO-IV, long haul
+- transport, freight, lorry, EURO-IV
+- ton kilometer
+: Freight transport by road
+? !!python/tuple
+- transport, freight, lorry, compressed gas, 26t gross weight, EURO-V, long haul
+- transport, freight, lorry, EURO-V
+- ton kilometer
+: Freight transport by road
+? !!python/tuple
+- transport, freight, lorry, compressed gas, 26t gross weight, EURO-VI, long haul
+- transport, freight, lorry, EURO-VI
+- ton kilometer
+: Freight transport by road
+? !!python/tuple
+- transport, freight, lorry, compressed gas, 3.5t gross weight, EURO-III, long haul
+- transport, freight, lorry, EURO-III
+- ton kilometer
+: Freight transport by road
+? !!python/tuple
+- transport, freight, lorry, compressed gas, 3.5t gross weight, EURO-IV, long haul
+- transport, freight, lorry, EURO-IV
+- ton kilometer
+: Freight transport by road
+? !!python/tuple
+- transport, freight, lorry, compressed gas, 3.5t gross weight, EURO-V, long haul
+- transport, freight, lorry, EURO-V
+- ton kilometer
+: Freight transport by road
+? !!python/tuple
+- transport, freight, lorry, compressed gas, 3.5t gross weight, EURO-VI, long haul
+- transport, freight, lorry, EURO-VI
+- ton kilometer
+: Freight transport by road
+? !!python/tuple
+- transport, freight, lorry, compressed gas, 32t gross weight, EURO-III, long haul
+- transport, freight, lorry, EURO-III
+- ton kilometer
+: Freight transport by road
+? !!python/tuple
+- transport, freight, lorry, compressed gas, 32t gross weight, EURO-IV, long haul
+- transport, freight, lorry, EURO-IV
+- ton kilometer
+: Freight transport by road
+? !!python/tuple
+- transport, freight, lorry, compressed gas, 32t gross weight, EURO-V, long haul
+- transport, freight, lorry, EURO-V
+- ton kilometer
+: Freight transport by road
+? !!python/tuple
+- transport, freight, lorry, compressed gas, 32t gross weight, EURO-VI, long haul
+- transport, freight, lorry, EURO-VI
+- ton kilometer
+: Freight transport by road
+? !!python/tuple
+- transport, freight, lorry, compressed gas, 40t gross weight, EURO-III, long haul
+- transport, freight, lorry, EURO-III
+- ton kilometer
+: Freight transport by road
+? !!python/tuple
+- transport, freight, lorry, compressed gas, 40t gross weight, EURO-IV, long haul
+- transport, freight, lorry, EURO-IV
+- ton kilometer
+: Freight transport by road
+? !!python/tuple
+- transport, freight, lorry, compressed gas, 40t gross weight, EURO-V, long haul
+- transport, freight, lorry, EURO-V
+- ton kilometer
+: Freight transport by road
+? !!python/tuple
+- transport, freight, lorry, compressed gas, 40t gross weight, EURO-VI, long haul
+- transport, freight, lorry, EURO-VI
+- ton kilometer
+: Freight transport by road
+? !!python/tuple
+- transport, freight, lorry, compressed gas, 60t gross weight, EURO-III, long haul
+- transport, freight, lorry, EURO-III
+- ton kilometer
+: Freight transport by road
+? !!python/tuple
+- transport, freight, lorry, compressed gas, 60t gross weight, EURO-IV, long haul
+- transport, freight, lorry, EURO-IV
+- ton kilometer
+: Freight transport by road
+? !!python/tuple
+- transport, freight, lorry, compressed gas, 60t gross weight, EURO-V, long haul
+- transport, freight, lorry, EURO-V
+- ton kilometer
+: Freight transport by road
+? !!python/tuple
+- transport, freight, lorry, compressed gas, 60t gross weight, EURO-VI, long haul
+- transport, freight, lorry, EURO-VI
+- ton kilometer
+: Freight transport by road
+? !!python/tuple
+- transport, freight, lorry, compressed gas, 7.5t gross weight, EURO-III, long haul
+- transport, freight, lorry, EURO-III
+- ton kilometer
+: Freight transport by road
+? !!python/tuple
+- transport, freight, lorry, compressed gas, 7.5t gross weight, EURO-IV, long haul
+- transport, freight, lorry, EURO-IV
+- ton kilometer
+: Freight transport by road
+? !!python/tuple
+- transport, freight, lorry, compressed gas, 7.5t gross weight, EURO-V, long haul
+- transport, freight, lorry, EURO-V
+- ton kilometer
+: Freight transport by road
+? !!python/tuple
+- transport, freight, lorry, compressed gas, 7.5t gross weight, EURO-VI, long haul
+- transport, freight, lorry, EURO-VI
+- ton kilometer
+: Freight transport by road
+? !!python/tuple
+- transport, freight, lorry, diesel hybrid, 18t gross weight, EURO-VI, long haul
+- transport, freight, lorry, EURO-VI
+- ton kilometer
+: Freight transport by road
+? !!python/tuple
+- transport, freight, lorry, diesel hybrid, 26t gross weight, EURO-VI, long haul
+- transport, freight, lorry, EURO-VI
+- ton kilometer
+: Freight transport by road
+? !!python/tuple
+- transport, freight, lorry, diesel hybrid, 3.5t gross weight, EURO-VI, long haul
+- transport, freight, lorry, EURO-VI
+- ton kilometer
+: Freight transport by road
+? !!python/tuple
+- transport, freight, lorry, diesel hybrid, 32t gross weight, EURO-VI, long haul
+- transport, freight, lorry, EURO-VI
+- ton kilometer
+: Freight transport by road
+? !!python/tuple
+- transport, freight, lorry, diesel hybrid, 40t gross weight, EURO-VI, long haul
+- transport, freight, lorry, EURO-VI
+- ton kilometer
+: Freight transport by road
+? !!python/tuple
+- transport, freight, lorry, diesel hybrid, 60t gross weight, EURO-VI, long haul
+- transport, freight, lorry, EURO-VI
+- ton kilometer
+: Freight transport by road
+? !!python/tuple
+- transport, freight, lorry, diesel hybrid, 7.5t gross weight, EURO-VI, long haul
+- transport, freight, lorry, EURO-VI
+- ton kilometer
+: Freight transport by road
+? !!python/tuple
+- transport, freight, lorry, diesel, 18t gross weight, EURO-III, long haul
+- transport, freight, lorry, EURO-III
+- ton kilometer
+: Freight transport by road
+? !!python/tuple
+- transport, freight, lorry, diesel, 18t gross weight, EURO-IV, long haul
+- transport, freight, lorry, EURO-IV
+- ton kilometer
+: Freight transport by road
+? !!python/tuple
+- transport, freight, lorry, diesel, 18t gross weight, EURO-V, long haul
+- transport, freight, lorry, EURO-V
+- ton kilometer
+: Freight transport by road
+? !!python/tuple
+- transport, freight, lorry, diesel, 18t gross weight, EURO-VI, long haul
+- transport, freight, lorry, EURO-VI
+- ton kilometer
+: Freight transport by road
+? !!python/tuple
+- transport, freight, lorry, diesel, 26t gross weight, EURO-III, long haul
+- transport, freight, lorry, EURO-III
+- ton kilometer
+: Freight transport by road
+? !!python/tuple
+- transport, freight, lorry, diesel, 26t gross weight, EURO-IV, long haul
+- transport, freight, lorry, EURO-IV
+- ton kilometer
+: Freight transport by road
+? !!python/tuple
+- transport, freight, lorry, diesel, 26t gross weight, EURO-V, long haul
+- transport, freight, lorry, EURO-V
+- ton kilometer
+: Freight transport by road
+? !!python/tuple
+- transport, freight, lorry, diesel, 26t gross weight, EURO-VI, long haul
+- transport, freight, lorry, EURO-VI
+- ton kilometer
+: Freight transport by road
+? !!python/tuple
+- transport, freight, lorry, diesel, 3.5t gross weight, EURO-III, long haul
+- transport, freight, lorry, EURO-III
+- ton kilometer
+: Freight transport by road
+? !!python/tuple
+- transport, freight, lorry, diesel, 3.5t gross weight, EURO-IV, long haul
+- transport, freight, lorry, EURO-IV
+- ton kilometer
+: Freight transport by road
+? !!python/tuple
+- transport, freight, lorry, diesel, 3.5t gross weight, EURO-V, long haul
+- transport, freight, lorry, EURO-V
+- ton kilometer
+: Freight transport by road
+? !!python/tuple
+- transport, freight, lorry, diesel, 3.5t gross weight, EURO-VI, long haul
+- transport, freight, lorry, EURO-VI
+- ton kilometer
+: Freight transport by road
+? !!python/tuple
+- transport, freight, lorry, diesel, 32t gross weight, EURO-III, long haul
+- transport, freight, lorry, EURO-III
+- ton kilometer
+: Freight transport by road
+? !!python/tuple
+- transport, freight, lorry, diesel, 32t gross weight, EURO-IV, long haul
+- transport, freight, lorry, EURO-IV
+- ton kilometer
+: Freight transport by road
+? !!python/tuple
+- transport, freight, lorry, diesel, 32t gross weight, EURO-V, long haul
+- transport, freight, lorry, EURO-V
+- ton kilometer
+: Freight transport by road
+? !!python/tuple
+- transport, freight, lorry, diesel, 32t gross weight, EURO-VI, long haul
+- transport, freight, lorry, EURO-VI
+- ton kilometer
+: Freight transport by road
+? !!python/tuple
+- transport, freight, lorry, diesel, 40t gross weight, EURO-III, long haul
+- transport, freight, lorry, EURO-III
+- ton kilometer
+: Freight transport by road
+? !!python/tuple
+- transport, freight, lorry, diesel, 40t gross weight, EURO-IV, long haul
+- transport, freight, lorry, EURO-IV
+- ton kilometer
+: Freight transport by road
+? !!python/tuple
+- transport, freight, lorry, diesel, 40t gross weight, EURO-V, long haul
+- transport, freight, lorry, EURO-V
+- ton kilometer
+: Freight transport by road
+? !!python/tuple
+- transport, freight, lorry, diesel, 40t gross weight, EURO-VI, long haul
+- transport, freight, lorry, EURO-VI
+- ton kilometer
+: Freight transport by road
+? !!python/tuple
+- transport, freight, lorry, diesel, 60t gross weight, EURO-III, long haul
+- transport, freight, lorry, EURO-III
+- ton kilometer
+: Freight transport by road
+? !!python/tuple
+- transport, freight, lorry, diesel, 60t gross weight, EURO-IV, long haul
+- transport, freight, lorry, EURO-IV
+- ton kilometer
+: Freight transport by road
+? !!python/tuple
+- transport, freight, lorry, diesel, 60t gross weight, EURO-V, long haul
+- transport, freight, lorry, EURO-V
+- ton kilometer
+: Freight transport by road
+? !!python/tuple
+- transport, freight, lorry, diesel, 60t gross weight, EURO-VI, long haul
+- transport, freight, lorry, EURO-VI
+- ton kilometer
+: Freight transport by road
+? !!python/tuple
+- transport, freight, lorry, diesel, 7.5t gross weight, EURO-III, long haul
+- transport, freight, lorry, EURO-III
+- ton kilometer
+: Freight transport by road
+? !!python/tuple
+- transport, freight, lorry, diesel, 7.5t gross weight, EURO-IV, long haul
+- transport, freight, lorry, EURO-IV
+- ton kilometer
+: Freight transport by road
+? !!python/tuple
+- transport, freight, lorry, diesel, 7.5t gross weight, EURO-V, long haul
+- transport, freight, lorry, EURO-V
+- ton kilometer
+: Freight transport by road
+? !!python/tuple
+- transport, freight, lorry, diesel, 7.5t gross weight, EURO-VI, long haul
+- transport, freight, lorry, EURO-VI
+- ton kilometer
+: Freight transport by road
+? !!python/tuple
+- transport, freight, lorry, fuel cell electric, 18t gross weight, long haul
+- transport, freight, lorry
+- ton kilometer
+: Freight transport by road
+? !!python/tuple
+- transport, freight, lorry, fuel cell electric, 26t gross weight, long haul
+- transport, freight, lorry
+- ton kilometer
+: Freight transport by road
+? !!python/tuple
+- transport, freight, lorry, fuel cell electric, 3.5t gross weight, long haul
+- transport, freight, lorry
+- ton kilometer
+: Freight transport by road
+? !!python/tuple
+- transport, freight, lorry, fuel cell electric, 32t gross weight, long haul
+- transport, freight, lorry
+- ton kilometer
+: Freight transport by road
+? !!python/tuple
+- transport, freight, lorry, fuel cell electric, 40t gross weight, long haul
+- transport, freight, lorry
+- ton kilometer
+: Freight transport by road
+? !!python/tuple
+- transport, freight, lorry, fuel cell electric, 60t gross weight, long haul
+- transport, freight, lorry
+- ton kilometer
+: Freight transport by road
+? !!python/tuple
+- transport, freight, lorry, fuel cell electric, 7.5t gross weight, long haul
+- transport, freight, lorry
+- ton kilometer
+: Freight transport by road
+? !!python/tuple
+- transport, freight, lorry, plugin diesel hybrid, 18t gross weight, EURO-VI, long
+  haul
+- transport, freight, lorry, EURO-VI
+- ton kilometer
+: Freight transport by road
+? !!python/tuple
+- transport, freight, lorry, plugin diesel hybrid, 26t gross weight, EURO-VI, long
+  haul
+- transport, freight, lorry, EURO-VI
+- ton kilometer
+: Freight transport by road
+? !!python/tuple
+- transport, freight, lorry, plugin diesel hybrid, 3.5t gross weight, EURO-VI, long
+  haul
+- transport, freight, lorry, EURO-VI
+- ton kilometer
+: Freight transport by road
+? !!python/tuple
+- transport, freight, lorry, plugin diesel hybrid, 32t gross weight, EURO-VI, long
+  haul
+- transport, freight, lorry, EURO-VI
+- ton kilometer
+: Freight transport by road
+? !!python/tuple
+- transport, freight, lorry, plugin diesel hybrid, 40t gross weight, EURO-VI, long
+  haul
+- transport, freight, lorry, EURO-VI
+- ton kilometer
+: Freight transport by road
+? !!python/tuple
+- transport, freight, lorry, plugin diesel hybrid, 60t gross weight, EURO-VI, long
+  haul
+- transport, freight, lorry, EURO-VI
+- ton kilometer
+: Freight transport by road
+? !!python/tuple
+- transport, freight, lorry, plugin diesel hybrid, 7.5t gross weight, EURO-VI, long
+  haul
+- transport, freight, lorry, EURO-VI
+- ton kilometer
+: Freight transport by road
+? !!python/tuple
+- transport, passenger bus, battery electric - battery-equipped trolleybus, LTO battery,
+  13m single deck urban bus
+- transport, passenger bus
+- person kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger bus, battery electric - battery-equipped trolleybus, LTO battery,
+  18m articulated urban bus
+- transport, passenger bus
+- person kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger bus, battery electric - opportunity charging, LTO battery,
+  13m double deck urban bus
+- transport, passenger bus
+- person kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger bus, battery electric - opportunity charging, LTO battery,
+  13m single deck urban bus
+- transport, passenger bus
+- person kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger bus, battery electric - opportunity charging, LTO battery,
+  18m articulated urban bus
+- transport, passenger bus
+- person kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger bus, battery electric - opportunity charging, LTO battery,
+  9m midibus
+- transport, passenger bus
+- person kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger bus, battery electric - overnight charging, NMC-622 battery,
+  13m double deck urban bus
+- transport, passenger bus
+- person kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger bus, battery electric - overnight charging, NMC-622 battery,
+  13m single deck urban bus
+- transport, passenger bus
+- person kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger bus, battery electric - overnight charging, NMC-622 battery,
+  18m articulated urban bus
+- transport, passenger bus
+- person kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger bus, battery electric - overnight charging, NMC-622 battery,
+  9m midibus
+- transport, passenger bus
+- person kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger bus, compressed gas, 13m double deck coach bus, EURO-III
+- transport, passenger bus, EURO-III
+- person kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger bus, compressed gas, 13m double deck coach bus, EURO-IV
+- transport, passenger bus, EURO-IV
+- person kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger bus, compressed gas, 13m double deck coach bus, EURO-V
+- transport, passenger bus, EURO-V
+- person kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger bus, compressed gas, 13m double deck coach bus, EURO-VI
+- transport, passenger bus, EURO-VI
+- person kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger bus, compressed gas, 13m double deck urban bus, EURO-III
+- transport, passenger bus, EURO-III
+- person kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger bus, compressed gas, 13m double deck urban bus, EURO-IV
+- transport, passenger bus, EURO-IV
+- person kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger bus, compressed gas, 13m double deck urban bus, EURO-V
+- transport, passenger bus, EURO-V
+- person kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger bus, compressed gas, 13m double deck urban bus, EURO-VI
+- transport, passenger bus, EURO-VI
+- person kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger bus, compressed gas, 13m single deck coach bus, EURO-III
+- transport, passenger bus, EURO-III
+- person kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger bus, compressed gas, 13m single deck coach bus, EURO-IV
+- transport, passenger bus, EURO-IV
+- person kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger bus, compressed gas, 13m single deck coach bus, EURO-V
+- transport, passenger bus, EURO-V
+- person kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger bus, compressed gas, 13m single deck coach bus, EURO-VI
+- transport, passenger bus, EURO-VI
+- person kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger bus, compressed gas, 13m single deck urban bus, EURO-III
+- transport, passenger bus, EURO-III
+- person kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger bus, compressed gas, 13m single deck urban bus, EURO-IV
+- transport, passenger bus, EURO-IV
+- person kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger bus, compressed gas, 13m single deck urban bus, EURO-V
+- transport, passenger bus, EURO-V
+- person kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger bus, compressed gas, 13m single deck urban bus, EURO-VI
+- transport, passenger bus, EURO-VI
+- person kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger bus, compressed gas, 18m articulated urban bus, EURO-III
+- transport, passenger bus, EURO-III
+- person kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger bus, compressed gas, 18m articulated urban bus, EURO-IV
+- transport, passenger bus, EURO-IV
+- person kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger bus, compressed gas, 18m articulated urban bus, EURO-V
+- transport, passenger bus, EURO-V
+- person kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger bus, compressed gas, 18m articulated urban bus, EURO-VI
+- transport, passenger bus, EURO-VI
+- person kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger bus, compressed gas, 9m midibus, EURO-III
+- transport, passenger bus, EURO-III
+- person kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger bus, compressed gas, 9m midibus, EURO-IV
+- transport, passenger bus, EURO-IV
+- person kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger bus, compressed gas, 9m midibus, EURO-V
+- transport, passenger bus, EURO-V
+- person kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger bus, compressed gas, 9m midibus, EURO-VI
+- transport, passenger bus, EURO-VI
+- person kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger bus, diesel hybrid, 13m double deck coach bus, EURO-VI
+- transport, passenger bus, EURO-VI
+- person kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger bus, diesel hybrid, 13m double deck urban bus, EURO-VI
+- transport, passenger bus, EURO-VI
+- person kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger bus, diesel hybrid, 13m single deck coach bus, EURO-VI
+- transport, passenger bus, EURO-VI
+- person kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger bus, diesel hybrid, 13m single deck urban bus, EURO-VI
+- transport, passenger bus, EURO-VI
+- person kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger bus, diesel hybrid, 18m articulated urban bus, EURO-VI
+- transport, passenger bus, EURO-VI
+- person kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger bus, diesel hybrid, 9m midibus, EURO-VI
+- transport, passenger bus, EURO-VI
+- person kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger bus, diesel, 13m double deck coach bus, EURO-III
+- transport, passenger bus, EURO-III
+- person kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger bus, diesel, 13m double deck coach bus, EURO-IV
+- transport, passenger bus, EURO-IV
+- person kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger bus, diesel, 13m double deck coach bus, EURO-V
+- transport, passenger bus, EURO-V
+- person kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger bus, diesel, 13m double deck coach bus, EURO-VI
+- transport, passenger bus, EURO-VI
+- person kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger bus, diesel, 13m double deck urban bus, EURO-III
+- transport, passenger bus, EURO-III
+- person kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger bus, diesel, 13m double deck urban bus, EURO-IV
+- transport, passenger bus, EURO-IV
+- person kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger bus, diesel, 13m double deck urban bus, EURO-V
+- transport, passenger bus, EURO-V
+- person kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger bus, diesel, 13m double deck urban bus, EURO-VI
+- transport, passenger bus, EURO-VI
+- person kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger bus, diesel, 13m single deck coach bus, EURO-III
+- transport, passenger bus, EURO-III
+- person kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger bus, diesel, 13m single deck coach bus, EURO-IV
+- transport, passenger bus, EURO-IV
+- person kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger bus, diesel, 13m single deck coach bus, EURO-V
+- transport, passenger bus, EURO-V
+- person kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger bus, diesel, 13m single deck coach bus, EURO-VI
+- transport, passenger bus, EURO-VI
+- person kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger bus, diesel, 13m single deck urban bus, EURO-III
+- transport, passenger bus, EURO-III
+- person kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger bus, diesel, 13m single deck urban bus, EURO-IV
+- transport, passenger bus, EURO-IV
+- person kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger bus, diesel, 13m single deck urban bus, EURO-V
+- transport, passenger bus, EURO-V
+- person kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger bus, diesel, 13m single deck urban bus, EURO-VI
+- transport, passenger bus, EURO-VI
+- person kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger bus, diesel, 18m articulated urban bus, EURO-III
+- transport, passenger bus, EURO-III
+- person kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger bus, diesel, 18m articulated urban bus, EURO-IV
+- transport, passenger bus, EURO-IV
+- person kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger bus, diesel, 18m articulated urban bus, EURO-V
+- transport, passenger bus, EURO-V
+- person kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger bus, diesel, 18m articulated urban bus, EURO-VI
+- transport, passenger bus, EURO-VI
+- person kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger bus, diesel, 9m midibus, EURO-III
+- transport, passenger bus, EURO-III
+- person kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger bus, diesel, 9m midibus, EURO-IV
+- transport, passenger bus, EURO-IV
+- person kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger bus, diesel, 9m midibus, EURO-V
+- transport, passenger bus, EURO-V
+- person kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger bus, diesel, 9m midibus, EURO-VI
+- transport, passenger bus, EURO-VI
+- person kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger bus, fuel cell electric, 13m double deck coach bus
+- transport, passenger bus
+- person kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger bus, fuel cell electric, 13m double deck urban bus
+- transport, passenger bus
+- person kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger bus, fuel cell electric, 13m single deck coach bus
+- transport, passenger bus
+- person kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger bus, fuel cell electric, 13m single deck urban bus
+- transport, passenger bus
+- person kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger bus, fuel cell electric, 18m articulated urban bus
+- transport, passenger bus
+- person kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger bus, fuel cell electric, 9m midibus
+- transport, passenger bus
+- person kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, battery electric, NMC-622 battery, Large
+- transport, passenger car
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, battery electric, NMC-622 battery, Large SUV
+- transport, passenger car
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, battery electric, NMC-622 battery, Lower medium
+- transport, passenger car
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, battery electric, NMC-622 battery, Medium
+- transport, passenger car
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, battery electric, NMC-622 battery, Medium SUV
+- transport, passenger car
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, battery electric, NMC-622 battery, Micro
+- transport, passenger car
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, battery electric, NMC-622 battery, Mini
+- transport, passenger car
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, battery electric, NMC-622 battery, Small
+- transport, passenger car
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, battery electric, NMC-622 battery, Van
+- transport, passenger car
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, compressed gas, Large SUV, EURO-2
+- transport, passenger car, EURO-2
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, compressed gas, Large SUV, EURO-3
+- transport, passenger car, EURO-3
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, compressed gas, Large SUV, EURO-4
+- transport, passenger car, EURO-4
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, compressed gas, Large SUV, EURO-6
+- transport, passenger car, EURO-6
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, compressed gas, Large SUV, EURO-6ab
+- transport, passenger car, EURO-6ab
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, compressed gas, Large, EURO-2
+- transport, passenger car, EURO-2
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, compressed gas, Large, EURO-3
+- transport, passenger car, EURO-3
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, compressed gas, Large, EURO-4
+- transport, passenger car, EURO-4
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, compressed gas, Large, EURO-6
+- transport, passenger car, EURO-6
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, compressed gas, Large, EURO-6ab
+- transport, passenger car, EURO-6ab
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, compressed gas, Lower medium, EURO-2
+- transport, passenger car, EURO-2
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, compressed gas, Lower medium, EURO-3
+- transport, passenger car, EURO-3
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, compressed gas, Lower medium, EURO-4
+- transport, passenger car, EURO-4
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, compressed gas, Lower medium, EURO-6
+- transport, passenger car, EURO-6
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, compressed gas, Lower medium, EURO-6ab
+- transport, passenger car, EURO-6ab
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, compressed gas, Medium SUV, EURO-2
+- transport, passenger car, EURO-2
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, compressed gas, Medium SUV, EURO-3
+- transport, passenger car, EURO-3
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, compressed gas, Medium SUV, EURO-4
+- transport, passenger car, EURO-4
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, compressed gas, Medium SUV, EURO-6
+- transport, passenger car, EURO-6
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, compressed gas, Medium SUV, EURO-6ab
+- transport, passenger car, EURO-6ab
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, compressed gas, Medium, EURO-2
+- transport, passenger car, EURO-2
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, compressed gas, Medium, EURO-3
+- transport, passenger car, EURO-3
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, compressed gas, Medium, EURO-4
+- transport, passenger car, EURO-4
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, compressed gas, Medium, EURO-6
+- transport, passenger car, EURO-6
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, compressed gas, Medium, EURO-6ab
+- transport, passenger car, EURO-6ab
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, compressed gas, Mini, EURO-2
+- transport, passenger car, EURO-2
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, compressed gas, Mini, EURO-3
+- transport, passenger car, EURO-3
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, compressed gas, Mini, EURO-4
+- transport, passenger car, EURO-4
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, compressed gas, Mini, EURO-6
+- transport, passenger car, EURO-6
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, compressed gas, Mini, EURO-6ab
+- transport, passenger car, EURO-6ab
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, compressed gas, Small, EURO-2
+- transport, passenger car, EURO-2
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, compressed gas, Small, EURO-3
+- transport, passenger car, EURO-3
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, compressed gas, Small, EURO-4
+- transport, passenger car, EURO-4
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, compressed gas, Small, EURO-6
+- transport, passenger car, EURO-6
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, compressed gas, Small, EURO-6ab
+- transport, passenger car, EURO-6ab
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, compressed gas, Van, EURO-2
+- transport, passenger car, EURO-2
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, compressed gas, Van, EURO-3
+- transport, passenger car, EURO-3
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, compressed gas, Van, EURO-4
+- transport, passenger car, EURO-4
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, compressed gas, Van, EURO-6
+- transport, passenger car, EURO-6
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, compressed gas, Van, EURO-6ab
+- transport, passenger car, EURO-6ab
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, diesel hybrid, Large SUV, EURO-6
+- transport, passenger car, EURO-6
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, diesel hybrid, Large SUV, EURO-6ab
+- transport, passenger car, EURO-6ab
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, diesel hybrid, Large, EURO-6
+- transport, passenger car, EURO-6
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, diesel hybrid, Large, EURO-6ab
+- transport, passenger car, EURO-6ab
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, diesel hybrid, Lower medium, EURO-6
+- transport, passenger car, EURO-6
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, diesel hybrid, Lower medium, EURO-6ab
+- transport, passenger car, EURO-6ab
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, diesel hybrid, Medium SUV, EURO-6
+- transport, passenger car, EURO-6
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, diesel hybrid, Medium SUV, EURO-6ab
+- transport, passenger car, EURO-6ab
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, diesel hybrid, Medium, EURO-6
+- transport, passenger car, EURO-6
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, diesel hybrid, Medium, EURO-6ab
+- transport, passenger car, EURO-6ab
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, diesel hybrid, Mini, EURO-6
+- transport, passenger car, EURO-6
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, diesel hybrid, Mini, EURO-6ab
+- transport, passenger car, EURO-6ab
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, diesel hybrid, Small, EURO-6
+- transport, passenger car, EURO-6
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, diesel hybrid, Small, EURO-6ab
+- transport, passenger car, EURO-6ab
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, diesel hybrid, Van, EURO-6
+- transport, passenger car, EURO-6
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, diesel hybrid, Van, EURO-6ab
+- transport, passenger car, EURO-6ab
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, diesel, Large SUV, EURO-2
+- transport, passenger car, EURO-2
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, diesel, Large SUV, EURO-3
+- transport, passenger car, EURO-3
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, diesel, Large SUV, EURO-4
+- transport, passenger car, EURO-4
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, diesel, Large SUV, EURO-6
+- transport, passenger car, EURO-6
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, diesel, Large SUV, EURO-6ab
+- transport, passenger car, EURO-6ab
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, diesel, Large, EURO-2
+- transport, passenger car, EURO-2
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, diesel, Large, EURO-3
+- transport, passenger car, EURO-3
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, diesel, Large, EURO-4
+- transport, passenger car, EURO-4
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, diesel, Large, EURO-6
+- transport, passenger car, EURO-6
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, diesel, Large, EURO-6ab
+- transport, passenger car, EURO-6ab
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, diesel, Lower medium, EURO-2
+- transport, passenger car, EURO-2
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, diesel, Lower medium, EURO-3
+- transport, passenger car, EURO-3
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, diesel, Lower medium, EURO-4
+- transport, passenger car, EURO-4
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, diesel, Lower medium, EURO-6
+- transport, passenger car, EURO-6
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, diesel, Lower medium, EURO-6ab
+- transport, passenger car, EURO-6ab
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, diesel, Medium SUV, EURO-2
+- transport, passenger car, EURO-2
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, diesel, Medium SUV, EURO-3
+- transport, passenger car, EURO-3
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, diesel, Medium SUV, EURO-4
+- transport, passenger car, EURO-4
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, diesel, Medium SUV, EURO-6
+- transport, passenger car, EURO-6
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, diesel, Medium SUV, EURO-6ab
+- transport, passenger car, EURO-6ab
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, diesel, Medium, EURO-2
+- transport, passenger car, EURO-2
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, diesel, Medium, EURO-3
+- transport, passenger car, EURO-3
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, diesel, Medium, EURO-4
+- transport, passenger car, EURO-4
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, diesel, Medium, EURO-6
+- transport, passenger car, EURO-6
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, diesel, Medium, EURO-6ab
+- transport, passenger car, EURO-6ab
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, diesel, Mini, EURO-2
+- transport, passenger car, EURO-2
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, diesel, Mini, EURO-3
+- transport, passenger car, EURO-3
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, diesel, Mini, EURO-4
+- transport, passenger car, EURO-4
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, diesel, Mini, EURO-6
+- transport, passenger car, EURO-6
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, diesel, Mini, EURO-6ab
+- transport, passenger car, EURO-6ab
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, diesel, Small, EURO-2
+- transport, passenger car, EURO-2
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, diesel, Small, EURO-3
+- transport, passenger car, EURO-3
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, diesel, Small, EURO-4
+- transport, passenger car, EURO-4
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, diesel, Small, EURO-6
+- transport, passenger car, EURO-6
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, diesel, Small, EURO-6ab
+- transport, passenger car, EURO-6ab
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, diesel, Van, EURO-2
+- transport, passenger car, EURO-2
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, diesel, Van, EURO-3
+- transport, passenger car, EURO-3
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, diesel, Van, EURO-4
+- transport, passenger car, EURO-4
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, diesel, Van, EURO-6
+- transport, passenger car, EURO-6
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, diesel, Van, EURO-6ab
+- transport, passenger car, EURO-6ab
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, fuel cell electric, Large
+- transport, passenger car
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, fuel cell electric, Large SUV
+- transport, passenger car
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, fuel cell electric, Lower medium
+- transport, passenger car
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, fuel cell electric, Medium
+- transport, passenger car
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, fuel cell electric, Medium SUV
+- transport, passenger car
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, fuel cell electric, Mini
+- transport, passenger car
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, fuel cell electric, Small
+- transport, passenger car
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, fuel cell electric, Van
+- transport, passenger car
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, gasoline hybrid, Large SUV, EURO-6
+- transport, passenger car, EURO-6
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, gasoline hybrid, Large SUV, EURO-6ab
+- transport, passenger car, EURO-6ab
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, gasoline hybrid, Large, EURO-6
+- transport, passenger car, EURO-6
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, gasoline hybrid, Large, EURO-6ab
+- transport, passenger car, EURO-6ab
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, gasoline hybrid, Lower medium, EURO-6
+- transport, passenger car, EURO-6
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, gasoline hybrid, Lower medium, EURO-6ab
+- transport, passenger car, EURO-6ab
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, gasoline hybrid, Medium SUV, EURO-6
+- transport, passenger car, EURO-6
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, gasoline hybrid, Medium SUV, EURO-6ab
+- transport, passenger car, EURO-6ab
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, gasoline hybrid, Medium, EURO-6
+- transport, passenger car, EURO-6
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, gasoline hybrid, Medium, EURO-6ab
+- transport, passenger car, EURO-6ab
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, gasoline hybrid, Mini, EURO-6
+- transport, passenger car, EURO-6
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, gasoline hybrid, Mini, EURO-6ab
+- transport, passenger car, EURO-6ab
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, gasoline hybrid, Small, EURO-6
+- transport, passenger car, EURO-6
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, gasoline hybrid, Small, EURO-6ab
+- transport, passenger car, EURO-6ab
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, gasoline hybrid, Van, EURO-6
+- transport, passenger car, EURO-6
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, gasoline hybrid, Van, EURO-6ab
+- transport, passenger car, EURO-6ab
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, gasoline, Large SUV, EURO-2
+- transport, passenger car, EURO-2
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, gasoline, Large SUV, EURO-3
+- transport, passenger car, EURO-3
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, gasoline, Large SUV, EURO-4
+- transport, passenger car, EURO-4
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, gasoline, Large SUV, EURO-6
+- transport, passenger car, EURO-6
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, gasoline, Large SUV, EURO-6ab
+- transport, passenger car, EURO-6ab
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, gasoline, Large, EURO-2
+- transport, passenger car, EURO-2
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, gasoline, Large, EURO-3
+- transport, passenger car, EURO-3
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, gasoline, Large, EURO-4
+- transport, passenger car, EURO-4
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, gasoline, Large, EURO-6
+- transport, passenger car, EURO-6
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, gasoline, Large, EURO-6ab
+- transport, passenger car, EURO-6ab
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, gasoline, Lower medium, EURO-2
+- transport, passenger car, EURO-2
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, gasoline, Lower medium, EURO-3
+- transport, passenger car, EURO-3
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, gasoline, Lower medium, EURO-4
+- transport, passenger car, EURO-4
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, gasoline, Lower medium, EURO-6
+- transport, passenger car, EURO-6
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, gasoline, Lower medium, EURO-6ab
+- transport, passenger car, EURO-6ab
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, gasoline, Medium SUV, EURO-2
+- transport, passenger car, EURO-2
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, gasoline, Medium SUV, EURO-3
+- transport, passenger car, EURO-3
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, gasoline, Medium SUV, EURO-4
+- transport, passenger car, EURO-4
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, gasoline, Medium SUV, EURO-6
+- transport, passenger car, EURO-6
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, gasoline, Medium SUV, EURO-6ab
+- transport, passenger car, EURO-6ab
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, gasoline, Medium, EURO-2
+- transport, passenger car, EURO-2
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, gasoline, Medium, EURO-3
+- transport, passenger car, EURO-3
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, gasoline, Medium, EURO-4
+- transport, passenger car, EURO-4
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, gasoline, Medium, EURO-6
+- transport, passenger car, EURO-6
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, gasoline, Medium, EURO-6ab
+- transport, passenger car, EURO-6ab
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, gasoline, Mini, EURO-2
+- transport, passenger car, EURO-2
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, gasoline, Mini, EURO-3
+- transport, passenger car, EURO-3
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, gasoline, Mini, EURO-4
+- transport, passenger car, EURO-4
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, gasoline, Mini, EURO-6
+- transport, passenger car, EURO-6
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, gasoline, Mini, EURO-6ab
+- transport, passenger car, EURO-6ab
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, gasoline, Small, EURO-2
+- transport, passenger car, EURO-2
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, gasoline, Small, EURO-3
+- transport, passenger car, EURO-3
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, gasoline, Small, EURO-4
+- transport, passenger car, EURO-4
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, gasoline, Small, EURO-6
+- transport, passenger car, EURO-6
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, gasoline, Small, EURO-6ab
+- transport, passenger car, EURO-6ab
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, gasoline, Van, EURO-2
+- transport, passenger car, EURO-2
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, gasoline, Van, EURO-3
+- transport, passenger car, EURO-3
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, gasoline, Van, EURO-4
+- transport, passenger car, EURO-4
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, gasoline, Van, EURO-6
+- transport, passenger car, EURO-6
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, gasoline, Van, EURO-6ab
+- transport, passenger car, EURO-6ab
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, plugin diesel hybrid, Large SUV, EURO-6
+- transport, passenger car, EURO-6
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, plugin diesel hybrid, Large SUV, EURO-6ab
+- transport, passenger car, EURO-6ab
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, plugin diesel hybrid, Large, EURO-6
+- transport, passenger car, EURO-6
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, plugin diesel hybrid, Large, EURO-6ab
+- transport, passenger car, EURO-6ab
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, plugin diesel hybrid, Lower medium, EURO-6
+- transport, passenger car, EURO-6
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, plugin diesel hybrid, Lower medium, EURO-6ab
+- transport, passenger car, EURO-6ab
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, plugin diesel hybrid, Medium SUV, EURO-6
+- transport, passenger car, EURO-6
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, plugin diesel hybrid, Medium SUV, EURO-6ab
+- transport, passenger car, EURO-6ab
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, plugin diesel hybrid, Medium, EURO-6
+- transport, passenger car, EURO-6
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, plugin diesel hybrid, Medium, EURO-6ab
+- transport, passenger car, EURO-6ab
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, plugin diesel hybrid, Mini, EURO-6
+- transport, passenger car, EURO-6
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, plugin diesel hybrid, Mini, EURO-6ab
+- transport, passenger car, EURO-6ab
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, plugin diesel hybrid, Small, EURO-6
+- transport, passenger car, EURO-6
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, plugin diesel hybrid, Small, EURO-6ab
+- transport, passenger car, EURO-6ab
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, plugin diesel hybrid, Van, EURO-6
+- transport, passenger car, EURO-6
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, plugin diesel hybrid, Van, EURO-6ab
+- transport, passenger car, EURO-6ab
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, plugin gasoline hybrid, Large SUV, EURO-6
+- transport, passenger car, EURO-6
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, plugin gasoline hybrid, Large SUV, EURO-6ab
+- transport, passenger car, EURO-6ab
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, plugin gasoline hybrid, Large, EURO-6
+- transport, passenger car, EURO-6
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, plugin gasoline hybrid, Large, EURO-6ab
+- transport, passenger car, EURO-6ab
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, plugin gasoline hybrid, Lower medium, EURO-6
+- transport, passenger car, EURO-6
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, plugin gasoline hybrid, Lower medium, EURO-6ab
+- transport, passenger car, EURO-6ab
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, plugin gasoline hybrid, Medium SUV, EURO-6
+- transport, passenger car, EURO-6
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, plugin gasoline hybrid, Medium SUV, EURO-6ab
+- transport, passenger car, EURO-6ab
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, plugin gasoline hybrid, Medium, EURO-6
+- transport, passenger car, EURO-6
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, plugin gasoline hybrid, Medium, EURO-6ab
+- transport, passenger car, EURO-6ab
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, plugin gasoline hybrid, Mini, EURO-6
+- transport, passenger car, EURO-6
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, plugin gasoline hybrid, Mini, EURO-6ab
+- transport, passenger car, EURO-6ab
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, plugin gasoline hybrid, Small, EURO-6
+- transport, passenger car, EURO-6
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, plugin gasoline hybrid, Small, EURO-6ab
+- transport, passenger car, EURO-6ab
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, plugin gasoline hybrid, Van, EURO-6
+- transport, passenger car, EURO-6
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, plugin gasoline hybrid, Van, EURO-6ab
+- transport, passenger car, EURO-6ab
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- wood, burned in residential wood stove 5-15kW
+- heat
+- megajoule
+: Steam and air conditioning supply
+? !!python/tuple
+- wood, burned in residential wood stove 5-15kW_FE_residential_water_heating_wood
+- heat
+- megajoule
+: Steam and air conditioning supply
+? !!python/tuple
+- wood, burned in wood industrial furnace 1-10MW
+- heat
+- megajoule
+: Steam and air conditioning supply
+? !!python/tuple
+- wood, burned in wood industrial furnace 1-10MW_FE_services_wood
+- heat
+- megajoule
+: Steam and air conditioning supply
+? !!python/tuple
+- market for battery cell, Li-ion, NMC622
+- battery cell, Li-ion, NMC622
+- kilogram
+: Manufacture of batteries and accumulators
+? !!python/tuple
+- light fuel oil, burned in residential 10kW boiler_FE_residential_water_heating_light_fuel_oil
+- heat
+- megajoule
+: Steam and air conditioning supply
+? !!python/tuple
+- light fuel oil, burned in residential 10kW boiler
+- heat
+- megajoule
+: Steam and air conditioning supply
