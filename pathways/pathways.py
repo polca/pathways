@@ -324,11 +324,16 @@ class Pathways:
             if k in self.scenarios.coords["variables"].values
         }
 
-        # Create xarray for storing LCA results if not already present
-        if self.lca_results is None:
-            _, technosphere_index, _ = get_lca_matrices(
+        try:
+            _, technosphere_index, _, uncertain_parameters = get_lca_matrices(
                 self.filepaths, models[0], scenarios[0], years[0]
             )
+        except Exception as e:
+            logging.error(f"Error retrieving LCA matrices: {str(e)}")
+            return
+
+        # Create xarray for storing LCA results if not already present
+        if self.lca_results is None:
             locations = fetch_inventories_locations(technosphere_index)
 
             self.lca_results = create_lca_results_array(
@@ -344,13 +349,12 @@ class Pathways:
             )
 
         # generate share of sub-technologies
+        shares = None
         if subshares:
             shares = generate_samples(
                 years=self.scenarios.coords["year"].values.tolist(),
                 iterations=use_distributions,
             )
-        else:
-            shares = None
 
         # Iterate over each combination of model, scenario, and year
         results = {}
@@ -377,6 +381,7 @@ class Pathways:
                             self.reverse_classifications,
                             self.debug,
                             use_distributions,
+                            uncertain_parameters,
                             shares,
                         )
                         for year in years
@@ -414,6 +419,7 @@ class Pathways:
                                     self.debug,
                                     use_distributions,
                                     shares or None,
+                                    uncertain_parameters,
                                 )
                             )
                             for year in years

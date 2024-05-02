@@ -25,8 +25,8 @@ Wind: ### Check if IAMs make the distinction between onshore and offshore
         uncertainty_type: uniform
 PV:
   c-Si:
-    name: electricity production, photovoltaic, at 93 kWp slanted-roof, multi-Si, laminimumated, integrated
-    reference product: electricity production, photovoltaic, at 93 kWp slanted-roof, multi-Si, laminimumated, integrated
+    name: electricity production, photovoltaic, at 93 kWp slanted-roof, multi-Si, laminated, integrated
+    reference product: electricity production, photovoltaic, at 93 kWp slanted-roof, multi-Si, laminated, integrated
     unit: kilowatt hour
     share:
       2020:
@@ -47,7 +47,7 @@ PV:
         maximum: 0.2500
         uncertainty_type: uniform
   CIGS:
-    name: electricity production, photovoltaic, 3kWp slanted-roof installation, CdTe, laminimumated, integrated
+    name: electricity production, photovoltaic, 3kWp slanted-roof installation, CdTe, laminated, integrated
     reference product: electricity, low voltage
     unit: kilowatt hour
     share:
@@ -58,7 +58,7 @@ PV:
         maximum: 0.1250
         uncertainty_type: uniform
   a-Si:
-    name: electricity production, photovoltaic, 3kWp slanted-roof installation, a-Si, laminimumated, integrated
+    name: electricity production, photovoltaic, 3kWp slanted-roof installation, a-Si, laminated, integrated
     reference product: electricity, low voltage
     unit: kilowatt hour
     share:
@@ -69,8 +69,8 @@ PV:
         maximum: 0.0090
         uncertainty_type: uniform
   Perovskite:
-    name: null
-    reference product: null
+    name: electricity production, photovoltaic, perovskite
+    reference product: electricity, low voltage
     unit: kilowatt hour
     share:
       2020:
@@ -80,8 +80,8 @@ PV:
         maximum: 0.3000
         uncertainty_type: uniform
   GaAs:
-    name: null
-    reference product: null
+    name: electricity production, photovoltaic, GaAs
+    reference product: electricity, low voltage
     unit: kilowatt hour
     share:
       2020:
@@ -259,7 +259,6 @@ Battery-Mobile:
         minimum: 0.0
         maximum: 0.1
         uncertainty_type: uniform
-#### ON BATTERIES, WE WILL BE WORKING WITH KILOGRAMS... FORGETTING ABOUT ENERGY DENSITIES :(
 Battery-Stationary: ### Home storage uses NMC811 (w/o hyphen) in the current premise version
   NMC111:
     name: market for battery cell, Li-ion, NMC111

@@ -103,6 +103,35 @@ def load_units_conversion() -> dict:
     return data
 
 
+def read_indices_csv(file_path: Path) -> dict[tuple[str, str, str, str], int]:
+    """
+    Reads a CSV file and returns its contents as a dictionary.
+
+    Each row of the CSV file is expected to contain four string values followed by an index.
+    These are stored in the dictionary as a tuple of the four strings mapped to the index.
+
+    :param file_path: The path to the CSV file.
+    :type file_path: Path
+
+    :return: A dictionary mapping tuples of four strings to indices.
+    For technosphere indices, the four strings are the activity name, product name, location, and unit.
+    For biosphere indices, the four strings are the flow name, category, subcategory, and unit.
+    :rtype: Dict[Tuple[str, str, str, str], str]
+    """
+    indices = dict()
+    with open(file_path) as read_obj:
+        csv_reader = csv.reader(read_obj, delimiter=";")
+        for row in csv_reader:
+            try:
+                indices[(row[0], row[1], row[2], row[3])] = int(row[4])
+            except IndexError as err:
+                logging.error(
+                    f"Error reading row {row} from {file_path}: {err}. "
+                    f"Could it be that the file uses commas instead of semicolons?"
+                )
+    return indices
+
+
 def create_lca_results_array(
     methods: [List[str], None],
     years: List[int],
@@ -251,6 +280,54 @@ def clean_cache_directory():
     # clean up the cache directory
     for file in get_visible_files(DIR_CACHED_DB):
         file.unlink()
+
+
+# def resize_scenario_data(
+#     scenario_data: xr.DataArray,
+#     model: List[str],
+#     scenario: List[str],
+#     region: List[str],
+#     year: List[int],
+#     variables: List[str],
+# ) -> xr.DataArray:
+#     """
+#     Resize the scenario data to the given scenario, year, region, and variables.
+#     :param model: List of models.
+#     :param scenario_data: xarray DataArray with scenario data.
+#     :param scenario: List of scenarios.
+#     :param year: List of years.
+#     :param region: List of regions.
+#     :param variables: List of variables.
+#     :return: Resized scenario data.
+#     """
+#     def append_missing(data_array, dimension, new_values, dim_name):
+#         for value in new_values:
+#             if value not in data_array.coords[dim_name].values:
+#                 new_entry = xr.full_like(data_array.isel(**{dim_name: 0}), fill_value=0)  # Placeholder value
+#                 new_entry.coords[dim_name] = value
+#                 data_array = xr.concat([data_array, new_entry], dim=dim_name)
+#         return data_array
+#
+#     # Check and append missing model, scenario, region, year, and variables
+#     scenario_data = append_missing(scenario_data, 'model', model, 'model')
+#     scenario_data = append_missing(scenario_data, 'pathway', scenario, 'pathway')
+#     scenario_data = append_missing(scenario_data, 'region', region, 'region')
+#     scenario_data = append_missing(scenario_data, 'year', year, 'year')
+#     scenario_data = append_missing(scenario_data, 'variables', variables, 'variables')
+#
+#     # Collect indices for all dimensions now that all entries are guaranteed to exist
+#     indices = {
+#         'model': [scenario_data.coords['model'].values.tolist().index(x) for x in model],
+#         'pathway': [scenario_data.coords['pathway'].values.tolist().index(x) for x in scenario],
+#         'region': [scenario_data.coords['region'].values.tolist().index(x) for x in region],
+#         'year': [scenario_data.coords['year'].values.tolist().index(x) for x in year],
+#         'variables': [scenario_data.coords['variables'].values.tolist().index(x) for x in variables],
+#     }
+#
+#     # Use multi-dimensional indexing to select data
+#     scenario_data = scenario_data.isel(**indices)
+#
+#     return scenario_data
 
 
 def resize_scenario_data(

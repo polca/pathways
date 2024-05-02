@@ -5,6 +5,7 @@ import bw2calc
 import bw_processing
 import bw_processing as bwp
 import numpy as np
+import pandas as pd
 import yaml
 from bw_processing import Datapackage
 from premise.geomap import Geomap
@@ -186,10 +187,13 @@ def get_subshares_matrix(
 
 
 def adjust_matrix_based_on_shares(
+    filepaths: list,
     lca: bw2calc.LCA,
     shares_dict: dict,
     subshares: dict,
     use_distributions: int,
+    model: str,
+    scenario: str,
     year: int,
 ):
     """
