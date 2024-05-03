@@ -1,5 +1,5 @@
 ---
-title: '`pathways`: enhancing environmental impact assessments of transition scenarios through Life Cycle Assessment (LCA)
+title: '`pathways`: enhancing environmental impact assessments of transition scenarios through Life Cycle Assessment (LCA)'
 tags:
   - Python
   - life cycle assessment
@@ -43,7 +43,7 @@ environmental impacts of the scenario (or a subset of it) over time.
 
 IAMs, frequently based on Shared Socioeconomic Pathways (SSPs), offer cost-optimized projections of future scenarios, 
 highlighting, for example, the necessary changes in regional electricity mixes and different means of transport to meet
-global warming objectives. This scenario analysis exercise enables us to predict future system changes 
+global warming objectives [@Riahi:2017]. This scenario analysis exercise enables us to predict future system changes 
 and their effects on the environmental performance of different technologies along the different supply chains. In this context,
 prospective Life Cycle Assessment (pLCA) emerges as a unique tool to provide a robust evaluation of the environmental 
 performance of both existing and anticipated production systems. At the methodological level, [@Sacchi:2022] has recently 
