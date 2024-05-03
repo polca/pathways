@@ -32,34 +32,34 @@ bibliography: paper.bib
 `pathways` is a Python package that characterizes the environmental impacts of products, sectors or transition scenarios
 over time using Life Cycle Assessment (LCA). Compared to traditional scenario results from energy models, `pathways`
 provides a more detailed and transparent view of the environmental impacts of a scenario by resolving supply chains 
-between producers and consumers (as an LCA does). Hence, direct and indirect emissions are accounted for, and 
+between producers and consumers (as LCA does). Hence, direct and indirect emissions are accounted for, and 
 double-counting issues are partially resolved.
 
-`pathways` is initially designed to work with data packages produced by `premise` [@Sacchi:2022], but can be used with any Integrated
-Assessment Model (IAM) scenarios  and LCA databases. It reads a scenario and a corresponding set of scenario-based LCA matrices and calculates the 
-environmental impacts of the scenario (or a subset of it) over time.
+`pathways` is initially designed to work with data packages produced by `premise` [@Sacchi:2022], but can be used with 
+any Integrated Assessment Model (IAM) scenarios and LCA databases. It reads a scenario and a corresponding set of 
+scenario-based LCA matrices and calculates the environmental impacts of the scenario (or a subset of it) over time.
 
 # Statement of need
 
-IAMs, frequently based on Shared Socioeconomic Pathways (SSPs), offer cost-optimized projections of future scenarios, 
-highlighting, for example, the necessary changes in regional electricity mixes and different means of transport to meet
-global warming objectives [@Riahi:2017]. This scenario analysis exercise enables us to predict future system changes 
-and their effects on the environmental performance of different technologies along the different supply chains. In this context,
-prospective Life Cycle Assessment (pLCA) emerges as a unique tool to provide a robust evaluation of the environmental 
-performance of both existing and anticipated production systems. At the methodological level, [@Sacchi:2022] has recently 
-laid the foundations for extending present-day process-based life-cycle inventory into the future using the output 
-from IAMs. Meanwhile, most efforts in pLCA have been centred around improving the ability to forecast future life cycle
-inventories accurately.
+IAMs, frequently based on Shared Socioeconomic Pathways (SSPs), offer cost-optimized projections of future scenarios. 
+These scenarios highlight, for example, the necessary changes in regional electricity mixes and different means of 
+transport to meet global warming mitigation objectives [@Riahi:2017]. This scenario analysis exercise enables us to 
+consider future system changes and their effects on the environmental performance of different technologies 
+along the different supply chains. In this context, prospective Life Cycle Assessment (pLCA) emerges as a unique tool 
+to provide a robust evaluation of the environmental performance of both existing and anticipated production systems. 
+At the methodological level, [@Sacchi:2022] has recently laid the foundations for extending present-day process-based 
+life-cycle inventory into the future using the output from IAMs. Meanwhile, most efforts in pLCA have been centred 
+around improving the ability to forecast future life cycle inventories accurately.
 
 At this juncture, performing an LCA of the transition scenarios using the updated life cycle inventories at each time step
 uncaps excellent potential to improve the sustainability assessment of these scenarios. LCA would expand the 
-conventional focus on GHG emissions to broader environmental impacts, such as land use, water consumption, and toxicity while considering direct 
-and indirect emissions. However, running LCAs of the transition scenarios provided by IAMs -or energy system models - at
-the system level remains challenging. Mainly because of the computational expense of running LCAs for each time step and
-region of each scenario and the methodological complexity of consistently defining the functional unit of the LCA based
-on the IAMs outputs while dealing with issues such as double-counting. `pathways`, using the LCA framework `brightway2` [@Mutel:2017]
-and building on `premise`, offers a solution to these challenges by providing a tool to evaluate the environmental impacts 
-of transition scenarios systematically.
+conventional focus on GHG emissions to broader environmental impacts, such as land use, water consumption, and toxicity 
+while considering direct and indirect emissions. However, running LCAs of the transition scenarios provided by IAMs -
+or energy system models - at the system level remains challenging. Mainly because of the computational expense of running 
+LCAs for each time step and region of each scenario and the methodological complexity of consistently defining the 
+functional unit of the LCA based on the IAMs outputs while dealing with issues such as double-counting. 
+`pathways`, using the LCA framework `brightway2` [@Mutel:2017] and building on `premise`, offers a solution to these 
+challenges by providing a tool to evaluate the environmental impacts of transition scenarios systematically.
 
 # Description
 
@@ -86,6 +86,8 @@ of transition scenarios systematically.
 # Acknowledgements
 
 The authors gratefully acknowledge the financial support from the Swiss State Secretariat for Education, Research and 
-Innovation (SERI), under the Horizon Europe project PRISMA (grant agreement no. 101081604).
+Innovation (SERI), under the Horizon Europe project PRISMA (grant agreement no. 101081604). The authors also thank the
+Swiss Federal Office of Energy (SFOE) for the support in the development of the `premise` and `pathways` tools through 
+the SWEET-SURE program.
 
 # References
