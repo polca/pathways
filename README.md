@@ -40,7 +40,7 @@ or alternatively, you can clone the repository and install it from the source:
 
 ```bash
 
-    git clone https://github.com/yourrepository/pathways.git
+    git clone https://github.com/polca/pathways.git
     cd pathways
     pip install -r requirements.txt
     
@@ -50,7 +50,8 @@ or alternatively, you can clone the repository and install it from the source:
 ## Usage
 
 ``pathways`` is a Python package, and can be used in Python scripts
-or in a Python interpreter.
+or in a Python interpreter. 
+See the [example notebook](https://github.com/polca/pathways/blob/main/example/example.ipynb).
 
 ### Python
 
@@ -131,10 +132,16 @@ You can display the LCA results with an optional cutoff parameter to filter insi
 It can be further formatted
 to a pandas' DataFrame or export to a CSV/Excel file using the built-in
 methods of ``xarray``.
+    
+```python
 
+    df = results.to_dataframe()
+    df.to_csv("results.csv")
 
-which can then be visualized using your favorite plotting library.
-![Screenshot](assets/screenshot.png)
+```
+
+Results can be visualized using your favorite plotting library.
+![Screenshot](example/fig5.png)
 
 ## Contributing
 

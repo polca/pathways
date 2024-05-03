@@ -5,13 +5,11 @@ LCA datasets, and LCA matrices.
 """
 
 import logging
-import warnings
 from collections import defaultdict
 from multiprocessing import Pool, cpu_count
-from typing import List, Optional
+from typing import Any, List, Optional
 
 import numpy as np
-import pandas
 import pandas as pd
 import pyprind
 import xarray as xr
@@ -33,9 +31,6 @@ from .utils import (
     load_units_conversion,
     resize_scenario_data,
 )
-
-# remove warnings
-#warnings.filterwarnings("ignore")
 
 
 def _get_mapping(data) -> dict:
@@ -60,9 +55,9 @@ def _read_scenario_data(data: dict, scenario: str):
     # if CSV file
     if filepath.endswith(".csv"):
         return pd.read_csv(filepath, index_col=0)
-    else:
-        # Excel file
-        return pd.read_excel(filepath, index_col=0)
+
+    # Excel file
+    return pd.read_excel(filepath, index_col=0)
 
 
 def _read_datapackage(datapackage: str) -> DataPackage:
@@ -98,9 +93,7 @@ class Pathways:
 
         if self.data.get_resource("classifications"):
             self.classifications.update(
-                yaml.full_load(
-                    self.data.get_resource("classifications").raw_read()
-                )
+                yaml.full_load(self.data.get_resource("classifications").raw_read())
             )
 
         # create a reverse mapping
@@ -132,7 +125,9 @@ class Pathways:
         :return: dict
         """
 
-        def create_dict_for_specific_model(row: dict, model: str) -> dict:
+        def create_dict_for_specific_model(
+            row: pd.Series, model: str
+        ) -> dict[Any, Any] | None:
             """
             Create a dictionary for a specific model from the row.
             :param row: dict
@@ -161,7 +156,7 @@ class Pathways:
             return None
 
         def create_dict_with_specific_model(
-            dataframe: pandas.DataFrame, model: str
+            dataframe: pd.DataFrame, model: str
         ) -> dict:
             """
             Create a dictionary for a specific model from the dataframe.
@@ -170,7 +165,7 @@ class Pathways:
             :return: dict
             """
             model_dict = {}
-            for index, row in dataframe.iterrows():
+            for _, row in dataframe.iterrows():
                 row_dict = create_dict_for_specific_model(row, model)
                 if row_dict:
                     model_dict.update(row_dict)
@@ -198,7 +193,9 @@ class Pathways:
         for var in mapping_vars:
             if var not in scenario_data["variables"].values:
                 if self.debug:
-                    logging.warning(f"Variable {var} not found in scenario data among: {scenario_data['variables'].values.tolist()}.")
+                    logging.warning(
+                        f"Variable {var} not found in scenario data among: {scenario_data['variables'].values.tolist()}."
+                    )
 
         # remove rows which do not have a value under the `variable`
         # column that correspond to any value in self.mapping for `scenario variable`
@@ -248,7 +245,6 @@ class Pathways:
         regions: Optional[List[str]] = None,
         years: Optional[List[int]] = None,
         variables: Optional[List[str]] = None,
-        characterization: bool = True,
         multiprocessing: bool = False,
         demand_cutoff: float = 1e-3,
         use_distributions: int = 0,
@@ -284,14 +280,11 @@ class Pathways:
 
         self.scenarios = harmonize_units(self.scenarios, variables)
 
-        if characterization is False:
-            methods = None
+        # if no methods are provided, use all those available
+        methods = methods or get_lcia_method_names()
+        if self.debug:
+            logging.info(f"Using the following LCIA methods: {methods}")
 
-        # Set default values if arguments are not provided
-        if methods is None and characterization is True:
-            methods = get_lcia_method_names()
-            if self.debug:
-                logging.info(f"Using the following LCIA methods: {methods}")
         if models is None:
             models = self.scenarios.coords["model"].values
             models = [m.lower() for m in models]
@@ -331,7 +324,7 @@ class Pathways:
 
         # Create xarray for storing LCA results if not already present
         if self.lca_results is None:
-            _, technosphere_index, biosphere_index = get_lca_matrices(
+            _, technosphere_index, _ = get_lca_matrices(
                 self.filepaths, models[0], scenarios[0], years[0]
             )
             locations = fetch_inventories_locations(technosphere_index)
@@ -345,7 +338,7 @@ class Pathways:
                 scenarios=scenarios,
                 classifications=self.classifications,
                 mapping=self.mapping,
-                use_distributions=True if use_distributions > 0 else False,
+                use_distributions=use_distributions > 0,
             )
 
         # Iterate over each combination of model, scenario, and year
@@ -388,29 +381,31 @@ class Pathways:
                             }
                         )
                 else:
-                    results = {
-                        (model, scenario, year): _calculate_year(
-                            (
-                                model,
-                                scenario,
-                                year,
-                                regions,
-                                variables,
-                                methods,
-                                demand_cutoff,
-                                self.filepaths,
-                                self.mapping,
-                                self.units,
-                                self.lca_results,
-                                self.classifications,
-                                self.scenarios,
-                                self.reverse_classifications,
-                                self.debug,
-                                use_distributions,
+                    results.update(
+                        {
+                            (model, scenario, year): _calculate_year(
+                                (
+                                    model,
+                                    scenario,
+                                    year,
+                                    regions,
+                                    variables,
+                                    methods,
+                                    demand_cutoff,
+                                    self.filepaths,
+                                    self.mapping,
+                                    self.units,
+                                    self.lca_results,
+                                    self.classifications,
+                                    self.scenarios,
+                                    self.reverse_classifications,
+                                    self.debug,
+                                    use_distributions,
+                                )
                             )
-                        )
-                        for year in years
-                    }
+                            for year in years
+                        }
+                    )
 
         # remove None values in results
         results = {k: v for k, v in results.items() if v is not None}
@@ -432,9 +427,9 @@ class Pathways:
         }
 
         # use pyprint to display progress
-        bar = pyprind.ProgBar(len(results))
+        progress_bar = pyprind.ProgBar(len(results))
         for coord, result in results.items():
-            bar.update()
+            progress_bar.update()
             model, scenario, year = coord
             acts_category_idx_dict = result["other"]["acts_category_idx_dict"]
             acts_location_idx_dict = result["other"]["acts_location_idx_dict"]
