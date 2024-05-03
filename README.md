@@ -141,7 +141,7 @@ methods of ``xarray``.
 ```
 
 Results can be visualized using your favorite plotting library.
-![Screenshot](example/fig5.png)
+![Screenshot](example/figures/fig5.png)
 
 ## Contributing
 
