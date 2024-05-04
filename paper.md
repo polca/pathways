@@ -29,15 +29,17 @@ bibliography: paper.bib
 
 # Summary
 
-`pathways` is a Python package that characterizes the environmental impacts of products, sectors or transition scenarios
-over time using Life Cycle Assessment (LCA). Compared to traditional scenario results from energy models, `pathways`
-provides a more detailed and transparent view of the environmental impacts of a scenario by resolving supply chains 
-between producers and consumers (as LCA does). Hence, direct and indirect emissions are accounted for, and 
-double-counting issues are partially resolved.
 
-`pathways` is initially designed to work with data packages produced by `premise` [@Sacchi:2022], but can be used with 
-any Integrated Assessment Model (IAM) scenarios and LCA databases. It reads a scenario and a corresponding set of 
-scenario-based LCA matrices and calculates the environmental impacts of the scenario (or a subset of it) over time.
+`pathways` is a Python package that conducts Life Cycle Assessment (LCA) to evaluate 
+the environmental impacts of products, sectors, or transition scenarios over time. 
+Unlike most energy (ESM) or integrated assessment models (IAM), `pathways` offers 
+a clearer view on impacts caused by a scenario by considering supply chain relations 
+between producers and consumers, thereby addressing direct and indirect emissions. 
+Unlike the reported emissions in ESM and IAM scenarios, which focus primarily on operation,
+`pathways` allows reporting the environmental impacts of infrastructure build-up 
+and decommissioning. Finally, scenarios can be characterized across a wide range of 
+indicators which are usually not included in ESM or IAM: land use, water consumption,
+toxicity impacts, etc.
 
 # Statement of need
 
