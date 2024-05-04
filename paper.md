@@ -107,7 +107,7 @@ double accounting, etc., see 5 in Figure 1) before the results are aggregated an
 dataframe (6 in Figure 1). Impacts are broken down per technology, region, time step,
 geographical origin of impact, life-cycle stage and impact assessment method.
 
-![pathways workflow.\label{fig:workflow}](assets/workflow_diagram.png)
+![`pathways` workflow: from data package to impact assessment.\label{fig:workflow}](assets/workflow_diagram.png)
 
 # Usage
 
