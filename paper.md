@@ -77,7 +77,7 @@ environmental impacts of energy transition scenarios. `pathways` works with
 data packages containing LCA matrices adjusted to each time step of the 
 ESM/IAM scenario, providing detailed and transparent insights into 
 scenario environmental impacts. `pathways` works particularly well with
-data packages produced by `premise`, but can be used with any IAM/ESM scenarios
+data packages produced by `premise`, but can be used with any ESM/IAM scenarios
 and LCA databases. Using LCA matrices which have been modified to reflect
 the scenario's time-dependent technology mixes ensures a consistent and coherent
 characterization of said scenario.
@@ -112,8 +112,8 @@ geographical origin of impact, life-cycle stage and impact assessment method.
 # Impact
 
 By systematically updating and integrating LCA matrices over time, `pathways` improves the accuracy and relevance of 
-environmental impact assessments for transition scenarios. This tool fosters greater alignment between LCAs and IAM 
-outputs, enhancing the consistency and reliability of environmental assessments across different modeling platforms.
+environmental impact assessments for transition scenarios. This tool fosters greater alignment between LCAs and ESM/IAM 
+outputs, enhancing the consistency and reliability of environmental assessments across different modelling platforms.
 
 Additionally, `pathways` offers a detailed and structured workflow that enables IAM 
 modellers to incorporate LCA into their analyses. This opens new avenues for these modellers to enhance the 
