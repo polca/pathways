@@ -1,5 +1,5 @@
 ---
-title: '`pathways`: sustainable energy transition scenarios'
+title: '`pathways`: life cycle assessment of energy transition scenarios'
 tags:
   - Python
   - life cycle assessment
@@ -91,11 +91,11 @@ files:
 
 - `datapackage.json`: a JSON file describing the contents of the data package
 - a `mapping` folder containing a `mapping.yaml` file that describes the mapping
-  between the IAM scenario and the LCA databases
-- an `inventories` folder containing the LCA matrices as CSV files
+  between the IAM scenario variables and the LCA datasets
+- an `inventories` folder containing the LCA matrices as CSV files for each time step
 - a `scenario_data` folder containing the scenario data as CSV files
 
-`pathways` reads teh scenario data files (1 in Figure 1), and iterates, 
+`pathways` reads the scenario data files (1 in Figure 1), and iterates, 
 for each time step and region, through technologies with a non-null
 production volume. For each technology, `pathways` retrieves the corresponding
 LCI dataset by looking it up in teh mapping file (2 in Figure 1). The lookup
