@@ -68,8 +68,8 @@ Several studies characterize energy scenarios with LCA, including
 IAM scenario outputs using a hybrid-LCA framework. There is also the work of
 [@Xu:2020], who developed the ambitious EAFESA framework aiming for 
 bidirectional coupling between ESM and LCA. Yet, these studies focused 
-on specific sectors or technologies and haven't yet generalized to broader 
-scenarios and indicators, nor made their implementations widely available.
+on specific sectors or technologies and have not yet generalized to broader 
+scenarios and indicators, nor have they made their implementations widely available.
 
 To address these challenges, the open-source library `pathways` utilizes the 
 LCA framework `brightway` [@Mutel:2017] to systematically evaluate 
