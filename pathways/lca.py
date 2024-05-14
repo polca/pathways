@@ -22,14 +22,6 @@ from scipy.sparse import csr_matrix
 
 from .filesystem_constants import DIR_CACHED_DB
 from .lcia import fill_characterization_factors_matrices
-from .utils import (
-    _group_technosphere_indices,
-    check_unclassified_activities,
-    fetch_indices,
-    get_unit_conversion_factors,
-    read_indices_csv,
-)
-
 from .stats import (
     create_mapping_sheet,
     log_intensities_to_excel,
@@ -41,6 +33,13 @@ from .subshares import (
     adjust_matrix_based_on_shares,
     find_technology_indices,
     get_subshares_matrix,
+)
+from .utils import (
+    _group_technosphere_indices,
+    check_unclassified_activities,
+    fetch_indices,
+    get_unit_conversion_factors,
+    read_indices_csv,
 )
 
 logging.basicConfig(
