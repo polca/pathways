@@ -68,8 +68,8 @@ Several studies characterize energy scenarios with LCA, including
 IAM scenario outputs using a hybrid-LCA framework. There is also the work of
 [@Xu:2020], who developed the ambitious EAFESA framework aiming for 
 bidirectional coupling between ESM and LCA. Yet, these studies focused 
-on specific sectors or technologies and haven't yet generalized to broader 
-scenarios and indicators, nor made their implementations widely available.
+on specific sectors or technologies and have not yet generalized to broader 
+scenarios and indicators, nor have they made their implementations widely available.
 
 To address these challenges, the open-source library `pathways` utilizes the 
 LCA framework `brightway` [@Mutel:2017] to systematically evaluate 
@@ -101,13 +101,21 @@ production volume. For each technology, `pathways` retrieves the corresponding
 LCI dataset by looking it up in the mapping file (2 in Figure 1). The lookup
 indicates `pathways` which LCA matrices to fetch from the data package (3 in Figure 1).
 The LCA matrices are loaded in `bw2calc` (the LCA calculation module of `brightway`)
-and multiplied by the production volume (see 4 in Figure 1). Some post-processing
-is done on the inventory matrices (e.g., Monte Carlo iterations, dealing with
-double accounting, etc., see 5 in Figure 1) before the results are aggregated and saved in a
-dataframe (6 in Figure 1). Impacts are broken down per technology, region, time step,
-geographical origin of impact, life-cycle stage and impact assessment method.
+and multiplied by the production volume (see 4 in Figure 1). Some post-processing 
+is done on the inventory matrices, including dealing 
+with double accounting. For this purpose, the original LCI database is adjusted by 
+zeroing out all regional energy inputs that the energy system 
+model accounts for and might demand during the system's life cycle,
+following the same workflow presented in [@Volkart:2018] (see 5 in Figure 1). 
+Finally, the results are aggregated and saved in a dataframe, 
+where impacts are broken down per technology, region, time step,
+geographical origin of impact, life-cycle stage and impact assessment 
+method (6 in Figure 1).
 
 ![`pathways` workflow: from data package to impact assessment.\label{fig:workflow}](assets/workflow_diagram.png)
+
+A detailed [example notebook](https://github.com/polca/pathways/blob/main/example/example.ipynb) 
+is available for using `pathways` with a sample data package.
 
 # Impact
 

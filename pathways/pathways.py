@@ -20,6 +20,7 @@ from .data_validation import validate_datapackage
 from .filesystem_constants import DATA_DIR, DIR_CACHED_DB
 from .lca import _calculate_year, get_lca_matrices
 from .lcia import get_lcia_method_names
+from .subshares import generate_samples
 from .utils import (
     clean_cache_directory,
     create_lca_results_array,
@@ -248,6 +249,7 @@ class Pathways:
         multiprocessing: bool = False,
         demand_cutoff: float = 1e-3,
         use_distributions: int = 0,
+        subshares: bool = False,
     ) -> None:
         """
         Calculate Life Cycle Assessment (LCA) results for given methods, models, scenarios, regions, and years.
@@ -276,6 +278,9 @@ class Pathways:
         :param demand_cutoff: Float. If the total demand for a given variable is less than this value, the variable is skipped.
         :type demand_cutoff: float, default is 1e-3
         :param use_distributions: Integer. If non zero, use distributions for LCA calculations.
+        :type use_distributions: int, default is 0
+        :param subshares: Boolean. If True, calculate subshares.
+        :type subshares: bool, default is False
         """
 
         self.scenarios = harmonize_units(self.scenarios, variables)
@@ -322,11 +327,16 @@ class Pathways:
             if k in self.scenarios.coords["variables"].values
         }
 
-        # Create xarray for storing LCA results if not already present
-        if self.lca_results is None:
-            _, technosphere_index, _ = get_lca_matrices(
+        try:
+            _, technosphere_index, _, uncertain_parameters = get_lca_matrices(
                 self.filepaths, models[0], scenarios[0], years[0]
             )
+        except Exception as e:
+            logging.error(f"Error retrieving LCA matrices: {str(e)}")
+            return
+
+        # Create xarray for storing LCA results if not already present
+        if self.lca_results is None:
             locations = fetch_inventories_locations(technosphere_index)
 
             self.lca_results = create_lca_results_array(
@@ -339,6 +349,14 @@ class Pathways:
                 classifications=self.classifications,
                 mapping=self.mapping,
                 use_distributions=use_distributions > 0,
+            )
+
+        # generate share of sub-technologies
+        shares = None
+        if subshares:
+            shares = generate_samples(
+                years=self.scenarios.coords["year"].values.tolist(),
+                iterations=use_distributions,
             )
 
         # Iterate over each combination of model, scenario, and year
@@ -366,6 +384,8 @@ class Pathways:
                             self.reverse_classifications,
                             self.debug,
                             use_distributions,
+                            uncertain_parameters,
+                            shares,
                         )
                         for year in years
                     ]
@@ -401,6 +421,8 @@ class Pathways:
                                     self.reverse_classifications,
                                     self.debug,
                                     use_distributions,
+                                    shares or None,
+                                    uncertain_parameters,
                                 )
                             )
                             for year in years
