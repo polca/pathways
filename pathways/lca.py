@@ -3,11 +3,11 @@ This module contains functions to calculate the Life Cycle Assessment (LCA) resu
 
 """
 
-import csv
 import logging
 import uuid
 from pathlib import Path
 from typing import Any, Dict, List, Tuple
+import yaml
 
 import bw2calc as bc
 import bw_processing as bwp
@@ -20,7 +20,7 @@ from premise.geomap import Geomap
 from scipy import sparse
 from scipy.sparse import csr_matrix
 
-from .filesystem_constants import DIR_CACHED_DB
+from .filesystem_constants import DIR_CACHED_DB, DATA_DIR
 from .lcia import fill_characterization_factors_matrices
 from .stats import (
     create_mapping_sheet,
@@ -40,6 +40,9 @@ from .utils import (
     fetch_indices,
     get_unit_conversion_factors,
     read_indices_csv,
+    read_categories_from_yaml,
+    get_combined_filters,
+    apply_filters,
 )
 
 logging.basicConfig(
@@ -49,35 +52,6 @@ logging.basicConfig(
     format="%(asctime)s - %(levelname)s - %(module)s - %(message)s",
     datefmt="%Y-%m-%d %H:%M:%S",
 )
-
-
-def read_indices_csv(file_path: Path) -> dict[tuple[str, str, str, str], int]:
-    """
-    Reads a CSV file and returns its contents as a dictionary.
-
-    Each row of the CSV file is expected to contain four string values followed by an index.
-    These are stored in the dictionary as a tuple of the four strings mapped to the index.
-
-    :param file_path: The path to the CSV file.
-    :type file_path: Path
-
-    :return: A dictionary mapping tuples of four strings to indices.
-    For technosphere indices, the four strings are the activity name, product name, location, and unit.
-    For biosphere indices, the four strings are the flow name, category, subcategory, and unit.
-    :rtype: Dict[Tuple[str, str, str, str], str]
-    """
-    indices = dict()
-    with open(file_path) as read_obj:
-        csv_reader = csv.reader(read_obj, delimiter=";")
-        for row in csv_reader:
-            try:
-                indices[(row[0], row[1], row[2], row[3])] = int(row[4])
-            except IndexError as err:
-                logging.error(
-                    f"Error reading row {row} from {file_path}: {err}. "
-                    f"Could it be that the file uses commas instead of semicolons?"
-                )
-    return indices
 
 
 def load_matrix_and_index(
@@ -210,29 +184,37 @@ def find_uncertain_parameters(
     return uncertain_parameters
 
 
-def remove_double_counting(A: csr_matrix, vars_info: dict) -> csr_matrix:
+def remove_double_accounting(
+        lca: bc.LCA,
+        demand: Dict,
+        activities_to_exclude: List[int],
+):
     """
     Remove double counting from a technosphere matrix.
-    :param A: Technosphere matrix
-    :param vars_info: Dictionary with information about which indices to zero out.
+    :param lca: bw2calc.LCA object
+    :param demand: dict with demand values
+    :param activities_to_exclude: list of activities to exclude
     :return: Technosphere matrix with double counting removed.
     """
 
-    A_coo = A.tocoo()
+    assert hasattr(lca, "characterized_inventory"), "Must do LCI and LCIA first"
 
-    list_of_idx = []
+    tm_original = lca.technosphere_matrix.copy()
+    tm_modified = tm_original.tocoo()
 
-    for region in vars_info:
-        for variable in vars_info[region]:
-            idx = vars_info[region][variable]["idx"]
-            if idx not in list_of_idx:
-                list_of_idx.append(idx)
-                row_mask = np.isin(A_coo.row, idx)
-                col_mask = np.isin(A_coo.col, idx)
-                A_coo.data[row_mask & ~col_mask] = 0
+    for act in activities_to_exclude:
+        row_idx = np.where(tm_modified.col == act)[0]
 
-    A_coo.eliminate_zeros()
-    return A_coo.tocsr()
+        for idx in row_idx:
+            if tm_modified.row[idx] != act: # skip the diagonal
+                tm_modified.data[idx] = 0
+
+    tm_modified = tm_modified.tocsr()
+    tm_modified.eliminate_zeros()
+
+    # Remove double accounting
+    lca.technosphere_matrix = tm_modified
+    lca.lci(demand=demand)
 
 
 def process_region(data: Tuple) -> dict[str, ndarray[Any, dtype[Any]] | list[int]]:
@@ -255,6 +237,7 @@ def process_region(data: Tuple) -> dict[str, ndarray[Any, dtype[Any]] | list[int
         lca,
         characterization_matrix,
         methods,
+        activities_to_exclude,
         debug,
         use_distributions,
         uncertain_parameters,
@@ -302,7 +285,9 @@ def process_region(data: Tuple) -> dict[str, ndarray[Any, dtype[Any]] | list[int
             "demand": demand.values * float(unit_vector),
         }
 
-        lca.lci(demand={idx: demand.values * float(unit_vector)})
+        demand = {idx: demand.values * float(unit_vector)}
+        if activities_to_exclude is not None:
+            remove_double_accounting(lca=lca, demand=demand, activities_to_exclude=activities_to_exclude)
 
         if use_distributions == 0:
             # Regular LCA
@@ -382,6 +367,7 @@ def _calculate_year(args: tuple):
         regions,
         variables,
         methods,
+        double_accounting,
         demand_cutoff,
         filepaths,
         mapping,
@@ -428,11 +414,13 @@ def _calculate_year(args: tuple):
             logging.warning(f"Skipping {model}, {scenario}, {year}, as data not found.")
         return
 
+    if double_accounting is not None:
+        categories = read_categories_from_yaml(DATA_DIR / "smart_categories.yaml")
+        selected_filters = get_combined_filters(categories, double_accounting)
+        activities_to_exclude = apply_filters(technosphere_indices, selected_filters)
+
     # Fetch indices
     vars_info = fetch_indices(mapping, regions, variables, technosphere_indices, geo)
-
-    # Remove contribution from activities in other activities
-    # A = remove_double_counting(A, vars_info)
 
     # check unclassified activities
     missing_classifications = check_unclassified_activities(
@@ -541,6 +529,7 @@ def _calculate_year(args: tuple):
                 lca,
                 characterization_matrix,
                 methods,
+                activities_to_exclude,
                 debug,
                 use_distributions,
                 uncertain_parameters,

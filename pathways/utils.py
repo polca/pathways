@@ -11,7 +11,7 @@ dictionary, checking unclassified activities, and getting activity indices.
 import csv
 import logging
 from pathlib import Path
-from typing import Any, Dict, List, Tuple, Union
+from typing import Any, Dict, List, Tuple, Union, Set
 
 import numpy as np
 import xarray as xr
@@ -31,6 +31,34 @@ logging.basicConfig(
     format="%(asctime)s - %(levelname)s - %(module)s - %(message)s",
     datefmt="%Y-%m-%d %H:%M:%S",
 )
+
+def read_indices_csv(file_path: Path) -> dict[tuple[str, str, str, str], int]:
+    """
+    Reads a CSV file and returns its contents as a dictionary.
+
+    Each row of the CSV file is expected to contain four string values followed by an index.
+    These are stored in the dictionary as a tuple of the four strings mapped to the index.
+
+    :param file_path: The path to the CSV file.
+    :type file_path: Path
+
+    :return: A dictionary mapping tuples of four strings to indices.
+    For technosphere indices, the four strings are the activity name, product name, location, and unit.
+    For biosphere indices, the four strings are the flow name, category, subcategory, and unit.
+    :rtype: Dict[Tuple[str, str, str, str], str]
+    """
+    indices = dict()
+    with open(file_path) as read_obj:
+        csv_reader = csv.reader(read_obj, delimiter=";")
+        for row in csv_reader:
+            try:
+                indices[(row[0], row[1], row[2], row[3])] = int(row[4])
+            except IndexError as err:
+                logging.error(
+                    f"Error reading row {row} from {file_path}: {err}. "
+                    f"Could it be that the file uses commas instead of semicolons?"
+                )
+    return indices
 
 
 def load_classifications():
@@ -480,7 +508,6 @@ def _group_technosphere_indices(
 
     acts_dict = {}
     for value in group_values:
-        # Collect indices for activities belonging to the current group value
         x = [
             int(technosphere_indices[a])
             for a in technosphere_indices
@@ -489,3 +516,104 @@ def _group_technosphere_indices(
         acts_dict[value] = x
 
     return acts_dict
+
+def read_categories_from_yaml(file_path: Path) -> Dict:
+    """
+    Read categories from a YAML file.
+
+    :param file_path: The path to the YAML file.
+    :return: The categories.
+    """
+    with open(file_path, "r") as file:
+        filters = yaml.safe_load(file)
+
+    return filters
+
+def gather_filters(current_level: Dict,
+                   combined_filters: Dict[str, Set[str]]
+) -> None:
+    """
+    Recursively gather filters from the current level and all sub-levels.
+
+    :param current_level: The current level in the filters dictionary.
+    :param combined_filters: The combined filter criteria dictionary.
+    """
+    if 'ecoinvent_aliases' in current_level:
+        ecoinvent_aliases = current_level['ecoinvent_aliases']
+        for k in combined_filters.keys():
+            combined_filters[k].update(ecoinvent_aliases.get(k, []))
+    for key, value in current_level.items():
+        if isinstance(value, dict):
+            gather_filters(value, combined_filters)
+
+def get_combined_filters(filters: Dict,
+                         paths: List[List[str]]
+) -> Dict[str, List[str]]:
+    """
+    Traverse the filters dictionary to get combined filter criteria based on multiple paths.
+
+    :param filters: The filters dictionary loaded from YAML.
+    :param paths: A list of lists, where each inner list represents a path in the hierarchy.
+    :return: The combined filter criteria dictionary.
+    """
+    combined_filters = {
+        'name_fltr': set(),
+        'name_mask': set(),
+        'product_fltr': set(),
+        'product_mask': set(),
+    }
+
+    for path in paths:
+        current_level = filters
+        for key in path:
+            current_level = current_level.get(key, {})
+            if not isinstance(current_level, dict):
+                break
+        gather_filters(current_level, combined_filters)
+
+    # Convert sets back to lists
+    for k in combined_filters.keys():
+        combined_filters[k] = list(combined_filters[k])
+
+    return combined_filters
+
+def apply_filters(
+        technosphere_inds: Dict[Tuple[str, str, str, str], int],
+        filters: Dict[str, List[str]]
+) -> List[int]:
+    """
+    Apply the filters to the database and return a list of indices.
+
+    :param technosphere_inds: Dictionary where keys are tuples of four strings (activity name, product name, location, unit)
+                     and values are integers (indices).
+    :param filters: Dictionary containing the filter criteria.
+    :return: List of indices of filtered activities.
+    """
+    name_fltr = filters.get('name_fltr', [])
+    name_mask = filters.get('name_mask', [])
+    product_fltr = filters.get('product_fltr', [])
+    product_mask = filters.get('product_mask', [])
+
+    def match_filter(item, filter_values):
+        return any(fltr in item for fltr in filter_values)
+
+    def match_mask(item, mask_values):
+        return any(msk in item for msk in mask_values)
+
+    filtered_indices = []
+
+    for key, value in technosphere_inds.items():
+        name, product, location, unit = key
+
+        if name_fltr and not match_filter(name, name_fltr):
+            continue
+        if product_fltr and not match_filter(product, product_fltr):
+            continue
+        if name_mask and match_mask(name, name_mask):
+            continue
+        if product_mask and match_mask(product, product_mask):
+            continue
+
+        filtered_indices.append(value)
+
+    return filtered_indices
