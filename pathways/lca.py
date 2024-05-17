@@ -7,12 +7,12 @@ import logging
 import uuid
 from pathlib import Path
 from typing import Any, Dict, List, Tuple
-import yaml
 
 import bw2calc as bc
 import bw_processing as bwp
 import numpy as np
 import pyprind
+import yaml
 from bw2calc.monte_carlo import MonteCarloLCA
 from bw_processing import Datapackage
 from numpy import dtype, ndarray
@@ -20,7 +20,7 @@ from premise.geomap import Geomap
 from scipy import sparse
 from scipy.sparse import csr_matrix
 
-from .filesystem_constants import DIR_CACHED_DB, DATA_DIR
+from .filesystem_constants import DATA_DIR, DIR_CACHED_DB
 from .lcia import fill_characterization_factors_matrices
 from .stats import (
     create_mapping_sheet,
@@ -36,13 +36,13 @@ from .subshares import (
 )
 from .utils import (
     _group_technosphere_indices,
+    apply_filters,
     check_unclassified_activities,
     fetch_indices,
-    get_unit_conversion_factors,
-    read_indices_csv,
-    read_categories_from_yaml,
     get_combined_filters,
-    apply_filters,
+    get_unit_conversion_factors,
+    read_categories_from_yaml,
+    read_indices_csv,
 )
 
 logging.basicConfig(
@@ -185,9 +185,9 @@ def find_uncertain_parameters(
 
 
 def remove_double_accounting(
-        lca: bc.LCA,
-        demand: Dict,
-        activities_to_exclude: List[int],
+    lca: bc.LCA,
+    demand: Dict,
+    activities_to_exclude: List[int],
 ):
     """
     Remove double counting from a technosphere matrix.
@@ -206,7 +206,7 @@ def remove_double_accounting(
         row_idx = np.where(tm_modified.col == act)[0]
 
         for idx in row_idx:
-            if tm_modified.row[idx] != act: # skip the diagonal
+            if tm_modified.row[idx] != act:  # skip the diagonal
                 tm_modified.data[idx] = 0
 
     tm_modified = tm_modified.tocsr()
@@ -287,7 +287,9 @@ def process_region(data: Tuple) -> dict[str, ndarray[Any, dtype[Any]] | list[int
 
         demand = {idx: demand.values * float(unit_vector)}
         if activities_to_exclude is not None:
-            remove_double_accounting(lca=lca, demand=demand, activities_to_exclude=activities_to_exclude)
+            remove_double_accounting(
+                lca=lca, demand=demand, activities_to_exclude=activities_to_exclude
+            )
 
         if use_distributions == 0:
             # Regular LCA

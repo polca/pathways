@@ -11,7 +11,7 @@ dictionary, checking unclassified activities, and getting activity indices.
 import csv
 import logging
 from pathlib import Path
-from typing import Any, Dict, List, Tuple, Union, Set
+from typing import Any, Dict, List, Set, Tuple, Union
 
 import numpy as np
 import xarray as xr
@@ -31,6 +31,7 @@ logging.basicConfig(
     format="%(asctime)s - %(levelname)s - %(module)s - %(message)s",
     datefmt="%Y-%m-%d %H:%M:%S",
 )
+
 
 def read_indices_csv(file_path: Path) -> dict[tuple[str, str, str, str], int]:
     """
@@ -517,6 +518,7 @@ def _group_technosphere_indices(
 
     return acts_dict
 
+
 def read_categories_from_yaml(file_path: Path) -> Dict:
     """
     Read categories from a YAML file.
@@ -529,26 +531,24 @@ def read_categories_from_yaml(file_path: Path) -> Dict:
 
     return filters
 
-def gather_filters(current_level: Dict,
-                   combined_filters: Dict[str, Set[str]]
-) -> None:
+
+def gather_filters(current_level: Dict, combined_filters: Dict[str, Set[str]]) -> None:
     """
     Recursively gather filters from the current level and all sub-levels.
 
     :param current_level: The current level in the filters dictionary.
     :param combined_filters: The combined filter criteria dictionary.
     """
-    if 'ecoinvent_aliases' in current_level:
-        ecoinvent_aliases = current_level['ecoinvent_aliases']
+    if "ecoinvent_aliases" in current_level:
+        ecoinvent_aliases = current_level["ecoinvent_aliases"]
         for k in combined_filters.keys():
             combined_filters[k].update(ecoinvent_aliases.get(k, []))
     for key, value in current_level.items():
         if isinstance(value, dict):
             gather_filters(value, combined_filters)
 
-def get_combined_filters(filters: Dict,
-                         paths: List[List[str]]
-) -> Dict[str, List[str]]:
+
+def get_combined_filters(filters: Dict, paths: List[List[str]]) -> Dict[str, List[str]]:
     """
     Traverse the filters dictionary to get combined filter criteria based on multiple paths.
 
@@ -557,10 +557,10 @@ def get_combined_filters(filters: Dict,
     :return: The combined filter criteria dictionary.
     """
     combined_filters = {
-        'name_fltr': set(),
-        'name_mask': set(),
-        'product_fltr': set(),
-        'product_mask': set(),
+        "name_fltr": set(),
+        "name_mask": set(),
+        "product_fltr": set(),
+        "product_mask": set(),
     }
 
     for path in paths:
@@ -577,9 +577,10 @@ def get_combined_filters(filters: Dict,
 
     return combined_filters
 
+
 def apply_filters(
-        technosphere_inds: Dict[Tuple[str, str, str, str], int],
-        filters: Dict[str, List[str]]
+    technosphere_inds: Dict[Tuple[str, str, str, str], int],
+    filters: Dict[str, List[str]],
 ) -> List[int]:
     """
     Apply the filters to the database and return a list of indices.
@@ -589,10 +590,10 @@ def apply_filters(
     :param filters: Dictionary containing the filter criteria.
     :return: List of indices of filtered activities.
     """
-    name_fltr = filters.get('name_fltr', [])
-    name_mask = filters.get('name_mask', [])
-    product_fltr = filters.get('product_fltr', [])
-    product_mask = filters.get('product_mask', [])
+    name_fltr = filters.get("name_fltr", [])
+    name_mask = filters.get("name_mask", [])
+    product_fltr = filters.get("product_fltr", [])
+    product_mask = filters.get("product_mask", [])
 
     def match_filter(item, filter_values):
         return any(fltr in item for fltr in filter_values)
