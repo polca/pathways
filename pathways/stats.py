@@ -101,7 +101,9 @@ def log_intensities_to_excel(model: str, scenario: str, year: int, new_data: dic
 
             for col in df_new.columns:
                 if col + "_new" in combined_df:
-                    combined_df[col] = combined_df[col].combine_first(combined_df.pop(col + "_new"))
+                    combined_df[col] = combined_df[col].combine_first(
+                        combined_df.pop(col + "_new")
+                    )
 
             combined_df = combined_df.loc[:, ~combined_df.columns.str.endswith("_new")]
             df = combined_df
