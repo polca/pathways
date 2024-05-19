@@ -13,8 +13,8 @@ import bw2calc as bc
 import bw_processing as bwp
 import numpy as np
 import pyprind
-from bw2calc.utils import get_datapackage
 from bw2calc.monte_carlo import MonteCarloLCA
+from bw2calc.utils import get_datapackage
 from bw_processing import Datapackage
 from numpy import dtype, ndarray
 from premise.geomap import Geomap
