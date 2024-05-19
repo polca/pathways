@@ -208,7 +208,9 @@ def remove_double_accounting(
 
         for idx in row_idx:
             # Skip the diagonal and exceptions
-            if tm_modified.row[idx] != act and (exceptions is None or tm_modified.col[idx] not in exceptions):
+            if tm_modified.row[idx] != act and (
+                exceptions is None or tm_modified.col[idx] not in exceptions
+            ):
                 tm_modified.data[idx] = 0
 
     tm_modified = tm_modified.tocsr()
@@ -422,8 +424,12 @@ def _calculate_year(args: tuple):
 
     if double_accounting is not None:
         categories = read_categories_from_yaml(DATA_DIR / "smart_categories.yaml")
-        combined_filters, exception_filters = get_combined_filters(categories, double_accounting)
-        activities_to_exclude, exceptions = apply_filters(technosphere_indices, combined_filters, exception_filters)
+        combined_filters, exception_filters = get_combined_filters(
+            categories, double_accounting
+        )
+        activities_to_exclude, exceptions = apply_filters(
+            technosphere_indices, combined_filters, exception_filters
+        )
     else:
         activities_to_exclude = None
 
@@ -474,7 +480,10 @@ def _calculate_year(args: tuple):
         # lca.lci(factorize=True)
         if activities_to_exclude is not None:
             remove_double_accounting(
-                lca=lca, demand={0: 1}, activities_to_exclude=activities_to_exclude, exceptions=exceptions
+                lca=lca,
+                demand={0: 1},
+                activities_to_exclude=activities_to_exclude,
+                exceptions=exceptions,
             )
         else:
             lca.lci(factorize=True)
@@ -491,7 +500,10 @@ def _calculate_year(args: tuple):
         # lca.lci()
         if activities_to_exclude is not None:
             remove_double_accounting(
-                lca=lca, demand={0: 1}, activities_to_exclude=activities_to_exclude, exceptions=exceptions
+                lca=lca,
+                demand={0: 1},
+                activities_to_exclude=activities_to_exclude,
+                exceptions=exceptions,
             )
         else:
             lca.lci()
