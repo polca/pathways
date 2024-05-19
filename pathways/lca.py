@@ -13,6 +13,7 @@ import bw2calc as bc
 import bw_processing as bwp
 import numpy as np
 import pyprind
+from bw2calc.utils import get_datapackage
 from bw2calc.monte_carlo import MonteCarloLCA
 from bw_processing import Datapackage
 from numpy import dtype, ndarray
@@ -263,6 +264,7 @@ def process_region(data: Tuple) -> dict[str, ndarray[Any, dtype[Any]] | list[int
     variables_demand = {}
     d = []
     impacts_by_method = {method: [] for method in methods}
+    param_keys = set()
 
     for v, variable in enumerate(variables):
         idx, dataset = vars_idx[variable]["idx"], vars_idx[variable]["dataset"]
@@ -315,7 +317,6 @@ def process_region(data: Tuple) -> dict[str, ndarray[Any, dtype[Any]] | list[int
             # next(lca) is a generator that yields the inventory matrix
             temp_results = []
             params = {}
-            param_keys = set()
             for _ in zip(range(use_distributions), lca):
                 matrix_result = (characterization_matrix @ lca.inventory).toarray()
                 temp_results.append(matrix_result)
