@@ -12,7 +12,8 @@ import bw2calc as bc
 import bw_processing as bwp
 import numpy as np
 import pyprind
-import yaml
+
+from bw2calc.utils import get_datapackage
 from bw2calc.monte_carlo import MonteCarloLCA
 from bw_processing import Datapackage
 from numpy import dtype, ndarray
@@ -420,6 +421,8 @@ def _calculate_year(args: tuple):
         categories = read_categories_from_yaml(DATA_DIR / "smart_categories.yaml")
         selected_filters = get_combined_filters(categories, double_accounting)
         activities_to_exclude = apply_filters(technosphere_indices, selected_filters)
+    else:
+        activities_to_exclude = None
 
     # Fetch indices
     vars_info = fetch_indices(mapping, regions, variables, technosphere_indices, geo)

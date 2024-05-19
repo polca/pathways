@@ -82,16 +82,14 @@ def log_intensities_to_excel(model: str, scenario: str, year: int, new_data: dic
         return
 
     try:
+        max_length = max(len(v) for v in new_data.values())
+
+        df_new = pd.DataFrame(new_data)
+        df_new["Iteration"] = range(1, max_length + 1)
+        df_new["Year"] = [year] * max_length
+
         if os.path.exists(filename):
             df_existing = pd.read_excel(filename)
-            max_length = max(len(v) for v in new_data.values())
-
-            df_new = pd.DataFrame(index=range(max_length), columns=new_data.keys())
-            for key, values in new_data.items():
-                df_new[key][: len(values)] = values
-
-            df_new["Iteration"] = range(1, max_length + 1)
-            df_new["Year"] = [year] * max_length
 
             combined_df = pd.merge(
                 df_existing,
@@ -103,17 +101,13 @@ def log_intensities_to_excel(model: str, scenario: str, year: int, new_data: dic
 
             for col in df_new.columns:
                 if col + "_new" in combined_df:
-                    combined_df[col].update(combined_df.pop(col + "_new"))
+                    combined_df[col] = combined_df[col].combine_first(combined_df.pop(col + "_new"))
 
-            # Remove any '_new' columns if they still exist after updates
             combined_df = combined_df.loc[:, ~combined_df.columns.str.endswith("_new")]
-
             df = combined_df
+
         else:
-            max_length = max(len(v) for v in new_data.values())
-            df = pd.DataFrame(new_data, index=range(max_length))
-            df["Iteration"] = range(1, max_length + 1)
-            df["Year"] = [year] * max_length
+            df = df_new
 
         df.to_excel(filename, index=False)
     except Exception as e:

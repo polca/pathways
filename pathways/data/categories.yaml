@@ -1,0 +1,2302 @@
+Energy:
+  ### Electricity generation| We look for activities providing 'kilowatt hour' in Ecoinvent
+  Electricity:
+    Industrial:
+      ### NOTE: The way we are cancelling now, the pv commercial/residential datasets won't be working. Add exception.
+      PV:
+        dataset:
+          - name: electricity production, photovoltaic, 570kWp open ground installation, multi-Si
+            reference product: electricity, low voltage
+            unit: kilowatt hour
+          - name: electricity production, photovoltaic, at 1.3 MWp slanted-roof, multi-Si, panel, mounted
+            reference product: electricity production, photovoltaic, at 1.3 MWp slanted-roof, multi-Si, panel, mounted
+            unit: kilowatt hour
+          - name: electricity production, photovoltaic, at 156 kWp flat-roof, multi-Si
+            reference product: electricity production, photovoltaic, at 156 kWp flat-roof, multi-Si
+            unit: kilowatt hour
+          - name: electricity production, photovoltaic, at 156 kWp flat-roof, single-Si
+            reference product: electricity production, photovoltaic, at 156 kWp flat-roof, single-Si
+            unit: kilowatt hour
+          - name: electricity production, photovoltaic, at 280 kWp flat-roof, multi-Si
+            reference product: electricity production, photovoltaic, at 280 kWp flat-roof, multi-Si
+            unit: kilowatt hour
+          - name: electricity production, photovoltaic, at 280 kWp flat-roof, single-Si
+            reference product: electricity production, photovoltaic, at 280 kWp flat-roof, single-Si
+            unit: kilowatt hour
+          - name: electricity production, photovoltaic, at 324 kWp flat-roof, multi-Si
+            reference product: electricity production, photovoltaic, at 324 kWp flat-roof, multi-Si
+            unit: kilowatt hour
+          - name: electricity production, photovoltaic, at 450 kWp flat-roof, single-Si
+            reference product: electricity production, photovoltaic, at 450 kWp flat-roof, single-Si
+            unit: kilowatt hour
+          - name: electricity production, photovoltaic, at 560 kWp open ground, single-Si
+            reference product: electricity production, photovoltaic, at 560 kWp open ground, single-Si
+            unit: kilowatt hour
+          - name: electricity production, photovoltaic, at 569 kWp open ground, multi-Si
+            reference product: electricity production, photovoltaic, at 569 kWp open ground, multi-Si
+            unit: kilowatt hour
+          - name: electricity production, photovoltaic, at 570 kWp open ground, multi-Si
+            reference product: electricity production, photovoltaic, at 570 kWp open ground, multi-Si
+            unit: kilowatt hour
+          - name: electricity production, photovoltaic, at 93 kWp slanted-roof, multi-Si, laminated, integrated
+            reference product: electricity production, photovoltaic, at 93 kWp slanted-roof, multi-Si, laminated, integrated
+            unit: kilowatt hour
+          - name: electricity production, photovoltaic, at 93 kWp slanted-roof, multi-Si, panel, mounted
+            reference product: electricity production, photovoltaic, at 93 kWp slanted-roof, multi-Si, panel, mounted
+            unit: kilowatt hour
+          - name: electricity production, photovoltaic, at 93 kWp slanted-roof, single-Si, laminated, integrated
+            reference product: electricity production, photovoltaic, at 93 kWp slanted-roof, single-Si, laminated, integrated
+            unit: kilowatt hour
+          - name: electricity production, photovoltaic, at 93 kWp slanted-roof, single-Si, panel, mounted
+            reference product: electricity production, photovoltaic, at 93 kWp slanted-roof, single-Si, panel, mounted
+            unit: kilowatt hour
+      Hydro:
+        dataset:
+          - name: electricity production, hydro, aluminium industry
+            reference product: electricity, high voltage, aluminium industry
+            unit: kilowatt hour
+          - name: electricity production, hydro, pumped storage
+            reference product: electricity, high voltage
+            unit: kilowatt hour
+          - name: electricity production, hydro, reservoir, alpine region
+            reference product: electricity, high voltage
+            unit: kilowatt hour
+          - name: electricity production, hydro, reservoir, alpine region, renewable energy products
+            reference product: electricity, high voltage, renewable energy products
+            unit: kilowatt hour
+          - name: electricity production, hydro, reservoir, non-alpine region
+            reference product: electricity, high voltage
+            unit: kilowatt hour
+          - name: electricity production, hydro, reservoir, tropical region
+            reference product: electricity, high voltage
+            unit: kilowatt hour
+          - name: electricity production, hydro, run-of-river
+            reference product: electricity, high voltage
+            unit: kilowatt hour
+          - name: electricity production, hydro, run-of-river, renewable energy products
+            reference product: electricity, high voltage, renewable energy products
+            unit: kilowatt hour
+      Oil:
+        dataset:
+          - name: electricity production, at co-generation oil-fired power plant, post, pipeline 200km, storage 1000m
+            reference product: electricity, high voltage
+            unit: kilowatt hour
+          - name: electricity production, at oil-fired power plant, combined cycle, oxy, pipeline 200km, storage 1000m
+            reference product: electricity, high voltage
+            unit: kilowatt hour
+          - name: electricity production, oil
+            reference product: electricity, high voltage
+            unit: kilowatt hour
+          - name: electricity production, oil, aluminium industry
+            reference product: electricity, high voltage, aluminium industry
+            unit: kilowatt hour
+          - name: heat and power co-generation, oil
+            reference product: electricity, high voltage
+            unit: kilowatt hour
+      Gas:
+        dataset:
+          - name: electricity production, at co-generation natural gas-fired power plant, post, pipeline 200km, storage 1000m
+            reference product: electricity, high voltage
+            unit: kilowatt hour
+          - name: electricity production, at natural gas-fired combined cycle power plant
+            reference product: electricity, high voltage
+            unit: kilowatt hour
+          - name: electricity production, at natural gas-fired combined cycle power plant, post, pipeline 200km, storage 1000m
+            reference product: electricity, high voltage
+            unit: kilowatt hour
+          - name: electricity production, from combined cycle plant, synthetic natural gas
+            reference product: electricity, high voltage
+            unit: kilowatt hour
+          - name: electricity production, from combined cycle plant, synthetic natural gas, post, pipeline 200km, storage 1000m
+            reference product: electricity, high voltage
+            unit: kilowatt hour
+          - name: electricity production, natural gas, 10MW
+            reference product: electricity, high voltage
+            unit: kilowatt hour
+          - name: electricity production, natural gas, aluminium industry
+            reference product: electricity, high voltage, aluminium industry
+            unit: kilowatt hour
+          - name: electricity production, natural gas, combined cycle power plant
+            reference product: electricity, high voltage
+            unit: kilowatt hour
+          - name: electricity production, natural gas, conventional power plant
+            reference product: electricity, high voltage
+            unit: kilowatt hour
+          - name: heat and power co-generation, natural gas, 160kW electrical, Jakobsberg
+            reference product: electricity, high voltage
+            unit: kilowatt hour
+          - name: heat and power co-generation, natural gas, 160kW electrical, lambda=1
+            reference product: electricity, high voltage
+            unit: kilowatt hour
+          - name: heat and power co-generation, natural gas, 1MW electrical, lean burn
+            reference product: electricity, high voltage
+            unit: kilowatt hour
+          - name: heat and power co-generation, natural gas, 200kW electrical, lean burn
+            reference product: electricity, high voltage
+            unit: kilowatt hour
+          - name: heat and power co-generation, natural gas, 500kW electrical, lean burn
+            reference product: electricity, high voltage
+            unit: kilowatt hour
+          - name: heat and power co-generation, natural gas, 50kW electrical, lean burn
+            reference product: electricity, high voltage
+            unit: kilowatt hour
+          - name: heat and power co-generation, natural gas, combined cycle power plant, 400MW electrical
+            reference product: electricity, high voltage
+            unit: kilowatt hour
+          - name: heat and power co-generation, natural gas, conventional power plant, 100MW electrical
+            reference product: electricity, high voltage
+            unit: kilowatt hour
+          - name: heat and power co-generation, natural gas, mini-plant 2KW electrical
+            reference product: electricity, high voltage
+            unit: kilowatt hour
+          - name: natural gas, burned in micro gas turbine, 100kWe
+            reference product: electricity, high voltage
+            unit: kilowatt hour
+          - name: natural gas, burned in polymer electrolyte membrane fuel cell 2kWe, future
+            reference product: electricity, high voltage
+            unit: kilowatt hour
+          - name: natural gas, burned in solid oxide fuel cell 125kWe, future
+            reference product: electricity, high voltage
+            unit: kilowatt hour
+          - name: natural gas, burned in solid oxide fuel cell, with micro gas turbine, 180kWe, future
+            reference product: electricity, high voltage
+            unit: kilowatt hour
+      Biogas:
+        dataset:
+          - name: biomethane, low pressure burned in micro gas turbine 100kWe
+            reference product: electricity, low voltage
+            unit: kilowatt hour
+          - name: biomethane, low pressure burned in polymer electrolyte membrane fuel cell 2kWe, future
+            reference product: electricity, low voltage
+            unit: kilowatt hour
+          - name: biomethane, low pressure burned in solid oxide fuel cell 125kWe, future
+            reference product: electricity, low voltage
+            unit: kilowatt hour
+          - name: biomethane, low pressure burned in solid oxide fuel cell, with micro gas turbine, 180kWe, future
+            reference product: electricity, low voltage
+            unit: kilowatt hour
+          - name: heat and power co-generation, biogas, gas engine
+            reference product: electricity, high voltage
+            unit: kilowatt hour
+          - name: heat and power co-generation, biogas, gas engine, renewable energy products
+            reference product: electricity, high voltage, renewable energy products
+            unit: kilowatt hour
+      Nuclear:
+        dataset:
+          - name: electricity production, nuclear, aluminium industry
+            reference product: electricity, high voltage, aluminium industry
+            unit: kilowatt hour
+          - name: electricity production, nuclear, boiling water reactor
+            reference product: electricity, high voltage
+            unit: kilowatt hour
+          - name: electricity production, nuclear, pressure water reactor
+            reference product: electricity, high voltage
+            unit: kilowatt hour
+          - name: electricity production, nuclear, pressure water reactor, heavy water moderated
+            reference product: electricity, high voltage
+            unit: kilowatt hour
+      Waste2Grid:
+        dataset:
+          - name: electricity, from municipal waste incineration to generic market for electricity, medium voltage
+            reference product: electricity, medium voltage
+            unit: kilowatt hour
+          - name: treatment of bilge oil, hazardous waste incineration, with energy recovery
+            reference product: electricity, medium voltage
+            unit: kilowatt hour
+          - name: treatment of digester sludge, municipal incineration, future
+            reference product: electricity, high voltage
+            unit: kilowatt hour
+          - name: treatment of fly ash and scrubber sludge, hazardous waste incineration, with energy recovery
+            reference product: electricity, medium voltage
+            unit: kilowatt hour
+          - name: treatment of hazardous waste, hazardous waste incineration, with energy recovery
+            reference product: electricity, medium voltage
+            unit: kilowatt hour
+          - name: treatment of refinery sludge, hazardous waste incineration, with energy recovery
+            reference product: electricity, medium voltage
+            unit: kilowatt hour
+          - name: treatment of sewage sludge, 75% water, WWT, condensate from light oil boiler, sanitary landfill
+            reference product: electricity, medium voltage
+            unit: kilowatt hour
+          - name: treatment of sewage sludge, 75% water, WWT, heat carrier liquid, 40% C3H8O2, sanitary landfill
+            reference product: electricity, medium voltage
+            unit: kilowatt hour
+          - name: treatment of sewage sludge, 75% water, WWT, rainwater mineral oil storage, sanitary landfill
+            reference product: electricity, medium voltage
+            unit: kilowatt hour
+          - name: treatment of sewage sludge, 75% water, WWT, WW from ammonium paratungstate production, sanitary landfill
+            reference product: electricity, medium voltage
+            unit: kilowatt hour
+          - name: treatment of sewage sludge, 75% water, WWT, WW from black chrome coating, sanitary landfill
+            reference product: electricity, medium voltage
+            unit: kilowatt hour
+          - name: treatment of sewage sludge, 75% water, WWT, WW from ceramic production, sanitary landfill
+            reference product: electricity, medium voltage
+            unit: kilowatt hour
+          - name: treatment of sewage sludge, 75% water, WWT, WW from concrete production, sanitary landfill
+            reference product: electricity, medium voltage
+            unit: kilowatt hour
+          - name: treatment of sewage sludge, 75% water, WWT, WW from CRT production, sanitary landfill
+            reference product: electricity, medium voltage
+            unit: kilowatt hour
+          - name: treatment of sewage sludge, 75% water, WWT, WW from GGBFS production, sanitary landfill
+            reference product: electricity, medium voltage
+            unit: kilowatt hour
+          - name: treatment of sewage sludge, 75% water, WWT, WW from glass production, sanitary landfill
+            reference product: electricity, medium voltage
+            unit: kilowatt hour
+          - name: treatment of sewage sludge, 75% water, WWT, WW from grass refinery, sanitary landfill
+            reference product: electricity, medium voltage
+            unit: kilowatt hour
+          - name: treatment of sewage sludge, 75% water, WWT, WW from hard fibreboard production, sanitary landfill
+            reference product: electricity, medium voltage
+            unit: kilowatt hour
+          - name: treatment of sewage sludge, 75% water, WWT, WW from LCD backlight production, sanitary landfill
+            reference product: electricity, medium voltage
+            unit: kilowatt hour
+          - name: treatment of sewage sludge, 75% water, WWT, WW from LCD production, sanitary landfill
+            reference product: electricity, medium voltage
+            unit: kilowatt hour
+          - name: treatment of sewage sludge, 75% water, WWT, WW from liquid crystal production, sanitary landfill
+            reference product: electricity, medium voltage
+            unit: kilowatt hour
+          - name: treatment of sewage sludge, 75% water, WWT, WW from maize starch production, sanitary landfill
+            reference product: electricity, medium voltage
+            unit: kilowatt hour
+          - name: treatment of sewage sludge, 75% water, WWT, WW from medium density board production, sanitary landfill
+            reference product: electricity, medium voltage
+            unit: kilowatt hour
+          - name: treatment of sewage sludge, 75% water, WWT, WW from particle board production, sanitary landfill
+            reference product: electricity, medium voltage
+            unit: kilowatt hour
+          - name: treatment of sewage sludge, 75% water, WWT, WW from pig iron production, sanitary landfill
+            reference product: electricity, medium voltage
+            unit: kilowatt hour
+          - name: treatment of sewage sludge, 75% water, WWT, WW from plywood production, sanitary landfill
+            reference product: electricity, medium voltage
+            unit: kilowatt hour
+          - name: treatment of sewage sludge, 75% water, WWT, WW from potato starch production, sanitary landfill
+            reference product: electricity, medium voltage
+            unit: kilowatt hour
+          - name: treatment of sewage sludge, 75% water, WWT, WW from PV cell production, sanitary landfill
+            reference product: electricity, medium voltage
+            unit: kilowatt hour
+          - name: treatment of sewage sludge, 75% water, WWT, WW from soft fibreboard production, sanitary landfill
+            reference product: electricity, medium voltage
+            unit: kilowatt hour
+          - name: treatment of sewage sludge, 75% water, WWT, WW from tube collector production, sanitary landfill
+            reference product: electricity, medium voltage
+            unit: kilowatt hour
+          - name: treatment of sewage sludge, 75% water, WWT, WW from vegetable oil refinery, sanitary landfill
+            reference product: electricity, medium voltage
+            unit: kilowatt hour
+          - name: treatment of sewage sludge, 75% water, WWT, WW from wafer fabrication, sanitary landfill
+            reference product: electricity, medium voltage
+            unit: kilowatt hour
+          - name: treatment of sewage sludge, 75% water, WWT, WW, average, sanitary landfill
+            reference product: electricity, medium voltage
+            unit: kilowatt hour
+          - name: treatment of sewage sludge, 75% water, WWT[R], WW from anaerobic digestion of whey, sanitary landfill
+            reference product: electricity, medium voltage
+            unit: kilowatt hour
+          - name: treatment of sewage sludge, 75% water, WWT[U], WW from lorry production, sanitary landfill
+            reference product: electricity, medium voltage
+            unit: kilowatt hour
+          - name: treatment of spent antifreezer liquid, hazardous waste incineration, with energy recovery
+            reference product: electricity, medium voltage
+            unit: kilowatt hour
+          - name: treatment of spent oxychlor catalyst, hazardous waste incineration, with energy recovery
+            reference product: electricity, medium voltage
+            unit: kilowatt hour
+          - name: treatment of spent solvent mixture, hazardous waste incineration, with energy recovery
+            reference product: electricity, medium voltage
+            unit: kilowatt hour
+          - name: treatment of used capacitor, to hazardous waste incineration, with energy recovery
+            reference product: electricity, medium voltage
+            unit: kilowatt hour
+          - name: treatment of waste emulsion paint, hazardous waste incineration, with energy recovery
+            reference product: electricity, medium voltage
+            unit: kilowatt hour
+          - name: treatment of waste mineral oil, hazardous waste incineration, with energy recovery
+            reference product: electricity, medium voltage
+            unit: kilowatt hour
+          - name: treatment of waste packaging paper, sanitary landfill
+            reference product: electricity, medium voltage
+            unit: kilowatt hour
+          - name: treatment of waste paint, hazardous waste incineration, with energy recovery
+            reference product: electricity, medium voltage
+            unit: kilowatt hour
+          - name: treatment of waste plastic, consumer electronics, sanitary landfill, wet infiltration class (500mm)
+            reference product: electricity, medium voltage
+            unit: kilowatt hour
+      Waste2Treatment:
+        dataset:
+          - name: treatment of spent anion exchange resin from potable water production, municipal incineration
+            reference product: electricity, for reuse in municipal waste incineration only
+            unit: kilowatt hour
+          - name: treatment of spent anion exchange resin from potable water production, municipal incineration with fly ash extraction
+            reference product: electricity, for reuse in municipal waste incineration only
+            unit: kilowatt hour
+          - name: treatment of residue from mechanical treatment, cathode ray tube display, municipal incineration with fly ash extraction
+            reference product: electricity, for reuse in municipal waste incineration only
+            unit: kilowatt hour
+          - name: treatment of residue from mechanical treatment, cathode ray tube display, municipal waste incineration
+            reference product: electricity, for reuse in municipal waste incineration only
+            unit: kilowatt hour
+          - name: treatment of residue from mechanical treatment, desktop computer, municipal incineration with fly ash extraction
+            reference product: electricity, for reuse in municipal waste incineration only
+            unit: kilowatt hour
+          - name: treatment of residue from mechanical treatment, desktop computer, municipal waste incineration
+            reference product: electricity, for reuse in municipal waste incineration only
+            unit: kilowatt hour
+          - name: treatment of residue from mechanical treatment, industrial device, municipal incineration with fly ash extraction
+            reference product: electricity, for reuse in municipal waste incineration only
+            unit: kilowatt hour
+          - name: treatment of residue from mechanical treatment, industrial device, municipal waste incineration
+            reference product: electricity, for reuse in municipal waste incineration only
+            unit: kilowatt hour
+          - name: treatment of residue from mechanical treatment, IT accessory, municipal incineration with fly ash extraction
+            reference product: electricity, for reuse in municipal waste incineration only
+            unit: kilowatt hour
+          - name: treatment of residue from mechanical treatment, IT accessory, municipal waste incineration
+            reference product: electricity, for reuse in municipal waste incineration only
+            unit: kilowatt hour
+          - name: treatment of residue from mechanical treatment, laptop computer, municipal incineration with fly ash extraction
+            reference product: electricity, for reuse in municipal waste incineration only
+            unit: kilowatt hour
+          - name: treatment of residue from mechanical treatment, laptop computer, municipal waste incineration
+            reference product: electricity, for reuse in municipal waste incineration only
+            unit: kilowatt hour
+          - name: treatment of residue from mechanical treatment, laser printer, municipal incineration with fly ash extraction
+            reference product: electricity, for reuse in municipal waste incineration only
+            unit: kilowatt hour
+          - name: treatment of residue from mechanical treatment, laser printer, municipal waste incineration
+            reference product: electricity, for reuse in municipal waste incineration only
+            unit: kilowatt hour
+          - name: treatment of residue from mechanical treatment, liquid crystal display, municipal incineration with fly ash extraction
+            reference product: electricity, for reuse in municipal waste incineration only
+            unit: kilowatt hour
+          - name: treatment of residue from mechanical treatment, liquid crystal display, municipal waste incineration
+            reference product: electricity, for reuse in municipal waste incineration only
+            unit: kilowatt hour
+          - name: treatment of residue from shredder fraction from manual dismantling, municipal incineration with fly ash extraction
+            reference product: electricity, for reuse in municipal waste incineration only
+            unit: kilowatt hour
+          - name: treatment of residue from shredder fraction from manual dismantling, municipal waste incineration
+            reference product: electricity, for reuse in municipal waste incineration only
+            unit: kilowatt hour
+          - name: treatment of sewage sludge, 70% water, WWT, condensate from light oil boiler, municipal incineration
+            reference product: electricity, for reuse in municipal waste incineration only
+            unit: kilowatt hour
+          - name: treatment of sewage sludge, 70% water, WWT, heat carrier liquid, 40% C3H8O2, municipal incineration
+            reference product: electricity, for reuse in municipal waste incineration only
+            unit: kilowatt hour
+          - name: treatment of sewage sludge, 70% water, WWT, heat carrier liquid, 40% C3H8O2, municipal incineration FAE
+            reference product: electricity, for reuse in municipal waste incineration only
+            unit: kilowatt hour
+          - name: treatment of sewage sludge, 70% water, WWT, rainwater mineral oil storage, municipal incineration
+            reference product: electricity, for reuse in municipal waste incineration only
+            unit: kilowatt hour
+          - name: treatment of sewage sludge, 70% water, WWT, WW from CRT production, municipal incineration
+            reference product: electricity, for reuse in municipal waste incineration only
+            unit: kilowatt hour
+          - name: treatment of sewage sludge, 70% water, WWT, WW from CRT production, municipal incineration FAE
+            reference product: electricity, for reuse in municipal waste incineration only
+            unit: kilowatt hour
+          - name: treatment of sewage sludge, 70% water, WWT, WW from GGBFS production, municipal incineration
+            reference product: electricity, for reuse in municipal waste incineration only
+            unit: kilowatt hour
+          - name: treatment of sewage sludge, 70% water, WWT, WW from glass production, municipal incineration
+            reference product: electricity, for reuse in municipal waste incineration only
+            unit: kilowatt hour
+          - name: treatment of sewage sludge, 70% water, WWT, WW from grass refinery, municipal incineration
+            reference product: electricity, for reuse in municipal waste incineration only
+            unit: kilowatt hour
+          - name: treatment of sewage sludge, 70% water, WWT, WW from grass refinery, municipal incineration FAE
+            reference product: electricity, for reuse in municipal waste incineration only
+            unit: kilowatt hour
+          - name: treatment of sewage sludge, 70% water, WWT, WW from hard fibreboard production, municipal incineration
+            reference product: electricity, for reuse in municipal waste incineration only
+            unit: kilowatt hour
+          - name: treatment of sewage sludge, 70% water, WWT, WW from LCD backlight production, municipal incineration
+            reference product: electricity, for reuse in municipal waste incineration only
+            unit: kilowatt hour
+          - name: treatment of sewage sludge, 70% water, WWT, WW from LCD backlight production, municipal incineration FAE
+            reference product: electricity, for reuse in municipal waste incineration only
+            unit: kilowatt hour
+          - name: treatment of sewage sludge, 70% water, WWT, WW from LCD production, municipal incineration
+            reference product: electricity, for reuse in municipal waste incineration only
+            unit: kilowatt hour
+          - name: treatment of sewage sludge, 70% water, WWT, WW from LCD production, municipal incineration FAE
+            reference product: electricity, for reuse in municipal waste incineration only
+            unit: kilowatt hour
+          - name: treatment of sewage sludge, 70% water, WWT, WW from liquid crystal production, municipal incineration
+            reference product: electricity, for reuse in municipal waste incineration only
+            unit: kilowatt hour
+          - name: treatment of sewage sludge, 70% water, WWT, WW from liquid crystal production, municipal incineration FAE
+            reference product: electricity, for reuse in municipal waste incineration only
+            unit: kilowatt hour
+          - name: treatment of sewage sludge, 70% water, WWT, WW from maize starch production, municipal incineration
+            reference product: electricity, for reuse in municipal waste incineration only
+            unit: kilowatt hour
+          - name: treatment of sewage sludge, 70% water, WWT, WW from maize starch production, municipal incineration FAE
+            reference product: electricity, for reuse in municipal waste incineration only
+            unit: kilowatt hour
+          - name: treatment of sewage sludge, 70% water, WWT, WW from medium density board production, municipal incineration
+            reference product: electricity, for reuse in municipal waste incineration only
+            unit: kilowatt hour
+          - name: treatment of sewage sludge, 70% water, WWT, WW from particle board production, municipal incineration
+            reference product: electricity, for reuse in municipal waste incineration only
+            unit: kilowatt hour
+          - name: treatment of sewage sludge, 70% water, WWT, WW from plywood production, municipal incineration
+            reference product: electricity, for reuse in municipal waste incineration only
+            unit: kilowatt hour
+          - name: treatment of sewage sludge, 70% water, WWT, WW from plywood production, municipal incineration FAE
+            reference product: electricity, for reuse in municipal waste incineration only
+            unit: kilowatt hour
+          - name: treatment of sewage sludge, 70% water, WWT, WW from potato starch production, municipal incineration
+            reference product: electricity, for reuse in municipal waste incineration only
+            unit: kilowatt hour
+          - name: treatment of sewage sludge, 70% water, WWT, WW from potato starch production, municipal incineration FAE
+            reference product: electricity, for reuse in municipal waste incineration only
+            unit: kilowatt hour
+          - name: treatment of sewage sludge, 70% water, WWT, WW from soft fibreboard production, municipal incineration
+            reference product: electricity, for reuse in municipal waste incineration only
+            unit: kilowatt hour
+          - name: treatment of sewage sludge, 70% water, WWT, WW from soft fibreboard production, municipal incineration FAE
+            reference product: electricity, for reuse in municipal waste incineration only
+            unit: kilowatt hour
+          - name: treatment of sewage sludge, 70% water, WWT, WW from vegetable oil refinery, municipal incineration
+            reference product: electricity, for reuse in municipal waste incineration only
+            unit: kilowatt hour
+          - name: treatment of sewage sludge, 70% water, WWT, WW, average, municipal incineration
+            reference product: electricity, for reuse in municipal waste incineration only
+            unit: kilowatt hour
+          - name: treatment of sewage sludge, 70% water, WWT, WW, average, municipal incineration FAE
+            reference product: electricity, for reuse in municipal waste incineration only
+            unit: kilowatt hour
+          - name: treatment of sewage sludge, 70% water, WWT[R], WW from anaerobic digestion of whey, municipal incineration
+            reference product: electricity, for reuse in municipal waste incineration only
+            unit: kilowatt hour
+          - name: treatment of sewage sludge, 70% water, WWT[R], WW from anaerobic digestion of whey, municipal incineration FAE
+            reference product: electricity, for reuse in municipal waste incineration only
+            unit: kilowatt hour
+          - name: treatment of biowaste, municipal incineration
+            reference product: electricity, for reuse in municipal waste incineration only
+            unit: kilowatt hour
+          - name: treatment of biowaste, municipal incineration with fly ash extraction
+            reference product: electricity, for reuse in municipal waste incineration only
+            unit: kilowatt hour
+          - name: treatment of digester sludge, municipal incineration
+            reference product: electricity, for reuse in municipal waste incineration only
+            unit: kilowatt hour
+          - name: treatment of digester sludge, municipal incineration with fly ash extraction
+            reference product: electricity, for reuse in municipal waste incineration only
+            unit: kilowatt hour
+          - name: treatment of municipal solid waste, incineration
+            reference product: electricity, for reuse in municipal waste incineration only
+            unit: kilowatt hour
+          - name: treatment of municipal solid waste, municipal incineration with fly ash extraction
+            reference product: electricity, for reuse in municipal waste incineration only
+            unit: kilowatt hour
+          - name: treatment of raw sewage sludge, municipal incineration
+            reference product: electricity, for reuse in municipal waste incineration only
+            unit: kilowatt hour
+          - name: treatment of raw sewage sludge, municipal incineration with fly ash extraction
+            reference product: electricity, for reuse in municipal waste incineration only
+            unit: kilowatt hour
+          - name: treatment of used liquid crystal display module, municipal incineration with fly ash extraction
+            reference product: electricity, for reuse in municipal waste incineration only
+            unit: kilowatt hour
+          - name: treatment of used liquid crystal display module, municipal waste incineration
+            reference product: electricity, for reuse in municipal waste incineration only
+            unit: kilowatt hour
+          - name: treatment of waste bitumen sheet, municipal incineration
+            reference product: electricity, for reuse in municipal waste incineration only
+            unit: kilowatt hour
+          - name: treatment of waste bitumen sheet, municipal incineration with fly ash extraction
+            reference product: electricity, for reuse in municipal waste incineration only
+            unit: kilowatt hour
+          - name: treatment of waste building wood, chrome preserved, municipal incineration
+            reference product: electricity, for reuse in municipal waste incineration only
+            unit: kilowatt hour
+          - name: treatment of waste building wood, chrome preserved, municipal incineration with fly ash extraction
+            reference product: electricity, for reuse in municipal waste incineration only
+            unit: kilowatt hour
+          - name: treatment of waste cement-fibre slab, dismantled, municipal incineration with fly ash extraction
+            reference product: electricity, for reuse in municipal waste incineration only
+            unit: kilowatt hour
+          - name: treatment of waste cement-fibre slab, municipal incineration
+            reference product: electricity, for reuse in municipal waste incineration only
+            unit: kilowatt hour
+          - name: treatment of waste emulsion paint, municipal incineration
+            reference product: electricity, for reuse in municipal waste incineration only
+            unit: kilowatt hour
+          - name: treatment of waste emulsion paint, municipal incineration with fly ash extraction
+            reference product: electricity, for reuse in municipal waste incineration only
+            unit: kilowatt hour
+          - name: treatment of waste expanded polystyrene, municipal incineration
+            reference product: electricity, for reuse in municipal waste incineration only
+            unit: kilowatt hour
+          - name: treatment of waste expanded polystyrene, municipal incineration with fly ash extraction
+            reference product: electricity, for reuse in municipal waste incineration only
+            unit: kilowatt hour
+          - name: treatment of waste graphical paper, municipal incineration
+            reference product: electricity, for reuse in municipal waste incineration only
+            unit: kilowatt hour
+          - name: treatment of waste graphical paper, municipal incineration with fly ash extraction
+            reference product: electricity, for reuse in municipal waste incineration only
+            unit: kilowatt hour
+          - name: treatment of waste newspaper, municipal incineration
+            reference product: electricity, for reuse in municipal waste incineration only
+            unit: kilowatt hour
+          - name: treatment of waste newspaper, municipal incineration with fly ash extraction
+            reference product: electricity, for reuse in municipal waste incineration only
+            unit: kilowatt hour
+          - name: treatment of waste packaging paper, municipal incineration
+            reference product: electricity, for reuse in municipal waste incineration only
+            unit: kilowatt hour
+          - name: treatment of waste packaging paper, municipal incineration with fly ash extraction
+            reference product: electricity, for reuse in municipal waste incineration only
+            unit: kilowatt hour
+          - name: treatment of waste paint, municipal incineration
+            reference product: electricity, for reuse in municipal waste incineration only
+            unit: kilowatt hour
+          - name: treatment of waste paint, municipal incineration with fly ash extraction
+            reference product: electricity, for reuse in municipal waste incineration only
+            unit: kilowatt hour
+          - name: treatment of waste paperboard, municipal incineration
+            reference product: electricity, for reuse in municipal waste incineration only
+            unit: kilowatt hour
+          - name: treatment of waste paperboard, municipal incineration with fly ash extraction
+            reference product: electricity, for reuse in municipal waste incineration only
+            unit: kilowatt hour
+          - name: treatment of waste plastic, consumer electronics, municipal incineration
+            reference product: electricity, for reuse in municipal waste incineration only
+            unit: kilowatt hour
+          - name: treatment of waste plastic, consumer electronics, municipal incineration with fly ash extraction
+            reference product: electricity, for reuse in municipal waste incineration only
+            unit: kilowatt hour
+          - name: treatment of waste plastic, industrial electronics, municipal incineration
+            reference product: electricity, for reuse in municipal waste incineration only
+            unit: kilowatt hour
+          - name: treatment of waste plastic, industrial electronics, municipal incineration with fly ash extraction
+            reference product: electricity, for reuse in municipal waste incineration only
+            unit: kilowatt hour
+          - name: treatment of waste plastic, mixture, municipal incineration
+            reference product: electricity, for reuse in municipal waste incineration only
+            unit: kilowatt hour
+          - name: treatment of waste plastic, mixture, municipal incineration with fly ash extraction
+            reference product: electricity, for reuse in municipal waste incineration only
+            unit: kilowatt hour
+          - name: treatment of waste polyethylene terephthalate, municipal incineration
+            reference product: electricity, for reuse in municipal waste incineration only
+            unit: kilowatt hour
+          - name: treatment of waste polyethylene terephthalate, municipal incineration with fly ash extraction
+            reference product: electricity, for reuse in municipal waste incineration only
+            unit: kilowatt hour
+          - name: treatment of waste polyethylene, municipal incineration
+            reference product: electricity, for reuse in municipal waste incineration only
+            unit: kilowatt hour
+          - name: treatment of waste polyethylene, municipal incineration with fly ash extraction
+            reference product: electricity, for reuse in municipal waste incineration only
+            unit: kilowatt hour
+          - name: treatment of waste polypropylene, municipal incineration
+            reference product: electricity, for reuse in municipal waste incineration only
+            unit: kilowatt hour
+          - name: treatment of waste polypropylene, municipal incineration with fly ash extraction
+            reference product: electricity, for reuse in municipal waste incineration only
+            unit: kilowatt hour
+          - name: treatment of waste polystyrene, municipal incineration
+            reference product: electricity, for reuse in municipal waste incineration only
+            unit: kilowatt hour
+          - name: treatment of waste polystyrene, municipal incineration with fly ash extraction
+            reference product: electricity, for reuse in municipal waste incineration only
+            unit: kilowatt hour
+          - name: treatment of waste polyurethane, municipal incineration
+            reference product: electricity, for reuse in municipal waste incineration only
+            unit: kilowatt hour
+          - name: treatment of waste polyurethane, municipal incineration with fly ash extraction
+            reference product: electricity, for reuse in municipal waste incineration only
+            unit: kilowatt hour
+          - name: treatment of waste polyvinylchloride, municipal incineration
+            reference product: electricity, for reuse in municipal waste incineration only
+            unit: kilowatt hour
+          - name: treatment of waste polyvinylchloride, municipal incineration with fly ash extraction
+            reference product: electricity, for reuse in municipal waste incineration only
+            unit: kilowatt hour
+          - name: treatment of waste polyvinylfluoride, municipal incineration
+            reference product: electricity, for reuse in municipal waste incineration only
+            unit: kilowatt hour
+          - name: treatment of waste polyvinylfluoride, municipal incineration with fly ash extraction
+            reference product: electricity, for reuse in municipal waste incineration only
+            unit: kilowatt hour
+          - name: treatment of waste rubber, unspecified, municipal incineration
+            reference product: electricity, for reuse in municipal waste incineration only
+            unit: kilowatt hour
+          - name: treatment of waste rubber, unspecified, municipal incineration with fly ash extraction
+            reference product: electricity, for reuse in municipal waste incineration only
+            unit: kilowatt hour
+          - name: treatment of waste sealing sheet, polyethylene, municipal incineration
+            reference product: electricity, for reuse in municipal waste incineration only
+            unit: kilowatt hour
+          - name: treatment of waste sealing sheet, polyethylene, municipal incineration with fly ash extraction
+            reference product: electricity, for reuse in municipal waste incineration only
+            unit: kilowatt hour
+          - name: treatment of waste sealing sheet, polyvinylchloride, municipal incineration
+            reference product: electricity, for reuse in municipal waste incineration only
+            unit: kilowatt hour
+          - name: treatment of waste sealing sheet, polyvinylchloride, municipal incineration with fly ash extraction
+            reference product: electricity, for reuse in municipal waste incineration only
+            unit: kilowatt hour
+          - name: treatment of waste textile, soiled, municipal incineration
+            reference product: electricity, for reuse in municipal waste incineration only
+            unit: kilowatt hour
+          - name: treatment of waste textile, soiled, municipal incineration with fly ash extraction
+            reference product: electricity, for reuse in municipal waste incineration only
+            unit: kilowatt hour
+          - name: treatment of waste vapour barrier, flame-retarded, municipal incineration
+            reference product: electricity, for reuse in municipal waste incineration only
+            unit: kilowatt hour
+          - name: treatment of waste vapour barrier, flame-retarded, municipal incineration with fly ash extraction
+            reference product: electricity, for reuse in municipal waste incineration only
+            unit: kilowatt hour
+          - name: treatment of waste wire plastic, municipal incineration
+            reference product: electricity, for reuse in municipal waste incineration only
+            unit: kilowatt hour
+          - name: treatment of waste wire plastic, municipal incineration with fly ash extraction
+            reference product: electricity, for reuse in municipal waste incineration only
+            unit: kilowatt hour
+          - name: treatment of waste wood pole, chrome preserved, municipal incineration
+            reference product: electricity, for reuse in municipal waste incineration only
+            unit: kilowatt hour
+          - name: treatment of waste wood pole, chrome preserved, municipal incineration with fly ash extraction
+            reference product: electricity, for reuse in municipal waste incineration only
+            unit: kilowatt hour
+          - name: treatment of waste wood, untreated, municipal incineration
+            reference product: electricity, for reuse in municipal waste incineration only
+            unit: kilowatt hour
+          - name: treatment of waste wood, untreated, municipal incineration with fly ash extraction
+            reference product: electricity, for reuse in municipal waste incineration only
+            unit: kilowatt hour
+      Wind:
+        dataset:
+          - name: electricity production, wind, 1-3MW turbine, onshore
+            reference product: electricity, high voltage
+            unit: kilowatt hour
+          - name: electricity production, wind, 1-3MW turbine, onshore, renewable energy products
+            reference product: electricity, high voltage, renewable energy products
+            unit: kilowatt hour
+          - name: electricity production, wind, <1MW turbine, onshore
+            reference product: electricity, high voltage
+            unit: kilowatt hour
+          - name: electricity production, wind, <1MW turbine, onshore, renewable energy products
+            reference product: electricity, high voltage, renewable energy products
+            unit: kilowatt hour
+          - name: electricity production, wind, >3MW turbine, onshore
+            reference product: electricity, high voltage
+            unit: kilowatt hour
+          - name: electricity production, wind, >3MW turbine, onshore, renewable energy products
+            reference product: electricity, high voltage, renewable energy products
+            unit: kilowatt hour
+          - name: electricity production, wind, 1-3MW turbine, offshore
+            reference product: electricity, high voltage
+            unit: kilowatt hour
+      Geothermal:
+        dataset:
+          - name: electricity production, deep geothermal
+            reference product: electricity, high voltage
+            unit: kilowatt hour
+      Hydrogen:
+        dataset:
+          - name: electricity production, at hydrogen-fired combined cycle power plant, by auto-thermal reforming of natural gas, pre, pipeline 200km, storage 1000m
+            reference product: electricity, high voltage
+            unit: kilowatt hour
+          - name: electricity production, at hydrogen-fired combined cycle power plant, by auto-thermal reforming of natural gas
+            reference product: electricity, high voltage
+            unit: kilowatt hour
+          - name: electricity production, from hydrogen-fired one gigawatt gas turbine
+            reference product: electricity, high voltage
+            unit: kilowatt hour
+      Biomass:
+        dataset:
+          - name: electricity production, at biomass-fired IGCC power plant
+            reference product: electricity, high voltage
+            unit: kilowatt hour
+          - name: electricity production, at biomass-fired IGCC power plant, pre, pipeline 200km, storage 1000m
+            reference product: electricity, high voltage
+            unit: kilowatt hour
+          - name: electricity production, at co-firing wood and coal power plant, 50-50
+            reference product: electricity, high voltage
+            unit: kilowatt hour
+          - name: electricity production, at co-firing wood and coal power plant, 80-20
+            reference product: electricity, high voltage
+            unit: kilowatt hour
+          - name: electricity production, at co-generation wood-fired power plant, post, pipeline 200km, storage 1000m
+            reference product: electricity, high voltage
+            unit: kilowatt hour
+          - name: electricity production, at wood burning power plant
+            reference product: electricity, high voltage
+            unit: kilowatt hour
+          - name: electricity production, at wood burning power plant, post, pipeline 200km, storage 1000m
+            reference product: electricity, high voltage
+            unit: kilowatt hour
+          - name: electricity production, wood, future
+            reference product: electricity, high voltage
+            unit: kilowatt hour
+          - name: ethanol production from wood
+            reference product: electricity, high voltage
+            unit: kilowatt hour
+          - name: heat and power co-generation, wood chips, 2000 kW
+            reference product: electricity, high voltage
+            unit: kilowatt hour
+          - name: heat and power co-generation, wood chips, 2000 kW, state-of-the-art 2014
+            reference product: electricity, high voltage
+            unit: kilowatt hour
+          - name: heat and power co-generation, wood chips, 6667 kW
+            reference product: electricity, high voltage
+            unit: kilowatt hour
+          - name: heat and power co-generation, wood chips, 6667 kW, state-of-the-art 2014
+            reference product: electricity, high voltage
+            unit: kilowatt hour
+          - name: heat and power co-generation, wood chips, 6667 kW, state-of-the-art 2014, renewable energy products
+            reference product: electricity, high voltage, renewable energy products
+            unit: kilowatt hour
+          - name: sawing and planing, paraná pine, kiln dried
+            reference product: electricity, high voltage
+            unit: kilowatt hour
+          - name: sulfate pulp production, from hardwood, bleached
+            reference product: electricity, high voltage
+            unit: kilowatt hour
+          - name: sulfate pulp production, from softwood, bleached
+            reference product: electricity, high voltage
+            unit: kilowatt hour
+          - name: sulfate pulp production, from softwood, unbleached
+            reference product: electricity, high voltage
+            unit: kilowatt hour
+          - name: wood pellets, burned in stirling heat and power co-generation unit, 3kW electrical, future
+            reference product: electricity, high voltage
+            unit: kilowatt hour
+      Battery:
+        dataset:
+          - name: electricity supply, from stationary 19.5 kWh NMC battery
+            reference product: electricity, high voltage
+            unit: kilowatt hour
+          - name: electricity supply, high voltage, from vanadium-redox flow battery system
+            reference product: electricity, high voltage
+            unit: kilowatt hour
+          - name: electricity voltage transformation from high to medium voltage, for LiS battery
+            reference product: electricity, medium voltage
+            unit: kilowatt hour
+          - name: market for electricity, medium voltage, for LiS battery
+            reference product: electricity, medium voltage
+            unit: kilowatt hour
+          - name: use phase, for LiS battery
+            reference product: electricity, medium voltage
+            unit: kilowatt hour
+      CSP:
+        dataset:
+          - name: electricity production, at 110 MW concentrating solar power plant, with thermal energy storage
+            reference product: electricity, high voltage
+            unit: kilowatt hour
+          - name: electricity production, solar thermal parabolic trough, 50 MW
+            reference product: electricity, high voltage
+            unit: kilowatt hour
+          - name: electricity production, solar tower power plant, 20 MW
+            reference product: electricity, high voltage
+            unit: kilowatt hour
+      CAES:
+        dataset:
+          - name: electricity production, compressed air energy storage
+            reference product: electricity, high voltage
+            unit: kilowatt hour
+          - name: electricity production, compressed air energy storage, adiabatic
+            reference product: electricity, high voltage
+            unit: kilowatt hour
+      Import:
+        dataset:
+          - name: electricity, high voltage, biofuels, import from Germany
+            reference product: electricity, high voltage
+            unit: kilowatt hour
+          - name: electricity, high voltage, hydro, import from CA-NF
+            reference product: electricity, high voltage
+            unit: kilowatt hour
+          - name: electricity, high voltage, hydro, import from CA-ON
+            reference product: electricity, high voltage
+            unit: kilowatt hour
+          - name: electricity, high voltage, hydro, import from PY
+            reference product: electricity, high voltage
+            unit: kilowatt hour
+          - name: electricity, high voltage, hydro, import from UY
+            reference product: electricity, high voltage
+            unit: kilowatt hour
+          - name: electricity, high voltage, hydro, reservoir, import from France
+            reference product: electricity, high voltage
+            unit: kilowatt hour
+          - name: electricity, high voltage, hydro, reservoir, import from France, renewable energy products
+            reference product: electricity, high voltage, renewable energy products
+            unit: kilowatt hour
+          - name: electricity, high voltage, hydro, run-of-river, import from France
+            reference product: electricity, high voltage
+            unit: kilowatt hour
+          - name: electricity, high voltage, hydro, run-of-river, import from France, renewable energy products
+            reference product: electricity, high voltage, renewable energy products
+            unit: kilowatt hour
+          - name: electricity, high voltage, import from AL
+            reference product: electricity, high voltage
+            unit: kilowatt hour
+          - name: electricity, high voltage, import from AO
+            reference product: electricity, high voltage
+            unit: kilowatt hour
+          - name: electricity, high voltage, import from AR
+            reference product: electricity, high voltage
+            unit: kilowatt hour
+          - name: electricity, high voltage, import from AT
+            reference product: electricity, high voltage
+            unit: kilowatt hour
+          - name: electricity, high voltage, import from AZ
+            reference product: electricity, high voltage
+            unit: kilowatt hour
+          - name: electricity, high voltage, import from BA
+            reference product: electricity, high voltage
+            unit: kilowatt hour
+          - name: electricity, high voltage, import from BE
+            reference product: electricity, high voltage
+            unit: kilowatt hour
+          - name: electricity, high voltage, import from BG
+            reference product: electricity, high voltage
+            unit: kilowatt hour
+          - name: electricity, high voltage, import from BR-North-eastern grid
+            reference product: electricity, high voltage
+            unit: kilowatt hour
+          - name: electricity, high voltage, import from BR-Northern grid
+            reference product: electricity, high voltage
+            unit: kilowatt hour
+          - name: electricity, high voltage, import from BR-South-eastern/Mid-western grid
+            reference product: electricity, high voltage
+            unit: kilowatt hour
+          - name: electricity, high voltage, import from BR-Southern grid
+            reference product: electricity, high voltage
+            unit: kilowatt hour
+          - name: electricity, high voltage, import from BT
+            reference product: electricity, high voltage
+            unit: kilowatt hour
+          - name: electricity, high voltage, import from BY
+            reference product: electricity, high voltage
+            unit: kilowatt hour
+          - name: electricity, high voltage, import from CA-AB
+            reference product: electricity, high voltage
+            unit: kilowatt hour
+          - name: electricity, high voltage, import from CA-BC
+            reference product: electricity, high voltage
+            unit: kilowatt hour
+          - name: electricity, high voltage, import from CA-MB
+            reference product: electricity, high voltage
+            unit: kilowatt hour
+          - name: electricity, high voltage, import from CA-NB
+            reference product: electricity, high voltage
+            unit: kilowatt hour
+          - name: electricity, high voltage, import from CA-NF
+            reference product: electricity, high voltage
+            unit: kilowatt hour
+          - name: electricity, high voltage, import from CA-NS
+            reference product: electricity, high voltage
+            unit: kilowatt hour
+          - name: electricity, high voltage, import from CA-ON
+            reference product: electricity, high voltage
+            unit: kilowatt hour
+          - name: electricity, high voltage, import from CA-PE
+            reference product: electricity, high voltage
+            unit: kilowatt hour
+          - name: electricity, high voltage, import from CA-QC
+            reference product: electricity, high voltage
+            unit: kilowatt hour
+          - name: electricity, high voltage, import from CA-SK
+            reference product: electricity, high voltage
+            unit: kilowatt hour
+          - name: electricity, high voltage, import from CD
+            reference product: electricity, high voltage
+            unit: kilowatt hour
+          - name: electricity, high voltage, import from CH
+            reference product: electricity, high voltage
+            unit: kilowatt hour
+          - name: electricity, high voltage, import from CL
+            reference product: electricity, high voltage
+            unit: kilowatt hour
+          - name: electricity, high voltage, import from CN-CSG
+            reference product: electricity, high voltage
+            unit: kilowatt hour
+          - name: electricity, high voltage, import from CN-ECGC
+            reference product: electricity, high voltage
+            unit: kilowatt hour
+          - name: electricity, high voltage, import from CN-NCGC
+            reference product: electricity, high voltage
+            unit: kilowatt hour
+          - name: electricity, high voltage, import from CN-NECG
+            reference product: electricity, high voltage
+            unit: kilowatt hour
+          - name: electricity, high voltage, import from CN-NWG
+            reference product: electricity, high voltage
+            unit: kilowatt hour
+          - name: electricity, high voltage, import from CN-SGCC
+            reference product: electricity, high voltage
+            unit: kilowatt hour
+          - name: electricity, high voltage, import from CN-SWG
+            reference product: electricity, high voltage
+            unit: kilowatt hour
+          - name: electricity, high voltage, import from CO
+            reference product: electricity, high voltage
+            unit: kilowatt hour
+          - name: electricity, high voltage, import from CR
+            reference product: electricity, high voltage
+            unit: kilowatt hour
+          - name: electricity, high voltage, import from CZ
+            reference product: electricity, high voltage
+            unit: kilowatt hour
+          - name: electricity, high voltage, import from DE
+            reference product: electricity, high voltage
+            unit: kilowatt hour
+          - name: electricity, high voltage, import from DK
+            reference product: electricity, high voltage
+            unit: kilowatt hour
+          - name: electricity, high voltage, import from DZ
+            reference product: electricity, high voltage
+            unit: kilowatt hour
+          - name: electricity, high voltage, import from EC
+            reference product: electricity, high voltage
+            unit: kilowatt hour
+          - name: electricity, high voltage, import from EE
+            reference product: electricity, high voltage
+            unit: kilowatt hour
+          - name: electricity, high voltage, import from EG
+            reference product: electricity, high voltage
+            unit: kilowatt hour
+          - name: electricity, high voltage, import from ES
+            reference product: electricity, high voltage
+            unit: kilowatt hour
+          - name: electricity, high voltage, import from FI
+            reference product: electricity, high voltage
+            unit: kilowatt hour
+          - name: electricity, high voltage, import from FR
+            reference product: electricity, high voltage
+            unit: kilowatt hour
+          - name: electricity, high voltage, import from GB
+            reference product: electricity, high voltage
+            unit: kilowatt hour
+          - name: electricity, high voltage, import from GE
+            reference product: electricity, high voltage
+            unit: kilowatt hour
+          - name: electricity, high voltage, import from GH
+            reference product: electricity, high voltage
+            unit: kilowatt hour
+          - name: electricity, high voltage, import from GR
+            reference product: electricity, high voltage
+            unit: kilowatt hour
+          - name: electricity, high voltage, import from GT
+            reference product: electricity, high voltage
+            unit: kilowatt hour
+          - name: electricity, high voltage, import from HN
+            reference product: electricity, high voltage
+            unit: kilowatt hour
+          - name: electricity, high voltage, import from HR
+            reference product: electricity, high voltage
+            unit: kilowatt hour
+          - name: electricity, high voltage, import from HU
+            reference product: electricity, high voltage
+            unit: kilowatt hour
+          - name: electricity, high voltage, import from ID
+            reference product: electricity, high voltage
+            unit: kilowatt hour
+          - name: electricity, high voltage, import from IE
+            reference product: electricity, high voltage
+            unit: kilowatt hour
+          - name: electricity, high voltage, import from IN-Eastern grid
+            reference product: electricity, high voltage
+            unit: kilowatt hour
+          - name: electricity, high voltage, import from IN-North-eastern grid
+            reference product: electricity, high voltage
+            unit: kilowatt hour
+          - name: electricity, high voltage, import from IN-Northern grid
+            reference product: electricity, high voltage
+            unit: kilowatt hour
+          - name: electricity, high voltage, import from IN-Southern grid
+            reference product: electricity, high voltage
+            unit: kilowatt hour
+          - name: electricity, high voltage, import from IN-Western grid
+            reference product: electricity, high voltage
+            unit: kilowatt hour
+          - name: electricity, high voltage, import from IR
+            reference product: electricity, high voltage
+            unit: kilowatt hour
+          - name: electricity, high voltage, import from IT
+            reference product: electricity, high voltage
+            unit: kilowatt hour
+          - name: electricity, high voltage, import from JO
+            reference product: electricity, high voltage
+            unit: kilowatt hour
+          - name: electricity, high voltage, import from KZ
+            reference product: electricity, high voltage
+            unit: kilowatt hour
+          - name: electricity, high voltage, import from LT
+            reference product: electricity, high voltage
+            unit: kilowatt hour
+          - name: electricity, high voltage, import from LU
+            reference product: electricity, high voltage
+            unit: kilowatt hour
+          - name: electricity, high voltage, import from LV
+            reference product: electricity, high voltage
+            unit: kilowatt hour
+          - name: electricity, high voltage, import from MA
+            reference product: electricity, high voltage
+            unit: kilowatt hour
+          - name: electricity, high voltage, import from MD
+            reference product: electricity, high voltage
+            unit: kilowatt hour
+          - name: electricity, high voltage, import from ME
+            reference product: electricity, high voltage
+            unit: kilowatt hour
+          - name: electricity, high voltage, import from MK
+            reference product: electricity, high voltage
+            unit: kilowatt hour
+          - name: electricity, high voltage, import from MN
+            reference product: electricity, high voltage
+            unit: kilowatt hour
+          - name: electricity, high voltage, import from MT
+            reference product: electricity, high voltage
+            unit: kilowatt hour
+          - name: electricity, high voltage, import from MX
+            reference product: electricity, high voltage
+            unit: kilowatt hour
+          - name: electricity, high voltage, import from MY
+            reference product: electricity, high voltage
+            unit: kilowatt hour
+          - name: electricity, high voltage, import from MZ
+            reference product: electricity, high voltage
+            unit: kilowatt hour
+          - name: electricity, high voltage, import from NG
+            reference product: electricity, high voltage
+            unit: kilowatt hour
+          - name: electricity, high voltage, import from NI
+            reference product: electricity, high voltage
+            unit: kilowatt hour
+          - name: electricity, high voltage, import from NL
+            reference product: electricity, high voltage
+            unit: kilowatt hour
+          - name: electricity, high voltage, import from NO
+            reference product: electricity, high voltage
+            unit: kilowatt hour
+          - name: electricity, high voltage, import from OM
+            reference product: electricity, high voltage
+            unit: kilowatt hour
+          - name: electricity, high voltage, import from PA
+            reference product: electricity, high voltage
+            unit: kilowatt hour
+          - name: electricity, high voltage, import from PL
+            reference product: electricity, high voltage
+            unit: kilowatt hour
+          - name: electricity, high voltage, import from PT
+            reference product: electricity, high voltage
+            unit: kilowatt hour
+          - name: electricity, high voltage, import from PY
+            reference product: electricity, high voltage
+            unit: kilowatt hour
+          - name: electricity, high voltage, import from RAF
+            reference product: electricity, high voltage
+            unit: kilowatt hour
+          - name: electricity, high voltage, import from RAS
+            reference product: electricity, high voltage
+            unit: kilowatt hour
+          - name: electricity, high voltage, import from RO
+            reference product: electricity, high voltage
+            unit: kilowatt hour
+          - name: electricity, high voltage, import from RS
+            reference product: electricity, high voltage
+            unit: kilowatt hour
+          - name: electricity, high voltage, import from RU
+            reference product: electricity, high voltage
+            unit: kilowatt hour
+          - name: electricity, high voltage, import from SA
+            reference product: electricity, high voltage
+            unit: kilowatt hour
+          - name: electricity, high voltage, import from SE
+            reference product: electricity, high voltage
+            unit: kilowatt hour
+          - name: electricity, high voltage, import from SI
+            reference product: electricity, high voltage
+            unit: kilowatt hour
+          - name: electricity, high voltage, import from SK
+            reference product: electricity, high voltage
+            unit: kilowatt hour
+          - name: electricity, high voltage, import from SY
+            reference product: electricity, high voltage
+            unit: kilowatt hour
+          - name: electricity, high voltage, import from TG
+            reference product: electricity, high voltage
+            unit: kilowatt hour
+          - name: electricity, high voltage, import from TN
+            reference product: electricity, high voltage
+            unit: kilowatt hour
+          - name: electricity, high voltage, import from TR
+            reference product: electricity, high voltage
+            unit: kilowatt hour
+          - name: electricity, high voltage, import from TZ
+            reference product: electricity, high voltage
+            unit: kilowatt hour
+          - name: electricity, high voltage, import from UA
+            reference product: electricity, high voltage
+            unit: kilowatt hour
+          - name: electricity, high voltage, import from US-MRO
+            reference product: electricity, high voltage
+            unit: kilowatt hour
+          - name: electricity, high voltage, import from US-NPCC
+            reference product: electricity, high voltage
+            unit: kilowatt hour
+          - name: electricity, high voltage, import from US-TRE
+            reference product: electricity, high voltage
+            unit: kilowatt hour
+          - name: electricity, high voltage, import from US-WECC
+            reference product: electricity, high voltage
+            unit: kilowatt hour
+          - name: electricity, high voltage, import from UY
+            reference product: electricity, high voltage
+            unit: kilowatt hour
+          - name: electricity, high voltage, import from UZ
+            reference product: electricity, high voltage
+            unit: kilowatt hour
+          - name: electricity, high voltage, import from VE
+            reference product: electricity, high voltage
+            unit: kilowatt hour
+          - name: electricity, high voltage, import from VN
+            reference product: electricity, high voltage
+            unit: kilowatt hour
+          - name: electricity, high voltage, import from ZA
+            reference product: electricity, high voltage
+            unit: kilowatt hour
+          - name: electricity, high voltage, import from ZW
+            reference product: electricity, high voltage
+            unit: kilowatt hour
+          - name: electricity, high voltage, natural gas, import from Germany
+            reference product: electricity, high voltage
+            unit: kilowatt hour
+          - name: electricity, high voltage, nuclear, import from France
+            reference product: electricity, high voltage
+            unit: kilowatt hour
+          - name: electricity, high voltage, wind power, import from Germany
+            reference product: electricity, high voltage
+            unit: kilowatt hour
+          - name: electricity, high voltage, wind power, import from Germany, renewable energy products
+            reference product: electricity, high voltage, renewable energy products
+            unit: kilowatt hour
+          - name: electricity, low voltage, photovoltaic, import from Germany
+            reference product: electricity, low voltage
+            unit: kilowatt hour
+          - name: electricity, medium voltage, municipal waste incineration, import from Germany
+            reference product: electricity, medium voltage
+            unit: kilowatt hour
+    Residential:
+      PV:
+        dataset:
+          - name: electricity production, photovoltaic, 3kWp facade installation, multi-Si, laminated, integrated
+            reference product: electricity, low voltage
+            unit: kilowatt hour
+          - name: electricity production, photovoltaic, 3kWp facade installation, multi-Si, panel, mounted
+            reference product: electricity, low voltage
+            unit: kilowatt hour
+          - name: electricity production, photovoltaic, 3kWp facade installation, single-Si, laminated, integrated
+            reference product: electricity, low voltage
+            unit: kilowatt hour
+          - name: electricity production, photovoltaic, 3kWp facade installation, single-Si, panel, mounted
+            reference product: electricity, low voltage
+            unit: kilowatt hour
+          - name: electricity production, photovoltaic, 3kWp flat-roof installation, multi-Si
+            reference product: electricity, low voltage
+            unit: kilowatt hour
+          - name: electricity production, photovoltaic, 3kWp flat-roof installation, single-Si
+            reference product: electricity, low voltage
+            unit: kilowatt hour
+          - name: electricity production, photovoltaic, 3kWp slanted-roof installation, a-Si, laminated, integrated
+            reference product: electricity, low voltage
+            unit: kilowatt hour
+          - name: electricity production, photovoltaic, 3kWp slanted-roof installation, a-Si, panel, mounted
+            reference product: electricity, low voltage
+            unit: kilowatt hour
+          - name: electricity production, photovoltaic, 3kWp slanted-roof installation, CdTe, laminated, integrated
+            reference product: electricity, low voltage
+            unit: kilowatt hour
+          - name: electricity production, photovoltaic, 3kWp slanted-roof installation, CIS, panel, mounted
+            reference product: electricity, low voltage
+            unit: kilowatt hour
+          - name: electricity production, photovoltaic, 3kWp slanted-roof installation, multi-Si, laminated, integrated
+            reference product: electricity, low voltage
+            unit: kilowatt hour
+          - name: electricity production, photovoltaic, 3kWp slanted-roof installation, multi-Si, panel, mounted
+            reference product: electricity, low voltage
+            unit: kilowatt hour
+          - name: electricity production, photovoltaic, 3kWp slanted-roof installation, ribbon-Si, laminated, integrated
+            reference product: electricity, low voltage
+            unit: kilowatt hour
+          - name: electricity production, photovoltaic, 3kWp slanted-roof installation, ribbon-Si, panel, mounted
+            reference product: electricity, low voltage
+            unit: kilowatt hour
+          - name: electricity production, photovoltaic, 3kWp slanted-roof installation, single-Si, laminated, integrated
+            reference product: electricity, low voltage
+            unit: kilowatt hour
+          - name: electricity production, photovoltaic, 3kWp slanted-roof installation, single-Si, panel, mounted
+            reference product: electricity, low voltage
+            unit: kilowatt hour
+          - name: electricity production, photovoltaic, 3kWp slanted-roof installation, single-Si, panel, mounted, renewable energy produc
+            reference product: electricity, low voltage, renewable energy products
+            unit: kilowatt hour
+          - name: electricity production, photovoltaic, at 3kWp slanted-roof, CdTe, panel, mounted
+            reference product: electricity production, photovoltaic, at 3kWp slanted-roof, CdTe, panel, mounted
+            unit: kilowatt hour
+          - name: electricity production, photovoltaic, at 3kWp slanted-roof, CIS, laminated, integrated
+            reference product: electricity production, photovoltaic, at 3kWp slanted-roof, CIS, laminated, integrated
+            unit: kilowatt hour
+          - name: electricity production, photovoltaic, photovoltaic slanted-roof installation, 3 kWp, CdTe, laminated, integrated
+            reference product: electricity, low voltage
+            unit: kilowatt hour
+          - name: electricity production, photovoltaic, photovoltaic slanted-roof installation, 3 kWp, CIS, panel, mounted
+            reference product: electricity, low voltage
+            unit: kilowatt hour
+          - name: electricity production, photovoltaic, photovoltaic slanted-roof installation, 3 kWp, multi-Si, laminated, integrated
+            reference product: electricity, low voltage
+            unit: kilowatt hour
+          - name: electricity production, photovoltaic, photovoltaic slanted-roof installation, 3 kWp, multi-Si, panel, mounted
+            reference product: electricity, low voltage
+            unit: kilowatt hour
+          - name: electricity production, photovoltaic, photovoltaic slanted-roof installation, 3 kWp, single-Si, laminated, integrated
+            reference product: electricity, low voltage
+            unit: kilowatt hour
+          - name: electricity production, photovoltaic, photovoltaic slanted-roof installation, 3 kWp, single-Si, panel, mounted
+            reference product: electricity, low voltage
+            unit: kilowatt hour
+      Hydrogen:
+        dataset:
+          - name: electricity, residential, by conversion of hydrogen using fuel cell, PEM, allocated by exergy, distributed by pipeline, produced by Electrolysis, PEM using electricity from grid
+            reference product: electricity, from residential heating system
+            unit: kilowatt hour
+          - name: electricity, residential, by combustion of hydrogen using CHP, allocated by exergy, distributed by pipeline, produced by Electrolysis, PEM using electricity from grid
+            reference product: electricity, from residential heating system
+            unit: kilowatt hour
+          - name: electricity, residential, by conversion of hydrogen using fuel cell, SOFC, allocated by exergy, distributed by pipeline, produced by Electrolysis, PEM using electricity from grid
+            reference product: electricity, from residential heating system
+            unit: kilowatt hour
+  #### Activities providing 'heat', in megajoules
+  Heat:
+    Industrial:
+      CHP and furnace:
+        dataset:
+          - name: biomethane, low pressure burned in micro gas turbine 100kWe
+            reference product: heat, central or small-scale, other than natural gas
+            unit: megajoule
+          - name: biomethane, low pressure burned in polymer electrolyte membrane fuel cell 2kWe, future
+            reference product: heat, future
+            unit: megajoule
+          - name: heat and power co-generation, biogas, gas engine
+            reference product: heat, central or small-scale, other than natural gas
+            unit: megajoule
+          - name: heat and power co-generation, biogas, gas engine, renewable energy products
+            reference product: heat, central or small-scale, other than natural gas
+            unit: megajoule
+          - name: heat and power co-generation, diesel, 200kW electrical, SCR-NOx reduction
+            reference product: heat, central or small-scale, other than natural gas
+            unit: megajoule
+          - name: heat and power co-generation, hard coal
+            reference product: heat, central or small-scale, other than natural gas
+            unit: megajoule
+          - name: heat and power co-generation, lignite
+            reference product: heat, central or small-scale, other than natural gas
+            unit: megajoule
+          - name: heat and power co-generation, natural gas, 160kW electrical, Jakobsberg
+            reference product: heat, central or small-scale, natural gas, Jakobsberg
+            unit: megajoule
+          - name: heat and power co-generation, natural gas, 160kW electrical, lambda=1
+            reference product: heat, central or small-scale, natural gas
+            unit: megajoule
+          - name: heat and power co-generation, natural gas, 1MW electrical, lean burn
+            reference product: heat, district or industrial, natural gas
+            unit: megajoule
+          - name: heat and power co-generation, natural gas, 200kW electrical, lean burn
+            reference product: heat, district or industrial, natural gas
+            unit: megajoule
+          - name: heat and power co-generation, natural gas, 500kW electrical, lean burn
+            reference product: heat, district or industrial, natural gas
+            unit: megajoule
+          - name: heat and power co-generation, natural gas, 50kW electrical, lean burn
+            reference product: heat, central or small-scale, natural gas
+            unit: megajoule
+          - name: heat and power co-generation, natural gas, combined cycle power plant, 400MW electrical
+            reference product: heat, district or industrial, natural gas
+            unit: megajoule
+          - name: heat and power co-generation, natural gas, conventional power plant, 100MW electrical
+            reference product: heat, district or industrial, natural gas
+            unit: megajoule
+          - name: heat and power co-generation, natural gas, mini-plant 2KW electrical
+            reference product: heat, central or small-scale, natural gas
+            unit: megajoule
+          - name: heat and power co-generation, oil
+            reference product: heat, district or industrial, other than natural gas
+            unit: megajoule
+          - name: heat and power co-generation, wood chips, 2000 kW
+            reference product: heat, district or industrial, other than natural gas
+            unit: megajoule
+          - name: heat and power co-generation, wood chips, 2000 kW, state-of-the-art 2014
+            reference product: heat, district or industrial, other than natural gas
+            unit: megajoule
+          - name: heat and power co-generation, wood chips, 6667 kW
+            reference product: heat, district or industrial, other than natural gas
+            unit: megajoule
+          - name: heat and power co-generation, wood chips, 6667 kW, state-of-the-art 2014
+            reference product: heat, district or industrial, other than natural gas
+            unit: megajoule
+          - name: heat and power co-generation, wood chips, 6667 kW, state-of-the-art 2014, renewable energy products
+            reference product: heat, district or industrial, other than natural gas
+            unit: megajoule
+          - name: heat production, at co-generation hard coal-fired power plant, post, pipeline 200km, storage 1000m
+            reference product: heat, district or industrial, other than natural gas
+            unit: megajoule
+          - name: heat production, at co-generation natural gas-fired power plant, post, pipeline 200km, storage 1000m
+            reference product: heat, district or industrial, natural gas
+            unit: megajoule
+          - name: heat production, at co-generation oil-fired power plant, post, pipeline 200km, storage 1000m
+            reference product: heat, district or industrial, other than natural gas
+            unit: megajoule
+          - name: heat production, at co-generation wood-fired power plant, post, pipeline 200km, storage 1000m
+            reference product: heat, district or industrial, other than natural gas
+            unit: megajoule
+          - name: heat production, at hard coal industrial furnace 1-10MW
+            reference product: heat, district or industrial, other than natural gas
+            unit: megajoule
+          - name: heat production, from hydrogen-fired one gigawatt gas turbine
+            reference product: heat
+            unit: megajoule
+          - name: heat production, hardwood chips from forest, at furnace 1000kW
+            reference product: heat, district or industrial, other than natural gas
+            unit: megajoule
+          - name: heat production, hardwood chips from forest, at furnace 1000kW, state-of-the-art 2014
+            reference product: heat, district or industrial, other than natural gas
+            unit: megajoule
+          - name: heat production, hardwood chips from forest, at furnace 300kW
+            reference product: heat, district or industrial, other than natural gas
+            unit: megajoule
+          - name: heat production, hardwood chips from forest, at furnace 300kW, state-of-the-art 2014
+            reference product: heat, district or industrial, other than natural gas
+            unit: megajoule
+          - name: heat production, hardwood chips from forest, at furnace 5000kW
+            reference product: heat, district or industrial, other than natural gas
+            unit: megajoule
+          - name: heat production, hardwood chips from forest, at furnace 5000kW, state-of-the-art 2014
+            reference product: heat, district or industrial, other than natural gas
+            unit: megajoule
+          - name: heat production, heavy fuel oil, at industrial furnace 1MW
+            reference product: heat, district or industrial, other than natural gas
+            unit: megajoule
+          - name: heat production, light fuel oil, at boiler 100kW condensing, non-modulating
+            reference product: heat, central or small-scale, other than natural gas
+            unit: megajoule
+          - name: heat production, light fuel oil, at boiler 100kW, non-modulating
+            reference product: heat, central or small-scale, other than natural gas
+            unit: megajoule
+          - name: heat production, light fuel oil, at industrial furnace 1MW
+            reference product: heat, district or industrial, other than natural gas
+            unit: megajoule
+          - name: heat production, mixed logs, at furnace 100kW
+            reference product: heat, central or small-scale, other than natural gas
+            unit: megajoule
+          - name: heat production, mixed logs, at furnace 100kW, state-of-the-art 2014
+            reference product: heat, central or small-scale, other than natural gas
+            unit: megajoule
+          - name: heat production, natural gas, at boiler condensing modulating >100kW
+            reference product: heat, district or industrial, natural gas
+            unit: megajoule
+          - name: heat production, natural gas, at boiler modulating >100kW
+            reference product: heat, district or industrial, natural gas
+            unit: megajoule
+          - name: heat production, natural gas, at industrial furnace >100kW
+            reference product: heat, district or industrial, natural gas
+            unit: megajoule
+          - name: heat production, natural gas, at industrial furnace low-NOx >100kW
+            reference product: heat, district or industrial, natural gas
+            unit: megajoule
+          - name: heat production, propane, at industrial furnace >100kW
+            reference product: heat, district or industrial, other than natural gas
+            unit: megajoule
+          - name: heat production, softwood chips from forest, at furnace 1000kW
+            reference product: heat, district or industrial, other than natural gas
+            unit: megajoule
+          - name: heat production, softwood chips from forest, at furnace 1000kW, state-of-the-art 2014
+            reference product: heat, district or industrial, other than natural gas
+            unit: megajoule
+          - name: heat production, softwood chips from forest, at furnace 300kW
+            reference product: heat, district or industrial, other than natural gas
+            unit: megajoule
+          - name: heat production, softwood chips from forest, at furnace 300kW, state-of-the-art 2014
+            reference product: heat, district or industrial, other than natural gas
+            unit: megajoule
+          - name: heat production, softwood chips from forest, at furnace 5000kW
+            reference product: heat, district or industrial, other than natural gas
+            unit: megajoule
+          - name: heat production, softwood chips from forest, at furnace 5000kW, state-of-the-art 2014
+            reference product: heat, district or industrial, other than natural gas
+            unit: megajoule
+          - name: heat production, straw, at furnace 300kW
+            reference product: heat, district or industrial, other than natural gas
+            unit: megajoule
+          - name: heat production, straw, organic, at furnace 300kW
+            reference product: heat, district or industrial, other than natural gas
+            unit: megajoule
+          - name: heat production, untreated waste wood, at furnace 1000-5000 kW
+            reference product: heat, district or industrial, other than natural gas
+            unit: megajoule
+          - name: heat production, untreated waste wood, at furnace 1000-5000 kW, state-of-the-art 2014
+            reference product: heat, district or industrial, other than natural gas
+            unit: megajoule
+          - name: heat production, wood chips from industry, at furnace 1000kW
+            reference product: heat, district or industrial, other than natural gas
+            unit: megajoule
+          - name: heat production, wood chips from industry, at furnace 1000kW, state-of-the-art 2014
+            reference product: heat, district or industrial, other than natural gas
+            unit: megajoule
+          - name: heat production, wood chips from industry, at furnace 300kW
+            reference product: heat, district or industrial, other than natural gas
+            unit: megajoule
+          - name: heat production, wood chips from industry, at furnace 300kW, state-of-the-art 2014
+            reference product: heat, district or industrial, other than natural gas
+            unit: megajoule
+          - name: heat production, wood chips from industry, at furnace 5000kW
+            reference product: heat, district or industrial, other than natural gas
+            unit: megajoule
+          - name: heat production, wood chips from industry, at furnace 5000kW, state-of-the-art 2014
+            reference product: heat, district or industrial, other than natural gas
+            unit: megajoule
+          - name: heat production, wood chips from post-consumer wood, at furnace 300kW
+            reference product: heat, district or industrial, other than natural gas
+            unit: megajoule
+          - name: heat production, wood pellet, at furnace 300kW
+            reference product: heat, central or small-scale, other than natural gas
+            unit: megajoule
+          - name: heat production, wood pellet, at furnace 300kW, state-of-the-art 2014
+            reference product: heat, central or small-scale, other than natural gas
+            unit: megajoule
+          - name: heat, at cogen, with supporting oil furnace 60%, 160kWe Jakobsberg, allocation exergy
+            reference product: heat, central or small-scale, Jakobsberg
+            unit: megajoule
+          - name: heat, from municipal waste incineration to generic market for heat district or industrial, other than natural gas
+            reference product: heat, district or industrial, other than natural gas
+            unit: megajoule
+          - name: heat, non-market, at cogen 160kWe Jakobsberg, allocation exergy
+            reference product: heat, central or small-scale, natural gas and heat pump, Jakobsberg
+            unit: megajoule
+          - name: natural gas, burned in micro gas turbine, 100kWe
+            reference product: heat, central or small-scale, natural gas
+            unit: megajoule
+          - name: natural gas, burned in solid oxide fuel cell 125kWe, future
+            reference product: heat, future
+            unit: megajoule
+          - name: natural gas, burned in solid oxide fuel cell, with micro gas turbine, 180kWe, future
+            reference product: heat, future
+            unit: megajoule
+          - name: refinery gas, burned in furnace
+            reference product: heat, district or industrial, other than natural gas
+            unit: megajoule
+      ### Activities generating "heat, for reuse in municipal waste incineration only"
+      Treatment activities:
+        dataset:
+          - name: treatment of biowaste, municipal incineration
+            reference product: heat, for reuse in municipal waste incineration only
+            unit: megajoule
+          - name: treatment of biowaste, municipal incineration with fly ash extraction
+            reference product: heat, for reuse in municipal waste incineration only
+            unit: megajoule
+          - name: treatment of digester sludge, municipal incineration
+            reference product: heat, for reuse in municipal waste incineration only
+            unit: megajoule
+          - name: treatment of digester sludge, municipal incineration with fly ash extraction
+            reference product: heat, for reuse in municipal waste incineration only
+            unit: megajoule
+          - name: treatment of municipal solid waste, incineration
+            reference product: heat, for reuse in municipal waste incineration only
+            unit: megajoule
+          - name: treatment of municipal solid waste, municipal incineration with fly ash extraction
+            reference product: heat, for reuse in municipal waste incineration only
+            unit: megajoule
+          - name: treatment of raw sewage sludge, municipal incineration
+            reference product: heat, for reuse in municipal waste incineration only
+            unit: megajoule
+          - name: treatment of raw sewage sludge, municipal incineration with fly ash extraction
+            reference product: heat, for reuse in municipal waste incineration only
+            unit: megajoule
+          - name: treatment of residue from mechanical treatment, cathode ray tube display, municipal incineration with fly ash extraction
+            reference product: heat, for reuse in municipal waste incineration only
+            unit: megajoule
+          - name: treatment of residue from mechanical treatment, cathode ray tube display, municipal waste incineration
+            reference product: heat, for reuse in municipal waste incineration only
+            unit: megajoule
+          - name: treatment of residue from mechanical treatment, desktop computer, municipal incineration with fly ash extraction
+            reference product: heat, for reuse in municipal waste incineration only
+            unit: megajoule
+          - name: treatment of residue from mechanical treatment, desktop computer, municipal waste incineration
+            reference product: heat, for reuse in municipal waste incineration only
+            unit: megajoule
+          - name: treatment of residue from mechanical treatment, industrial device, municipal incineration with fly ash extraction
+            reference product: heat, for reuse in municipal waste incineration only
+            unit: megajoule
+          - name: treatment of residue from mechanical treatment, industrial device, municipal waste incineration
+            reference product: heat, for reuse in municipal waste incineration only
+            unit: megajoule
+          - name: treatment of residue from mechanical treatment, IT accessory, municipal incineration with fly ash extraction
+            reference product: heat, for reuse in municipal waste incineration only
+            unit: megajoule
+          - name: treatment of residue from mechanical treatment, IT accessory, municipal waste incineration
+            reference product: heat, for reuse in municipal waste incineration only
+            unit: megajoule
+          - name: treatment of residue from mechanical treatment, laptop computer, municipal incineration with fly ash extraction
+            reference product: heat, for reuse in municipal waste incineration only
+            unit: megajoule
+          - name: treatment of residue from mechanical treatment, laptop computer, municipal waste incineration
+            reference product: heat, for reuse in municipal waste incineration only
+            unit: megajoule
+          - name: treatment of residue from mechanical treatment, laser printer, municipal incineration with fly ash extraction
+            reference product: heat, for reuse in municipal waste incineration only
+            unit: megajoule
+          - name: treatment of residue from mechanical treatment, laser printer, municipal waste incineration
+            reference product: heat, for reuse in municipal waste incineration only
+            unit: megajoule
+          - name: treatment of residue from mechanical treatment, liquid crystal display, municipal incineration with fly ash extraction
+            reference product: heat, for reuse in municipal waste incineration only
+            unit: megajoule
+          - name: treatment of residue from mechanical treatment, liquid crystal display, municipal waste incineration
+            reference product: heat, for reuse in municipal waste incineration only
+            unit: megajoule
+          - name: treatment of residue from shredder fraction from manual dismantling, municipal incineration with fly ash extraction
+            reference product: heat, for reuse in municipal waste incineration only
+            unit: megajoule
+          - name: treatment of residue from shredder fraction from manual dismantling, municipal waste incineration
+            reference product: heat, for reuse in municipal waste incineration only
+            unit: megajoule
+          - name: treatment of sewage sludge, 70% water, WWT, condensate from light oil boiler, municipal incineration
+            reference product: heat, for reuse in municipal waste incineration only
+            unit: megajoule
+          - name: treatment of sewage sludge, 70% water, WWT, heat carrier liquid, 40% C3H8O2, municipal incineration
+            reference product: heat, for reuse in municipal waste incineration only
+            unit: megajoule
+          - name: treatment of sewage sludge, 70% water, WWT, heat carrier liquid, 40% C3H8O2, municipal incineration FAE
+            reference product: heat, for reuse in municipal waste incineration only
+            unit: megajoule
+          - name: treatment of sewage sludge, 70% water, WWT, rainwater mineral oil storage, municipal incineration
+            reference product: heat, for reuse in municipal waste incineration only
+            unit: megajoule
+          - name: treatment of sewage sludge, 70% water, WWT, rainwater mineral oil storage, municipal incineration FAE
+            reference product: heat, for reuse in municipal waste incineration only
+            unit: megajoule
+          - name: treatment of sewage sludge, 70% water, WWT, WW from concrete production, municipal incineration
+            reference product: heat, for reuse in municipal waste incineration only
+            unit: megajoule
+          - name: treatment of sewage sludge, 70% water, WWT, WW from CRT production, municipal incineration
+            reference product: heat, for reuse in municipal waste incineration only
+            unit: megajoule
+          - name: treatment of sewage sludge, 70% water, WWT, WW from CRT production, municipal incineration FAE
+            reference product: heat, for reuse in municipal waste incineration only
+            unit: megajoule
+          - name: treatment of sewage sludge, 70% water, WWT, WW from GGBFS production, municipal incineration
+            reference product: heat, for reuse in municipal waste incineration only
+            unit: megajoule
+          - name: treatment of sewage sludge, 70% water, WWT, WW from glass production, municipal incineration
+            reference product: heat, for reuse in municipal waste incineration only
+            unit: megajoule
+          - name: treatment of sewage sludge, 70% water, WWT, WW from glass production, municipal incineration FAE
+            reference product: heat, for reuse in municipal waste incineration only
+            unit: megajoule
+          - name: treatment of sewage sludge, 70% water, WWT, WW from grass refinery, municipal incineration
+            reference product: heat, for reuse in municipal waste incineration only
+            unit: megajoule
+          - name: treatment of sewage sludge, 70% water, WWT, WW from grass refinery, municipal incineration FAE
+            reference product: heat, for reuse in municipal waste incineration only
+            unit: megajoule
+          - name: treatment of sewage sludge, 70% water, WWT, WW from hard fibreboard production, municipal incineration
+            reference product: heat, for reuse in municipal waste incineration only
+            unit: megajoule
+          - name: treatment of sewage sludge, 70% water, WWT, WW from LCD backlight production, municipal incineration
+            reference product: heat, for reuse in municipal waste incineration only
+            unit: megajoule
+          - name: treatment of sewage sludge, 70% water, WWT, WW from LCD backlight production, municipal incineration FAE
+            reference product: heat, for reuse in municipal waste incineration only
+            unit: megajoule
+          - name: treatment of sewage sludge, 70% water, WWT, WW from LCD production, municipal incineration
+            reference product: heat, for reuse in municipal waste incineration only
+            unit: megajoule
+          - name: treatment of sewage sludge, 70% water, WWT, WW from LCD production, municipal incineration FAE
+            reference product: heat, for reuse in municipal waste incineration only
+            unit: megajoule
+          - name: treatment of sewage sludge, 70% water, WWT, WW from liquid crystal production, municipal incineration
+            reference product: heat, for reuse in municipal waste incineration only
+            unit: megajoule
+          - name: treatment of sewage sludge, 70% water, WWT, WW from liquid crystal production, municipal incineration FAE
+            reference product: heat, for reuse in municipal waste incineration only
+            unit: megajoule
+          - name: treatment of sewage sludge, 70% water, WWT, WW from maize starch production, municipal incineration
+            reference product: heat, for reuse in municipal waste incineration only
+            unit: megajoule
+          - name: treatment of sewage sludge, 70% water, WWT, WW from maize starch production, municipal incineration FAE
+            reference product: heat, for reuse in municipal waste incineration only
+            unit: megajoule
+          - name: treatment of sewage sludge, 70% water, WWT, WW from medium density board production, municipal incineration
+            reference product: heat, for reuse in municipal waste incineration only
+            unit: megajoule
+          - name: treatment of sewage sludge, 70% water, WWT, WW from particle board production, municipal incineration
+            reference product: heat, for reuse in municipal waste incineration only
+            unit: megajoule
+          - name: treatment of sewage sludge, 70% water, WWT, WW from plywood production, municipal incineration
+            reference product: heat, for reuse in municipal waste incineration only
+            unit: megajoule
+          - name: treatment of sewage sludge, 70% water, WWT, WW from plywood production, municipal incineration FAE
+            reference product: heat, for reuse in municipal waste incineration only
+            unit: megajoule
+          - name: treatment of sewage sludge, 70% water, WWT, WW from potato starch production, municipal incineration
+            reference product: heat, for reuse in municipal waste incineration only
+            unit: megajoule
+          - name: treatment of sewage sludge, 70% water, WWT, WW from potato starch production, municipal incineration FAE
+            reference product: heat, for reuse in municipal waste incineration only
+            unit: megajoule
+          - name: treatment of sewage sludge, 70% water, WWT, WW from soft fibreboard production, municipal incineration
+            reference product: heat, for reuse in municipal waste incineration only
+            unit: megajoule
+          - name: treatment of sewage sludge, 70% water, WWT, WW from soft fibreboard production, municipal incineration FAE
+            reference product: heat, for reuse in municipal waste incineration only
+            unit: megajoule
+          - name: treatment of sewage sludge, 70% water, WWT, WW from vegetable oil refinery, municipal incineration
+            reference product: heat, for reuse in municipal waste incineration only
+            unit: megajoule
+          - name: treatment of sewage sludge, 70% water, WWT, WW, average, municipal incineration
+            reference product: heat, for reuse in municipal waste incineration only
+            unit: megajoule
+          - name: treatment of sewage sludge, 70% water, WWT, WW, average, municipal incineration FAE
+            reference product: heat, for reuse in municipal waste incineration only
+            unit: megajoule
+          - name: treatment of sewage sludge, 70% water, WWT[R], WW from anaerobic digestion of whey, municipal incineration
+            reference product: heat, for reuse in municipal waste incineration only
+            unit: megajoule
+          - name: treatment of sewage sludge, 70% water, WWT[R], WW from anaerobic digestion of whey, municipal incineration FAE
+            reference product: heat, for reuse in municipal waste incineration only
+            unit: megajoule
+          - name: treatment of spent anion exchange resin from potable water production, municipal incineration
+            reference product: heat, for reuse in municipal waste incineration only
+            unit: megajoule
+          - name: treatment of spent anion exchange resin from potable water production, municipal incineration with fly ash extraction
+            reference product: heat, for reuse in municipal waste incineration only
+            unit: megajoule
+          - name: treatment of spent cation exchange resin from potable water production, municipal incineration
+            reference product: heat, for reuse in municipal waste incineration only
+            unit: megajoule
+          - name: treatment of spent cation exchange resin from potable water production, municipal incineration with fly ash extraction
+            reference product: heat, for reuse in municipal waste incineration only
+            unit: megajoule
+          - name: treatment of used liquid crystal display module, municipal incineration with fly ash extraction
+            reference product: heat, for reuse in municipal waste incineration only
+            unit: megajoule
+          - name: treatment of used liquid crystal display module, municipal waste incineration
+            reference product: heat, for reuse in municipal waste incineration only
+            unit: megajoule
+          - name: treatment of waste bitumen sheet, municipal incineration
+            reference product: heat, for reuse in municipal waste incineration only
+            unit: megajoule
+          - name: treatment of waste bitumen sheet, municipal incineration with fly ash extraction
+            reference product: heat, for reuse in municipal waste incineration only
+            unit: megajoule
+          - name: treatment of waste building wood, chrome preserved, municipal incineration
+            reference product: heat, for reuse in municipal waste incineration only
+            unit: megajoule
+          - name: treatment of waste building wood, chrome preserved, municipal incineration with fly ash extraction
+            reference product: heat, for reuse in municipal waste incineration only
+            unit: megajoule
+          - name: treatment of waste building wood, chrome preserved, municipal incineration with fly ash extraction
+            reference product: heat, for reuse in municipal waste incineration only
+            unit: megajoule
+          - name: treatment of waste cement-fibre slab, dismantled, municipal incineration with fly ash extraction
+            reference product: heat, for reuse in municipal waste incineration only
+            unit: megajoule
+          - name: treatment of waste cement-fibre slab, municipal incineration
+            reference product: heat, for reuse in municipal waste incineration only
+            unit: megajoule
+          - name: treatment of waste emulsion paint, municipal incineration
+            reference product: heat, for reuse in municipal waste incineration only
+            unit: megajoule
+          - name: treatment of waste emulsion paint, municipal incineration with fly ash extraction
+            reference product: heat, for reuse in municipal waste incineration only
+            unit: megajoule
+          - name: treatment of waste expanded polystyrene, municipal incineration
+            reference product: heat, for reuse in municipal waste incineration only
+            unit: megajoule
+          - name: treatment of waste expanded polystyrene, municipal incineration with fly ash extraction
+            reference product: heat, for reuse in municipal waste incineration only
+            unit: megajoule
+          - name: treatment of waste glass, municipal incineration
+            reference product: heat, for reuse in municipal waste incineration only
+            unit: megajoule
+          - name: treatment of waste glass, municipal incineration with fly ash extraction
+            reference product: heat, for reuse in municipal waste incineration only
+            unit: megajoule
+          - name: treatment of waste graphical paper, municipal incineration
+            reference product: heat, for reuse in municipal waste incineration only
+            unit: megajoule
+          - name: treatment of waste graphical paper, municipal incineration with fly ash extraction
+            reference product: heat, for reuse in municipal waste incineration only
+            unit: megajoule
+          - name: treatment of waste newspaper, municipal incineration
+            reference product: heat, for reuse in municipal waste incineration only
+            unit: megajoule
+          - name: treatment of waste newspaper, municipal incineration with fly ash extraction
+            reference product: heat, for reuse in municipal waste incineration only
+            unit: megajoule
+          - name: treatment of waste packaging paper, municipal incineration
+            reference product: heat, for reuse in municipal waste incineration only
+            unit: megajoule
+          - name: treatment of waste packaging paper, municipal incineration with fly ash extraction
+            reference product: heat, for reuse in municipal waste incineration only
+            unit: megajoule
+          - name: treatment of waste paint, municipal incineration
+            reference product: heat, for reuse in municipal waste incineration only
+            unit: megajoule
+          - name: treatment of waste paint, municipal incineration with fly ash extraction
+            reference product: heat, for reuse in municipal waste incineration only
+            unit: megajoule
+          - name: treatment of waste paperboard, municipal incineration
+            reference product: heat, for reuse in municipal waste incineration only
+            unit: megajoule
+          - name: treatment of waste paperboard, municipal incineration with fly ash extraction
+            reference product: heat, for reuse in municipal waste incineration only
+            unit: megajoule
+          - name: treatment of waste plastic, consumer electronics, municipal incineration
+            reference product: heat, for reuse in municipal waste incineration only
+            unit: megajoule
+          - name: treatment of waste plastic, consumer electronics, municipal incineration with fly ash extraction
+            reference product: heat, for reuse in municipal waste incineration only
+            unit: megajoule
+          - name: treatment of waste plastic, industrial electronics, municipal incineration
+            reference product: heat, for reuse in municipal waste incineration only
+            unit: megajoule
+          - name: treatment of waste plastic, industrial electronics, municipal incineration with fly ash extraction
+            reference product: heat, for reuse in municipal waste incineration only
+            unit: megajoule
+          - name: treatment of waste plastic, mixture, municipal incineration
+            reference product: heat, for reuse in municipal waste incineration only
+            unit: megajoule
+          - name: treatment of waste plastic, mixture, municipal incineration with fly ash extraction
+            reference product: heat, for reuse in municipal waste incineration only
+            unit: megajoule
+          - name: treatment of waste polyethylene terephthalate, municipal incineration
+            reference product: heat, for reuse in municipal waste incineration only
+            unit: megajoule
+          - name: treatment of waste polyethylene terephthalate, municipal incineration with fly ash extraction
+            reference product: heat, for reuse in municipal waste incineration only
+            unit: megajoule
+          - name: treatment of waste polyethylene, municipal incineration
+            reference product: heat, for reuse in municipal waste incineration only
+            unit: megajoule
+          - name: treatment of waste polyethylene, municipal incineration with fly ash extraction
+            reference product: heat, for reuse in municipal waste incineration only
+            unit: megajoule
+          - name: treatment of waste polypropylene, municipal incineration
+            reference product: heat, for reuse in municipal waste incineration only
+            unit: megajoule
+          - name: treatment of waste polypropylene, municipal incineration with fly ash extraction
+            reference product: heat, for reuse in municipal waste incineration only
+            unit: megajoule
+          - name: treatment of waste polystyrene, municipal incineration
+            reference product: heat, for reuse in municipal waste incineration only
+            unit: megajoule
+          - name: treatment of waste polystyrene, municipal incineration with fly ash extraction
+            reference product: heat, for reuse in municipal waste incineration only
+            unit: megajoule
+          - name: treatment of waste polyurethane, municipal incineration
+            reference product: heat, for reuse in municipal waste incineration only
+            unit: megajoule
+          - name: treatment of waste polyurethane, municipal incineration with fly ash extraction
+            reference product: heat, for reuse in municipal waste incineration only
+            unit: megajoule
+          - name: treatment of waste polyvinylchloride, municipal incineration
+            reference product: heat, for reuse in municipal waste incineration only
+            unit: megajoule
+          - name: treatment of waste polyvinylchloride, municipal incineration with fly ash extraction
+            reference product: heat, for reuse in municipal waste incineration only
+            unit: megajoule
+          - name: treatment of waste polyvinylfluoride, municipal incineration
+            reference product: heat, for reuse in municipal waste incineration only
+            unit: megajoule
+          - name: treatment of waste polyvinylfluoride, municipal incineration with fly ash extraction
+            reference product: heat, for reuse in municipal waste incineration only
+            unit: megajoule
+          - name: treatment of waste rubber, unspecified, municipal incineration
+            reference product: heat, for reuse in municipal waste incineration only
+            unit: megajoule
+          - name: treatment of waste rubber, unspecified, municipal incineration with fly ash extraction
+            reference product: heat, for reuse in municipal waste incineration only
+            unit: megajoule
+          - name: treatment of waste sealing sheet, polyethylene, municipal incineration
+            reference product: heat, for reuse in municipal waste incineration only
+            unit: megajoule
+          - name: treatment of waste sealing sheet, polyethylene, municipal incineration with fly ash extraction
+            reference product: heat, for reuse in municipal waste incineration only
+            unit: megajoule
+          - name: treatment of waste sealing sheet, polyvinylchloride, municipal incineration
+            reference product: heat, for reuse in municipal waste incineration only
+            unit: megajoule
+          - name: treatment of waste sealing sheet, polyvinylchloride, municipal incineration with fly ash extraction
+            reference product: heat, for reuse in municipal waste incineration only
+            unit: megajoule
+          - name: treatment of waste textile, soiled, municipal incineration
+            reference product: heat, for reuse in municipal waste incineration only
+            unit: megajoule
+          - name: treatment of waste textile, soiled, municipal incineration with fly ash extraction
+            reference product: heat, for reuse in municipal waste incineration only
+            unit: megajoule
+          - name: treatment of waste vapour barrier, flame-retarded, municipal incineration
+            reference product: heat, for reuse in municipal waste incineration only
+            unit: megajoule
+          - name: treatment of waste vapour barrier, flame-retarded, municipal incineration with fly ash extraction
+            reference product: heat, for reuse in municipal waste incineration only
+            unit: megajoule
+          - name: treatment of waste wire plastic, municipal incineration
+            reference product: heat, for reuse in municipal waste incineration only
+            unit: megajoule
+          - name: treatment of waste wire plastic, municipal incineration with fly ash extraction
+            reference product: heat, for reuse in municipal waste incineration only
+            unit: megajoule
+          - name: treatment of waste wood pole, chrome preserved, municipal incineration
+            reference product: heat, for reuse in municipal waste incineration only
+            unit: megajoule
+          - name: treatment of waste wood pole, chrome preserved, municipal incineration with fly ash extraction
+            reference product: heat, for reuse in municipal waste incineration only
+            unit: megajoule
+          - name: treatment of waste wood, untreated, municipal incineration
+            reference product: heat, for reuse in municipal waste incineration only
+            unit: megajoule
+          - name: treatment of waste wood, untreated, municipal incineration with fly ash extraction
+            reference product: heat, for reuse in municipal waste incineration only
+            unit: megajoule
+      Recovery:
+        dataset:
+          - name: energy saving, from ventilation system, 1 x 720 m3/h, polyethylene ducts, with earth tube heat exchanger
+            reference product: energy saving
+            unit: megajoule
+          - name: energy saving, from ventilation system, 1 x 720 m3/h, steel ducts, with earth tube heat exchanger
+            reference product: energy saving
+            unit: megajoule
+          - name: energy saving, from ventilation system, 6 x 120 m3/h, polyethylene ducts
+            reference product: energy saving
+            unit: megajoule
+          - name: energy saving, from ventilation system, 6 x 120 m3/h, polyethylene ducts, with earth tube heat exchanger
+            reference product: energy saving
+            unit: megajoule
+          - name: energy saving, from ventilation system, 6 x 120 m3/h, steel ducts
+            reference product: energy saving
+            unit: megajoule
+          - name: energy saving, from ventilation system, 6 x 120 m3/h, steel ducts, with earth tube heat exchanger
+            reference product: energy saving
+            unit: megajoule
+          - name: hot rolling, steel
+            reference product: heat, district or industrial, other than natural gas
+            unit: megajoule
+          - name: kraft paper production
+            reference product: heat, district or industrial, other than natural gas
+            unit: megajoule
+          - name: particleboard production, uncoated, average glue mix
+            reference product: heat, district or industrial, other than natural gas
+            unit: megajoule
+          - name: steel production, electric, low-alloyed
+            reference product: heat, district or industrial, other than natural gas
+            unit: megajoule
+          - name: sulfate pulp production, from eucalyptus, bleached
+            reference product: heat, district or industrial, other than natural gas
+            unit: megajoule
+          - name: sulfate pulp production, from hardwood, bleached
+            reference product: heat, district or industrial, other than natural gas
+            unit: megajoule
+          - name: sulfate pulp production, from softwood, bleached
+            reference product: heat, district or industrial, other than natural gas
+            unit: megajoule
+          - name: sulfate pulp production, from softwood, unbleached
+            reference product: heat, district or industrial, other than natural gas
+            unit: megajoule
+          - name: treatment of bagasse, from sugarcane, in heat and power co-generation unit, 6400kW thermal
+            reference product: heat, district or industrial, other than natural gas
+            unit: megajoule
+          - name: treatment of bagasse, from sweet sorghum, in heat and power co-generation unit, 6400kW thermal
+            reference product: heat, district or industrial, other than natural gas
+            unit: megajoule
+          - name: treatment of bilge oil, hazardous waste incineration, with energy recovery
+            reference product: heat, district or industrial, other than natural gas
+            unit: megajoule
+          - name: treatment of blast furnace gas, in power plant
+            reference product: heat, district or industrial, other than natural gas
+            unit: megajoule
+          - name: treatment of coal gas, in power plant
+            reference product: heat, district or industrial, other than natural gas
+            unit: megajoule
+          - name: treatment of coal tar, in industrial furnace 1MW
+            reference product: heat, district or industrial, other than natural gas
+            unit: megajoule
+          - name: treatment of digester sludge, municipal incineration, future
+            reference product: heat, future
+            unit: megajoule
+          - name: treatment of fly ash and scrubber sludge, hazardous waste incineration, with energy recovery
+            reference product: heat, district or industrial, other than natural gas
+            unit: megajoule
+          - name: treatment of hazardous waste, hazardous waste incineration, with energy recovery
+            reference product: heat, district or industrial, other than natural gas
+            unit: megajoule
+          - name: treatment of heat carrier liquid, 40% C3H8O2, wastewater treatment
+            reference product: heat, central or small-scale, other than natural gas
+            unit: megajoule
+          - name: treatment of refinery sludge, hazardous waste incineration, with energy recovery
+            reference product: heat, district or industrial, other than natural gas
+            unit: megajoule
+          - name: treatment of sewage sludge, 75% water, WWT, condensate from light oil boiler, sanitary landfill
+            reference product: heat, district or industrial, other than natural gas
+            unit: megajoule
+          - name: treatment of sewage sludge, 75% water, WWT, heat carrier liquid, 40% C3H8O2, sanitary landfill
+            reference product: heat, district or industrial, other than natural gas
+            unit: megajoule
+          - name: treatment of sewage sludge, 75% water, WWT, rainwater mineral oil storage, sanitary landfill
+            reference product: heat, district or industrial, other than natural gas
+            unit: megajoule
+          - name: treatment of sewage sludge, 75% water, WWT, WW from ammonium paratungstate production, sanitary landfill
+            reference product: heat, district or industrial, other than natural gas
+            unit: megajoule
+          - name: treatment of sewage sludge, 75% water, WWT, WW from black chrome coating, sanitary landfill
+            reference product: heat, district or industrial, other than natural gas
+            unit: megajoule
+          - name: treatment of sewage sludge, 75% water, WWT, WW from ceramic production, sanitary landfill
+            reference product: heat, district or industrial, other than natural gas
+            unit: megajoule
+          - name: treatment of sewage sludge, 75% water, WWT, WW from concrete production, sanitary landfill
+            reference product: heat, district or industrial, other than natural gas
+            unit: megajoule
+          - name: treatment of sewage sludge, 75% water, WWT, WW from CRT production, sanitary landfill
+            reference product: heat, district or industrial, other than natural gas
+            unit: megajoule
+          - name: treatment of sewage sludge, 75% water, WWT, WW from GGBFS production, sanitary landfill
+            reference product: heat, district or industrial, other than natural gas
+            unit: megajoule
+          - name: treatment of sewage sludge, 75% water, WWT, WW from glass production, sanitary landfill
+            reference product: heat, district or industrial, other than natural gas
+            unit: megajoule
+          - name: treatment of sewage sludge, 75% water, WWT, WW from grass refinery, sanitary landfill
+            reference product: heat, district or industrial, other than natural gas
+            unit: megajoule
+          - name: treatment of sewage sludge, 75% water, WWT, WW from hard fibreboard production, sanitary landfill
+            reference product: heat, district or industrial, other than natural gas
+            unit: megajoule
+          - name: treatment of sewage sludge, 75% water, WWT, WW from LCD backlight production, sanitary landfill
+            reference product: heat, district or industrial, other than natural gas
+            unit: megajoule
+          - name: treatment of sewage sludge, 75% water, WWT, WW from LCD production, sanitary landfill
+            reference product: heat, district or industrial, other than natural gas
+            unit: megajoule
+          - name: treatment of sewage sludge, 75% water, WWT, WW from liquid crystal production, sanitary landfill
+            reference product: heat, district or industrial, other than natural gas
+            unit: megajoule
+          - name: treatment of sewage sludge, 75% water, WWT, WW from maize starch production, sanitary landfill
+            reference product: heat, district or industrial, other than natural gas
+            unit: megajoule
+          - name: treatment of sewage sludge, 75% water, WWT, WW from medium density board production, sanitary landfill
+            reference product: heat, district or industrial, other than natural gas
+            unit: megajoule
+          - name: treatment of sewage sludge, 75% water, WWT, WW from particle board production, sanitary landfill
+            reference product: heat, district or industrial, other than natural gas
+            unit: megajoule
+          - name: treatment of sewage sludge, 75% water, WWT, WW from pig iron production, sanitary landfill
+            reference product: heat, district or industrial, other than natural gas
+            unit: megajoule
+          - name: treatment of sewage sludge, 75% water, WWT, WW from plywood production, sanitary landfill
+            reference product: heat, district or industrial, other than natural gas
+            unit: megajoule
+          - name: treatment of sewage sludge, 75% water, WWT, WW from potato starch production, sanitary landfill
+            reference product: heat, district or industrial, other than natural gas
+            unit: megajoule
+          - name: treatment of sewage sludge, 75% water, WWT, WW from PV cell production, sanitary landfill
+            reference product: heat, district or industrial, other than natural gas
+            unit: megajoule
+          - name: treatment of sewage sludge, 75% water, WWT, WW from soft fibreboard production, sanitary landfill
+            reference product: heat, district or industrial, other than natural gas
+            unit: megajoule
+          - name: treatment of sewage sludge, 75% water, WWT, WW from tube collector production, sanitary landfill
+            reference product: heat, district or industrial, other than natural gas
+            unit: megajoule
+          - name: treatment of sewage sludge, 75% water, WWT, WW from vegetable oil refinery, sanitary landfill
+            reference product: heat, district or industrial, other than natural gas
+            unit: megajoule
+          - name: treatment of sewage sludge, 75% water, WWT, WW from wafer fabrication, sanitary landfill
+            reference product: heat, district or industrial, other than natural gas
+            unit: megajoule
+          - name: treatment of sewage sludge, 75% water, WWT, WW, average, sanitary landfill
+            reference product: heat, district or industrial, other than natural gas
+            unit: megajoule
+          - name: treatment of sewage sludge, 75% water, WWT[R], WW from anaerobic digestion of whey, sanitary landfill
+            reference product: heat, district or industrial, other than natural gas
+            unit: megajoule
+          - name: treatment of sewage sludge, 75% water, WWT[U], WW from lorry production, sanitary landfill
+            reference product: heat, district or industrial, other than natural gas
+            unit: megajoule
+          - name: treatment of waste plastic, consumer electronics, sanitary landfill, wet infiltration class (500mm)
+            reference product: heat, district or industrial, other than natural gas
+            unit: megajoule
+          - name: treatment of wastewater from anaerobic digestion of whey, wastewater treatment, rural
+            reference product: heat, central or small-scale, other than natural gas
+            unit: megajoule
+          - name: treatment of wastewater from cathode ray tube production, wastewater treatment
+            reference product: heat, central or small-scale, other than natural gas
+            unit: megajoule
+          - name: treatment of wastewater from grass refinery, wastewater treatment
+            reference product: heat, central or small-scale, other than natural gas
+            unit: megajoule
+          - name: treatment of wastewater from hard fibreboard production, wastewater treatment
+            reference product: heat, central or small-scale, other than natural gas
+            unit: megajoule
+          - name: treatment of wastewater from liquid crystal display backlight production, wastewater treatment
+            reference product: heat, central or small-scale, other than natural gas
+            unit: megajoule
+          - name: treatment of wastewater from liquid crystal display production, wastewater treatment
+            reference product: heat, central or small-scale, other than natural gas
+            unit: megajoule
+          - name: treatment of wastewater from liquid crystal production, wastewater treatment
+            reference product: heat, central or small-scale, other than natural gas
+            unit: megajoule
+          - name: treatment of wastewater from maize starch production, wastewater treatment
+            reference product: heat, central or small-scale, other than natural gas
+            unit: megajoule
+          - name: treatment of wastewater from medium density board production, wastewater treatment
+            reference product: heat, central or small-scale, other than natural gas
+            unit: megajoule
+          - name: treatment of wastewater from plywood production, wastewater treatment
+            reference product: heat, central or small-scale, other than natural gas
+            unit: megajoule
+          - name: treatment of wastewater from potato starch production, wastewater treatment
+            reference product: heat, central or small-scale, other than natural gas
+            unit: megajoule
+          - name: treatment of wastewater from soft fibreboard production, wastewater treatment
+            reference product: heat, central or small-scale, other than natural gas
+            unit: megajoule
+          - name: treatment of wastewater from vegetable oil refinery, wastewater treatment
+            reference product: heat, central or small-scale, other than natural gas
+            unit: megajoule
+          - name: treatment of wastewater, average, wastewater treatment
+            reference product: heat, central or small-scale, other than natural gas
+            unit: megajoule
+          - name: treatment of waste packaging paper, sanitary landfill
+            reference product: heat, district or industrial, other than natural gas
+            unit: megajoule
+          - name: treatment of waste paint, hazardous waste incineration, with energy recovery
+            reference product: heat, district or industrial, other than natural gas
+            unit: megajoule
+          - name: treatment of waste mineral oil, hazardous waste incineration, with energy recovery
+            reference product: heat, district or industrial, other than natural gas
+            unit: megajoule
+          - name: treatment of spent antifreezer liquid, hazardous waste incineration, with energy recovery
+            reference product: heat, district or industrial, other than natural gas
+            unit: megajoule
+          - name: treatment of waste emulsion paint, hazardous waste incineration, with energy recovery
+            reference product: heat, district or industrial, other than natural gas
+            unit: megajoule
+          - name: treatment of spent oxychlor catalyst, hazardous waste incineration, with energy recovery
+            reference product: heat, district or industrial, other than natural gas
+            unit: megajoule
+          - name: treatment of spent solvent mixture, hazardous waste incineration, with energy recovery
+            reference product: heat, district or industrial, other than natural gas
+            unit: megajoule
+          - name: treatment of stalk, in wood heater 6kW
+            reference product: heat, central or small-scale, other than natural gas
+            unit: megajoule
+          - name: treatment of used capacitor, to hazardous waste incineration, with energy recovery
+            reference product: heat, district or industrial, other than natural gas
+            unit: megajoule
+      Steam:
+        dataset:
+          - name: primary zinc production from concentrate
+            reference product: heat, from steam, in chemical industry
+            unit: megajoule
+          - name: steam production, as energy carrier, in chemical industry
+            reference product: heat, from steam, in chemical industry
+            unit: megajoule
+      Renewables:
+        dataset:
+          - name: heat production, at 110 MW concentrating solar power plant, with thermal energy storage
+            reference product: heat
+            unit: megajoule
+          - name: heat production, deep geothermal
+            reference product: heat, deep geothermal
+            unit: megajoule
+    ## Residential: below 100kW
+    Residential:
+      Boiler and CHP:
+        dataset:
+          - name: heat production, biomethane, at boiler condensing modulating <100kW
+            reference product: heat, central or small-scale, biomethane
+            unit: megajoule
+          - name: heat production, light fuel oil, at boiler 10kW condensing, non-modulating
+            reference product: heat, central or small-scale, other than natural gas
+            unit: megajoule
+          - name: heat production, light fuel oil, at boiler 10kW, non-modulating
+            reference product: heat, central or small-scale, other than natural gas
+            unit: megajoule
+          - name: heat production, natural gas, at boiler atm. low-NOx condensing non-modulating <100kW
+            reference product: heat, central or small-scale, natural gas
+            unit: megajoule
+          - name: heat production, natural gas, at boiler atmospheric low-NOx non-modulating <100kW
+            reference product: heat, central or small-scale, natural gas
+            unit: megajoule
+          - name: heat production, natural gas, at boiler atmospheric non-modulating <100kW
+            reference product: heat, central or small-scale, natural gas
+            unit: megajoule
+          - name: heat production, natural gas, at boiler condensing modulating <100kW
+            reference product: heat, central or small-scale, natural gas
+            unit: megajoule
+          - name: heat production, natural gas, at boiler fan burner low-NOx non-modulating <100kW
+            reference product: heat, central or small-scale, natural gas
+            unit: megajoule
+          - name: heat production, natural gas, at boiler fan burner non-modulating <100kW
+            reference product: heat, central or small-scale, natural gas
+            unit: megajoule
+          - name: heat production, natural gas, at boiler modulating <100kW
+            reference product: heat, central or small-scale, natural gas
+            unit: megajoule
+          - name: heat, residential, by combustion of hydrogen using boiler, distributed by pipeline, produced by Electrolysis, PEM using electricity from grid
+            reference product: heat, from residential heating system
+            unit: megajoule
+          - name: heat, residential, by combustion of hydrogen using CHP, allocated by exergy, distributed by pipeline, produced by Electrolysis, PEM using electricity from grid
+            reference product: heat, from residential heating system
+            unit: megajoule
+          - name: heat, residential, by combustion of methanol using boiler, distributed by truck, produced by Electrolysis, PEM using electricity from grid and carbon sourced from DAC
+            reference product: heat, from residential heating system
+            unit: megajoule
+          - name: heat, residential, by combustion of methanol using boiler, distributed by truck, produced with biomass
+            reference product: heat, from residential heating system
+            unit: megajoule
+          - name: heat, residential, by combustion of methanol using boiler, distributed by truck, produced with coal
+            reference product: heat, from residential heating system
+            unit: megajoule
+          - name: heat, residential, by conversion of hydrogen using fuel cell, PEM, allocated by exergy, distributed by pipeline, produced by Electrolysis, PEM using electricity from grid
+            reference product: heat, from residential heating system
+            unit: megajoule
+          - name: heat, residential, by conversion of hydrogen using fuel cell, SOFC, allocated by exergy, distributed by pipeline, produced by Electrolysis, PEM using electricity from grid
+            reference product: heat, from residential heating system
+            unit: megajoule
+          - name: natural gas, burned in polymer electrolyte membrane fuel cell 2kWe, future
+            reference product: heat, future
+            unit: megajoule
+          - name: wood pellets, burned in stirling heat and power co-generation unit, 3kW electrical, future
+            reference product: heat, future
+            unit: megajoule
+      Heat Pump:
+        dataset:
+          - name: heat production, air-water heat pump 10kW
+            reference product: heat, air-water heat pump 10kW
+            unit: megajoule
+          - name: heat production, at heat pump 30kW, allocation exergy
+            reference product: heat, central or small-scale, other than natural gas
+            unit: megajoule
+          - name: heat production, biomethane, low pressure, at diffusion absorption heat pump 4kW, future
+            reference product: heat, diffusion absorption heat pump
+            unit: megajoule
+          - name: heat production, borehole heat exchanger, brine-water heat pump 10kW
+            reference product: heat, brine-water heat pump 10kW
+            unit: megajoule
+          - name: heat production, natural gas, at diffusion absorption heat pump 4kW, future
+            reference product: heat, future
+            unit: megajoule
+      Furnace and Stove:
+        dataset:
+          - name: heat production, anthracite, at stove 5-15kW
+            reference product: heat, central or small-scale, other than natural gas
+            unit: megajoule
+          - name: heat production, hard coal briquette, stove 5-15kW
+            reference product: heat, central or small-scale, other than natural gas
+            unit: megajoule
+          - name: heat production, hard coal coke, stove 5-15kW
+            reference product: heat, central or small-scale, other than natural gas
+            unit: megajoule
+          - name: heat production, lignite briquette, at stove 5-15kW
+            reference product: heat, central or small-scale, other than natural gas
+            unit: megajoule
+          - name: heat production, mixed logs, at furnace 30kW
+            reference product: heat, central or small-scale, other than natural gas
+            unit: megajoule
+          - name: heat production, mixed logs, at furnace 30kW, state-of-the-art 2014
+            reference product: heat, central or small-scale, other than natural gas
+            unit: megajoule
+          - name: heat production, hardwood chips from forest, at furnace 50kW
+            reference product: heat, central or small-scale, other than natural gas
+            unit: megajoule
+          - name: heat production, hardwood chips from forest, at furnace 50kW, state-of-the-art 2014
+            reference product: heat, central or small-scale, other than natural gas
+            unit: megajoule
+          - name: heat production, mixed logs, at wood heater 6kW
+            reference product: heat, central or small-scale, other than natural gas
+            unit: megajoule
+          - name: heat production, mixed logs, at wood heater 6kW, state-of-the-art 2014
+            reference product: heat, central or small-scale, other than natural gas
+            unit: megajoule
+          - name: heat production, softwood chips from forest, at furnace 50kW
+            reference product: heat, central or small-scale, other than natural gas
+            unit: megajoule
+          - name: heat production, softwood chips from forest, at furnace 50kW, state-of-the-art 2014
+            reference product: heat, central or small-scale, other than natural gas
+            unit: megajoule
+          - name: heat production, wood chips from industry, at furnace 50kW
+            reference product: heat, central or small-scale, other than natural gas
+            unit: megajoule
+          - name: heat production, wood chips from industry, at furnace 50kW, state-of-the-art 2014
+            reference product: heat, central or small-scale, other than natural gas
+            unit: megajoule
+          - name: heat production, wood pellet, at furnace 25kW
+            reference product: heat, central or small-scale, other than natural gas
+            unit: megajoule
+          - name: heat production, wood pellet, at furnace 25kW, state-of-the-art 2014
+            reference product: heat, central or small-scale, other than natural gas
+            unit: megajoule
+          - name: heat production, wood pellet, at furnace 9kW
+            reference product: heat, central or small-scale, other than natural gas
+            unit: megajoule
+          - name: heat production, wood pellet, at furnace 9kW, state-of-the-art 2014
+            reference product: heat, central or small-scale, other than natural gas
+            unit: megajoule
+      Solar:
+        dataset:
+          - name: heat production, at hot water tank, solar+electric, flat plate, multiple dwelling
+            reference product: heat, solar+electric, multiple-dwelling, for hot water
+            unit: megajoule
+          - name: heat production, at hot water tank, solar+gas, flat plate, multiple dwelling
+            reference product: heat, solar+gas, multiple-dwelling, for hot water
+            unit: megajoule
+          - name: heat production, at hot water tank, solar+gas, flat plate, one-family house
+            reference product: heat, solar+gas, one-family house, for hot water
+            unit: megajoule
+          - name: heat production, at solar+gas heating, flat plate, one-family house, combined system
+            reference product: heat, solar+gas, one-family house, for combined system
+            unit: megajoule
+          - name: heat production, at solar+gas heating, tube collector, one-family house, combined system
+            reference product: heat, solar+gas, one-family house, for combined system
+            unit: megajoule
+          - name: heat production, at solar+wood heating, flat plate, one-family house, combined system
+            reference product: heat, solar+wood, one-family house, for combined system
+            unit: megajoule
+          - name: operation, solar collector system, Cu flat plate collector, multiple dwelling, for hot water
+            reference product: heat, central or small-scale, other than natural gas
+            unit: megajoule
+          - name: operation, solar collector system, Cu flat plate collector, one-family house, for combined system
+            reference product: heat, central or small-scale, other than natural gas
+            unit: megajoule
+          - name: operation, solar collector system, Cu flat plate collector, one-family house, for hot water
+            reference product: heat, central or small-scale, other than natural gas
+            unit: megajoule
+          - name: operation, solar collector system, evacuated tube collector, one-family house, for combined system
+            reference product: heat, central or small-scale, other than natural gas
+            unit: megajoule
+Transport:
+  Freight:
+
+  Passengers:
+
+
+#### WHICH PRODUCTS DO WE WANT TO ZERO?
