@@ -286,4 +286,11 @@ Transport:
           - energy use, electric bicycle
           - transport, passenger, bicycle
           - transport, passenger electric bicycle
-
+Exceptions:
+  ### The input to these activities will not be zeroed.
+  ecoinvent_aliases:
+    name_fltr:
+      - electricity production, photovoltaic, commercial
+      - electricity production, photovoltaic, residential
+    product_fltr:
+      - electricity, low voltage

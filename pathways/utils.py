@@ -84,6 +84,10 @@ def harmonize_units(scenario: xr.DataArray, variables: list) -> xr.DataArray:
     :return: xr.DataArray
     """
 
+    missing_vars = [var for var in variables if var not in scenario.attrs["units"]]
+    if missing_vars:
+        raise KeyError(f"The following variables are missing in 'scenario.attrs[\"units\"]': {missing_vars}")
+
     units = [scenario.attrs["units"][var] for var in variables]
 
     if len(variables) == 0:
@@ -548,19 +552,27 @@ def gather_filters(current_level: Dict, combined_filters: Dict[str, Set[str]]) -
             gather_filters(value, combined_filters)
 
 
-def get_combined_filters(filters: Dict, paths: List[List[str]]) -> Dict[str, List[str]]:
+def get_combined_filters(
+        filters: Dict,
+        paths: List[List[str]]
+) -> Tuple[Dict[str, List[str]], Dict[str, List[str]]]:
     """
     Traverse the filters dictionary to get combined filter criteria based on multiple paths.
 
     :param filters: The filters dictionary loaded from YAML.
     :param paths: A list of lists, where each inner list represents a path in the hierarchy.
-    :return: The combined filter criteria dictionary.
+    :return: A tuple with combined filter criteria dictionary and exceptions dictionary.
     """
     combined_filters = {
         "name_fltr": set(),
         "name_mask": set(),
         "product_fltr": set(),
         "product_mask": set(),
+    }
+
+    exceptions_filters = {
+        "name_fltr": set(),
+        "product_fltr": set(),
     }
 
     for path in paths:
@@ -571,29 +583,42 @@ def get_combined_filters(filters: Dict, paths: List[List[str]]) -> Dict[str, Lis
                 break
         gather_filters(current_level, combined_filters)
 
-    # Convert sets back to lists
+    # Gather exceptions from the "Exceptions" path
+    exceptions = filters.get("Exceptions", {}).get("ecoinvent_aliases", {})
+    for k in exceptions_filters.keys():
+        exceptions_filters[k].update(exceptions.get(k, []))
+
     for k in combined_filters.keys():
         combined_filters[k] = list(combined_filters[k])
+    for k in exceptions_filters.keys():
+        exceptions_filters[k] = list(exceptions_filters[k])
 
-    return combined_filters
+    return combined_filters, exceptions_filters
 
 
 def apply_filters(
     technosphere_inds: Dict[Tuple[str, str, str, str], int],
     filters: Dict[str, List[str]],
-) -> List[int]:
+    exceptions: Dict[str, List[str]]
+) -> Tuple[List[int], List[int]]:
     """
-    Apply the filters to the database and return a list of indices.
+    Apply the filters to the database and return a list of indices and exceptions.
 
     :param technosphere_inds: Dictionary where keys are tuples of four strings (activity name, product name, location, unit)
                      and values are integers (indices).
     :param filters: Dictionary containing the filter criteria.
-    :return: List of indices of filtered activities.
+    :param exceptions: Dictionary containing the exceptions criteria.
+    :return: Tuple containing a list of indices of filtered activities and a list of indices of exceptions.
     """
     name_fltr = filters.get("name_fltr", [])
     name_mask = filters.get("name_mask", [])
     product_fltr = filters.get("product_fltr", [])
     product_mask = filters.get("product_mask", [])
+
+    exception_name_fltr = exceptions.get("name_fltr", [])
+    exception_product_fltr = exceptions.get("product_fltr", [])
+    exception_name_mask = exceptions.get("name_mask", [])
+    exception_product_mask = exceptions.get("product_mask", [])
 
     def match_filter(item, filter_values):
         return any(fltr in item for fltr in filter_values)
@@ -602,6 +627,7 @@ def apply_filters(
         return any(msk in item for msk in mask_values)
 
     filtered_indices = []
+    exception_indices = []
 
     for key, value in technosphere_inds.items():
         name, product, location, unit = key
@@ -617,4 +643,18 @@ def apply_filters(
 
         filtered_indices.append(value)
 
-    return filtered_indices
+    for key, value in technosphere_inds.items():
+        name, product, location, unit = key
+
+        if exception_name_fltr and not match_filter(name, exception_name_fltr):
+            continue
+        if exception_product_fltr and not match_filter(product, exception_product_fltr):
+            continue
+        if exception_name_mask and match_mask(name, exception_name_mask):
+            continue
+        if exception_product_mask and match_mask(product, exception_product_mask):
+            continue
+
+        exception_indices.append(value)
+
+    return filtered_indices, exception_indices

@@ -188,6 +188,7 @@ def remove_double_accounting(
     lca: bc.LCA,
     demand: Dict,
     activities_to_exclude: List[int],
+    exceptions: List[int],
 ):
     """
     Remove double counting from a technosphere matrix.
@@ -206,7 +207,8 @@ def remove_double_accounting(
         row_idx = np.where(tm_modified.col == act)[0]
 
         for idx in row_idx:
-            if tm_modified.row[idx] != act:  # skip the diagonal
+            # Skip the diagonal and exceptions
+            if tm_modified.row[idx] != act and (exceptions is None or tm_modified.col[idx] not in exceptions):
                 tm_modified.data[idx] = 0
 
     tm_modified = tm_modified.tocsr()
@@ -214,7 +216,7 @@ def remove_double_accounting(
 
     # Remove double accounting
     lca.technosphere_matrix = tm_modified
-    lca.lci(demand=demand)
+    # lca.lci(demand=demand)
 
 
 def process_region(data: Tuple) -> dict[str, ndarray[Any, dtype[Any]] | list[int]]:
@@ -237,7 +239,7 @@ def process_region(data: Tuple) -> dict[str, ndarray[Any, dtype[Any]] | list[int
         lca,
         characterization_matrix,
         methods,
-        activities_to_exclude,
+        # activities_to_exclude,
         debug,
         use_distributions,
         uncertain_parameters,
@@ -246,6 +248,7 @@ def process_region(data: Tuple) -> dict[str, ndarray[Any, dtype[Any]] | list[int
     variables_demand = {}
     d = []
     impacts_by_method = {method: [] for method in methods}
+    param_keys = set()
 
     for v, variable in enumerate(variables):
         idx, dataset = vars_idx[variable]["idx"], vars_idx[variable]["dataset"]
@@ -286,10 +289,11 @@ def process_region(data: Tuple) -> dict[str, ndarray[Any, dtype[Any]] | list[int
         }
 
         demand = {idx: demand.values * float(unit_vector)}
-        if activities_to_exclude is not None:
-            remove_double_accounting(
-                lca=lca, demand=demand, activities_to_exclude=activities_to_exclude
-            )
+        lca.lci(demand=demand)
+        # if activities_to_exclude is not None:
+        #     remove_double_accounting(
+        #         lca=lca, demand=demand, activities_to_exclude=activities_to_exclude, exceptions=exception_activities
+        #     )
 
         if use_distributions == 0:
             # Regular LCA
@@ -302,7 +306,7 @@ def process_region(data: Tuple) -> dict[str, ndarray[Any, dtype[Any]] | list[int
             # next(lca) is a generator that yields the inventory matrix
             temp_results = []
             params = {}
-            param_keys = set()
+
             for _ in zip(range(use_distributions), lca):
                 matrix_result = (characterization_matrix @ lca.inventory).toarray()
                 temp_results.append(matrix_result)
@@ -418,8 +422,8 @@ def _calculate_year(args: tuple):
 
     if double_accounting is not None:
         categories = read_categories_from_yaml(DATA_DIR / "smart_categories.yaml")
-        selected_filters = get_combined_filters(categories, double_accounting)
-        activities_to_exclude = apply_filters(technosphere_indices, selected_filters)
+        combined_filters, exception_filters = get_combined_filters(categories, double_accounting)
+        activities_to_exclude, exceptions = apply_filters(technosphere_indices, combined_filters, exception_filters)
     else:
         activities_to_exclude = None
 
@@ -467,7 +471,13 @@ def _calculate_year(args: tuple):
                 bw_datapackage,
             ],
         )
-        lca.lci(factorize=True)
+        # lca.lci(factorize=True)
+        if activities_to_exclude is not None:
+            remove_double_accounting(
+                lca=lca, demand={0: 1}, activities_to_exclude=activities_to_exclude, exceptions=exceptions
+            )
+        else:
+            lca.lci(factorize=True)
 
     else:
         logging.info("Calculating LCA results with distributions.")
@@ -478,7 +488,13 @@ def _calculate_year(args: tuple):
             ],
             use_distributions=True,
         )
-        lca.lci()
+        # lca.lci()
+        if activities_to_exclude is not None:
+            remove_double_accounting(
+                lca=lca, demand={0: 1}, activities_to_exclude=activities_to_exclude, exceptions=exceptions
+            )
+        else:
+            lca.lci()
 
         if shares:
             logging.info("Calculating LCA results with subshares.")
@@ -533,7 +549,7 @@ def _calculate_year(args: tuple):
                 lca,
                 characterization_matrix,
                 methods,
-                activities_to_exclude,
+                # activities_to_exclude,
                 debug,
                 use_distributions,
                 uncertain_parameters,
