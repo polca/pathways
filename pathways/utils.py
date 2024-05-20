@@ -86,7 +86,9 @@ def harmonize_units(scenario: xr.DataArray, variables: list) -> xr.DataArray:
 
     missing_vars = [var for var in variables if var not in scenario.attrs["units"]]
     if missing_vars:
-        raise KeyError(f"The following variables are missing in 'scenario.attrs[\"units\"]': {missing_vars}")
+        raise KeyError(
+            f"The following variables are missing in 'scenario.attrs[\"units\"]': {missing_vars}"
+        )
 
     units = [scenario.attrs["units"][var] for var in variables]
 
@@ -553,8 +555,7 @@ def gather_filters(current_level: Dict, combined_filters: Dict[str, Set[str]]) -
 
 
 def get_combined_filters(
-        filters: Dict,
-        paths: List[List[str]]
+    filters: Dict, paths: List[List[str]]
 ) -> Tuple[Dict[str, List[str]], Dict[str, List[str]]]:
     """
     Traverse the filters dictionary to get combined filter criteria based on multiple paths.
