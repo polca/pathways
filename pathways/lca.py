@@ -24,11 +24,11 @@ from .filesystem_constants import DATA_DIR, DIR_CACHED_DB
 from .lcia import fill_characterization_factors_matrices
 from .stats import (
     create_mapping_sheet,
+    log_double_accounting,
     log_intensities_to_excel,
     log_results_to_excel,
     log_subshares_to_excel,
     run_stats_analysis,
-    log_double_accounting,
 )
 from .subshares import (
     adjust_matrix_based_on_shares,
@@ -207,7 +207,9 @@ def remove_double_accounting(
 
         for idx in row_idx:
             # Skip the diagonal and exceptions
-            if tm_modified.row[idx] != act and (exceptions is None or tm_modified.col[idx] not in exceptions):
+            if tm_modified.row[idx] != act and (
+                exceptions is None or tm_modified.col[idx] not in exceptions
+            ):
                 tm_modified.data[idx] = 0
 
     tm_modified = tm_modified.tocsr()
@@ -417,12 +419,17 @@ def _calculate_year(args: tuple):
 
     if double_accounting is not None:
         categories = read_categories_from_yaml(DATA_DIR / "smart_categories.yaml")
-        combined_filters, exception_filters = get_combined_filters(categories, double_accounting)
-        activities_to_exclude, exceptions, filtered_names, exception_names = apply_filters(technosphere_indices,
-                                                                                           combined_filters,
-                                                                                           exception_filters,
-                                                                                           double_accounting
-                                                                                           )
+        combined_filters, exception_filters = get_combined_filters(
+            categories, double_accounting
+        )
+        activities_to_exclude, exceptions, filtered_names, exception_names = (
+            apply_filters(
+                technosphere_indices,
+                combined_filters,
+                exception_filters,
+                double_accounting,
+            )
+        )
         log_double_accounting(model, scenario, year, filtered_names, exception_names)
     else:
         activities_to_exclude = None
@@ -474,7 +481,10 @@ def _calculate_year(args: tuple):
         lca.lci(factorize=True)
         if activities_to_exclude is not None:
             lca = remove_double_accounting(
-                lca=lca, demand={0: 1}, activities_to_exclude=activities_to_exclude, exceptions=exceptions
+                lca=lca,
+                demand={0: 1},
+                activities_to_exclude=activities_to_exclude,
+                exceptions=exceptions,
             )
 
     else:
@@ -489,7 +499,10 @@ def _calculate_year(args: tuple):
         lca.lci()
         if activities_to_exclude is not None:
             lca = remove_double_accounting(
-                lca=lca, demand={0: 1}, activities_to_exclude=activities_to_exclude, exceptions=exceptions
+                lca=lca,
+                demand={0: 1},
+                activities_to_exclude=activities_to_exclude,
+                exceptions=exceptions,
             )
 
         if shares:

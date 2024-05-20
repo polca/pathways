@@ -601,7 +601,7 @@ def apply_filters(
     technosphere_inds: Dict[Tuple[str, str, str, str], int],
     filters: Dict[str, List[str]],
     exceptions: Dict[str, List[str]],
-    paths: List[List[str]]  # Add paths as an argument
+    paths: List[List[str]],  # Add paths as an argument
 ) -> Tuple[List[int], List[int], Dict[str, Set[str]], Dict[str, Set[str]]]:
     """
     Apply the filters to the database and return a list of indices and exceptions,
