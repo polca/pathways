@@ -28,6 +28,7 @@ from .stats import (
     log_results_to_excel,
     log_subshares_to_excel,
     run_stats_analysis,
+    log_double_accounting,
 )
 from .subshares import (
     adjust_matrix_based_on_shares,
@@ -198,8 +199,6 @@ def remove_double_accounting(
     :return: Technosphere matrix with double counting removed.
     """
 
-    assert hasattr(lca, "characterized_inventory"), "Must do LCI and LCIA first"
-
     tm_original = lca.technosphere_matrix.copy()
     tm_modified = tm_original.tocoo()
 
@@ -216,7 +215,8 @@ def remove_double_accounting(
 
     # Remove double accounting
     lca.technosphere_matrix = tm_modified
-    # lca.lci(demand=demand)
+    lca.lci(demand=demand)
+    return lca
 
 
 def process_region(data: Tuple) -> dict[str, ndarray[Any, dtype[Any]] | list[int]]:
@@ -239,7 +239,6 @@ def process_region(data: Tuple) -> dict[str, ndarray[Any, dtype[Any]] | list[int
         lca,
         characterization_matrix,
         methods,
-        # activities_to_exclude,
         debug,
         use_distributions,
         uncertain_parameters,
@@ -290,10 +289,6 @@ def process_region(data: Tuple) -> dict[str, ndarray[Any, dtype[Any]] | list[int
 
         demand = {idx: demand.values * float(unit_vector)}
         lca.lci(demand=demand)
-        # if activities_to_exclude is not None:
-        #     remove_double_accounting(
-        #         lca=lca, demand=demand, activities_to_exclude=activities_to_exclude, exceptions=exception_activities
-        #     )
 
         if use_distributions == 0:
             # Regular LCA
@@ -423,7 +418,12 @@ def _calculate_year(args: tuple):
     if double_accounting is not None:
         categories = read_categories_from_yaml(DATA_DIR / "smart_categories.yaml")
         combined_filters, exception_filters = get_combined_filters(categories, double_accounting)
-        activities_to_exclude, exceptions = apply_filters(technosphere_indices, combined_filters, exception_filters)
+        activities_to_exclude, exceptions, filtered_names, exception_names = apply_filters(technosphere_indices,
+                                                                                           combined_filters,
+                                                                                           exception_filters,
+                                                                                           double_accounting
+                                                                                           )
+        log_double_accounting(model, scenario, year, filtered_names, exception_names)
     else:
         activities_to_exclude = None
 
@@ -471,13 +471,11 @@ def _calculate_year(args: tuple):
                 bw_datapackage,
             ],
         )
-        # lca.lci(factorize=True)
+        lca.lci(factorize=True)
         if activities_to_exclude is not None:
-            remove_double_accounting(
+            lca = remove_double_accounting(
                 lca=lca, demand={0: 1}, activities_to_exclude=activities_to_exclude, exceptions=exceptions
             )
-        else:
-            lca.lci(factorize=True)
 
     else:
         logging.info("Calculating LCA results with distributions.")
@@ -488,13 +486,11 @@ def _calculate_year(args: tuple):
             ],
             use_distributions=True,
         )
-        # lca.lci()
+        lca.lci()
         if activities_to_exclude is not None:
-            remove_double_accounting(
+            lca = remove_double_accounting(
                 lca=lca, demand={0: 1}, activities_to_exclude=activities_to_exclude, exceptions=exceptions
             )
-        else:
-            lca.lci()
 
         if shares:
             logging.info("Calculating LCA results with subshares.")
@@ -513,9 +509,6 @@ def _calculate_year(args: tuple):
 
             lca.packages.append(get_datapackage(bw_correlated))
             lca.use_arrays = True
-            #
-            # # Log
-            # log_subshares_to_excel(model, scenario, year, shares)
 
     characterization_matrix = fill_characterization_factors_matrices(
         methods=methods,
@@ -549,7 +542,6 @@ def _calculate_year(args: tuple):
                 lca,
                 characterization_matrix,
                 methods,
-                # activities_to_exclude,
                 debug,
                 use_distributions,
                 uncertain_parameters,

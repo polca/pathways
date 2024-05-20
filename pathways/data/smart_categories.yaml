@@ -292,5 +292,4 @@ Exceptions:
     name_fltr:
       - electricity production, photovoltaic, commercial
       - electricity production, photovoltaic, residential
-    product_fltr:
-      - electricity, low voltage
+      - electricity import, from neighboring countries

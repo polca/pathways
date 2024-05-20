@@ -5,6 +5,73 @@ from pathlib import Path
 import pandas as pd
 import statsmodels.api as sm
 from openpyxl import load_workbook
+from zipfile import BadZipFile
+
+from typing import Set, Dict, Tuple
+
+
+def log_double_accounting(
+        model: str,
+        scenario: str,
+        year: int,
+        filtered_names: Dict[Tuple[str, ...], Set[str]],
+        exception_names: Dict[Tuple[str, ...], Set[str]]
+):
+    """
+    Log the unique names of the filtered activities and exceptions to an Excel file,
+    distinguished by categories.
+
+    :param model: The model name.
+    :param scenario: The scenario name.
+    :param year: The year.
+    :param filtered_names: Dictionary of category paths to sets of filtered activity names.
+    :param exception_names: Dictionary of category paths to sets of exception names.
+    """
+    filename = f"stats_report_{model}_{scenario}_{year}.xlsx"
+
+    # Prepare data for DataFrame
+    data_filtered = {"/".join(category): list(names) for category, names in filtered_names.items() if names}
+    data_exceptions = {"/".join(category): list(names) for category, names in exception_names.items() if names}
+
+    # Convert dictionaries to DataFrames
+    filtered_df = pd.DataFrame(dict([(k, pd.Series(v)) for k, v in data_filtered.items()]))
+    exception_df = pd.DataFrame(dict([(k, pd.Series(v)) for k, v in data_exceptions.items()]))
+
+    if os.path.exists(filename):
+        try:
+            # Load the existing workbook
+            book = load_workbook(filename)
+            with pd.ExcelWriter(filename, engine='openpyxl', mode='a') as writer:
+                writer.book = book
+
+                # Remove the existing sheets if they exist
+                if 'Double accounting - Zeroed' in writer.book.sheetnames:
+                    idx = writer.book.sheetnames.index('Double accounting - Zeroed')
+                    std = writer.book.worksheets[idx]
+                    writer.book.remove(std)
+                    writer.book.create_sheet('Double accounting - Zeroed', idx)
+                if 'Double accounting - Exceptions' in writer.book.sheetnames:
+                    idx = writer.book.sheetnames.index('Double accounting - Exceptions')
+                    std = writer.book.worksheets[idx]
+                    writer.book.remove(std)
+                    writer.book.create_sheet('Double accounting - Exceptions', idx)
+
+                # Write DataFrames to the appropriate sheets
+                filtered_df.to_excel(writer, sheet_name='Double accounting - Zeroed', index=False)
+                exception_df.to_excel(writer, sheet_name='Double accounting - Exceptions', index=False)
+
+                writer.save()
+        except BadZipFile:
+            print(f"Warning: '{filename}' is not a valid Excel file. Creating a new file.")
+            with pd.ExcelWriter(filename) as writer:
+                filtered_df.to_excel(writer, sheet_name='Double accounting - Zeroed', index=False)
+                exception_df.to_excel(writer, sheet_name='Double accounting - Exceptions', index=False)
+    else:
+        with pd.ExcelWriter(filename) as writer:
+            filtered_df.to_excel(writer, sheet_name='Double accounting - Zeroed', index=False)
+            exception_df.to_excel(writer, sheet_name='Double accounting - Exceptions', index=False)
+
+
 
 
 def log_subshares_to_excel(model: str, scenario: str, year: int, shares: dict):

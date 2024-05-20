@@ -599,16 +599,20 @@ def get_combined_filters(
 def apply_filters(
     technosphere_inds: Dict[Tuple[str, str, str, str], int],
     filters: Dict[str, List[str]],
-    exceptions: Dict[str, List[str]]
-) -> Tuple[List[int], List[int]]:
+    exceptions: Dict[str, List[str]],
+    paths: List[List[str]]  # Add paths as an argument
+) -> Tuple[List[int], List[int], Dict[str, Set[str]], Dict[str, Set[str]]]:
     """
-    Apply the filters to the database and return a list of indices and exceptions.
+    Apply the filters to the database and return a list of indices and exceptions,
+    along with the names of filtered activities and exceptions categorized by paths.
 
     :param technosphere_inds: Dictionary where keys are tuples of four strings (activity name, product name, location, unit)
                      and values are integers (indices).
     :param filters: Dictionary containing the filter criteria.
     :param exceptions: Dictionary containing the exceptions criteria.
-    :return: Tuple containing a list of indices of filtered activities and a list of indices of exceptions.
+    :param paths: List of lists, where each inner list represents a path in the hierarchy.
+    :return: Tuple containing a list of indices of filtered activities, a list of indices of exceptions,
+             and dictionaries of categorized names of filtered activities and exceptions.
     """
     name_fltr = filters.get("name_fltr", [])
     name_mask = filters.get("name_mask", [])
@@ -628,6 +632,8 @@ def apply_filters(
 
     filtered_indices = []
     exception_indices = []
+    filtered_names = {tuple(path): set() for path in paths}
+    exception_names = {tuple(path): set() for path in paths}
 
     for key, value in technosphere_inds.items():
         name, product, location, unit = key
@@ -642,6 +648,10 @@ def apply_filters(
             continue
 
         filtered_indices.append(value)
+        for path in paths:
+            path_str = " ".join(path)
+            if match_filter(name, path_str):
+                filtered_names[tuple(path)].add(name)
 
     for key, value in technosphere_inds.items():
         name, product, location, unit = key
@@ -656,5 +666,9 @@ def apply_filters(
             continue
 
         exception_indices.append(value)
+        for path in paths:
+            path_str = " ".join(path)
+            if match_filter(name, path_str):
+                exception_names[tuple(path)].add(name)
 
-    return filtered_indices, exception_indices
+    return filtered_indices, exception_indices, filtered_names, exception_names
