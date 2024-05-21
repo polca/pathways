@@ -196,6 +196,7 @@ def remove_double_accounting(
     :param lca: bw2calc.LCA object
     :param demand: dict with demand values
     :param activities_to_exclude: list of activities to exclude
+    :param exceptions: list of exceptions
     :return: Technosphere matrix with double counting removed.
     """
 
