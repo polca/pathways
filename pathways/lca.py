@@ -294,7 +294,6 @@ def process_region(data: Tuple) -> dict[str, ndarray[Any, dtype[Any]] | list[int
             year=year,
         ).sum(dim="variables")
 
-
         # If the total demand is zero, return None
         if share < demand_cutoff:
             continue
@@ -507,7 +506,6 @@ def _calculate_year(args: tuple):
 
             lca.packages.append(get_datapackage(bw_correlated))
             lca.use_arrays = True
-
 
     characterization_matrix = fill_characterization_factors_matrices(
         methods=methods,
