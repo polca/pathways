@@ -346,7 +346,7 @@ def process_region(data: Tuple) -> dict[str, ndarray[Any, dtype[Any]] | list[int
     id_array = uuid.uuid4()
     np.save(file=DIR_CACHED_DB / f"{id_array}.npy", arr=np.stack(d))
 
-    # just making sure that the memory is freed. Maybe not needed- check later
+    # just making sure that the memory is freed. Maybe not needed-check later
     del d
 
     # returning a dictionary containing the id_array and the variables
