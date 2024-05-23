@@ -1,10 +1,100 @@
 import os
 import re
 from pathlib import Path
+from typing import Dict, Set, Tuple
+from zipfile import BadZipFile
 
 import pandas as pd
 import statsmodels.api as sm
 from openpyxl import load_workbook
+
+
+def log_double_accounting(
+    model: str,
+    scenario: str,
+    year: int,
+    filtered_names: Dict[Tuple[str, ...], Set[str]],
+    exception_names: Dict[Tuple[str, ...], Set[str]],
+):
+    """
+    Log the unique names of the filtered activities and exceptions to an Excel file,
+    distinguished by categories.
+
+    :param model: The model name.
+    :param scenario: The scenario name.
+    :param year: The year.
+    :param filtered_names: Dictionary of category paths to sets of filtered activity names.
+    :param exception_names: Dictionary of category paths to sets of exception names.
+    """
+    filename = f"stats_report_{model}_{scenario}_{year}.xlsx"
+
+    # Prepare data for DataFrame
+    data_filtered = {
+        "/".join(category): list(names)
+        for category, names in filtered_names.items()
+        if names
+    }
+    data_exceptions = {
+        "/".join(category): list(names)
+        for category, names in exception_names.items()
+        if names
+    }
+
+    # Convert dictionaries to DataFrames
+    filtered_df = pd.DataFrame(
+        dict([(k, pd.Series(v)) for k, v in data_filtered.items()])
+    )
+    exception_df = pd.DataFrame(
+        dict([(k, pd.Series(v)) for k, v in data_exceptions.items()])
+    )
+
+    if os.path.exists(filename):
+        try:
+            # Load the existing workbook
+            book = load_workbook(filename)
+            with pd.ExcelWriter(filename, engine="openpyxl", mode="a") as writer:
+                writer.book = book
+
+                # Remove the existing sheets if they exist
+                if "Double accounting - Zeroed" in writer.book.sheetnames:
+                    idx = writer.book.sheetnames.index("Double accounting - Zeroed")
+                    std = writer.book.worksheets[idx]
+                    writer.book.remove(std)
+                    writer.book.create_sheet("Double accounting - Zeroed", idx)
+                if "Double accounting - Exceptions" in writer.book.sheetnames:
+                    idx = writer.book.sheetnames.index("Double accounting - Exceptions")
+                    std = writer.book.worksheets[idx]
+                    writer.book.remove(std)
+                    writer.book.create_sheet("Double accounting - Exceptions", idx)
+
+                # Write DataFrames to the appropriate sheets
+                filtered_df.to_excel(
+                    writer, sheet_name="Double accounting - Zeroed", index=False
+                )
+                exception_df.to_excel(
+                    writer, sheet_name="Double accounting - Exceptions", index=False
+                )
+
+                writer.save()
+        except BadZipFile:
+            print(
+                f"Warning: '{filename}' is not a valid Excel file. Creating a new file."
+            )
+            with pd.ExcelWriter(filename) as writer:
+                filtered_df.to_excel(
+                    writer, sheet_name="Double accounting - Zeroed", index=False
+                )
+                exception_df.to_excel(
+                    writer, sheet_name="Double accounting - Exceptions", index=False
+                )
+    else:
+        with pd.ExcelWriter(filename) as writer:
+            filtered_df.to_excel(
+                writer, sheet_name="Double accounting - Zeroed", index=False
+            )
+            exception_df.to_excel(
+                writer, sheet_name="Double accounting - Exceptions", index=False
+            )
 
 
 def log_subshares_to_excel(model: str, scenario: str, year: int, shares: dict):
@@ -82,16 +172,14 @@ def log_intensities_to_excel(model: str, scenario: str, year: int, new_data: dic
         return
 
     try:
+        max_length = max(len(v) for v in new_data.values())
+
+        df_new = pd.DataFrame(new_data)
+        df_new["Iteration"] = range(1, max_length + 1)
+        df_new["Year"] = [year] * max_length
+
         if os.path.exists(filename):
             df_existing = pd.read_excel(filename)
-            max_length = max(len(v) for v in new_data.values())
-
-            df_new = pd.DataFrame(index=range(max_length), columns=new_data.keys())
-            for key, values in new_data.items():
-                df_new[key][: len(values)] = values
-
-            df_new["Iteration"] = range(1, max_length + 1)
-            df_new["Year"] = [year] * max_length
 
             combined_df = pd.merge(
                 df_existing,
@@ -103,17 +191,15 @@ def log_intensities_to_excel(model: str, scenario: str, year: int, new_data: dic
 
             for col in df_new.columns:
                 if col + "_new" in combined_df:
-                    combined_df[col].update(combined_df.pop(col + "_new"))
+                    combined_df[col] = combined_df[col].combine_first(
+                        combined_df.pop(col + "_new")
+                    )
 
-            # Remove any '_new' columns if they still exist after updates
             combined_df = combined_df.loc[:, ~combined_df.columns.str.endswith("_new")]
-
             df = combined_df
+
         else:
-            max_length = max(len(v) for v in new_data.values())
-            df = pd.DataFrame(new_data, index=range(max_length))
-            df["Iteration"] = range(1, max_length + 1)
-            df["Year"] = [year] * max_length
+            df = df_new
 
         df.to_excel(filename, index=False)
     except Exception as e:

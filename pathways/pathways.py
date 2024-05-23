@@ -239,6 +239,7 @@ class Pathways:
     def calculate(
         self,
         methods: Optional[List[str]] = None,
+        double_accounting: Optional[List[str]] = None,
         models: Optional[List[str]] = None,
         scenarios: Optional[List[str]] = None,
         regions: Optional[List[str]] = None,
@@ -372,6 +373,7 @@ class Pathways:
                             regions,
                             variables,
                             methods,
+                            double_accounting,
                             demand_cutoff,
                             self.filepaths,
                             self.mapping,
@@ -409,6 +411,7 @@ class Pathways:
                                     regions,
                                     variables,
                                     methods,
+                                    double_accounting,
                                     demand_cutoff,
                                     self.filepaths,
                                     self.mapping,
