@@ -39,7 +39,6 @@ from .utils import (
     check_unclassified_activities,
     fetch_indices,
     get_unit_conversion_factors,
-    read_indices_csv,
 )
 
 logging.basicConfig(
@@ -263,6 +262,7 @@ def process_region(data: Tuple) -> dict[str, ndarray[Any, dtype[Any]] | list[int
     variables_demand = {}
     d = []
     impacts_by_method = {method: [] for method in methods}
+    param_keys = set()
 
     for v, variable in enumerate(variables):
         idx, dataset = vars_idx[variable]["idx"], vars_idx[variable]["dataset"]
@@ -293,6 +293,7 @@ def process_region(data: Tuple) -> dict[str, ndarray[Any, dtype[Any]] | list[int
             year=year,
         ).sum(dim="variables")
 
+
         # If the total demand is zero, return None
         if share < demand_cutoff:
             continue
@@ -315,7 +316,7 @@ def process_region(data: Tuple) -> dict[str, ndarray[Any, dtype[Any]] | list[int
             # next(lca) is a generator that yields the inventory matrix
             temp_results = []
             params = {}
-            param_keys = set()
+
             for _ in zip(range(use_distributions), lca):
                 matrix_result = (characterization_matrix @ lca.inventory).toarray()
                 temp_results.append(matrix_result)
@@ -357,7 +358,7 @@ def process_region(data: Tuple) -> dict[str, ndarray[Any, dtype[Any]] | list[int
     id_array = uuid.uuid4()
     np.save(file=DIR_CACHED_DB / f"{id_array}.npy", arr=np.stack(d))
 
-    # just making sure that the memory is freed. Maybe not needed- check later
+    # just making sure that the memory is freed. Maybe not needed-check later
     del d
 
     # returning a dictionary containing the id_array and the variables
@@ -505,9 +506,7 @@ def _calculate_year(args: tuple):
 
             lca.packages.append(get_datapackage(bw_correlated))
             lca.use_arrays = True
-            #
-            # # Log
-            # log_subshares_to_excel(model, scenario, year, shares)
+
 
     characterization_matrix = fill_characterization_factors_matrices(
         methods=methods,

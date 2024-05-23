@@ -194,9 +194,7 @@ class Pathways:
         for var in mapping_vars:
             if var not in scenario_data["variables"].values:
                 if self.debug:
-                    logging.warning(
-                        f"Variable {var} not found in scenario data among: {scenario_data['variables'].values.tolist()}."
-                    )
+                    logging.warning(f"Variable {var} not found in scenario data.")
 
         # remove rows which do not have a value under the `variable`
         # column that correspond to any value in self.mapping for `scenario variable`
