@@ -19,7 +19,7 @@ from numpy import dtype, ndarray
 from premise.geomap import Geomap
 from scipy import sparse
 
-from .filesystem_constants import DATA_DIR, DIR_CACHED_DB, USER_LOGS_DIR, STATS_DIR
+from .filesystem_constants import DATA_DIR, DIR_CACHED_DB, STATS_DIR, USER_LOGS_DIR
 from .lcia import fill_characterization_factors_matrices
 from .stats import (
     create_mapping_sheet,

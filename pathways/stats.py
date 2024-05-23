@@ -48,7 +48,9 @@ def log_double_accounting(
     if os.path.exists(export_path):
         try:
             # Load the existing workbook
-            with pd.ExcelWriter(export_path, engine="openpyxl", mode="a", if_sheet_exists="overlay") as writer:
+            with pd.ExcelWriter(
+                export_path, engine="openpyxl", mode="a", if_sheet_exists="overlay"
+            ) as writer:
 
                 # Remove the existing sheets if they exist
                 if "Double accounting - Zeroed" in writer.book.sheetnames:
@@ -64,17 +66,23 @@ def log_double_accounting(
 
                 # Write DataFrames to the appropriate sheets
                 filtered_df.to_excel(
-                    writer, sheet_name="Double accounting - Zeroed", index=False,
+                    writer,
+                    sheet_name="Double accounting - Zeroed",
+                    index=False,
                 )
                 exception_df.to_excel(
-                    writer, sheet_name="Double accounting - Exceptions", index=False,
+                    writer,
+                    sheet_name="Double accounting - Exceptions",
+                    index=False,
                 )
 
         except BadZipFile:
             print(
                 f"Warning: '{export_path}' is not a valid Excel file. Creating a new file."
             )
-            with pd.ExcelWriter(export_path, engine="openpyxl", mode="a", if_sheet_exists="overlay") as writer:
+            with pd.ExcelWriter(
+                export_path, engine="openpyxl", mode="a", if_sheet_exists="overlay"
+            ) as writer:
                 filtered_df.to_excel(
                     writer, sheet_name="Double accounting - Zeroed", index=False
                 )
@@ -83,7 +91,9 @@ def log_double_accounting(
                 )
     else:
 
-        with pd.ExcelWriter(export_path, engine="openpyxl", mode="a", if_sheet_exists="overlay") as writer:
+        with pd.ExcelWriter(
+            export_path, engine="openpyxl", mode="a", if_sheet_exists="overlay"
+        ) as writer:
             filtered_df.to_excel(
                 writer, sheet_name="Double accounting - Zeroed", index=False
             )

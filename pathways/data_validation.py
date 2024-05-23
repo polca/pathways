@@ -9,6 +9,7 @@ import datapackage
 import pandas as pd
 import yaml
 from datapackage import DataPackageException, validate
+
 from .filesystem_constants import USER_LOGS_DIR
 
 logging.basicConfig(

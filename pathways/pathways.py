@@ -17,7 +17,7 @@ import yaml
 from datapackage import DataPackage
 
 from .data_validation import validate_datapackage
-from .filesystem_constants import DATA_DIR, DIR_CACHED_DB, USER_LOGS_DIR, STATS_DIR
+from .filesystem_constants import DATA_DIR, DIR_CACHED_DB, STATS_DIR, USER_LOGS_DIR
 from .lca import _calculate_year, get_lca_matrices
 from .lcia import get_lcia_method_names
 from .subshares import generate_samples
