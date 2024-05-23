@@ -18,7 +18,7 @@ import xarray as xr
 import yaml
 from premise.geomap import Geomap
 
-from .filesystem_constants import DATA_DIR, DIR_CACHED_DB
+from .filesystem_constants import DATA_DIR, DIR_CACHED_DB, USER_LOGS_DIR
 
 CLASSIFICATIONS = DATA_DIR / "activities_classifications.yaml"
 UNITS_CONVERSION = DATA_DIR / "units_conversion.yaml"
@@ -26,7 +26,7 @@ UNITS_CONVERSION = DATA_DIR / "units_conversion.yaml"
 
 logging.basicConfig(
     level=logging.DEBUG,
-    filename="pathways.log",  # Log file to save the entries
+    filename=USER_LOGS_DIR / "pathways.log",  # Log file to save the entries
     filemode="a",  # Append to the log file if it exists, 'w' to overwrite
     format="%(asctime)s - %(levelname)s - %(module)s - %(message)s",
     datefmt="%Y-%m-%d %H:%M:%S",

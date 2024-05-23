@@ -18,3 +18,6 @@ DIR_CACHED_DB.mkdir(parents=True, exist_ok=True)
 
 USER_LOGS_DIR = platformdirs.user_log_path(appname="pathways", appauthor="pylca")
 USER_LOGS_DIR.mkdir(parents=True, exist_ok=True)
+
+STATS_DIR = USER_DATA_BASE_DIR / "stats"
+STATS_DIR.mkdir(parents=True, exist_ok=True)

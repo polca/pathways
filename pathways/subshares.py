@@ -12,14 +12,14 @@ from premise.geomap import Geomap
 from scipy.interpolate import interp1d
 from stats_arrays import *
 
-from pathways.filesystem_constants import DATA_DIR
+from pathways.filesystem_constants import DATA_DIR, USER_LOGS_DIR
 from pathways.utils import get_activity_indices
 
 SUBSHARES = DATA_DIR / "technologies_shares.yaml"
 
 logging.basicConfig(
     level=logging.DEBUG,
-    filename="pathways.log",  # Log file to save the entries
+    filename=USER_LOGS_DIR / "pathways.log",  # Log file to save the entries
     filemode="a",  # Append to the log file if it exists, 'w' to overwrite
     format="%(asctime)s - %(levelname)s - %(module)s - %(message)s",
     datefmt="%Y-%m-%d %H:%M:%S",

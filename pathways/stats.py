@@ -10,11 +10,9 @@ from openpyxl import load_workbook
 
 
 def log_double_accounting(
-    model: str,
-    scenario: str,
-    year: int,
     filtered_names: Dict[Tuple[str, ...], Set[str]],
     exception_names: Dict[Tuple[str, ...], Set[str]],
+    export_path: Path,
 ):
     """
     Log the unique names of the filtered activities and exceptions to an Excel file,
@@ -26,7 +24,6 @@ def log_double_accounting(
     :param filtered_names: Dictionary of category paths to sets of filtered activity names.
     :param exception_names: Dictionary of category paths to sets of exception names.
     """
-    filename = f"stats_report_{model}_{scenario}_{year}.xlsx"
 
     # Prepare data for DataFrame
     data_filtered = {
@@ -48,12 +45,10 @@ def log_double_accounting(
         dict([(k, pd.Series(v)) for k, v in data_exceptions.items()])
     )
 
-    if os.path.exists(filename):
+    if os.path.exists(export_path):
         try:
             # Load the existing workbook
-            book = load_workbook(filename)
-            with pd.ExcelWriter(filename, engine="openpyxl", mode="a") as writer:
-                writer.book = book
+            with pd.ExcelWriter(export_path, engine="openpyxl", mode="a", if_sheet_exists="overlay") as writer:
 
                 # Remove the existing sheets if they exist
                 if "Double accounting - Zeroed" in writer.book.sheetnames:
@@ -69,18 +64,17 @@ def log_double_accounting(
 
                 # Write DataFrames to the appropriate sheets
                 filtered_df.to_excel(
-                    writer, sheet_name="Double accounting - Zeroed", index=False
+                    writer, sheet_name="Double accounting - Zeroed", index=False,
                 )
                 exception_df.to_excel(
-                    writer, sheet_name="Double accounting - Exceptions", index=False
+                    writer, sheet_name="Double accounting - Exceptions", index=False,
                 )
 
-                writer.save()
         except BadZipFile:
             print(
-                f"Warning: '{filename}' is not a valid Excel file. Creating a new file."
+                f"Warning: '{export_path}' is not a valid Excel file. Creating a new file."
             )
-            with pd.ExcelWriter(filename) as writer:
+            with pd.ExcelWriter(export_path, engine="openpyxl", mode="a", if_sheet_exists="overlay") as writer:
                 filtered_df.to_excel(
                     writer, sheet_name="Double accounting - Zeroed", index=False
                 )
@@ -88,7 +82,8 @@ def log_double_accounting(
                     writer, sheet_name="Double accounting - Exceptions", index=False
                 )
     else:
-        with pd.ExcelWriter(filename) as writer:
+
+        with pd.ExcelWriter(export_path, engine="openpyxl", mode="a", if_sheet_exists="overlay") as writer:
             filtered_df.to_excel(
                 writer, sheet_name="Double accounting - Zeroed", index=False
             )
@@ -97,7 +92,7 @@ def log_double_accounting(
             )
 
 
-def log_subshares_to_excel(model: str, scenario: str, year: int, shares: dict):
+def log_subshares_to_excel(year: int, shares: dict, export_path: Path):
     """
     Logs results to an Excel file named according to model, scenario, and year, specifically for the given year.
     This method assumes that each entry in the shares defaultdict is structured to be directly usable in a DataFrame.
@@ -108,7 +103,7 @@ def log_subshares_to_excel(model: str, scenario: str, year: int, shares: dict):
     :param year: The specific year for which data is being logged.
     :param shares: A nested defaultdict containing shares data for multiple years and types.
     """
-    filename = f"stats_report_{model}_{scenario}_{year}.xlsx"
+
     data = []
 
     first_tech = next(iter(shares), None)
@@ -130,8 +125,8 @@ def log_subshares_to_excel(model: str, scenario: str, year: int, shares: dict):
     new_df = pd.DataFrame(data)
 
     try:
-        if os.path.exists(filename):
-            df_existing = pd.read_excel(filename)
+        if os.path.exists(export_path):
+            df_existing = pd.read_excel(export_path)
             # Merge new data into existing data, selectively updating share columns
             combined_df = (
                 df_existing.set_index(["Iteration", "Year"])
@@ -149,37 +144,41 @@ def log_subshares_to_excel(model: str, scenario: str, year: int, shares: dict):
                 ["Iteration", "Year"] + new_columns + existing_columns
             ]
 
-            combined_df.to_excel(filename, index=False)
+            combined_df.to_excel(export_path, index=False)
         else:
-            new_df.to_excel(filename, index=False)
+            new_df.to_excel(export_path, index=False)
     except Exception as e:
         print(f"Error updating Excel file: {str(e)}")
 
 
-def log_intensities_to_excel(model: str, scenario: str, year: int, new_data: dict):
+def log_intensities_to_excel(
+    model: str, scenario: str, year: int, params: list, export_path: Path
+):
     """
     Update or create an Excel file with new columns of data, based on model, scenario, and year.
 
     :param model: The model name.
     :param scenario: The scenario name.
     :param year: The year for which the data is logged.
-    :param new_data: Dictionary where keys are the new column names and values are lists of data for each column.
+    :param params: Dictionary where keys are the new column names and values are lists of data for each column.
     """
-    filename = f"stats_report_{model}_{scenario}_{year}.xlsx"
 
-    if not new_data:
+    if not params:
         print("Warning: No new data provided to log.")
         return
 
     try:
-        max_length = max(len(v) for v in new_data.values())
+        # merge list of dictionaries into a single dictionary
+        params = {k: v for d in params for k, v in d.items()}
 
-        df_new = pd.DataFrame(new_data)
+        max_length = max(len(v) for v in params.values())
+
+        df_new = pd.DataFrame(params)
         df_new["Iteration"] = range(1, max_length + 1)
         df_new["Year"] = [year] * max_length
 
-        if os.path.exists(filename):
-            df_existing = pd.read_excel(filename)
+        if os.path.exists(export_path):
+            df_existing = pd.read_excel(export_path)
 
             combined_df = pd.merge(
                 df_existing,
@@ -201,18 +200,15 @@ def log_intensities_to_excel(model: str, scenario: str, year: int, new_data: dic
         else:
             df = df_new
 
-        df.to_excel(filename, index=False)
+        df.to_excel(export_path, index=False)
     except Exception as e:
         print(f"Failed to update the Excel file: {e}")
 
 
 def log_results_to_excel(
-    model: str,
-    scenario: str,
-    year: int,
     total_impacts_by_method: dict,
     methods: list,
-    filepath=None,
+    filepath: Path,
 ):
     """
     Log the characterized inventory results for each LCIA method into separate columns in an Excel file.
@@ -225,9 +221,6 @@ def log_results_to_excel(
     :param methods: List of method names.
     :param filepath: Optional. File path for the Excel file to save the results.
     """
-
-    if filepath is None:
-        filepath = f"stats_report_{model}_{scenario}_{year}.xlsx"
 
     try:
         df = pd.read_excel(filepath)
@@ -245,7 +238,12 @@ def log_results_to_excel(
 
 
 def create_mapping_sheet(
-    filepaths: list, model: str, scenario: str, year: int, parameter_keys: list
+    filepaths: list,
+    model: str,
+    scenario: str,
+    year: int,
+    parameter_keys: list,
+    export_path: Path,
 ):
     """
     Create a mapping sheet for the activities with uncertainties.
@@ -254,6 +252,7 @@ def create_mapping_sheet(
     :param scenario: Scenario name as a string.
     :param year: Year as an integer.
     :param parameter_keys: List of parameter keys used in intensity iterations.
+    :param export_path: Path to the directory where the Excel file will be saved.
     """
 
     def filter_filepaths(suffix: str, contains: list):
@@ -288,15 +287,13 @@ def create_mapping_sheet(
         ["Activity", "Product", "Location", "Unit", "Index"]
     ]  # Restrict columns if necessary
 
-    excel_path = f"stats_report_{model}_{scenario}_{year}.xlsx"
-
     try:
         with pd.ExcelWriter(
-            excel_path, mode="a", engine="openpyxl", if_sheet_exists="replace"
+            export_path, mode="a", engine="openpyxl", if_sheet_exists="replace"
         ) as writer:
             mapping_df.to_excel(writer, index=False, sheet_name="Mapping")
     except Exception as e:
-        print(f"Error writing mapping sheet to {excel_path}: {str(e)}")
+        print(f"Error writing mapping sheet to {export_path}: {str(e)}")
 
 
 def escape_formula(text: str):
@@ -310,7 +307,9 @@ def escape_formula(text: str):
     return "'" + text if text.startswith(("=", "-", "+")) else text
 
 
-def run_stats_analysis(model: str, scenario: str, year: int, methods: list):
+def run_stats_analysis(
+    model: str, scenario: str, year: int, methods: list, export_path: Path
+):
     """
     Runs OLS regression for specified methods and writes summaries to an Excel file.
 
@@ -321,20 +320,19 @@ def run_stats_analysis(model: str, scenario: str, year: int, methods: list):
     :param scenario: Scenario name.
     :param year: Year of interest.
     :param methods: Methods corresponding to dataset columns.
+    :param export_path: Path to the directory where the Excel file will be saved.
     """
 
-    filename = f"stats_report_{model}_{scenario}_{year}.xlsx"
-
     try:
-        book = load_workbook(filename)
+        book = load_workbook(export_path)
     except FileNotFoundError:
         book = pd.ExcelWriter(
-            filename, engine="openpyxl"
+            export_path, engine="openpyxl"
         )  # Create a new workbook if not found
         book.close()
-        book = load_workbook(filename)
+        book = load_workbook(export_path)
 
-    data = pd.read_excel(filename, sheet_name="Sheet1")
+    data = pd.read_excel(export_path, sheet_name="Sheet1")
 
     for idx, method in enumerate(methods):
         if method not in data.columns:
@@ -366,5 +364,4 @@ def run_stats_analysis(model: str, scenario: str, year: int, methods: list):
             columns = re.split(r"\s{2,}", line)
             ws.append(columns)
 
-    book.save(filename)
-    print("Analysis complete and results saved.")
+    book.save(export_path)

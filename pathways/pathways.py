@@ -17,7 +17,7 @@ import yaml
 from datapackage import DataPackage
 
 from .data_validation import validate_datapackage
-from .filesystem_constants import DATA_DIR, DIR_CACHED_DB
+from .filesystem_constants import DATA_DIR, DIR_CACHED_DB, USER_LOGS_DIR, STATS_DIR
 from .lca import _calculate_year, get_lca_matrices
 from .lcia import get_lcia_method_names
 from .subshares import generate_samples
@@ -112,13 +112,14 @@ class Pathways:
         if self.debug:
             logging.basicConfig(
                 level=logging.DEBUG,
-                filename="pathways.log",  # Log file to save the entries
+                filename=USER_LOGS_DIR / "pathways.log",  # Log file to save the entries
                 filemode="a",  # Append to the log file if it exists, 'w' to overwrite
                 format="%(asctime)s - %(levelname)s - %(module)s - %(message)s",
                 datefmt="%Y-%m-%d %H:%M:%S",
             )
             logging.info("#" * 600)
             logging.info(f"Pathways initialized with datapackage: {datapackage}")
+            print(f"Log file: {USER_LOGS_DIR / 'pathways.log'}")
 
     def _get_final_energy_mapping(self):
         """
@@ -176,7 +177,7 @@ class Pathways:
         mapping_dataframe = pd.read_excel(
             DATA_DIR / "final_energy_mapping.xlsx",
         )
-        model = self.data.descriptor["scenarios"][0].split(" - ")[0]
+        model = self.data.descriptor["scenarios"][0]["name"].split(" - ")[0]
 
         return create_dict_with_specific_model(mapping_dataframe, model)
 
@@ -352,7 +353,7 @@ class Pathways:
 
         # generate share of sub-technologies
         shares = None
-        if subshares:
+        if subshares is True:
             shares = generate_samples(
                 years=self.scenarios.coords["year"].values.tolist(),
                 iterations=use_distributions,
@@ -434,6 +435,8 @@ class Pathways:
         results = {k: v for k, v in results.items() if v is not None}
 
         self._fill_in_result_array(results)
+
+        print(f"Statistical analysis files: {STATS_DIR}")
 
     def _fill_in_result_array(self, results: dict):
 
