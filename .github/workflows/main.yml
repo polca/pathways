@@ -167,6 +167,7 @@ jobs:
           conda install conda-build
           conda install conda-verify
           conda install pytest
+          conda clean --all
           mkdir ~/conda-bld
           conda config --set anaconda_upload no
           export CONDA_BLD_PATH=~/conda-bld
