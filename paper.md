@@ -16,7 +16,7 @@ authors:
     affiliation: 1
   - name: Alvaro J. Hahn-Menacho
     orcid: 0000-0003-2592-2186
-    affiliation: 1,2
+    affiliation: "1,2"
 
 affiliations:
  - name: Laboratory for Energy Systems Analysis, Paul Scherrer Institute, 5232 Villigen, Switzerland
