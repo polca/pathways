@@ -14,6 +14,9 @@ data/logs/
 dev/sample/inventories/*
 *.pyc
 
+example/*.html
+dev/*.html
+
 *.xml
 *.iml
 
