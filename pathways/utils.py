@@ -11,14 +11,14 @@ dictionary, checking unclassified activities, and getting activity indices.
 import csv
 import logging
 from pathlib import Path
-from typing import Any, Dict, List, Tuple, Union
+from typing import Any, Dict, List, Set, Tuple, Union
 
 import numpy as np
 import xarray as xr
 import yaml
 from premise.geomap import Geomap
 
-from .filesystem_constants import DATA_DIR, DIR_CACHED_DB
+from .filesystem_constants import DATA_DIR, DIR_CACHED_DB, USER_LOGS_DIR
 
 CLASSIFICATIONS = DATA_DIR / "activities_classifications.yaml"
 UNITS_CONVERSION = DATA_DIR / "units_conversion.yaml"
@@ -26,11 +26,40 @@ UNITS_CONVERSION = DATA_DIR / "units_conversion.yaml"
 
 logging.basicConfig(
     level=logging.DEBUG,
-    filename="pathways.log",  # Log file to save the entries
+    filename=USER_LOGS_DIR / "pathways.log",  # Log file to save the entries
     filemode="a",  # Append to the log file if it exists, 'w' to overwrite
     format="%(asctime)s - %(levelname)s - %(module)s - %(message)s",
     datefmt="%Y-%m-%d %H:%M:%S",
 )
+
+
+def read_indices_csv(file_path: Path) -> dict[tuple[str, str, str, str], int]:
+    """
+    Reads a CSV file and returns its contents as a dictionary.
+
+    Each row of the CSV file is expected to contain four string values followed by an index.
+    These are stored in the dictionary as a tuple of the four strings mapped to the index.
+
+    :param file_path: The path to the CSV file.
+    :type file_path: Path
+
+    :return: A dictionary mapping tuples of four strings to indices.
+    For technosphere indices, the four strings are the activity name, product name, location, and unit.
+    For biosphere indices, the four strings are the flow name, category, subcategory, and unit.
+    :rtype: Dict[Tuple[str, str, str, str], str]
+    """
+    indices = dict()
+    with open(file_path) as read_obj:
+        csv_reader = csv.reader(read_obj, delimiter=";")
+        for row in csv_reader:
+            try:
+                indices[(row[0], row[1], row[2], row[3])] = int(row[4])
+            except IndexError as err:
+                logging.error(
+                    f"Error reading row {row} from {file_path}: {err}. "
+                    f"Could it be that the file uses commas instead of semicolons?"
+                )
+    return indices
 
 
 def load_classifications():
@@ -54,6 +83,12 @@ def harmonize_units(scenario: xr.DataArray, variables: list) -> xr.DataArray:
     :param variables: list of variables
     :return: xr.DataArray
     """
+
+    missing_vars = [var for var in variables if var not in scenario.attrs["units"]]
+    if missing_vars:
+        raise KeyError(
+            f"The following variables are missing in 'scenario.attrs[\"units\"]': {missing_vars}"
+        )
 
     units = [scenario.attrs["units"][var] for var in variables]
 
@@ -480,7 +515,6 @@ def _group_technosphere_indices(
 
     acts_dict = {}
     for value in group_values:
-        # Collect indices for activities belonging to the current group value
         x = [
             int(technosphere_indices[a])
             for a in technosphere_indices
@@ -489,3 +523,153 @@ def _group_technosphere_indices(
         acts_dict[value] = x
 
     return acts_dict
+
+
+def read_categories_from_yaml(file_path: Path) -> Dict:
+    """
+    Read categories from a YAML file.
+
+    :param file_path: The path to the YAML file.
+    :return: The categories.
+    """
+    with open(file_path, "r") as file:
+        filters = yaml.safe_load(file)
+
+    return filters
+
+
+def gather_filters(current_level: Dict, combined_filters: Dict[str, Set[str]]) -> None:
+    """
+    Recursively gather filters from the current level and all sub-levels.
+
+    :param current_level: The current level in the filters dictionary.
+    :param combined_filters: The combined filter criteria dictionary.
+    """
+    if "ecoinvent_aliases" in current_level:
+        ecoinvent_aliases = current_level["ecoinvent_aliases"]
+        for k in combined_filters.keys():
+            combined_filters[k].update(ecoinvent_aliases.get(k, []))
+    for key, value in current_level.items():
+        if isinstance(value, dict):
+            gather_filters(value, combined_filters)
+
+
+def get_combined_filters(
+    filters: Dict, paths: List[List[str]]
+) -> Tuple[Dict[str, List[str]], Dict[str, List[str]]]:
+    """
+    Traverse the filters dictionary to get combined filter criteria based on multiple paths.
+
+    :param filters: The filters dictionary loaded from YAML.
+    :param paths: A list of lists, where each inner list represents a path in the hierarchy.
+    :return: A tuple with combined filter criteria dictionary and exceptions dictionary.
+    """
+    combined_filters = {
+        "name_fltr": set(),
+        "name_mask": set(),
+        "product_fltr": set(),
+        "product_mask": set(),
+    }
+
+    exceptions_filters = {
+        "name_fltr": set(),
+        "product_fltr": set(),
+    }
+
+    for path in paths:
+        current_level = filters
+        for key in path:
+            current_level = current_level.get(key, {})
+            if not isinstance(current_level, dict):
+                break
+        gather_filters(current_level, combined_filters)
+
+    # Gather exceptions from the "Exceptions" path
+    exceptions = filters.get("Exceptions", {}).get("ecoinvent_aliases", {})
+    for k in exceptions_filters.keys():
+        exceptions_filters[k].update(exceptions.get(k, []))
+
+    for k in combined_filters.keys():
+        combined_filters[k] = list(combined_filters[k])
+    for k in exceptions_filters.keys():
+        exceptions_filters[k] = list(exceptions_filters[k])
+
+    return combined_filters, exceptions_filters
+
+
+def apply_filters(
+    technosphere_inds: Dict[Tuple[str, str, str, str], int],
+    filters: Dict[str, List[str]],
+    exceptions: Dict[str, List[str]],
+    paths: List[List[str]],  # Add paths as an argument
+) -> Tuple[List[int], List[int], Dict[str, Set[str]], Dict[str, Set[str]]]:
+    """
+    Apply the filters to the database and return a list of indices and exceptions,
+    along with the names of filtered activities and exceptions categorized by paths.
+
+    :param technosphere_inds: Dictionary where keys are tuples of four strings (activity name, product name, location, unit)
+                     and values are integers (indices).
+    :param filters: Dictionary containing the filter criteria.
+    :param exceptions: Dictionary containing the exceptions criteria.
+    :param paths: List of lists, where each inner list represents a path in the hierarchy.
+    :return: Tuple containing a list of indices of filtered activities, a list of indices of exceptions,
+             and dictionaries of categorized names of filtered activities and exceptions.
+    """
+    name_fltr = filters.get("name_fltr", [])
+    name_mask = filters.get("name_mask", [])
+    product_fltr = filters.get("product_fltr", [])
+    product_mask = filters.get("product_mask", [])
+
+    exception_name_fltr = exceptions.get("name_fltr", [])
+    exception_product_fltr = exceptions.get("product_fltr", [])
+    exception_name_mask = exceptions.get("name_mask", [])
+    exception_product_mask = exceptions.get("product_mask", [])
+
+    def match_filter(item, filter_values):
+        return any(fltr in item for fltr in filter_values)
+
+    def match_mask(item, mask_values):
+        return any(msk in item for msk in mask_values)
+
+    filtered_indices = []
+    exception_indices = []
+    filtered_names = {tuple(path): set() for path in paths}
+    exception_names = {tuple(path): set() for path in paths}
+
+    for key, value in technosphere_inds.items():
+        name, product, location, unit = key
+
+        if name_fltr and not match_filter(name, name_fltr):
+            continue
+        if product_fltr and not match_filter(product, product_fltr):
+            continue
+        if name_mask and match_mask(name, name_mask):
+            continue
+        if product_mask and match_mask(product, product_mask):
+            continue
+
+        filtered_indices.append(value)
+        for path in paths:
+            path_str = " ".join(path)
+            if match_filter(name, path_str):
+                filtered_names[tuple(path)].add(name)
+
+    for key, value in technosphere_inds.items():
+        name, product, location, unit = key
+
+        if exception_name_fltr and not match_filter(name, exception_name_fltr):
+            continue
+        if exception_product_fltr and not match_filter(product, exception_product_fltr):
+            continue
+        if exception_name_mask and match_mask(name, exception_name_mask):
+            continue
+        if exception_product_mask and match_mask(product, exception_product_mask):
+            continue
+
+        exception_indices.append(value)
+        for path in paths:
+            path_str = " ".join(path)
+            if match_filter(name, path_str):
+                exception_names[tuple(path)].add(name)
+
+    return filtered_indices, exception_indices, filtered_names, exception_names

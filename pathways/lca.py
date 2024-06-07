@@ -3,7 +3,6 @@ This module contains functions to calculate the Life Cycle Assessment (LCA) resu
 
 """
 
-import csv
 import logging
 import uuid
 from pathlib import Path
@@ -14,57 +13,45 @@ import bw_processing as bwp
 import numpy as np
 import pyprind
 from bw2calc.monte_carlo import MonteCarloLCA
+from bw2calc.utils import get_datapackage
 from bw_processing import Datapackage
 from numpy import dtype, ndarray
 from premise.geomap import Geomap
 from scipy import sparse
-from scipy.sparse import csr_matrix
 
-from .filesystem_constants import DIR_CACHED_DB
+from .filesystem_constants import DATA_DIR, DIR_CACHED_DB, STATS_DIR, USER_LOGS_DIR
 from .lcia import fill_characterization_factors_matrices
+from .stats import (
+    create_mapping_sheet,
+    log_double_accounting,
+    log_intensities_to_excel,
+    log_results_to_excel,
+    log_subshares_to_excel,
+    run_stats_analysis,
+)
+from .subshares import (
+    adjust_matrix_based_on_shares,
+    find_technology_indices,
+    get_subshares_matrix,
+)
 from .utils import (
     _group_technosphere_indices,
+    apply_filters,
     check_unclassified_activities,
     fetch_indices,
+    get_combined_filters,
     get_unit_conversion_factors,
+    read_categories_from_yaml,
+    read_indices_csv,
 )
 
 logging.basicConfig(
     level=logging.DEBUG,
-    filename="pathways.log",  # Log file to save the entries
+    filename=USER_LOGS_DIR / "pathways.log",  # Log file to save the entries
     filemode="a",  # Append to the log file if it exists, 'w' to overwrite
     format="%(asctime)s - %(levelname)s - %(module)s - %(message)s",
     datefmt="%Y-%m-%d %H:%M:%S",
 )
-
-
-def read_indices_csv(file_path: Path) -> dict[tuple[str, str, str, str], int]:
-    """
-    Reads a CSV file and returns its contents as a dictionary.
-
-    Each row of the CSV file is expected to contain four string values followed by an index.
-    These are stored in the dictionary as a tuple of the four strings mapped to the index.
-
-    :param file_path: The path to the CSV file.
-    :type file_path: Path
-
-    :return: A dictionary mapping tuples of four strings to indices.
-    For technosphere indices, the four strings are the activity name, product name, location, and unit.
-    For biosphere indices, the four strings are the flow name, category, subcategory, and unit.
-    :rtype: Dict[Tuple[str, str, str, str], str]
-    """
-    indices = dict()
-    with open(file_path) as read_obj:
-        csv_reader = csv.reader(read_obj, delimiter=";")
-        for row in csv_reader:
-            try:
-                indices[(row[0], row[1], row[2], row[3])] = int(row[4])
-            except IndexError as err:
-                logging.error(
-                    f"Error reading row {row} from {file_path}: {err}. "
-                    f"Could it be that the file uses commas instead of semicolons?"
-                )
-    return indices
 
 
 def load_matrix_and_index(
@@ -75,8 +62,8 @@ def load_matrix_and_index(
 
     :param file_path: The path to the CSV file.
     :type file_path: Path
-    :return: A tuple containing the data, indices, and sign of the data.
-    :rtype: Tuple[np.ndarray, np.ndarray, np.ndarray]
+    :return: A tuple containing the data, indices, and sign of the data as well as the exchanges with distributions.
+    :rtype: Tuple[np.ndarray, np.ndarray, np.ndarray, list]
     """
     # Load the data from the CSV file
     array = np.genfromtxt(file_path, delimiter=";", skip_header=1)
@@ -115,7 +102,7 @@ def get_lca_matrices(
     model: str,
     scenario: str,
     year: int,
-) -> Tuple[Datapackage, Dict, Dict]:
+) -> Tuple[Datapackage, Dict, Dict, list[tuple[int, int]]]:
     """
     Retrieve Life Cycle Assessment (LCA) matrices from disk.
 
@@ -127,7 +114,7 @@ def get_lca_matrices(
     :type scenario: str
     :param year: The year of the scenario.
     :type year: int
-    :rtype: Tuple[sparse.csr_matrix, sparse.csr_matrix, Dict, Dict]
+    :rtype: Tuple[sparse.csr_matrix, sparse.csr_matrix, Dict, Dict, List]
     """
 
     # find the correct filepaths in filepaths
@@ -167,6 +154,10 @@ def get_lca_matrices(
     # Load matrices and add them to the datapackage
     for matrix_name, fp in [("technosphere_matrix", fp_A), ("biosphere_matrix", fp_B)]:
         data, indices, sign, distributions = load_matrix_and_index(fp)
+
+        if matrix_name == "technosphere_matrix":
+            uncertain_parameters = find_uncertain_parameters(distributions, indices)
+
         dp.add_persistent_vector(
             matrix=matrix_name,
             indices_array=indices,
@@ -175,56 +166,67 @@ def get_lca_matrices(
             distributions_array=distributions,
         )
 
-    return dp, technosphere_inds, biosphere_inds
+    return dp, technosphere_inds, biosphere_inds, uncertain_parameters
 
 
-def remove_double_counting(
-    characterized_inventory: csr_matrix, vars_info: dict, activity_idx: int
-) -> csr_matrix:
+def find_uncertain_parameters(
+    distributions_array: np.ndarray, indices_array: np.ndarray
+) -> list[tuple[int, int]]:
     """
-    Remove double counting from a characterized inventory matrix for all activities except
-    the activity being evaluated, across all methods.
+    Find the uncertain parameters in the distributions array.
+    They will be used for the stats report
+    :param distributions_array:
+    :param indices_array:
+    :return:
+    """
+    uncertain_indices = np.where(distributions_array["uncertainty_type"] != 0)[0]
+    uncertain_parameters = [tuple(indices_array[idx]) for idx in uncertain_indices]
 
-    :param characterized_inventory: Characterized inventory matrix with rows for different methods and columns for different activities.
-    :param vars_info: Dictionary with information about which indices to zero out.
-    :param activity_idx: Index of the activity being evaluated, which should not be zeroed out.
-    :return: Characterized inventory with double counting removed for all but the evaluated activity.
+    return uncertain_parameters
 
-    TODO: This function is not used in the current implementation. It was used in the previous implementation. Needs improvement.
 
+def remove_double_accounting(
+    lca: bc.LCA,
+    demand: Dict,
+    activities_to_exclude: List[int],
+    exceptions: List[int],
+):
+    """
+    Remove double counting from a technosphere matrix.
+    :param lca: bw2calc.LCA object
+    :param demand: dict with demand values
+    :param activities_to_exclude: list of activities to exclude
+    :param exceptions: list of exceptions
+    :return: Technosphere matrix with double counting removed.
     """
 
-    print("Removing double counting")
-    if isinstance(characterized_inventory, np.ndarray):
-        characterized_inventory = csr_matrix(characterized_inventory)
-    elif not isinstance(characterized_inventory, csr_matrix):
-        raise TypeError(
-            "characterized_inventory must be a csr_matrix or a numpy array."
-        )
+    tm_original = lca.technosphere_matrix.copy()
+    tm_modified = tm_original.tocoo()
 
-    # Gather all indices for which we want to avoid double counting, except the evaluated activity
-    list_of_idx_to_remove = []
-    for region in vars_info:
-        for variable in vars_info[region]:
-            idx = vars_info[region][variable]
-            if idx != activity_idx:
-                list_of_idx_to_remove.append(idx)
+    for act in activities_to_exclude:
+        row_idx = np.where(tm_modified.col == act)[0]
 
-    # Convert to lil_matrix for more efficient element-wise operations - CHECK IF THIS IS ACTUALLY FASTER
-    characterized_inventory = characterized_inventory.tolil()
+        for idx in row_idx:
+            # Skip the diagonal and exceptions
+            if tm_modified.row[idx] != act and (
+                exceptions is None or tm_modified.col[idx] not in exceptions
+            ):
+                tm_modified.data[idx] = 0
 
-    # Zero out the specified indices for all methods, except for the activity being evaluated
-    for idx in list_of_idx_to_remove:
-        characterized_inventory[:, idx] = 0
+    tm_modified = tm_modified.tocsr()
+    tm_modified.eliminate_zeros()
 
-    return characterized_inventory.tocsr()
+    # Remove double accounting
+    lca.technosphere_matrix = tm_modified
+    lca.lci(demand=demand)
+    return lca
 
 
 def process_region(data: Tuple) -> dict[str, ndarray[Any, dtype[Any]] | list[int]]:
     """
     Process the region data.
     :param data: Tuple containing the model, scenario, year, region, variables, vars_idx, scenarios, units_map,
-                    demand_cutoff, lca, characterization_matrix, debug, use_distributions.
+                    demand_cutoff, lca, characterization_matrix, debug, use_distributions, uncertain_parameters.
     :return: Dictionary containing the region data.
     """
     (
@@ -239,12 +241,17 @@ def process_region(data: Tuple) -> dict[str, ndarray[Any, dtype[Any]] | list[int
         demand_cutoff,
         lca,
         characterization_matrix,
+        methods,
         debug,
         use_distributions,
+        uncertain_parameters,
     ) = data
 
     variables_demand = {}
     d = []
+    impacts_by_method = {method: [] for method in methods}
+    param_keys = set()
+    params_container = []
 
     for v, variable in enumerate(variables):
         idx, dataset = vars_idx[variable]["idx"], vars_idx[variable]["dataset"]
@@ -284,7 +291,8 @@ def process_region(data: Tuple) -> dict[str, ndarray[Any, dtype[Any]] | list[int
             "demand": demand.values * float(unit_vector),
         }
 
-        lca.lci(demand={idx: demand.values * float(unit_vector)})
+        demand = {idx: demand.values * float(unit_vector)}
+        lca.lci(demand=demand)
 
         if use_distributions == 0:
             # Regular LCA
@@ -295,15 +303,43 @@ def process_region(data: Tuple) -> dict[str, ndarray[Any, dtype[Any]] | list[int
         else:
             # Use distributions for LCA calculations
             # next(lca) is a generator that yields the inventory matrix
-            results = np.array(
-                [
-                    (characterization_matrix @ lca.inventory).toarray()
-                    for _ in zip(range(use_distributions), lca)
-                ]
-            )
+            temp_results = []
+            params = {}
+
+            for _ in zip(range(use_distributions), lca):
+                matrix_result = (characterization_matrix @ lca.inventory).toarray()
+                temp_results.append(matrix_result)
+                for i in range(len(uncertain_parameters)):
+                    param_key = (
+                        f"{uncertain_parameters[i][0]}_to_{uncertain_parameters[i][1]}"
+                    )
+                    param_keys.add(param_key)
+                    if param_key not in params:
+                        params[param_key] = []
+                    value = -lca.technosphere_matrix[
+                        uncertain_parameters[i][0], uncertain_parameters[i][1]
+                    ]
+                    params[param_key].append(value)
+
+            params_container.append(params)
+
+            results = np.array(temp_results)
+            for idx, method in enumerate(methods):
+                # Sum over items for each stochastic result, not across all results
+                method_impacts = results[:, idx, :].sum(axis=1)
+                impacts_by_method[method] = method_impacts.tolist()
 
             # calculate quantiles along the first dimension
             characterized_inventory = np.quantile(results, [0.05, 0.5, 0.95], axis=0)
+
+    if len(params_container) > 0:
+        log_intensities_to_excel(
+            model=model,
+            scenario=scenario,
+            year=year,
+            params=params_container,
+            export_path=STATS_DIR / f"{model}_{scenario}_{year}.xlsx",
+        )
 
         d.append(characterized_inventory)
 
@@ -311,16 +347,16 @@ def process_region(data: Tuple) -> dict[str, ndarray[Any, dtype[Any]] | list[int
             logging.info(
                 f"var.: {variable}, name: {dataset[0][:50]}, "
                 f"ref.: {dataset[1]}, unit: {dataset[2][:50]}, idx: {idx},"
-                f"loc.: {dataset[3]}, demand: {round(float(demand.values * float(unit_vector)), 2)}, "
+                f"loc.: {dataset[3]}, demand: {variables_demand[variable]['demand']}, "
                 f"unit conv.: {unit_vector}, "
-                f"impact: {np.round(characterized_inventory.sum(axis=-1) / (demand.values * float(unit_vector)), 3)}. "
+                f"impact: {np.round(characterized_inventory.sum(axis=-1) / variables_demand[variable]['demand'], 3)}. "
             )
 
     # Save the characterization vectors to disk
     id_array = uuid.uuid4()
     np.save(file=DIR_CACHED_DB / f"{id_array}.npy", arr=np.stack(d))
 
-    # just making sure that the memory is freed. Maybe not needed- check later
+    # just making sure that the memory is freed. Maybe not needed-check later
     del d
 
     # returning a dictionary containing the id_array and the variables
@@ -328,6 +364,8 @@ def process_region(data: Tuple) -> dict[str, ndarray[Any, dtype[Any]] | list[int
     return {
         "id_array": id_array,
         "variables": {k: v["demand"] for k, v in variables_demand.items()},
+        "impact_by_method": impacts_by_method,
+        "param_keys": param_keys,
     }
 
 
@@ -343,6 +381,7 @@ def _calculate_year(args: tuple):
         regions,
         variables,
         methods,
+        double_accounting,
         demand_cutoff,
         filepaths,
         mapping,
@@ -353,6 +392,8 @@ def _calculate_year(args: tuple):
         reverse_classifications,
         debug,
         use_distributions,
+        shares,
+        uncertain_parameters,
     ) = args
 
     print(f"------ Calculating LCA results for {year}...")
@@ -374,9 +415,12 @@ def _calculate_year(args: tuple):
 
     # Try to load LCA matrices for the given model, scenario, and year
     try:
-        bw_datapackage, technosphere_indices, biosphere_indices = get_lca_matrices(
-            filepaths, model, scenario, year
-        )
+        (
+            bw_datapackage,
+            technosphere_indices,
+            biosphere_indices,
+            uncertain_parameters,
+        ) = get_lca_matrices(filepaths, model, scenario, year)
 
     except FileNotFoundError:
         # If LCA matrices can't be loaded, skip to the next iteration
@@ -384,11 +428,29 @@ def _calculate_year(args: tuple):
             logging.warning(f"Skipping {model}, {scenario}, {year}, as data not found.")
         return
 
+    if double_accounting is not None:
+        categories = read_categories_from_yaml(DATA_DIR / "smart_categories.yaml")
+        combined_filters, exception_filters = get_combined_filters(
+            categories, double_accounting
+        )
+        activities_to_exclude, exceptions, filtered_names, exception_names = (
+            apply_filters(
+                technosphere_indices,
+                combined_filters,
+                exception_filters,
+                double_accounting,
+            )
+        )
+        log_double_accounting(
+            filtered_names=filtered_names,
+            exception_names=exception_names,
+            export_path=STATS_DIR / f"{model}_{scenario}_{year}.xlsx",
+        )
+    else:
+        activities_to_exclude = None
+
     # Fetch indices
     vars_info = fetch_indices(mapping, regions, variables, technosphere_indices, geo)
-
-    # Remove contribution from activities in other activities
-    # A = remove_double_counting(A, vars_info)
 
     # check unclassified activities
     missing_classifications = check_unclassified_activities(
@@ -424,6 +486,7 @@ def _calculate_year(args: tuple):
     }
 
     if use_distributions == 0:
+        logging.info("Calculating LCA results without distributions.")
         lca = bc.LCA(
             demand={0: 1},
             data_objs=[
@@ -431,7 +494,16 @@ def _calculate_year(args: tuple):
             ],
         )
         lca.lci(factorize=True)
+        if activities_to_exclude is not None:
+            lca = remove_double_accounting(
+                lca=lca,
+                demand={0: 1},
+                activities_to_exclude=activities_to_exclude,
+                exceptions=exceptions,
+            )
+
     else:
+        logging.info("Calculating LCA results with distributions.")
         lca = MonteCarloLCA(
             demand={0: 1},
             data_objs=[
@@ -440,6 +512,31 @@ def _calculate_year(args: tuple):
             use_distributions=True,
         )
         lca.lci()
+        if activities_to_exclude is not None:
+            lca = remove_double_accounting(
+                lca=lca,
+                demand={0: 1},
+                activities_to_exclude=activities_to_exclude,
+                exceptions=exceptions,
+            )
+
+        if shares is True:
+            logging.info("Calculating LCA results with subshares.")
+            shares_indices = find_technology_indices(regions, technosphere_indices, geo)
+            correlated_arrays = adjust_matrix_based_on_shares(
+                filepaths,
+                lca,
+                shares_indices,
+                shares,
+                use_distributions,
+                model,
+                scenario,
+                year,
+            )
+            bw_correlated = get_subshares_matrix(correlated_arrays)
+
+            lca.packages.append(get_datapackage(bw_correlated))
+            lca.use_arrays = True
 
     characterization_matrix = fill_characterization_factors_matrices(
         methods=methods,
@@ -453,6 +550,8 @@ def _calculate_year(args: tuple):
             f"Characterization matrix created. Shape: {characterization_matrix.shape}"
         )
 
+    total_impacts_by_method = {method: [] for method in methods}
+    all_param_keys = set()
     bar = pyprind.ProgBar(len(regions))
     for region in regions:
         bar.update()
@@ -470,9 +569,43 @@ def _calculate_year(args: tuple):
                 demand_cutoff,
                 lca,
                 characterization_matrix,
+                methods,
                 debug,
                 use_distributions,
+                uncertain_parameters,
             )
         )
 
+        if use_distributions != 0:
+            for method, impacts in results[region]["impact_by_method"].items():
+                total_impacts_by_method[method].extend(impacts)
+            all_param_keys.update(results[region]["param_keys"])
+
+    if use_distributions != 0:
+        if shares is True:
+            log_subshares_to_excel(
+                year=year,
+                shares=shares,
+                export_path=STATS_DIR / f"{model}_{scenario}_{year}.xlsx",
+            )
+        log_results_to_excel(
+            total_impacts_by_method=total_impacts_by_method,
+            methods=methods,
+            filepath=STATS_DIR / f"{model}_{scenario}_{year}.xlsx",
+        )
+        create_mapping_sheet(
+            filepaths=filepaths,
+            model=model,
+            scenario=scenario,
+            year=year,
+            parameter_keys=all_param_keys,
+            export_path=STATS_DIR / f"{model}_{scenario}_{year}.xlsx",
+        )
+        run_stats_analysis(
+            model=model,
+            scenario=scenario,
+            year=year,
+            methods=methods,
+            export_path=STATS_DIR / f"{model}_{scenario}_{year}.xlsx",
+        )
     return results

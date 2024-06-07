@@ -11,3 +11,4 @@ datapackage
 pyprind
 platformdirs
 fs
+statsmodels

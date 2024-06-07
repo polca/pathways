@@ -137,11 +137,11 @@ jobs:
         os: ["ubuntu-latest"]
         python-version: [ "3.10" ]
     steps:
-      - uses: actions/checkout@v2
-      - uses: conda-incubator/setup-miniconda@v2
+      - uses: actions/checkout@v4
+      - uses: conda-incubator/setup-miniconda@v3
         with:
           python-version: ${{ matrix.python-version }}
-          channels: conda-forge
+          channels: conda-forge,cmutel,konstantinstadler,haasad,pascallesage,romainsacchi
           allow-softlinks: true
           channel-priority: strict
           auto-update-conda: true
@@ -167,6 +167,7 @@ jobs:
           conda install conda-build
           conda install conda-verify
           conda install pytest
+          conda clean --all
           mkdir ~/conda-bld
           conda config --set anaconda_upload no
           export CONDA_BLD_PATH=~/conda-bld

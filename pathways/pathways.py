@@ -17,9 +17,10 @@ import yaml
 from datapackage import DataPackage
 
 from .data_validation import validate_datapackage
-from .filesystem_constants import DATA_DIR, DIR_CACHED_DB
+from .filesystem_constants import DATA_DIR, DIR_CACHED_DB, STATS_DIR, USER_LOGS_DIR
 from .lca import _calculate_year, get_lca_matrices
 from .lcia import get_lcia_method_names
+from .subshares import generate_samples
 from .utils import (
     clean_cache_directory,
     create_lca_results_array,
@@ -111,13 +112,14 @@ class Pathways:
         if self.debug:
             logging.basicConfig(
                 level=logging.DEBUG,
-                filename="pathways.log",  # Log file to save the entries
+                filename=USER_LOGS_DIR / "pathways.log",  # Log file to save the entries
                 filemode="a",  # Append to the log file if it exists, 'w' to overwrite
                 format="%(asctime)s - %(levelname)s - %(module)s - %(message)s",
                 datefmt="%Y-%m-%d %H:%M:%S",
             )
             logging.info("#" * 600)
             logging.info(f"Pathways initialized with datapackage: {datapackage}")
+            print(f"Log file: {USER_LOGS_DIR / 'pathways.log'}")
 
     def _get_final_energy_mapping(self):
         """
@@ -175,7 +177,7 @@ class Pathways:
         mapping_dataframe = pd.read_excel(
             DATA_DIR / "final_energy_mapping.xlsx",
         )
-        model = self.data.descriptor["scenarios"][0].split(" - ")[0]
+        model = self.data.descriptor["scenarios"][0]["name"].split(" - ")[0]
 
         return create_dict_with_specific_model(mapping_dataframe, model)
 
@@ -193,9 +195,7 @@ class Pathways:
         for var in mapping_vars:
             if var not in scenario_data["variables"].values:
                 if self.debug:
-                    logging.warning(
-                        f"Variable {var} not found in scenario data among: {scenario_data['variables'].values.tolist()}."
-                    )
+                    logging.warning(f"Variable {var} not found in scenario data.")
 
         # remove rows which do not have a value under the `variable`
         # column that correspond to any value in self.mapping for `scenario variable`
@@ -240,6 +240,7 @@ class Pathways:
     def calculate(
         self,
         methods: Optional[List[str]] = None,
+        double_accounting: Optional[List[str]] = None,
         models: Optional[List[str]] = None,
         scenarios: Optional[List[str]] = None,
         regions: Optional[List[str]] = None,
@@ -248,6 +249,7 @@ class Pathways:
         multiprocessing: bool = False,
         demand_cutoff: float = 1e-3,
         use_distributions: int = 0,
+        subshares: bool = False,
     ) -> None:
         """
         Calculate Life Cycle Assessment (LCA) results for given methods, models, scenarios, regions, and years.
@@ -276,6 +278,9 @@ class Pathways:
         :param demand_cutoff: Float. If the total demand for a given variable is less than this value, the variable is skipped.
         :type demand_cutoff: float, default is 1e-3
         :param use_distributions: Integer. If non zero, use distributions for LCA calculations.
+        :type use_distributions: int, default is 0
+        :param subshares: Boolean. If True, calculate subshares.
+        :type subshares: bool, default is False
         """
 
         self.scenarios = harmonize_units(self.scenarios, variables)
@@ -322,11 +327,16 @@ class Pathways:
             if k in self.scenarios.coords["variables"].values
         }
 
-        # Create xarray for storing LCA results if not already present
-        if self.lca_results is None:
-            _, technosphere_index, _ = get_lca_matrices(
+        try:
+            _, technosphere_index, _, uncertain_parameters = get_lca_matrices(
                 self.filepaths, models[0], scenarios[0], years[0]
             )
+        except Exception as e:
+            logging.error(f"Error retrieving LCA matrices: {str(e)}")
+            return
+
+        # Create xarray for storing LCA results if not already present
+        if self.lca_results is None:
             locations = fetch_inventories_locations(technosphere_index)
 
             self.lca_results = create_lca_results_array(
@@ -339,6 +349,14 @@ class Pathways:
                 classifications=self.classifications,
                 mapping=self.mapping,
                 use_distributions=use_distributions > 0,
+            )
+
+        # generate share of sub-technologies
+        shares = None
+        if subshares is True:
+            shares = generate_samples(
+                years=self.scenarios.coords["year"].values.tolist(),
+                iterations=use_distributions,
             )
 
         # Iterate over each combination of model, scenario, and year
@@ -356,6 +374,7 @@ class Pathways:
                             regions,
                             variables,
                             methods,
+                            double_accounting,
                             demand_cutoff,
                             self.filepaths,
                             self.mapping,
@@ -366,6 +385,8 @@ class Pathways:
                             self.reverse_classifications,
                             self.debug,
                             use_distributions,
+                            uncertain_parameters,
+                            shares,
                         )
                         for year in years
                     ]
@@ -391,6 +412,7 @@ class Pathways:
                                     regions,
                                     variables,
                                     methods,
+                                    double_accounting,
                                     demand_cutoff,
                                     self.filepaths,
                                     self.mapping,
@@ -401,6 +423,8 @@ class Pathways:
                                     self.reverse_classifications,
                                     self.debug,
                                     use_distributions,
+                                    shares or None,
+                                    uncertain_parameters,
                                 )
                             )
                             for year in years
@@ -411,6 +435,8 @@ class Pathways:
         results = {k: v for k, v in results.items() if v is not None}
 
         self._fill_in_result_array(results)
+
+        print(f"Statistical analysis files: {STATS_DIR}")
 
     def _fill_in_result_array(self, results: dict):
 
