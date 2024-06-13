@@ -436,7 +436,8 @@ class Pathways:
 
         self._fill_in_result_array(results)
 
-        print(f"Statistical analysis files: {STATS_DIR}")
+        if shares is not None:
+            print(f"Statistical analysis files: {STATS_DIR}")
 
     def _fill_in_result_array(self, results: dict):
 
