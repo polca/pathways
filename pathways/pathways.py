@@ -31,6 +31,7 @@ from .utils import (
     load_numpy_array_from_disk,
     load_units_conversion,
     resize_scenario_data,
+    export_results_to_parquet
 )
 
 
@@ -506,3 +507,11 @@ class Pathways:
 
     def display_results(self, cutoff: float = 0.001) -> xr.DataArray:
         return display_results(self.lca_results, cutoff=cutoff)
+
+    def export_results(self, filename: str) -> None:
+        """
+        Export the non-zero LCA results to a compressed parquet file.
+        :param filename: str. The name of the file to save the results.
+        :return: None
+        """
+        export_results_to_parquet(self.lca_results, filename)
