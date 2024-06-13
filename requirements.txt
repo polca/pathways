@@ -10,4 +10,5 @@ bw2calc == 2.0.DEV16
 datapackage
 pyprind
 platformdirs
+fs
 statsmodels

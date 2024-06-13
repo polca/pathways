@@ -53,6 +53,7 @@ setup(
         "datapackage",
         "pyprind",
         "platformdirs",
+        "fs",
         "statsmodels",
     ],
     url="https://github.com/polca/premise",

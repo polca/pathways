@@ -30,6 +30,7 @@ requirements:
     - datapackage
     - pyprind
     - platformdirs
+    - fs
 test:
   imports:
     - pathways
