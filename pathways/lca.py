@@ -332,15 +332,6 @@ def process_region(data: Tuple) -> dict[str, ndarray[Any, dtype[Any]] | list[int
             # calculate quantiles along the first dimension
             characterized_inventory = np.quantile(results, [0.05, 0.5, 0.95], axis=0)
 
-    if len(params_container) > 0:
-        log_intensities_to_excel(
-            model=model,
-            scenario=scenario,
-            year=year,
-            params=params_container,
-            export_path=STATS_DIR / f"{model}_{scenario}_{year}.xlsx",
-        )
-
         d.append(characterized_inventory)
 
         if debug:
@@ -351,6 +342,15 @@ def process_region(data: Tuple) -> dict[str, ndarray[Any, dtype[Any]] | list[int
                 f"unit conv.: {unit_vector}, "
                 f"impact: {np.round(characterized_inventory.sum(axis=-1) / variables_demand[variable]['demand'], 3)}. "
             )
+
+    if len(params_container) > 0:
+        log_intensities_to_excel(
+            model=model,
+            scenario=scenario,
+            year=year,
+            params=params_container,
+            export_path=STATS_DIR / f"{model}_{scenario}_{year}.xlsx",
+        )
 
     # Save the characterization vectors to disk
     id_array = uuid.uuid4()
