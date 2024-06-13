@@ -25,13 +25,13 @@ from .utils import (
     clean_cache_directory,
     create_lca_results_array,
     display_results,
+    export_results_to_parquet,
     fetch_inventories_locations,
     harmonize_units,
     load_classifications,
     load_numpy_array_from_disk,
     load_units_conversion,
     resize_scenario_data,
-    export_results_to_parquet
 )
 
 

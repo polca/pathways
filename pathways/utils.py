@@ -15,9 +15,9 @@ from pathlib import Path
 from typing import Any, Dict, List, Set, Tuple, Union
 
 import numpy as np
+import pandas as pd
 import xarray as xr
 import yaml
-import pandas as pd
 from premise.geomap import Geomap
 
 from .filesystem_constants import DATA_DIR, DIR_CACHED_DB, USER_LOGS_DIR
@@ -106,8 +106,8 @@ def harmonize_units(scenario: xr.DataArray, variables: list) -> xr.DataArray:
             )
             # multiply scenario by conversion factors
             scenario.loc[dict(variables=variables)] *= conversion_factors[
-                                                       :, np.newaxis, np.newaxis
-                                                       ]
+                :, np.newaxis, np.newaxis
+            ]
             # update units
             scenario.attrs["units"] = {var: "EJ/yr" for var in variables}
 
@@ -115,7 +115,7 @@ def harmonize_units(scenario: xr.DataArray, variables: list) -> xr.DataArray:
 
 
 def get_unit_conversion_factors(
-        scenario_unit: dict, dataset_unit: list, unit_mapping: dict
+    scenario_unit: dict, dataset_unit: list, unit_mapping: dict
 ) -> np.ndarray:
     """
     Get the unit conversion factors for a given scenario unit and dataset unit.
@@ -140,15 +140,15 @@ def load_units_conversion() -> dict:
 
 
 def create_lca_results_array(
-        methods: [List[str], None],
-        years: List[int],
-        regions: List[str],
-        locations: List[str],
-        models: List[str],
-        scenarios: List[str],
-        classifications: dict,
-        mapping: dict,
-        use_distributions: bool = False,
+    methods: [List[str], None],
+    years: List[int],
+    regions: List[str],
+    locations: List[str],
+    models: List[str],
+    scenarios: List[str],
+    classifications: dict,
+    mapping: dict,
+    use_distributions: bool = False,
 ) -> xr.DataArray:
     """
     Create an xarray DataArray to store Life Cycle Assessment (LCA) results.
@@ -245,19 +245,22 @@ def export_results_to_parquet(lca_results: xr.DataArray, filepath: str):
 
     # Step 6: Create a pandas DataFrame with non-zero values and corresponding coordinates
     coord_names = list(lca_results.dims)
-    coord_values = {dim: lca_results.coords[dim].values[coords[:, i]] for i, dim in enumerate(coord_names)}
+    coord_values = {
+        dim: lca_results.coords[dim].values[coords[:, i]]
+        for i, dim in enumerate(coord_names)
+    }
 
     df = pd.DataFrame(coord_values)
-    df['value'] = non_zero_values
-    df.to_parquet(path=filepath, compression='gzip')
+    df["value"] = non_zero_values
+    df.to_parquet(path=filepath, compression="gzip")
 
     print(f"Results exported to {filepath}")
 
 
 def display_results(
-        lca_results: Union[xr.DataArray, None],
-        cutoff: float = 0.001,
-        interpolate: bool = False,
+    lca_results: Union[xr.DataArray, None],
+    cutoff: float = 0.001,
+    interpolate: bool = False,
 ) -> xr.DataArray:
     """
     Display the LCA results.
@@ -328,12 +331,12 @@ def clean_cache_directory():
 
 
 def resize_scenario_data(
-        scenario_data: xr.DataArray,
-        model: List[str],
-        scenario: List[str],
-        region: List[str],
-        year: List[int],
-        variables: List[str],
+    scenario_data: xr.DataArray,
+    model: List[str],
+    scenario: List[str],
+    region: List[str],
+    year: List[int],
+    variables: List[str],
 ) -> xr.DataArray:
     """
     Resize the scenario data to the given scenario, year, region, and variables.
@@ -372,10 +375,10 @@ def resize_scenario_data(
 
 
 def get_activity_indices(
-        activities: List[Tuple[str, str, str, str]],
-        technosphere_index: Dict[Tuple[str, str, str, str], Any],
-        geo: Geomap,
-        debug: bool = False,
+    activities: List[Tuple[str, str, str, str]],
+    technosphere_index: Dict[Tuple[str, str, str, str], Any],
+    geo: Geomap,
+    debug: bool = False,
 ) -> List[int]:
     """
     Fetch the indices of activities in the technosphere matrix, optimized for efficiency.
@@ -421,7 +424,7 @@ def get_activity_indices(
 
 
 def fetch_indices(
-        mapping: dict, regions: list, variables: list, technosphere_index: dict, geo: Geomap
+    mapping: dict, regions: list, variables: list, technosphere_index: dict, geo: Geomap
 ) -> dict:
     """
     Fetch the indices for the given activities in the technosphere matrix.
@@ -479,7 +482,7 @@ def fetch_indices(
 
 
 def fetch_inventories_locations(
-        technosphere_indices: Dict[str, Tuple[str, str, str]]
+    technosphere_indices: Dict[str, Tuple[str, str, str]]
 ) -> List[str]:
     """
     Fetch the locations of the inventories.
@@ -517,7 +520,7 @@ def csv_to_dict(filename: str) -> dict[int, tuple[str, ...]]:
 
 
 def check_unclassified_activities(
-        technosphere_indices: dict, classifications: dict
+    technosphere_indices: dict, classifications: dict
 ) -> List:
     """
     Check if there are activities in the technosphere matrix that are not in the classifications.
@@ -539,7 +542,7 @@ def check_unclassified_activities(
 
 
 def _group_technosphere_indices(
-        technosphere_indices: dict, group_by, group_values: list
+    technosphere_indices: dict, group_by, group_values: list
 ) -> dict:
     """
     Generalized function to group technosphere indices by an arbitrary attribute (category, location, etc.).
@@ -593,7 +596,7 @@ def gather_filters(current_level: Dict, combined_filters: Dict[str, Set[str]]) -
 
 
 def get_combined_filters(
-        filters: Dict, paths: List[List[str]]
+    filters: Dict, paths: List[List[str]]
 ) -> Tuple[Dict[str, List[str]], Dict[str, List[str]]]:
     """
     Traverse the filters dictionary to get combined filter criteria based on multiple paths.
@@ -636,10 +639,10 @@ def get_combined_filters(
 
 
 def apply_filters(
-        technosphere_inds: Dict[Tuple[str, str, str, str], int],
-        filters: Dict[str, List[str]],
-        exceptions: Dict[str, List[str]],
-        paths: List[List[str]],  # Add paths as an argument
+    technosphere_inds: Dict[Tuple[str, str, str, str], int],
+    filters: Dict[str, List[str]],
+    exceptions: Dict[str, List[str]],
+    paths: List[List[str]],  # Add paths as an argument
 ) -> Tuple[List[int], List[int], Dict[str, Set[str]], Dict[str, Set[str]]]:
     """
     Apply the filters to the database and return a list of indices and exceptions,
