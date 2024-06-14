@@ -508,7 +508,7 @@ class Pathways:
     def display_results(self, cutoff: float = 0.001) -> xr.DataArray:
         return display_results(self.lca_results, cutoff=cutoff)
 
-    def export_results(self, filename: str) -> None:
+    def export_results(self, filename: str = None) -> None:
         """
         Export the non-zero LCA results to a compressed parquet file.
         :param filename: str. The name of the file to save the results.

@@ -43,6 +43,7 @@ from .utils import (
     get_unit_conversion_factors,
     read_categories_from_yaml,
     read_indices_csv,
+    get_all_indices,
 )
 
 logging.basicConfig(
@@ -184,43 +185,102 @@ def find_uncertain_parameters(
 
     return uncertain_parameters
 
-
-def remove_double_accounting(
-    lca: bc.LCA,
-    demand: Dict,
-    activities_to_exclude: List[int],
-    exceptions: List[int],
+def remove_double_counting(
+    technosphere_matrix: np.array,
+    activities_to_zero: List[int],
+    infra: List[int]
 ):
     """
-    Remove double counting from a technosphere matrix.
-    :param lca: bw2calc.LCA object
+    Remove double counting from a technosphere matrix by zeroing out the demanded row values
+    in all columns, except for those on the diagonal.
+    :param technosphere_matrix: bw2calc.LCA object
     :param demand: dict with demand values
-    :param activities_to_exclude: list of activities to exclude
-    :param exceptions: list of exceptions
-    :return: Technosphere matrix with double counting removed.
+    :param activities_to_exclude: list of row indices to zero out
+    :return: Technosphere matrix with double counting removed
     """
+    print("Activities to zero (rows):", activities_to_zero)
 
-    tm_original = lca.technosphere_matrix.copy()
-    tm_modified = tm_original.tocoo()
+    # Copy and convert the technosphere matrix to COO format for easy manipulation
+    # technosphere_matrix_original = technosphere_matrix.technosphere_matrix.copy()
+    technosphere_matrix = technosphere_matrix.tocoo()
 
-    for act in activities_to_exclude:
-        row_idx = np.where(tm_modified.col == act)[0]
+    # Create a mask for elements to zero out
+    mask = np.isin(technosphere_matrix.row, activities_to_zero) & (technosphere_matrix.row != technosphere_matrix.col)
 
-        for idx in row_idx:
-            # Skip the diagonal and exceptions
-            if tm_modified.row[idx] != act and (
-                exceptions is None or tm_modified.col[idx] not in exceptions
-            ):
-                tm_modified.data[idx] = 0
+    # Apply the mask to set the relevant elements to zero
+    print(technosphere_matrix.data[mask].sum() * -1)
+    technosphere_matrix.data[mask] = 0
 
-    tm_modified = tm_modified.tocsr()
-    tm_modified.eliminate_zeros()
+    mask_infra = np.isin(technosphere_matrix.row, infra) & (technosphere_matrix.row != technosphere_matrix.col)
+    print(technosphere_matrix.data[mask_infra].sum() * -1)
+    technosphere_matrix.data[mask_infra] = 0
 
-    # Remove double accounting
-    lca.technosphere_matrix = tm_modified
-    lca.lci(demand=demand)
-    return lca
+    # Convert the modified matrix back to CSR format and eliminate explicit zeros
+    #tm_modified = tm_modified.tocsr()
+    technosphere_matrix.eliminate_zeros()
 
+    # Update the LCA object's technosphere matrix and recalculate the inventory
+    #technosphere_matrix.technosphere_matrix = tm_modified
+    #technosphere_matrix.lci(demand=demand)
+    return technosphere_matrix.tocsr()
+
+# def remove_double_accounting(
+#     lca: bc.LCA,
+#     demand: Dict,
+#     activities_to_exclude: List[int],
+#     exceptions: List[int],
+# ):
+#     """
+#     Remove double counting from a technosphere matrix by zeroing out specified row values
+#     in all columns, except for those on the diagonal and those in the exceptions list.
+#
+#     :param lca: bw2calc.LCA object
+#     :param demand: dict with demand values
+#     :param activities_to_exclude: list of row indices to zero out
+#     :param exceptions: list of column indices that should not be zeroed out
+#     :return: Technosphere matrix with double counting removed
+#     """
+#
+#     print("Activities to exclude (rows):", activities_to_exclude)
+#     print("Exceptions (columns):", exceptions)
+#
+#     # Copy and convert the technosphere matrix to COO format for easy manipulation
+#     tm_original = lca.technosphere_matrix.copy()
+#     tm_modified = tm_original.tocoo()
+#
+#     # Create a mask for elements to zero out
+#     mask = np.isin(tm_modified.row, activities_to_exclude) & (tm_modified.row != tm_modified.col) & ~np.isin(tm_modified.col, exceptions)
+#
+#     # Apply the mask to set the relevant elements to zero
+#     tm_modified.data[mask] = 0
+#
+#     # Convert the modified matrix back to CSR format and eliminate explicit zeros
+#     tm_modified = tm_modified.tocsr()
+#     tm_modified.eliminate_zeros()
+#
+#     # Update the LCA object's technosphere matrix and recalculate the inventory
+#     lca.technosphere_matrix = tm_modified
+#     lca.lci(demand=demand)
+#     return lca
+
+# def check_non_zero_values(matrix: sparse.csr_matrix, activities_to_exclude: List[int]):
+#     """
+#     Check that all values in the specified rows are zero (except for the diagonal).
+#     Print the position (row, column) of any non-zero values that should be zero.
+#
+#     :param matrix: 2D scipy.sparse.csr_matrix representing the matrix
+#     :param activities_to_exclude: List of integers representing the row indices to check
+#     """
+#     matrix = matrix.tocoo()  # Ensure the matrix is in COO format for easy iteration
+#
+#     for row in activities_to_exclude:
+#         row_data = matrix.getrow(row).tocoo()  # Get the row in COO format for easy iteration
+#         for col, value in zip(row_data.col, row_data.data):
+#             if value != 0 and row != col:
+#                 print(f"WARNING: Non-zero value found at position ({row}, {col}). Value: {value}. It may still correspond to one of "
+#                       f"the activities that should be excluded. If not, something went wrong adjusting for double-counting.")
+#
+#     print("Double-counting check complete.")
 
 def process_region(data: Tuple) -> dict[str, ndarray[Any, dtype[Any]] | list[int]]:
     """
@@ -245,6 +305,7 @@ def process_region(data: Tuple) -> dict[str, ndarray[Any, dtype[Any]] | list[int
         debug,
         use_distributions,
         uncertain_parameters,
+        activities_to_exclude
     ) = data
 
     variables_demand = {}
@@ -274,13 +335,19 @@ def process_region(data: Tuple) -> dict[str, ndarray[Any, dtype[Any]] | list[int
             year=year,
         )
 
-        # If the demand is below the cut-off criteria, skip to the next iteration
-        share = demand / scenarios.sel(
+        total_demand = scenarios.sel(
             region=region,
             model=model,
             pathway=scenario,
             year=year,
         ).sum(dim="variables")
+
+        if total_demand == 0:
+            print(f"Total demand for {region}, {model}, {scenario}, {year} is zero. Skipping.")
+            continue
+
+        # If the demand is below the cut-off criteria, skip to the next iteration
+        share = demand / total_demand
 
         # If the total demand is zero, return None
         if share < demand_cutoff:
@@ -293,6 +360,9 @@ def process_region(data: Tuple) -> dict[str, ndarray[Any, dtype[Any]] | list[int
 
         demand = {idx: demand.values * float(unit_vector)}
         lca.lci(demand=demand)
+
+        # if activities_to_exclude is not None:
+        #     check_non_zero_values(lca.technosphere_matrix, activities_to_exclude)
 
         if use_distributions == 0:
             # Regular LCA
@@ -451,6 +521,8 @@ def _calculate_year(args: tuple):
 
     # Fetch indices
     vars_info = fetch_indices(mapping, regions, variables, technosphere_indices, geo)
+    # List of indices in vars_info
+    vars_info_idx = get_all_indices(vars_info)
 
     # check unclassified activities
     missing_classifications = check_unclassified_activities(
@@ -487,20 +559,39 @@ def _calculate_year(args: tuple):
 
     if use_distributions == 0:
         logging.info("Calculating LCA results without distributions.")
+
         lca = bc.LCA(
             demand={0: 1},
             data_objs=[
                 bw_datapackage,
             ],
         )
+
         lca.lci(factorize=True)
-        if activities_to_exclude is not None:
-            lca = remove_double_accounting(
-                lca=lca,
-                demand={0: 1},
-                activities_to_exclude=activities_to_exclude,
-                exceptions=exceptions,
-            )
+
+        infra_idx = [
+            v for k, v in technosphere_indices.items() if k[2] == "unit"
+        ]
+
+        print(len(infra_idx))
+        print(infra_idx)
+
+
+
+        lca.technosphere_matrix = remove_double_counting(
+            technosphere_matrix=lca.technosphere_matrix,
+            activities_to_zero=vars_info_idx,
+            infra=infra_idx
+        )
+
+
+        # if activities_to_exclude is not None:
+        #     lca = remove_double_accounting(
+        #         lca=lca,
+        #         demand={0: 1},
+        #         activities_to_exclude=activities_to_exclude,
+        #         exceptions=exceptions,
+        #     )
 
     else:
         logging.info("Calculating LCA results with distributions.")
@@ -512,13 +603,18 @@ def _calculate_year(args: tuple):
             use_distributions=True,
         )
         lca.lci()
-        if activities_to_exclude is not None:
-            lca = remove_double_accounting(
-                lca=lca,
-                demand={0: 1},
-                activities_to_exclude=activities_to_exclude,
-                exceptions=exceptions,
-            )
+        lca = remove_double_counting(
+            technosphere_matrix=lca,
+            demand={0: 1},
+            activities_to_exclude=vars_info_idx,
+        )
+        # if activities_to_exclude is not None:
+        #     lca = remove_double_accounting(
+        #         lca=lca,
+        #         demand={0: 1},
+        #         activities_to_exclude=activities_to_exclude,
+        #         exceptions=exceptions,
+        #     )
 
         if shares is True:
             logging.info("Calculating LCA results with subshares.")
@@ -573,6 +669,7 @@ def _calculate_year(args: tuple):
                 debug,
                 use_distributions,
                 uncertain_parameters,
+                activities_to_exclude,
             )
         )
 

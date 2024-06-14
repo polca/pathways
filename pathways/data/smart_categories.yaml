@@ -11,8 +11,8 @@ Energy:
             - slanted-roof installation
             - electricity production, photovoltaic, at 3kWp slanted-roof, CdTe, panel, mounted
             - electricity production, photovoltaic, at 3kWp slanted-roof, CIS, laminated, integrated
-            - commercial
-            - residential
+#            - commercial
+#            - residential
           product_fltr:
             - electricity
       Hydro:
@@ -112,6 +112,8 @@ Energy:
         ecoinvent_aliases:
           name_fltr:
             - solar
+            - parabolic trough
+            - 50 MW
           product_fltr:
             - electricity
       CAES:
@@ -126,6 +128,25 @@ Energy:
             - import
           product_fltr:
             - electricity
+      Coal:
+        ecoinvent_aliases:
+          name_fltr:
+            - lignite
+            - hard coal
+          product_fltr:
+            - electricity
+      Batteries:
+        ecoinvent_aliases:
+          name_fltr:
+            - battery
+          product_fltr:
+            - electricity
+      Markets:
+        ecoinvent_aliases:
+          name_fltr:
+            - market group for electricity, high voltage
+          product_fltr:
+            - electricity, high voltage
     Residential:
       PV:
         ecoinvent_aliases:
@@ -293,3 +314,4 @@ Exceptions:
       - electricity production, photovoltaic, commercial
       - electricity production, photovoltaic, residential
       - electricity import, from neighboring countries
+#      - market group for electricity, high voltage
