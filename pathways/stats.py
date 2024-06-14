@@ -78,9 +78,7 @@ def log_double_accounting(
             print(
                 f"Warning: '{export_path}' is not a valid Excel file. Creating a new file."
             )
-            with pd.ExcelWriter(
-                export_path, engine="openpyxl", mode="w"
-            ) as writer:
+            with pd.ExcelWriter(export_path, engine="openpyxl", mode="w") as writer:
                 filtered_df.to_excel(
                     writer, sheet_name="Double accounting - Zeroed", index=False
                 )
@@ -88,9 +86,7 @@ def log_double_accounting(
                     writer, sheet_name="Double accounting - Exceptions", index=False
                 )
     else:
-        with pd.ExcelWriter(
-            export_path, engine="openpyxl", mode="w"
-        ) as writer:
+        with pd.ExcelWriter(export_path, engine="openpyxl", mode="w") as writer:
             filtered_df.to_excel(
                 writer, sheet_name="Double accounting - Zeroed", index=False
             )

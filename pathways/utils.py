@@ -480,6 +480,7 @@ def fetch_indices(
 
     return vars_idx
 
+
 def get_all_indices(vars_info: dict) -> list[int]:
     """
     Extract all 'idx' values from the vars_info dictionary.
@@ -494,6 +495,7 @@ def get_all_indices(vars_info: dict) -> list[int]:
         for variable_data in region_data.values():
             idx_list.append(variable_data["idx"])
     return idx_list
+
 
 def fetch_inventories_locations(
     technosphere_indices: Dict[str, Tuple[str, str, str]]

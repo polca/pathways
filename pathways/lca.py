@@ -39,11 +39,11 @@ from .utils import (
     apply_filters,
     check_unclassified_activities,
     fetch_indices,
+    get_all_indices,
     get_combined_filters,
     get_unit_conversion_factors,
     read_categories_from_yaml,
     read_indices_csv,
-    get_all_indices,
 )
 
 logging.basicConfig(
@@ -185,10 +185,9 @@ def find_uncertain_parameters(
 
     return uncertain_parameters
 
+
 def remove_double_counting(
-    technosphere_matrix: np.array,
-    activities_to_zero: List[int],
-    infra: List[int]
+    technosphere_matrix: np.array, activities_to_zero: List[int], infra: List[int]
 ):
     """
     Remove double counting from a technosphere matrix by zeroing out the demanded row values
@@ -205,24 +204,29 @@ def remove_double_counting(
     technosphere_matrix = technosphere_matrix.tocoo()
 
     # Create a mask for elements to zero out
-    mask = np.isin(technosphere_matrix.row, activities_to_zero) & (technosphere_matrix.row != technosphere_matrix.col)
+    mask = np.isin(technosphere_matrix.row, activities_to_zero) & (
+        technosphere_matrix.row != technosphere_matrix.col
+    )
 
     # Apply the mask to set the relevant elements to zero
     print(technosphere_matrix.data[mask].sum() * -1)
     technosphere_matrix.data[mask] = 0
 
-    mask_infra = np.isin(technosphere_matrix.row, infra) & (technosphere_matrix.row != technosphere_matrix.col)
+    mask_infra = np.isin(technosphere_matrix.row, infra) & (
+        technosphere_matrix.row != technosphere_matrix.col
+    )
     print(technosphere_matrix.data[mask_infra].sum() * -1)
     technosphere_matrix.data[mask_infra] = 0
 
     # Convert the modified matrix back to CSR format and eliminate explicit zeros
-    #tm_modified = tm_modified.tocsr()
+    # tm_modified = tm_modified.tocsr()
     technosphere_matrix.eliminate_zeros()
 
     # Update the LCA object's technosphere matrix and recalculate the inventory
-    #technosphere_matrix.technosphere_matrix = tm_modified
-    #technosphere_matrix.lci(demand=demand)
+    # technosphere_matrix.technosphere_matrix = tm_modified
+    # technosphere_matrix.lci(demand=demand)
     return technosphere_matrix.tocsr()
+
 
 # def remove_double_accounting(
 #     lca: bc.LCA,
@@ -282,6 +286,7 @@ def remove_double_counting(
 #
 #     print("Double-counting check complete.")
 
+
 def process_region(data: Tuple) -> dict[str, ndarray[Any, dtype[Any]] | list[int]]:
     """
     Process the region data.
@@ -305,7 +310,7 @@ def process_region(data: Tuple) -> dict[str, ndarray[Any, dtype[Any]] | list[int
         debug,
         use_distributions,
         uncertain_parameters,
-        activities_to_exclude
+        activities_to_exclude,
     ) = data
 
     variables_demand = {}
@@ -343,7 +348,9 @@ def process_region(data: Tuple) -> dict[str, ndarray[Any, dtype[Any]] | list[int
         ).sum(dim="variables")
 
         if total_demand == 0:
-            print(f"Total demand for {region}, {model}, {scenario}, {year} is zero. Skipping.")
+            print(
+                f"Total demand for {region}, {model}, {scenario}, {year} is zero. Skipping."
+            )
             continue
 
         # If the demand is below the cut-off criteria, skip to the next iteration
@@ -569,21 +576,16 @@ def _calculate_year(args: tuple):
 
         lca.lci(factorize=True)
 
-        infra_idx = [
-            v for k, v in technosphere_indices.items() if k[2] == "unit"
-        ]
+        infra_idx = [v for k, v in technosphere_indices.items() if k[2] == "unit"]
 
         print(len(infra_idx))
         print(infra_idx)
 
-
-
         lca.technosphere_matrix = remove_double_counting(
             technosphere_matrix=lca.technosphere_matrix,
             activities_to_zero=vars_info_idx,
-            infra=infra_idx
+            infra=infra_idx,
         )
-
 
         # if activities_to_exclude is not None:
         #     lca = remove_double_accounting(
