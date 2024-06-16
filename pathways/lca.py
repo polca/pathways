@@ -109,7 +109,13 @@ def get_lca_matrices(
     geo: Geomap = None,
     remove_infrastructure: bool = False,
     double_counting: dict = None,
-) -> tuple[Datapackage, dict[tuple[str, str, str, str], int], dict[tuple, int], list[tuple[int, int]], dict | None]:
+) -> tuple[
+    Datapackage,
+    dict[tuple[str, str, str, str], int],
+    dict[tuple, int],
+    list[tuple[int, int]],
+    dict | None,
+]:
     """
     Retrieve Life Cycle Assessment (LCA) matrices from disk.
 
@@ -171,8 +177,17 @@ def get_lca_matrices(
 
         if remove_infrastructure is True and matrix_name == "technosphere_matrix":
             print("--------- Removing infrastructure exchanges")
-            infrastructure_indices = np.array([j for i, j in technosphere_inds.items() if i[2] == "unit" and "uranium" not in i[0].lower()])
-            idx = np.where(np.isin(indices["row"], infrastructure_indices) & (indices["row"] != indices["col"]))
+            infrastructure_indices = np.array(
+                [
+                    j
+                    for i, j in technosphere_inds.items()
+                    if i[2] == "unit" and "uranium" not in i[0].lower()
+                ]
+            )
+            idx = np.where(
+                np.isin(indices["row"], infrastructure_indices)
+                & (indices["row"] != indices["col"])
+            )
             data[idx] = 0
 
         if double_counting is not None and matrix_name == "technosphere_matrix":
@@ -187,28 +202,21 @@ def get_lca_matrices(
                                 idx_v = values[activity]["idx"]
                                 amount = y[year]
                                 # add indices to `indices`
-                                indices = np.append(indices, np.array([(idx_k, idx_v)], dtype=bwp.INDICES_DTYPE), axis=0)
+                                indices = np.append(
+                                    indices,
+                                    np.array([(idx_k, idx_v)], dtype=bwp.INDICES_DTYPE),
+                                    axis=0,
+                                )
                                 data = np.append(data, amount)
                                 print(f"Added {amount} from {k} to {activity}")
-                                distributions=np.append(
+                                distributions = np.append(
                                     distributions,
                                     np.array(
-                                        (
-                                            0,
-                                            None,
-                                            None,
-                                            None,
-                                            None,
-                                            None,
-                                            False
-                                        ),
+                                        (0, None, None, None, None, None, False),
                                         dtype=bwp.UNCERTAINTY_DTYPE,
-                                    )
+                                    ),
                                 )
-                                sign = np.append(
-                                    sign,
-                                    np.array([True])
-                                )
+                                sign = np.append(sign, np.array([True]))
 
         if matrix_name == "technosphere_matrix":
             uncertain_parameters = find_uncertain_parameters(distributions, indices)
@@ -352,7 +360,7 @@ def process_region(data: Tuple) -> dict[str, ndarray[Any, dtype[Any]] | list[int
         debug,
         use_distributions,
         uncertain_parameters,
-        #activities_to_exclude,
+        # activities_to_exclude,
     ) = data
 
     variables_demand = {}
@@ -409,9 +417,7 @@ def process_region(data: Tuple) -> dict[str, ndarray[Any, dtype[Any]] | list[int
 
         demand = {idx: demand.values * float(unit_vector)}
 
-
         lca.lci(demand=demand)
-
 
         # if activities_to_exclude is not None:
         #     check_non_zero_values(lca.technosphere_matrix, activities_to_exclude)
@@ -516,7 +522,7 @@ def _calculate_year(args: tuple):
         shares,
         uncertain_parameters,
         remove_infrastructure,
-        double_counting
+        double_counting,
     ) = args
 
     print(f"------ Calculating LCA results for {year}...")
@@ -632,14 +638,13 @@ def _calculate_year(args: tuple):
 
         lca.lci(factorize=True)
 
-        #infra_idx = [v for k, v in technosphere_indices.items() if k[2] == "unit"]
+        # infra_idx = [v for k, v in technosphere_indices.items() if k[2] == "unit"]
 
-        #lca.technosphere_matrix = remove_double_counting(
+        # lca.technosphere_matrix = remove_double_counting(
         #    technosphere_matrix=lca.technosphere_matrix,
         #    activities_to_zero=vars_info_idx,
         #    infra=infra_idx,
-        #)
-
+        # )
 
         # if activities_to_exclude is not None:
         #     lca = remove_double_accounting(
@@ -725,7 +730,7 @@ def _calculate_year(args: tuple):
                 debug,
                 use_distributions,
                 uncertain_parameters,
-                #activities_to_exclude,
+                # activities_to_exclude,
             )
         )
 

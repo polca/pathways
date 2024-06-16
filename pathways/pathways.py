@@ -334,7 +334,10 @@ class Pathways:
 
         try:
             _, technosphere_index, _, uncertain_parameters, _ = get_lca_matrices(
-                filepaths=self.filepaths, model=models[0], scenario=scenarios[0], year=years[0]
+                filepaths=self.filepaths,
+                model=models[0],
+                scenario=scenarios[0],
+                year=years[0],
             )
         except Exception as e:
             logging.error(f"Error retrieving LCA matrices: {str(e)}")
@@ -392,7 +395,7 @@ class Pathways:
                             uncertain_parameters,
                             shares,
                             remove_infrastructure,
-                            double_counting
+                            double_counting,
                         )
                         for year in years
                     ]
@@ -431,7 +434,7 @@ class Pathways:
                                     shares or None,
                                     uncertain_parameters,
                                     remove_infrastructure,
-                                    double_counting
+                                    double_counting,
                                 )
                             )
                             for year in years
