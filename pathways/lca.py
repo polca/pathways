@@ -103,7 +103,20 @@ def get_lca_matrices(
     model: str,
     scenario: str,
     year: int,
-) -> Tuple[Datapackage, Dict, Dict, list[tuple[int, int]]]:
+    mapping: Dict = None,
+    regions: List[str] = None,
+    variables: List[str] = None,
+    geo: Geomap = None,
+    remove_infrastructure: bool = False,
+    double_counting: dict = None,
+    remove_uncertainty: bool = False,
+) -> tuple[
+    Datapackage,
+    dict[tuple[str, str, str, str], int],
+    dict[tuple, int],
+    list[tuple[int, int]],
+    dict | None,
+]:
     """
     Retrieve Life Cycle Assessment (LCA) matrices from disk.
 
@@ -115,6 +128,7 @@ def get_lca_matrices(
     :type scenario: str
     :param year: The year of the scenario.
     :type year: int
+    :param remove_infrastructure: Whether to remove infrastructure exchanges from the technosphere matrix.
     :rtype: Tuple[sparse.csr_matrix, sparse.csr_matrix, Dict, Dict, List]
     """
 
@@ -147,6 +161,12 @@ def get_lca_matrices(
     # remove the last element of the tuple, which is the index
     biosphere_inds = {k[:-1]: v for k, v in biosphere_inds.items()}
 
+    # Fetch indices
+    if geo is not None:
+        vars_info = fetch_indices(mapping, regions, variables, technosphere_inds, geo)
+    else:
+        vars_info = None
+
     dp = bwp.create_datapackage()
 
     fp_A = select_filepath("A_matrix", [fp for fp in fps if "index" not in fp.name])
@@ -155,6 +175,57 @@ def get_lca_matrices(
     # Load matrices and add them to the datapackage
     for matrix_name, fp in [("technosphere_matrix", fp_A), ("biosphere_matrix", fp_B)]:
         data, indices, sign, distributions = load_matrix_and_index(fp)
+
+        if remove_uncertainty is True:
+            distributions = np.array(
+                [
+                    (0, None, None, None, None, None, False)
+                    for _ in range(len(distributions))
+                ],
+                dtype=bwp.UNCERTAINTY_DTYPE,
+            )
+
+        if remove_infrastructure is True and matrix_name == "technosphere_matrix":
+            print("--------- Removing infrastructure exchanges")
+            infrastructure_indices = np.array(
+                [
+                    j
+                    for i, j in technosphere_inds.items()
+                    if i[2] == "unit" and "uranium" not in i[0].lower()
+                ]
+            )
+            idx = np.where(
+                np.isin(indices["row"], infrastructure_indices)
+                & (indices["row"] != indices["col"])
+            )
+            data[idx] = 0
+
+        if double_counting is not None and matrix_name == "technosphere_matrix":
+            print("--------- Correcting for double-counting")
+            # remove double counting
+            for k, v in double_counting.items():
+                for region, values in vars_info.items():
+                    if k in values:
+                        idx_k = values[k]["idx"]
+                        for activity, y in v.items():
+                            if activity in values:
+                                idx_v = values[activity]["idx"]
+                                amount = y[year]
+                                # add indices to `indices`
+                                indices = np.append(
+                                    indices,
+                                    np.array([(idx_k, idx_v)], dtype=bwp.INDICES_DTYPE),
+                                    axis=0,
+                                )
+                                data = np.append(data, amount)
+                                distributions = np.append(
+                                    distributions,
+                                    np.array(
+                                        (0, None, None, None, None, None, False),
+                                        dtype=bwp.UNCERTAINTY_DTYPE,
+                                    ),
+                                )
+                                sign = np.append(sign, np.array([True]))
 
         if matrix_name == "technosphere_matrix":
             uncertain_parameters = find_uncertain_parameters(distributions, indices)
@@ -167,7 +238,7 @@ def get_lca_matrices(
             distributions_array=distributions,
         )
 
-    return dp, technosphere_inds, biosphere_inds, uncertain_parameters
+    return dp, technosphere_inds, biosphere_inds, uncertain_parameters, vars_info
 
 
 def find_uncertain_parameters(
@@ -197,7 +268,6 @@ def remove_double_counting(
     :param activities_to_exclude: list of row indices to zero out
     :return: Technosphere matrix with double counting removed
     """
-    print("Activities to zero (rows):", activities_to_zero)
 
     # Copy and convert the technosphere matrix to COO format for easy manipulation
     # technosphere_matrix_original = technosphere_matrix.technosphere_matrix.copy()
@@ -212,19 +282,8 @@ def remove_double_counting(
     print(technosphere_matrix.data[mask].sum() * -1)
     technosphere_matrix.data[mask] = 0
 
-    mask_infra = np.isin(technosphere_matrix.row, infra) & (
-        technosphere_matrix.row != technosphere_matrix.col
-    )
-    print(technosphere_matrix.data[mask_infra].sum() * -1)
-    technosphere_matrix.data[mask_infra] = 0
-
-    # Convert the modified matrix back to CSR format and eliminate explicit zeros
-    # tm_modified = tm_modified.tocsr()
     technosphere_matrix.eliminate_zeros()
 
-    # Update the LCA object's technosphere matrix and recalculate the inventory
-    # technosphere_matrix.technosphere_matrix = tm_modified
-    # technosphere_matrix.lci(demand=demand)
     return technosphere_matrix.tocsr()
 
 
@@ -310,7 +369,7 @@ def process_region(data: Tuple) -> dict[str, ndarray[Any, dtype[Any]] | list[int
         debug,
         use_distributions,
         uncertain_parameters,
-        activities_to_exclude,
+        # activities_to_exclude,
     ) = data
 
     variables_demand = {}
@@ -366,6 +425,7 @@ def process_region(data: Tuple) -> dict[str, ndarray[Any, dtype[Any]] | list[int
         }
 
         demand = {idx: demand.values * float(unit_vector)}
+
         lca.lci(demand=demand)
 
         # if activities_to_exclude is not None:
@@ -458,7 +518,6 @@ def _calculate_year(args: tuple):
         regions,
         variables,
         methods,
-        double_accounting,
         demand_cutoff,
         filepaths,
         mapping,
@@ -471,6 +530,9 @@ def _calculate_year(args: tuple):
         use_distributions,
         shares,
         uncertain_parameters,
+        remove_infrastructure,
+        double_counting,
+        remove_uncertainty,
     ) = args
 
     print(f"------ Calculating LCA results for {year}...")
@@ -497,7 +559,20 @@ def _calculate_year(args: tuple):
             technosphere_indices,
             biosphere_indices,
             uncertain_parameters,
-        ) = get_lca_matrices(filepaths, model, scenario, year)
+            vars_info,
+        ) = get_lca_matrices(
+            filepaths=filepaths,
+            model=model,
+            scenario=scenario,
+            year=year,
+            mapping=mapping,
+            regions=regions,
+            variables=variables,
+            geo=geo,
+            remove_infrastructure=remove_infrastructure,
+            double_counting=double_counting,
+            remove_uncertainty=remove_uncertainty,
+        )
 
     except FileNotFoundError:
         # If LCA matrices can't be loaded, skip to the next iteration
@@ -505,31 +580,29 @@ def _calculate_year(args: tuple):
             logging.warning(f"Skipping {model}, {scenario}, {year}, as data not found.")
         return
 
-    if double_accounting is not None:
-        categories = read_categories_from_yaml(DATA_DIR / "smart_categories.yaml")
-        combined_filters, exception_filters = get_combined_filters(
-            categories, double_accounting
-        )
-        activities_to_exclude, exceptions, filtered_names, exception_names = (
-            apply_filters(
-                technosphere_indices,
-                combined_filters,
-                exception_filters,
-                double_accounting,
-            )
-        )
-        log_double_accounting(
-            filtered_names=filtered_names,
-            exception_names=exception_names,
-            export_path=STATS_DIR / f"{model}_{scenario}_{year}.xlsx",
-        )
-    else:
-        activities_to_exclude = None
+    # if double_accounting is not None:
+    #     categories = read_categories_from_yaml(DATA_DIR / "smart_categories.yaml")
+    #     combined_filters, exception_filters = get_combined_filters(
+    #         categories, double_accounting
+    #     )
+    #     activities_to_exclude, exceptions, filtered_names, exception_names = (
+    #         apply_filters(
+    #             technosphere_indices,
+    #             combined_filters,
+    #             exception_filters,
+    #             double_accounting,
+    #         )
+    #     )
+    #     log_double_accounting(
+    #         filtered_names=filtered_names,
+    #         exception_names=exception_names,
+    #         export_path=STATS_DIR / f"{model}_{scenario}_{year}.xlsx",
+    #     )
+    # else:
+    #     activities_to_exclude = None
 
-    # Fetch indices
-    vars_info = fetch_indices(mapping, regions, variables, technosphere_indices, geo)
     # List of indices in vars_info
-    vars_info_idx = get_all_indices(vars_info)
+    # vars_info_idx = get_all_indices(vars_info)
 
     # check unclassified activities
     missing_classifications = check_unclassified_activities(
@@ -576,16 +649,13 @@ def _calculate_year(args: tuple):
 
         lca.lci(factorize=True)
 
-        infra_idx = [v for k, v in technosphere_indices.items() if k[2] == "unit"]
+        # infra_idx = [v for k, v in technosphere_indices.items() if k[2] == "unit"]
 
-        print(len(infra_idx))
-        print(infra_idx)
-
-        lca.technosphere_matrix = remove_double_counting(
-            technosphere_matrix=lca.technosphere_matrix,
-            activities_to_zero=vars_info_idx,
-            infra=infra_idx,
-        )
+        # lca.technosphere_matrix = remove_double_counting(
+        #    technosphere_matrix=lca.technosphere_matrix,
+        #    activities_to_zero=vars_info_idx,
+        #    infra=infra_idx,
+        # )
 
         # if activities_to_exclude is not None:
         #     lca = remove_double_accounting(
@@ -605,11 +675,11 @@ def _calculate_year(args: tuple):
             use_distributions=True,
         )
         lca.lci()
-        lca = remove_double_counting(
-            technosphere_matrix=lca,
-            demand={0: 1},
-            activities_to_exclude=vars_info_idx,
-        )
+        # lca = remove_double_counting(
+        #     technosphere_matrix=lca,
+        #     demand={0: 1},
+        #     activities_to_exclude=vars_info_idx,
+        # )
         # if activities_to_exclude is not None:
         #     lca = remove_double_accounting(
         #         lca=lca,
@@ -671,7 +741,7 @@ def _calculate_year(args: tuple):
                 debug,
                 use_distributions,
                 uncertain_parameters,
-                activities_to_exclude,
+                # activities_to_exclude,
             )
         )
 
