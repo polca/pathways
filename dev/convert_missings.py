@@ -7,7 +7,7 @@ data = pd.read_csv(file_path)
 
 # Convert dataframe to a list of tuples, matching the desired output structure
 data_tuples = [
-    {tuple(x): "Other transportation support activities"} for x in data.to_numpy()
+    {tuple(x[:-1]): x[-1]} for x in data.to_numpy()
 ]
 
 # Prepare the data in the specified YAML format with the custom tag
