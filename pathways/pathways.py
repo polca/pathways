@@ -252,6 +252,7 @@ class Pathways:
         subshares: bool = False,
         double_counting: dict = None,
         remove_infrastructure: bool = False,
+        remove_uncertainty: bool = False,
     ) -> None:
         """
         Calculate Life Cycle Assessment (LCA) results for given methods, models, scenarios, regions, and years.
@@ -396,6 +397,7 @@ class Pathways:
                             shares,
                             remove_infrastructure,
                             double_counting,
+                            remove_uncertainty,
                         )
                         for year in years
                     ]
@@ -435,6 +437,7 @@ class Pathways:
                                     uncertain_parameters,
                                     remove_infrastructure,
                                     double_counting,
+                                    remove_uncertainty,
                                 )
                             )
                             for year in years

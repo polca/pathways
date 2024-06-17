@@ -109,6 +109,7 @@ def get_lca_matrices(
     geo: Geomap = None,
     remove_infrastructure: bool = False,
     double_counting: dict = None,
+    remove_uncertainty: bool = False,
 ) -> tuple[
     Datapackage,
     dict[tuple[str, str, str, str], int],
@@ -175,6 +176,15 @@ def get_lca_matrices(
     for matrix_name, fp in [("technosphere_matrix", fp_A), ("biosphere_matrix", fp_B)]:
         data, indices, sign, distributions = load_matrix_and_index(fp)
 
+        if remove_uncertainty is True:
+            distributions = np.array(
+                [
+                    (0, None, None, None, None, None, False)
+                    for _ in range(len(distributions))
+                ],
+                dtype=bwp.UNCERTAINTY_DTYPE,
+            )
+
         if remove_infrastructure is True and matrix_name == "technosphere_matrix":
             print("--------- Removing infrastructure exchanges")
             infrastructure_indices = np.array(
@@ -208,7 +218,6 @@ def get_lca_matrices(
                                     axis=0,
                                 )
                                 data = np.append(data, amount)
-                                print(f"Added {amount} from {k} to {activity}")
                                 distributions = np.append(
                                     distributions,
                                     np.array(
@@ -523,6 +532,7 @@ def _calculate_year(args: tuple):
         uncertain_parameters,
         remove_infrastructure,
         double_counting,
+        remove_uncertainty,
     ) = args
 
     print(f"------ Calculating LCA results for {year}...")
@@ -561,6 +571,7 @@ def _calculate_year(args: tuple):
             geo=geo,
             remove_infrastructure=remove_infrastructure,
             double_counting=double_counting,
+            remove_uncertainty=remove_uncertainty,
         )
 
     except FileNotFoundError:
