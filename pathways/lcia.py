@@ -8,6 +8,7 @@ import logging
 import numpy as np
 from scipy import sparse
 from scipy.sparse import csr_matrix
+import bw_processing as bwp
 
 from .filesystem_constants import DATA_DIR
 
@@ -41,7 +42,7 @@ def format_lcia_method_exchanges(method):
     }
 
 
-def get_lcia_methods(methods: list = None):
+def get_lcia_methods(methods: list = None) -> dict:
     """Get a list of available LCIA methods."""
     with open(LCIA_METHODS, "r") as f:
         data = json.load(f)
@@ -49,8 +50,26 @@ def get_lcia_methods(methods: list = None):
     if methods:
         data = [x for x in data if " - ".join(x["name"]) in methods]
 
-    return {" - ".join(x["name"]): format_lcia_method_exchanges(x) for x in data}
+    cfs = {" - ".join(x["name"]): format_lcia_method_exchanges(x) for x in data}
+    units = {" - ".join(x["name"]): x["unit"] for x in data}
 
+    return cfs, units
+
+
+def build_characterization_matrix_for_sankey(method: str, biosphere_dict: dict):
+
+    lcia_data, unit = get_lcia_methods(methods=[method])
+    method_data = lcia_data[method]
+
+
+    indices, data = [], []
+
+    for flow in biosphere_dict:
+        if flow in method_data:
+            indices.append((biosphere_dict[flow], biosphere_dict[flow]))
+            data.append(method_data[flow])
+
+    return np.array(data), np.array(indices, dtype=bwp.INDICES_DTYPE), unit[method]
 
 def fill_characterization_factors_matrices(
     methods: list, biosphere_matrix_dict: dict, biosphere_dict: dict, debug=False
@@ -64,7 +83,7 @@ def fill_characterization_factors_matrices(
     :return: a sparse matrix with the characterization factors
     """
 
-    lcia_data = get_lcia_methods(methods=methods)
+    lcia_data, _ = get_lcia_methods(methods=methods)
 
     # Prepare data for efficient creation of the sparse matrix
     data = []

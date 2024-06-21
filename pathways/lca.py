@@ -136,6 +136,7 @@ def get_lca_matrices(
         return matches[0]
 
     fps = filter_filepaths(".csv", [model, scenario, str(year)])
+
     if len(fps) != 4:
         raise ValueError(f"Expected 4 filepaths, got {len(fps)}")
 

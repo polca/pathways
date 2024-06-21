@@ -33,6 +33,7 @@ from .utils import (
     load_units_conversion,
     resize_scenario_data,
 )
+from .sankey import Sankey
 
 
 def _get_mapping(data) -> dict:
@@ -237,6 +238,41 @@ class Pathways:
         data.attrs["units"] = units
 
         return data
+
+    def sankey(
+            self,
+            method: str,
+            model: str,
+            scenario: str,
+            region: str,
+            year: int,
+            variable: str,
+            cutoff: float = 1e-3,
+    ):
+        """
+        Display a Sankey diagram of the scenario data.
+        """
+
+        dp, technosphere_inds, biosphere_inds, uncertain_parameters = get_lca_matrices(
+            self.filepaths, model, scenario, year
+        )
+
+        sankey = Sankey(
+            method,
+            model,
+            scenario,
+            region,
+            year,
+            variable,
+            dp,
+            biosphere_inds,
+            technosphere_inds,
+            self.mapping,
+            self.scenarios,
+            cutoff,
+        )
+
+        return sankey
 
     def calculate(
         self,
