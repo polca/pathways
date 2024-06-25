@@ -5,10 +5,10 @@ This module contains functions to list, and LCIA methods and fill the LCIA chara
 import json
 import logging
 
+import bw_processing as bwp
 import numpy as np
 from scipy import sparse
 from scipy.sparse import csr_matrix
-import bw_processing as bwp
 
 from .filesystem_constants import DATA_DIR
 
@@ -61,7 +61,6 @@ def build_characterization_matrix_for_sankey(method: str, biosphere_dict: dict):
     lcia_data, unit = get_lcia_methods(methods=[method])
     method_data = lcia_data[method]
 
-
     indices, data = [], []
 
     for flow in biosphere_dict:
@@ -70,6 +69,7 @@ def build_characterization_matrix_for_sankey(method: str, biosphere_dict: dict):
             data.append(method_data[flow])
 
     return np.array(data), np.array(indices, dtype=bwp.INDICES_DTYPE), unit[method]
+
 
 def fill_characterization_factors_matrices(
     methods: list, biosphere_matrix_dict: dict, biosphere_dict: dict, debug=False

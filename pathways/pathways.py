@@ -20,6 +20,7 @@ from .data_validation import validate_datapackage
 from .filesystem_constants import DATA_DIR, DIR_CACHED_DB, STATS_DIR, USER_LOGS_DIR
 from .lca import _calculate_year, get_lca_matrices
 from .lcia import get_lcia_method_names
+from .sankey import Sankey
 from .subshares import generate_samples
 from .utils import (
     clean_cache_directory,
@@ -33,7 +34,6 @@ from .utils import (
     load_units_conversion,
     resize_scenario_data,
 )
-from .sankey import Sankey
 
 
 def _get_mapping(data) -> dict:
@@ -240,14 +240,14 @@ class Pathways:
         return data
 
     def sankey(
-            self,
-            method: str,
-            model: str,
-            scenario: str,
-            region: str,
-            year: int,
-            variable: str,
-            cutoff: float = 1e-3,
+        self,
+        method: str,
+        model: str,
+        scenario: str,
+        region: str,
+        year: int,
+        variable: str,
+        cutoff: float = 1e-3,
     ):
         """
         Display a Sankey diagram of the scenario data.

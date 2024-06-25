@@ -1,30 +1,32 @@
-import bw_processing as bwp
 import bw2calc as bc
 import bw2data
+import bw_processing as bwp
 import xarray as xr
 
 from .lcia import build_characterization_matrix_for_sankey
 from .utils import get_unit_conversion_factors, load_units_conversion
+
 
 class Sankey:
     """
     A class to represent a Sankey diagram.
     """
 
-    def __init__(self,
-                 method: str,
-                 model: str,
-                 scenario: str,
-                 region: str,
-                 year: int,
-                 variable: str,
-                 dp: bwp,
-                 biosphere_dict: dict,
-                 activity_dict: dict,
-                 mapping: dict,
-                 scenario_data: xr.DataArray,
-                 cutoff: float = 1e-3,
-                 ):
+    def __init__(
+        self,
+        method: str,
+        model: str,
+        scenario: str,
+        region: str,
+        year: int,
+        variable: str,
+        dp: bwp,
+        biosphere_dict: dict,
+        activity_dict: dict,
+        mapping: dict,
+        scenario_data: xr.DataArray,
+        cutoff: float = 1e-3,
+    ):
         """
         Initialize the Sankey object.
         """
@@ -53,14 +55,24 @@ class Sankey:
         dataset_index = self.activity_dict[dataset_name]
         self.dataset_index = dataset_index
         # fetch demand
-        demand = self.scenario_data.sel(model=self.model, pathway=self.scenario, region=self.region, year=self.year, variables=self.variable).values
+        demand = self.scenario_data.sel(
+            model=self.model,
+            pathway=self.scenario,
+            region=self.region,
+            year=self.year,
+            variables=self.variable,
+        ).values
         demand_unit = self.scenario_data.attrs["units"][self.variable]
-        demand = float(demand) * float(get_unit_conversion_factors(demand_unit, dataset_name[2], load_units_conversion()))
+        demand = float(demand) * float(
+            get_unit_conversion_factors(
+                demand_unit, dataset_name[2], load_units_conversion()
+            )
+        )
 
         self.lcia_unit = c_unit
 
         self.dp.add_persistent_vector(
-            matrix='characterization_matrix',
+            matrix="characterization_matrix",
             indices_array=c_indices,
             data_array=c_data,
         )
