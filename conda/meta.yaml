@@ -18,7 +18,7 @@ requirements:
     - python
     - setuptools
   run:
-    - numpy
+    - numpy>=1.24.0,<2.0.0
     - pathlib
     - pandas
     - scipy
@@ -26,7 +26,7 @@ requirements:
     - premise
     - pyyaml
     - bw_processing
-    - bw2calc
+    - bw2calc>= 2.0.DEV16
     - datapackage
     - pyprind
     - platformdirs
