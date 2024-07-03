@@ -499,9 +499,7 @@ def get_all_indices(vars_info: dict) -> list[int]:
     return idx_list
 
 
-def fetch_inventories_locations(
-    technosphere_indices: dict
-) -> List[str]:
+def fetch_inventories_locations(technosphere_indices: dict) -> List[str]:
     """
     Fetch the locations of the inventories.
     :param technosphere_indices: Dictionary with the indices of the activities in the technosphere matrix.

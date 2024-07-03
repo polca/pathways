@@ -2,7 +2,7 @@ from unittest.mock import Mock
 
 import pytest
 
-from pathways.utils import _group_technosphere_indices, _get_mapping
+from pathways.utils import _get_mapping, _group_technosphere_indices
 
 
 def test_group_technosphere_indices():

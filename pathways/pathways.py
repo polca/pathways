@@ -21,6 +21,8 @@ from .lca import _calculate_year, get_lca_matrices
 from .lcia import get_lcia_method_names
 from .subshares import generate_samples
 from .utils import (
+    _get_mapping,
+    _read_datapackage,
     clean_cache_directory,
     create_lca_results_array,
     display_results,
@@ -30,7 +32,7 @@ from .utils import (
     load_classifications,
     load_numpy_array_from_disk,
     load_units_conversion,
-    resize_scenario_data, _get_mapping, _read_datapackage,
+    resize_scenario_data,
 )
 
 
@@ -92,9 +94,7 @@ class Pathways:
         :return: dict
         """
 
-        def create_dict_for_specific_model(
-            row: pd.Series, model: str
-        ) -> [dict, None]:
+        def create_dict_for_specific_model(row: pd.Series, model: str) -> [dict, None]:
             """
             Create a dictionary for a specific model from the row.
             :param row: dict
@@ -362,9 +362,7 @@ class Pathways:
                     results.update(
                         {
                             (model, scenario, year): result
-                            for year, result in zip(
-                                years, p.map(_calculate_year, args)
-                            )
+                            for year, result in zip(years, p.map(_calculate_year, args))
                         }
                     )
 

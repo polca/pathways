@@ -462,8 +462,9 @@ def _calculate_year(args: tuple):
     except FileNotFoundError:
         # If LCA matrices can't be loaded, skip to the next iteration
         if debug:
-            logging.warning(f"Skipping {model}, {scenario}, {year}, "
-                            f"as data not found.")
+            logging.warning(
+                f"Skipping {model}, {scenario}, {year}, " f"as data not found."
+            )
         return
 
     # check unclassified activities

@@ -153,9 +153,7 @@ def log_subshares_to_excel(year: int, shares: dict, export_path: Path):
         print(f"Error updating Excel file: {str(e)}")
 
 
-def log_intensities_to_excel(
-    year: int, params: list, export_path: Path
-):
+def log_intensities_to_excel(year: int, params: list, export_path: Path):
     """
     Update or create an Excel file with new columns of data, based on model, scenario, and year.
 
