@@ -14,7 +14,6 @@ import pandas as pd
 import pyprind
 import xarray as xr
 import yaml
-from datapackage import DataPackage
 
 from .data_validation import validate_datapackage
 from .filesystem_constants import DATA_DIR, DIR_CACHED_DB, STATS_DIR, USER_LOGS_DIR
@@ -31,43 +30,8 @@ from .utils import (
     load_classifications,
     load_numpy_array_from_disk,
     load_units_conversion,
-    resize_scenario_data,
+    resize_scenario_data, _get_mapping, _read_datapackage,
 )
-
-
-def _get_mapping(data) -> dict:
-    """
-    Read the mapping file which maps scenario variables to LCA datasets.
-    It's a YAML file.
-    :return: dict
-
-    """
-    return yaml.safe_load(data.get_resource("mapping").raw_read())
-
-
-def _read_scenario_data(data: dict, scenario: str):
-    """
-    Read the scenario data.
-    The scenario data describes scenario variables with production volumes for each time step.
-    :param scenario: str. Scenario name.
-    :return: pd.DataFrame
-
-    """
-    filepath = data["scenarios"][scenario]["path"]
-    # if CSV file
-    if filepath.endswith(".csv"):
-        return pd.read_csv(filepath, index_col=0)
-
-    # Excel file
-    return pd.read_excel(filepath, index_col=0)
-
-
-def _read_datapackage(datapackage: str) -> DataPackage:
-    """Read the datapackage.json file.
-
-    :return: DataPackage
-    """
-    return DataPackage(datapackage)
 
 
 class Pathways:
@@ -130,7 +94,7 @@ class Pathways:
 
         def create_dict_for_specific_model(
             row: pd.Series, model: str
-        ) -> dict[Any, Any] | None:
+        ) -> [dict, None]:
             """
             Create a dictionary for a specific model from the row.
             :param row: dict
@@ -159,17 +123,17 @@ class Pathways:
             return None
 
         def create_dict_with_specific_model(
-            dataframe: pd.DataFrame, model: str
+            dataframe: pd.DataFrame, _model: str
         ) -> dict:
             """
             Create a dictionary for a specific model from the dataframe.
             :param dataframe: pandas.DataFrame
-            :param model: str
+            :param _model: str. The specific model to create the dictionary for.
             :return: dict
             """
             model_dict = {}
             for _, row in dataframe.iterrows():
-                row_dict = create_dict_for_specific_model(row, model)
+                row_dict = create_dict_for_specific_model(row, _model)
                 if row_dict:
                     model_dict.update(row_dict)
             return model_dict
@@ -246,12 +210,9 @@ class Pathways:
         regions: Optional[List[str]] = None,
         years: Optional[List[int]] = None,
         variables: Optional[List[str]] = None,
-        multiprocessing: bool = False,
         demand_cutoff: float = 1e-3,
         use_distributions: int = 0,
         subshares: bool = False,
-        double_counting: dict = None,
-        remove_infrastructure: bool = False,
         remove_uncertainty: bool = False,
     ) -> None:
         """
@@ -275,18 +236,14 @@ class Pathways:
         :type years: Optional[List[int]], default is None
         :param variables: List of variables. If None, all available variables will be used.
         :type variables: Optional[List[str]], default is None
-        :param multiprocessing: Boolean. If True, process each region in parallel.
-        :type multiprocessing: bool, default is False
         :param demand_cutoff: Float. If the total demand for a given variable is less than this value, the variable is skipped.
         :type demand_cutoff: float, default is 1e-3
-        :param use_distributions: Integer. If non zero, use distributions for LCA calculations.
+        :param use_distributions: Integer. If non-zero, use distributions for LCA calculations.
         :type use_distributions: int, default is 0
         :param subshares: Boolean. If True, calculate subshares.
         :type subshares: bool, default is False
-        :param double_counting: Dictionary. If provided, double counting is corrected.
-        :type double_counting: dict, default is None
-        :param remove_infrastructure: Boolean. If True, remove infrastructure from results.
-        :type remove_infrastructure: bool, default is False
+        :param remove_uncertainty: Boolean. If True, remove uncertainty from inventory exchanges.
+        :type remove_uncertainty: bool, default is False
         """
 
         self.scenarios = harmonize_units(self.scenarios, variables)
@@ -374,73 +331,40 @@ class Pathways:
             print(f"Calculating LCA results for {model}...")
             for scenario in scenarios:
                 print(f"--- Calculating LCA results for {scenario}...")
-                if multiprocessing:
-                    args = [
-                        (
-                            model,
-                            scenario,
-                            year,
-                            regions,
-                            variables,
-                            methods,
-                            demand_cutoff,
-                            self.filepaths,
-                            self.mapping,
-                            self.units,
-                            self.lca_results,
-                            self.classifications,
-                            self.scenarios,
-                            self.reverse_classifications,
-                            self.debug,
-                            use_distributions,
-                            uncertain_parameters,
-                            shares,
-                            remove_infrastructure,
-                            double_counting,
-                            remove_uncertainty,
-                        )
-                        for year in years
-                    ]
-                    # Process each region in parallel
-                    with Pool(cpu_count()) as p:
-                        # store th results as a dictionary with years as keys
-                        results.update(
-                            {
-                                (model, scenario, year): result
-                                for year, result in zip(
-                                    years, p.map(_calculate_year, args)
-                                )
-                            }
-                        )
-                else:
+
+                args = [
+                    (
+                        model,
+                        scenario,
+                        year,
+                        regions,
+                        variables,
+                        methods,
+                        demand_cutoff,
+                        self.filepaths,
+                        self.mapping,
+                        self.units,
+                        self.lca_results,
+                        self.classifications,
+                        self.scenarios,
+                        self.reverse_classifications,
+                        self.debug,
+                        use_distributions,
+                        uncertain_parameters,
+                        shares,
+                        remove_uncertainty,
+                    )
+                    for year in years
+                ]
+                # Process each region in parallel
+                with Pool(cpu_count()) as p:
+                    # store th results as a dictionary with years as keys
                     results.update(
                         {
-                            (model, scenario, year): _calculate_year(
-                                (
-                                    model,
-                                    scenario,
-                                    year,
-                                    regions,
-                                    variables,
-                                    methods,
-                                    demand_cutoff,
-                                    self.filepaths,
-                                    self.mapping,
-                                    self.units,
-                                    self.lca_results,
-                                    self.classifications,
-                                    self.scenarios,
-                                    self.reverse_classifications,
-                                    self.debug,
-                                    use_distributions,
-                                    shares or None,
-                                    uncertain_parameters,
-                                    remove_infrastructure,
-                                    double_counting,
-                                    remove_uncertainty,
-                                )
+                            (model, scenario, year): result
+                            for year, result in zip(
+                                years, p.map(_calculate_year, args)
                             )
-                            for year in years
                         }
                     )
 
@@ -503,7 +427,7 @@ class Pathways:
                                     }
                                 ] = summed_data
 
-                            except:
+                            except ValueError:
                                 # transpose quantile dimension to the penultimate dimension
                                 self.lca_results.loc[
                                     {

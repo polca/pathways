@@ -88,7 +88,6 @@ p.calculate(
     regions=regions,
     years=years,
     variables=variables,
-    multiprocessing=True, # optional, use multiprocessing to speed up the calculation
     use_distributions=0 # optional, number of iterations for Monte Carlo analysis
 )
 
@@ -137,6 +136,14 @@ methods of ``xarray``.
 
     df = results.to_dataframe()
     df.to_csv("results.csv")
+
+```
+
+Or the result cna be exoprted as a Parquet file:
+
+```python
+
+    p.export_results(filename="results.gzip")
 
 ```
 

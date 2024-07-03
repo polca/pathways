@@ -1,4 +1,4 @@
-numpy
+numpy<2.0.0
 pathlib
 pandas
 scipy
@@ -6,7 +6,7 @@ xarray
 premise
 pyyaml
 bw_processing
-bw2calc == 2.0.DEV16
+bw2calc >= 2.0.dev17
 datapackage
 pyprind
 platformdirs

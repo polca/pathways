@@ -101,10 +101,9 @@ def log_subshares_to_excel(year: int, shares: dict, export_path: Path):
     This method assumes that each entry in the shares defaultdict is structured to be directly usable in a DataFrame.
 
     Parameters:
-    :param model: The model name.
-    :param scenario: The scenario name.
     :param year: The specific year for which data is being logged.
     :param shares: A nested defaultdict containing shares data for multiple years and types.
+    :param export_path: The path to the Excel file where the data will be logged.
     """
 
     data = []
@@ -155,15 +154,14 @@ def log_subshares_to_excel(year: int, shares: dict, export_path: Path):
 
 
 def log_intensities_to_excel(
-    model: str, scenario: str, year: int, params: list, export_path: Path
+    year: int, params: list, export_path: Path
 ):
     """
     Update or create an Excel file with new columns of data, based on model, scenario, and year.
 
-    :param model: The model name.
-    :param scenario: The scenario name.
     :param year: The year for which the data is logged.
     :param params: Dictionary where keys are the new column names and values are lists of data for each column.
+    :param export_path: The path to the Excel file where the data will be logged.
     """
 
     if not params:
@@ -199,10 +197,8 @@ def log_intensities_to_excel(
 
             combined_df = combined_df.loc[:, ~combined_df.columns.str.endswith("_new")]
             df = combined_df
-
         else:
             df = df_new
-
         df.to_excel(export_path, index=False)
     except Exception as e:
         print(f"Failed to update the Excel file: {e}")
@@ -245,7 +241,7 @@ def create_mapping_sheet(
     model: str,
     scenario: str,
     year: int,
-    parameter_keys: list,
+    parameter_keys: set,
     export_path: Path,
 ):
     """

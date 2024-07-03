@@ -1,5 +1,5 @@
 ### When different technology configurations or alternatives are found,
-### we are taking the best performinimumg technology in terms of GWP.
+### we are taking the best performing technology in terms of GWP.
 Wind: ### Check if IAMs make the distinction between onshore and offshore
   onshore:
     name: electricity production, wind, <1MW turbine, onshore

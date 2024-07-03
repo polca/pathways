@@ -19,6 +19,7 @@ import numpy as np
 import pandas as pd
 import xarray as xr
 import yaml
+from datapackage import DataPackage
 from premise.geomap import Geomap
 
 from .filesystem_constants import DATA_DIR, DIR_CACHED_DB, USER_LOGS_DIR
@@ -499,7 +500,7 @@ def get_all_indices(vars_info: dict) -> list[int]:
 
 
 def fetch_inventories_locations(
-    technosphere_indices: Dict[str, Tuple[str, str, str]]
+    technosphere_indices: dict
 ) -> List[str]:
     """
     Fetch the locations of the inventories.
@@ -754,3 +755,38 @@ class CustomFilter:
         # Check if the warning message should be ignored
         if self.ignore_message not in str(message):
             self.original_showwarning(message, category, filename, lineno, file, line)
+
+
+def _get_mapping(data) -> dict:
+    """
+    Read the mapping file which maps scenario variables to LCA datasets.
+    It's a YAML file.
+    :return: dict
+
+    """
+    return yaml.safe_load(data.get_resource("mapping").raw_read())
+
+
+def _read_scenario_data(data: dict, scenario: str):
+    """
+    Read the scenario data.
+    The scenario data describes scenario variables with production volumes for each time step.
+    :param scenario: str. Scenario name.
+    :return: pd.DataFrame
+
+    """
+    filepath = data["scenarios"][scenario]["path"]
+    # if CSV file
+    if filepath.endswith(".csv"):
+        return pd.read_csv(filepath, index_col=0)
+
+    # Excel file
+    return pd.read_excel(filepath, index_col=0)
+
+
+def _read_datapackage(datapackage: str) -> DataPackage:
+    """Read the datapackage.json file.
+
+    :return: DataPackage
+    """
+    return DataPackage(datapackage)

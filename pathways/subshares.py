@@ -2,12 +2,9 @@ import logging
 from collections import defaultdict
 
 import bw2calc
-import bw_processing
 import bw_processing as bwp
 import numpy as np
-import pandas as pd
 import yaml
-from bw_processing import Datapackage
 from premise.geomap import Geomap
 from scipy.interpolate import interp1d
 from stats_arrays import *
@@ -187,22 +184,18 @@ def get_subshares_matrix(
 
 
 def adjust_matrix_based_on_shares(
-    filepaths: list,
     lca: bw2calc.LCA,
     shares_dict: dict,
     subshares: dict,
-    use_distributions: int,
-    model: str,
-    scenario: str,
     year: int,
 ):
     """
     Adjust the technosphere matrix based on shares.
     :param lca: bw2calc.LCA object.
     :param shares_dict: Dictionary containing the shares data.
-    :param use_distributions: Number of iterations.
+    :param subshares: Dictionary containing the subshares data.
     :param year: Integer representing the year.
-    :return:
+    :return: Tuple containing the data, indices, and signs.
     """
 
     # get coordinates of nonzero values in the technosphere matrix
