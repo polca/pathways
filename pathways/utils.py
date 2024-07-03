@@ -748,7 +748,9 @@ class CustomFilter:
         # Restore the original warning show function
         warnings.showwarning = self.original_showwarning
 
-    def custom_showwarning(self, message, category, filename, lineno, file=None, line=None):
+    def custom_showwarning(
+        self, message, category, filename, lineno, file=None, line=None
+    ):
         # Check if the warning message should be ignored
         if self.ignore_message not in str(message):
             self.original_showwarning(message, category, filename, lineno, file, line)

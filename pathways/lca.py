@@ -35,6 +35,7 @@ from .subshares import (
     get_subshares_matrix,
 )
 from .utils import (
+    CustomFilter,
     _group_technosphere_indices,
     apply_filters,
     check_unclassified_activities,
@@ -44,7 +45,6 @@ from .utils import (
     get_unit_conversion_factors,
     read_categories_from_yaml,
     read_indices_csv,
-    CustomFilter
 )
 
 logging.basicConfig(
