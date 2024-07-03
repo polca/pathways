@@ -56,7 +56,7 @@ class Sankey:
             # fetch dataset name of variables
             dataset_name = tuple(list(mapping[variable]["dataset"][0].values()))
             # add region to tuple
-            dataset_name += self.region,
+            dataset_name += (self.region,)
             # getch index of dataset
             dataset_index = self.activity_dict[dataset_name]
             self.dataset_index = dataset_index
