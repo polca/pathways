@@ -81,6 +81,7 @@ class Pathways:
     """
 
     def __init__(self, datapackage, debug=False):
+        self.results = None
         self.datapackage = datapackage
         self.data, dataframe, self.filepaths = validate_datapackage(
             _read_datapackage(datapackage)
@@ -469,14 +470,14 @@ class Pathways:
                     )
 
         # remove None values in results
-        results = {k: v for k, v in results.items() if v is not None}
+        self.results = {k: v for k, v in results.items() if v is not None}
 
-        self._fill_in_result_array(results)
+        self._fill_in_result_array()
 
         if shares is not None:
             print(f"Statistical analysis files: {STATS_DIR}")
 
-    def _fill_in_result_array(self, results: dict):
+    def _fill_in_result_array(self):
 
         # Assuming DIR_CACHED_DB, results, and self.lca_results are already defined
 
@@ -485,14 +486,14 @@ class Pathways:
             data["id_array"]: load_numpy_array_from_disk(
                 DIR_CACHED_DB / f"{data['id_array']}.npy",
             )
-            for coord, result in results.items()
+            for coord, result in self.results.items()
             for region, data in result.items()
             if region != "other"
         }
 
         # use pyprint to display progress
-        progress_bar = pyprind.ProgBar(len(results))
-        for coord, result in results.items():
+        progress_bar = pyprind.ProgBar(len(self.results))
+        for coord, result in self.results.items():
             progress_bar.update()
             model, scenario, year = coord
             acts_category_idx_dict = result["other"]["acts_category_idx_dict"]

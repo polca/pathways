@@ -36,7 +36,7 @@ class Sankey:
         self.scenario = scenario
         self.region = region
         self.year = year
-        self.variable = variable
+        self.variables = variable
         self.dp = dp
         self.biosphere_dict = biosphere_dict
         self.activity_dict = activity_dict
@@ -47,27 +47,35 @@ class Sankey:
             method=self.method, biosphere_dict=self.biosphere_dict
         )
 
-        # fetch dataset name of variables
-        dataset_name = tuple(list(mapping[self.variable]["dataset"][0].values()))
-        # add region to tuple
-        dataset_name = dataset_name + (self.region,)
-        # getch index of dataset
-        dataset_index = self.activity_dict[dataset_name]
-        self.dataset_index = dataset_index
-        # fetch demand
-        demand = self.scenario_data.sel(
-            model=self.model,
-            pathway=self.scenario,
-            region=self.region,
-            year=self.year,
-            variables=self.variable,
-        ).values
-        demand_unit = self.scenario_data.attrs["units"][self.variable]
-        demand = float(demand) * float(
-            get_unit_conversion_factors(
-                demand_unit, dataset_name[2], load_units_conversion()
+        if isinstance(self.variables, str):
+            self.variables = [self.variables]
+
+        FU = {}
+
+        for variable in self.variables:
+            # fetch dataset name of variables
+            dataset_name = tuple(list(mapping[variable]["dataset"][0].values()))
+            # add region to tuple
+            dataset_name += self.region,
+            # getch index of dataset
+            dataset_index = self.activity_dict[dataset_name]
+            self.dataset_index = dataset_index
+            # fetch demand
+            demand = self.scenario_data.sel(
+                model=self.model,
+                pathway=self.scenario,
+                region=self.region,
+                year=self.year,
+                variables=variable,
+            ).values
+            demand_unit = self.scenario_data.attrs["units"][variable]
+            demand = float(demand) * float(
+                get_unit_conversion_factors(
+                    demand_unit, dataset_name[2], load_units_conversion()
+                )
             )
-        )
+
+            FU[dataset_index] = demand
 
         self.lcia_unit = c_unit
 
@@ -77,8 +85,10 @@ class Sankey:
             data_array=c_data,
         )
 
+        print(FU)
+
         self.lca = bc.LCA(
-            demand={dataset_index: demand},
+            demand=FU,
             data_objs=[
                 self.dp,
             ],
