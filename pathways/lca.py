@@ -172,7 +172,7 @@ def get_lca_matrices(
 
 def find_uncertain_parameters(
     distributions_array: np.ndarray, indices_array: np.ndarray
-) -> list[tuple[int, int]]:
+) -> list[tuple]:
     """
     Find the uncertain parameters in the distributions array.
     They will be used for the stats report
@@ -184,43 +184,6 @@ def find_uncertain_parameters(
     uncertain_parameters = [tuple(indices_array[idx]) for idx in uncertain_indices]
 
     return uncertain_parameters
-
-
-def remove_double_accounting(
-    lca: bc.LCA,
-    demand: Dict,
-    activities_to_exclude: List[int],
-    exceptions: List[int],
-):
-    """
-    Remove double counting from a technosphere matrix.
-    :param lca: bw2calc.LCA object
-    :param demand: dict with demand values
-    :param activities_to_exclude: list of activities to exclude
-    :param exceptions: list of exceptions
-    :return: Technosphere matrix with double counting removed.
-    """
-
-    tm_original = lca.technosphere_matrix.copy()
-    tm_modified = tm_original.tocoo()
-
-    for act in activities_to_exclude:
-        row_idx = np.where(tm_modified.col == act)[0]
-
-        for idx in row_idx:
-            # Skip the diagonal and exceptions
-            if tm_modified.row[idx] != act and (
-                exceptions is None or tm_modified.col[idx] not in exceptions
-            ):
-                tm_modified.data[idx] = 0
-
-    tm_modified = tm_modified.tocsr()
-    tm_modified.eliminate_zeros()
-
-    # Remove double accounting
-    lca.technosphere_matrix = tm_modified
-    lca.lci(demand=demand)
-    return lca
 
 
 def process_region(data: Tuple) -> dict[str, ndarray[Any, dtype[Any]] | list[int]]:
