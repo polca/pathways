@@ -18,14 +18,11 @@ def log_double_accounting(
     Log the unique names of the filtered activities and exceptions to an Excel file,
     distinguished by categories.
 
-    :param model: The model name.
-    :param scenario: The scenario name.
-    :param year: The year.
     :param filtered_names: Dictionary of category paths to sets of filtered activity names.
     :param exception_names: Dictionary of category paths to sets of exception names.
+    :param export_path: Path to the export Excel file.
     """
 
-    # Prepare data for DataFrame
     data_filtered = {
         "/".join(category): list(names)
         for category, names in filtered_names.items()
@@ -37,7 +34,6 @@ def log_double_accounting(
         if names
     }
 
-    # Convert dictionaries to DataFrames
     filtered_df = pd.DataFrame(
         dict([(k, pd.Series(v)) for k, v in data_filtered.items()])
     )
@@ -45,7 +41,9 @@ def log_double_accounting(
         dict([(k, pd.Series(v)) for k, v in data_exceptions.items()])
     )
 
-    if os.path.exists(export_path):
+    export_path.parent.mkdir(parents=True, exist_ok=True)
+
+    if export_path.exists():
         try:
             # Load the existing workbook
             with pd.ExcelWriter(
@@ -80,9 +78,7 @@ def log_double_accounting(
             print(
                 f"Warning: '{export_path}' is not a valid Excel file. Creating a new file."
             )
-            with pd.ExcelWriter(
-                export_path, engine="openpyxl", mode="a", if_sheet_exists="overlay"
-            ) as writer:
+            with pd.ExcelWriter(export_path, engine="openpyxl", mode="w") as writer:
                 filtered_df.to_excel(
                     writer, sheet_name="Double accounting - Zeroed", index=False
                 )
@@ -90,10 +86,7 @@ def log_double_accounting(
                     writer, sheet_name="Double accounting - Exceptions", index=False
                 )
     else:
-
-        with pd.ExcelWriter(
-            export_path, engine="openpyxl", mode="a", if_sheet_exists="overlay"
-        ) as writer:
+        with pd.ExcelWriter(export_path, engine="openpyxl", mode="w") as writer:
             filtered_df.to_excel(
                 writer, sheet_name="Double accounting - Zeroed", index=False
             )

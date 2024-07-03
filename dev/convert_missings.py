@@ -6,9 +6,7 @@ file_path = "missing_classifications.csv"
 data = pd.read_csv(file_path)
 
 # Convert dataframe to a list of tuples, matching the desired output structure
-data_tuples = [
-    {tuple(x): "Other transportation support activities"} for x in data.to_numpy()
-]
+data_tuples = [{tuple(x[:-1]): x[-1]} for x in data.to_numpy()]
 
 # Prepare the data in the specified YAML format with the custom tag
 yaml_data = yaml.dump(

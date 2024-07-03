@@ -10,6 +10,7 @@ dictionary, checking unclassified activities, and getting activity indices.
 
 import csv
 import logging
+import warnings
 from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, List, Set, Tuple, Union
@@ -481,6 +482,22 @@ def fetch_indices(
     return vars_idx
 
 
+def get_all_indices(vars_info: dict) -> list[int]:
+    """
+    Extract all 'idx' values from the vars_info dictionary.
+
+    :param vars_info: Dictionary of variables information returned by fetch_indices.
+    :type vars_info: dict
+    :return: List of all 'idx' values.
+    :rtype: list[int]
+    """
+    idx_list = []
+    for region_data in vars_info.values():
+        for variable_data in region_data.values():
+            idx_list.append(variable_data["idx"])
+    return idx_list
+
+
 def fetch_inventories_locations(
     technosphere_indices: Dict[str, Tuple[str, str, str]]
 ) -> List[str]:
@@ -714,3 +731,24 @@ def apply_filters(
                 exception_names[tuple(path)].add(name)
 
     return filtered_indices, exception_indices, filtered_names, exception_names
+
+
+# Custom filter function
+# Custom context manager for filtering warnings
+class CustomFilter:
+    def __init__(self, ignore_message):
+        self.ignore_message = ignore_message
+
+    def __enter__(self):
+        # Capture the original warning show function
+        self.original_showwarning = warnings.showwarning
+        warnings.showwarning = self.custom_showwarning
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        # Restore the original warning show function
+        warnings.showwarning = self.original_showwarning
+
+    def custom_showwarning(self, message, category, filename, lineno, file=None, line=None):
+        # Check if the warning message should be ignored
+        if self.ignore_message not in str(message):
+            self.original_showwarning(message, category, filename, lineno, file, line)

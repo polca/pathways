@@ -241,7 +241,6 @@ class Pathways:
     def calculate(
         self,
         methods: Optional[List[str]] = None,
-        double_accounting: Optional[List[str]] = None,
         models: Optional[List[str]] = None,
         scenarios: Optional[List[str]] = None,
         regions: Optional[List[str]] = None,
@@ -251,6 +250,9 @@ class Pathways:
         demand_cutoff: float = 1e-3,
         use_distributions: int = 0,
         subshares: bool = False,
+        double_counting: dict = None,
+        remove_infrastructure: bool = False,
+        remove_uncertainty: bool = False,
     ) -> None:
         """
         Calculate Life Cycle Assessment (LCA) results for given methods, models, scenarios, regions, and years.
@@ -261,7 +263,6 @@ class Pathways:
         This function processes each combination of model, scenario, and year in parallel
         and stores the results in the `lca_results` attribute.
 
-        :param characterization: Boolean. If True, calculate LCIA results. If False, calculate LCI results.
         :param methods: List of impact assessment methods. If None, all available methods will be used.
         :type methods: Optional[List[str]], default is None
         :param models: List of models. If None, all available models will be used.
@@ -282,6 +283,10 @@ class Pathways:
         :type use_distributions: int, default is 0
         :param subshares: Boolean. If True, calculate subshares.
         :type subshares: bool, default is False
+        :param double_counting: Dictionary. If provided, double counting is corrected.
+        :type double_counting: dict, default is None
+        :param remove_infrastructure: Boolean. If True, remove infrastructure from results.
+        :type remove_infrastructure: bool, default is False
         """
 
         self.scenarios = harmonize_units(self.scenarios, variables)
@@ -329,8 +334,11 @@ class Pathways:
         }
 
         try:
-            _, technosphere_index, _, uncertain_parameters = get_lca_matrices(
-                self.filepaths, models[0], scenarios[0], years[0]
+            _, technosphere_index, _, uncertain_parameters, _ = get_lca_matrices(
+                filepaths=self.filepaths,
+                model=models[0],
+                scenario=scenarios[0],
+                year=years[0],
             )
         except Exception as e:
             logging.error(f"Error retrieving LCA matrices: {str(e)}")
@@ -375,7 +383,6 @@ class Pathways:
                             regions,
                             variables,
                             methods,
-                            double_accounting,
                             demand_cutoff,
                             self.filepaths,
                             self.mapping,
@@ -388,6 +395,9 @@ class Pathways:
                             use_distributions,
                             uncertain_parameters,
                             shares,
+                            remove_infrastructure,
+                            double_counting,
+                            remove_uncertainty,
                         )
                         for year in years
                     ]
@@ -413,7 +423,6 @@ class Pathways:
                                     regions,
                                     variables,
                                     methods,
-                                    double_accounting,
                                     demand_cutoff,
                                     self.filepaths,
                                     self.mapping,
@@ -426,6 +435,9 @@ class Pathways:
                                     use_distributions,
                                     shares or None,
                                     uncertain_parameters,
+                                    remove_infrastructure,
+                                    double_counting,
+                                    remove_uncertainty,
                                 )
                             )
                             for year in years
@@ -508,7 +520,7 @@ class Pathways:
     def display_results(self, cutoff: float = 0.001) -> xr.DataArray:
         return display_results(self.lca_results, cutoff=cutoff)
 
-    def export_results(self, filename: str) -> None:
+    def export_results(self, filename: str = None) -> None:
         """
         Export the non-zero LCA results to a compressed parquet file.
         :param filename: str. The name of the file to save the results.
