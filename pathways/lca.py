@@ -12,7 +12,6 @@ import bw2calc as bc
 import bw_processing as bwp
 import numpy as np
 import pyprind
-from bw2calc.monte_carlo import MonteCarloLCA
 from bw2calc.utils import get_datapackage
 from bw_processing import Datapackage
 from numpy import dtype, ndarray
@@ -167,6 +166,7 @@ def get_lca_matrices(
     fp_B = select_filepath("B_matrix", [fp for fp in fps if "index" not in fp.name])
 
     # Load matrices and add them to the datapackage
+    uncertain_parameters = None
     for matrix_name, fp in [("technosphere_matrix", fp_A), ("biosphere_matrix", fp_B)]:
         data, indices, sign, distributions = load_matrix_and_index(fp)
 
@@ -179,7 +179,6 @@ def get_lca_matrices(
                 dtype=bwp.UNCERTAINTY_DTYPE,
             )
 
-        uncertain_parameters = None
         if matrix_name == "technosphere_matrix":
             uncertain_parameters = find_uncertain_parameters(distributions, indices)
 
@@ -501,44 +500,29 @@ def _calculate_year(args: tuple):
         "acts_location_idx_dict": acts_location_idx_dict,
     }
 
-    if use_distributions == 0:
-        logging.info("Calculating LCA results without distributions.")
+    lca = bc.LCA(
+        demand={0: 1},
+        data_objs=[
+            bw_datapackage,
+        ],
+        use_distributions=True if use_distributions > 0 else False,
+    )
 
-        lca = bc.LCA(
-            demand={0: 1},
-            data_objs=[
-                bw_datapackage,
-            ],
+    with CustomFilter("(almost) singular matrix"):
+        lca.lci(factorize=True)
+
+    if shares is True:
+        logging.info("Calculating LCA results with subshares.")
+        shares_indices = find_technology_indices(regions, technosphere_indices, geo)
+        correlated_arrays = adjust_matrix_based_on_shares(
+            lca=lca,
+            shares_dict=shares_indices,
+            subshares=shares,
+            year=year,
         )
-
-        with CustomFilter("(almost) singular matrix"):
-            lca.lci(factorize=True)
-
-    else:
-        logging.info("Calculating LCA results with distributions.")
-        lca = MonteCarloLCA(
-            demand={0: 1},
-            data_objs=[
-                bw_datapackage,
-            ],
-            use_distributions=True,
-        )
-
-        with CustomFilter("(almost) singular matrix"):
-            lca.lci()
-
-        if shares is True:
-            logging.info("Calculating LCA results with subshares.")
-            shares_indices = find_technology_indices(regions, technosphere_indices, geo)
-            correlated_arrays = adjust_matrix_based_on_shares(
-                lca=lca,
-                shares_dict=shares_indices,
-                subshares=shares,
-                year=year,
-            )
-            bw_correlated = get_subshares_matrix(correlated_arrays)
-            lca.packages.append(get_datapackage(bw_correlated))
-            lca.use_arrays = True
+        bw_correlated = get_subshares_matrix(correlated_arrays)
+        lca.packages.append(get_datapackage(bw_correlated))
+        lca.use_arrays = True
 
     characterization_matrix = fill_characterization_factors_matrices(
         methods=methods,

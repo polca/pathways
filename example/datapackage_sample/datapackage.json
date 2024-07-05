@@ -1833,14 +1833,8 @@
     "description": "Data package used as an example.",
     "premise version": "(2, 1, 0, 'dev0')",
     "scenarios": [
-        {
-            "name": "Scenario A",
-            "description": "This is Scenario A"
-        },
-        {
-            "name": "Scenario B",
-            "description": "This is Scenario B"
-        }
+        "Scenario A",
+        "Scenario B"
     ],
     "keywords": [
         "ecoinvent",
