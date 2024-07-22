@@ -7,7 +7,7 @@ from zipfile import BadZipFile
 import numpy as np
 import pandas as pd
 import statsmodels.api as sm
-from openpyxl import load_workbook
+from openpyxl import load_workbook, Workbook
 from SALib.analyze import delta
 
 
@@ -313,57 +313,53 @@ def run_GSA_OLS(methods: list, export_path: Path):
     try:
         book = load_workbook(export_path)
     except FileNotFoundError:
-        book = pd.ExcelWriter(export_path, engine="openpyxl")
-        book.close()
+        book = Workbook()
+        book.save(export_path)
         book = load_workbook(export_path)
 
     data = pd.read_excel(export_path, sheet_name="Sheet1")
 
-    if "OLS" not in book.sheetnames:
-        ws = book.create_sheet("OLS")
-    else:
+    if "OLS" in book.sheetnames:
         ws = book["OLS"]
         book.remove(ws)
-        ws = book.create_sheet("OLS")
 
-    for idx, method in enumerate(methods):
+    ws = book.create_sheet("OLS")
+
+    X_base = data.drop(columns=["Iteration", "Year"] + methods)
+    X_base = sm.add_constant(X_base)
+    corr_matrix = X_base.corr().abs()
+    upper_triangle = corr_matrix.where(np.triu(np.ones(corr_matrix.shape), k=1).astype(bool))
+    high_correlation = [column for column in upper_triangle.columns if any(upper_triangle[column] > 0.95)]
+
+    if high_correlation:
+        print(f"OLS: High multicollinearity detected in columns: {high_correlation}")
+        X_base = X_base.drop(columns=high_correlation)
+
+    results = []
+    for method in methods:
         if method not in data.columns:
             print(f"Data for {method} not found in the file.")
             continue
 
         Y = data[method]
-        X = data.drop(columns=["Iteration", "Year"] + methods)
-        X = sm.add_constant(X)
-
-        # Check for multicollinearity
-        corr_matrix = X.corr().abs()
-        upper_triangle = corr_matrix.where(
-            np.triu(np.ones(corr_matrix.shape), k=1).astype(bool)
-        )
-        high_correlation = [
-            column
-            for column in upper_triangle.columns
-            if any(upper_triangle[column] > 0.95)
-        ]
-        if high_correlation:
-            print(
-                f"OLS: High multicollinearity detected in columns: {high_correlation}"
-            )
-            X = X.drop(columns=high_correlation)
+        X = X_base.copy()
 
         try:
             model_results = sm.OLS(Y, X).fit()
             summary = model_results.summary().as_text()
             summary_lines = summary.split("\n")
 
-            ws.append([f"OLS Summary for {method}"])
+            results.append([f"OLS Summary for {method}"])
             for line in summary_lines:
                 line = escape_formula(line)
                 columns = re.split(r"\s{2,}", line)
-                ws.append(columns)
-            ws.append([])
+                results.append(columns)
+            results.append([])
         except Exception as e:
             print(f"Error running OLS for method {method}: {e}")
+
+    for result in results:
+        ws.append(result)
 
     book.save(export_path)
 
