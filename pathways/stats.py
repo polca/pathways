@@ -1,12 +1,16 @@
 import os
+
 import re
 from pathlib import Path
 from typing import Dict, Set, Tuple
 from zipfile import BadZipFile
 
 import pandas as pd
+import numpy as np
 import statsmodels.api as sm
 from openpyxl import load_workbook
+
+from SALib.analyze import delta
 
 
 def log_double_accounting(
@@ -210,9 +214,6 @@ def log_results_to_excel(
     """
     Log the characterized inventory results for each LCIA method into separate columns in an Excel file.
 
-    :param model: The model name.
-    :param scenario: The scenario name.
-    :param year: The year for which the data is being logged.
     :param total_impacts_by_method: Dictionary where keys are method names and values are lists of impacts
     from all regions and distributions.
     :param methods: List of method names.
@@ -304,32 +305,28 @@ def escape_formula(text: str):
     return "'" + text if text.startswith(("=", "-", "+")) else text
 
 
-def run_stats_analysis(
-    model: str, scenario: str, year: int, methods: list, export_path: Path
-):
+def run_GSA_OLS(methods: list, export_path: Path):
     """
     Runs OLS regression for specified methods and writes summaries to an Excel file.
 
-    Each method's OLS summary is placed on a new sheet in the file named
-    'stats_report_{model}_{scenario}_{year}.xlsx'.
-
-    :param model: Model identifier.
-    :param scenario: Scenario name.
-    :param year: Year of interest.
     :param methods: Methods corresponding to dataset columns.
     :param export_path: Path to the directory where the Excel file will be saved.
     """
-
     try:
         book = load_workbook(export_path)
     except FileNotFoundError:
-        book = pd.ExcelWriter(
-            export_path, engine="openpyxl"
-        )  # Create a new workbook if not found
+        book = pd.ExcelWriter(export_path, engine="openpyxl")
         book.close()
         book = load_workbook(export_path)
 
     data = pd.read_excel(export_path, sheet_name="Sheet1")
+
+    if "OLS" not in book.sheetnames:
+        ws = book.create_sheet("OLS")
+    else:
+        ws = book["OLS"]
+        book.remove(ws)
+        ws = book.create_sheet("OLS")
 
     for idx, method in enumerate(methods):
         if method not in data.columns:
@@ -340,25 +337,87 @@ def run_stats_analysis(
         X = data.drop(columns=["Iteration", "Year"] + methods)
         X = sm.add_constant(X)
 
-        model_results = sm.OLS(Y, X).fit()
-        summary = model_results.summary().as_text()
+        # Check for multicollinearity
+        corr_matrix = X.corr().abs()
+        upper_triangle = corr_matrix.where(np.triu(np.ones(corr_matrix.shape), k=1).astype(bool))
+        high_correlation = [column for column in upper_triangle.columns if any(upper_triangle[column] > 0.95)]
+        if high_correlation:
+            print(f"OLS: High multicollinearity detected in columns: {high_correlation}")
+            X = X.drop(columns=high_correlation)
 
-        sheet_name_base = f"{method[:20]} OLS"
-        sheet_name = f"{sheet_name_base} {idx + 1}"
-        while sheet_name in book.sheetnames:
-            idx += 1
-            sheet_name = f"{sheet_name_base} {idx + 1}"
+        try:
+            model_results = sm.OLS(Y, X).fit()
+            summary = model_results.summary().as_text()
+            summary_lines = summary.split("\n")
 
-        if sheet_name in book.sheetnames:
-            std = book[sheet_name]
-            book.remove(std)
-        ws = book.create_sheet(sheet_name)
+            ws.append([f"OLS Summary for {method}"])
+            for line in summary_lines:
+                line = escape_formula(line)
+                columns = re.split(r"\s{2,}", line)
+                ws.append(columns)
+            ws.append([])
+        except Exception as e:
+            print(f"Error running OLS for method {method}: {e}")
 
-        summary_lines = summary.split("\n")
+    book.save(export_path)
 
-        for line in summary_lines:
-            line = escape_formula(line)
-            columns = re.split(r"\s{2,}", line)
-            ws.append(columns)
+
+def run_GSA_delta(methods: list, export_path: Path):
+    """
+    Runs Delta Moment-Independent Measure analysis for specified methods and writes summaries to an Excel file.
+
+    :param methods: List of method names corresponding to dataset columns.
+    :param export_path: Path to the directory where the Excel file will be saved.
+    """
+    try:
+        data = pd.read_excel(export_path, sheet_name="Sheet1")
+    except FileNotFoundError:
+        print(f"Data file {export_path} not found.")
+        return
+
+    standard_columns = {"Iteration", "Year"}
+    params = [col for col in data.columns if col not in standard_columns and col not in methods]
+
+    problem = {
+        'num_vars': len(params),
+        'names': params,
+        'bounds': [[data[param].min(), data[param].max()] for param in params]
+    }
+
+    try:
+        book = load_workbook(export_path)
+    except FileNotFoundError:
+        book = pd.ExcelWriter(export_path, engine="openpyxl")
+        book.close()
+        book = load_workbook(export_path)
+
+    if "GSA" not in book.sheetnames:
+        ws = book.create_sheet("GSA")
+    else:
+        ws = book["GSA"]
+        book.remove(ws)
+        ws = book.create_sheet("GSA")
+
+    for method in methods:
+        if method not in data.columns:
+            print(f"Data for {method} not found in the file.")
+            continue
+
+        param_values = data[params].values
+        Y = data[method].values
+
+        delta_results = delta.analyze(problem, param_values, Y, print_to_console=False)
+
+        ws.append([f"Delta Moment-Independent Measure for {method}"])
+        ws.append(["Parameter", "Delta", "Delta Conf", "S1", "S1 Conf"])
+        for i, param in enumerate(params):
+            ws.append([
+                param,
+                delta_results['delta'][i],
+                delta_results['delta_conf'][i],
+                delta_results['S1'][i],
+                delta_results['S1_conf'][i]
+            ])
+        ws.append([])
 
     book.save(export_path)

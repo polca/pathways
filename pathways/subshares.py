@@ -31,6 +31,9 @@ def load_subshares() -> dict:
     with open(SUBSHARES) as stream:
         data = yaml.safe_load(stream)
 
+    if not isinstance(data, dict):
+        raise ValueError("Subshares data should be a dictionary.")
+
     return check_subshares(check_uncertainty_params(data))
 
 
@@ -240,6 +243,8 @@ def adjust_matrix_based_on_shares(
 
     return data, indices, signs
 
+def default_dict_factory():
+    return defaultdict(dict)
 
 def load_and_normalize_shares(ranges: dict, iterations: int) -> dict:
     """
@@ -248,7 +253,9 @@ def load_and_normalize_shares(ranges: dict, iterations: int) -> dict:
     :param iterations: Number of iterations for random generation.
     :return: A dict with normalized shares for each technology and year.
     """
-    shares = defaultdict(lambda: defaultdict(dict))
+    # shares = defaultdict(lambda: defaultdict(dict)) # Gives problems for pickling in multiprocessing
+    shares = defaultdict(default_dict_factory)
+
     for technology_group, technologies in ranges.items():
         for technology, params in technologies.items():
             for y, share in params["share"].items():
@@ -285,6 +292,10 @@ def load_and_normalize_shares(ranges: dict, iterations: int) -> dict:
                     ranges[technology_group][technology]["share"][y].get("maximum", 1),
                 )
                 shares[technology_group][y][technology] = normalized
+
+    # Ensure that `shares` is a dictionary
+    if not isinstance(shares, dict):
+        raise ValueError("Normalized shares should be a dictionary.")
 
     return shares
 

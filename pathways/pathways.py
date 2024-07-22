@@ -350,8 +350,8 @@ class Pathways:
                         self.reverse_classifications,
                         self.debug,
                         use_distributions,
-                        uncertain_parameters,
                         shares,
+                        uncertain_parameters,
                         remove_uncertainty,
                     )
                     for year in years
@@ -371,8 +371,6 @@ class Pathways:
 
         self._fill_in_result_array(results)
 
-        if shares is not None:
-            print(f"Statistical analysis files: {STATS_DIR}")
 
     def _fill_in_result_array(self, results: dict):
 

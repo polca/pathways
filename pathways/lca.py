@@ -25,8 +25,15 @@ from .stats import (
     log_intensities_to_excel,
     log_results_to_excel,
     log_subshares_to_excel,
-    run_stats_analysis,
+    run_GSA_OLS,
+    run_GSA_delta,
 )
+
+import time
+
+# from .montecarlo import MonteCarloLCA
+# from .sensitivity_analysis import GlobalSensitivityAnalysis
+
 from .subshares import (
     adjust_matrix_based_on_shares,
     find_technology_indices,
@@ -260,6 +267,7 @@ def process_region(data: Tuple) -> dict[str, ndarray[Any, dtype[Any]] | list[int
         debug,
         use_distributions,
         uncertain_parameters,
+        # mc_lca,
     ) = data
 
     variables_demand = {}
@@ -268,6 +276,21 @@ def process_region(data: Tuple) -> dict[str, ndarray[Any, dtype[Any]] | list[int
     param_keys = set()
     params_container = []
 
+    total_demand = scenarios.sel(
+        region=region,
+        model=model,
+        pathway=scenario,
+        year=year,
+    ).sum(dim="variables").values
+
+    if total_demand == 0:
+        print(
+            f"Total demand for {region}, {model}, {scenario}, {year} is zero. "
+            f"Skipping."
+        )
+        return d
+
+    variable_count = 0
     for v, variable in enumerate(variables):
         idx, dataset = vars_idx[variable]["idx"], vars_idx[variable]["dataset"]
         # Compute the unit conversion vector for the given activities
@@ -278,7 +301,7 @@ def process_region(data: Tuple) -> dict[str, ndarray[Any, dtype[Any]] | list[int
             scenarios.attrs["units"][variable],
             dataset_unit,
             units_map,
-        )
+        ).astype(float)
 
         # Fetch the demand for the given
         # region, model, pathway, and year
@@ -288,18 +311,11 @@ def process_region(data: Tuple) -> dict[str, ndarray[Any, dtype[Any]] | list[int
             model=model,
             pathway=scenario,
             year=year,
-        )
+        ).values * unit_vector
 
-        total_demand = scenarios.sel(
-            region=region,
-            model=model,
-            pathway=scenario,
-            year=year,
-        ).sum(dim="variables")
-
-        if total_demand == 0:
+        if np.sum(demand) == 0:
             print(
-                f"Total demand for {region}, {model}, {scenario}, {year} is zero. "
+                f"Total demand for {variable} in {region}, {model}, {scenario}, {year} is zero. "
                 f"Skipping."
             )
             continue
@@ -313,10 +329,10 @@ def process_region(data: Tuple) -> dict[str, ndarray[Any, dtype[Any]] | list[int
 
         variables_demand[variable] = {
             "id": idx,
-            "demand": demand.values * float(unit_vector),
+            "demand": demand,
         }
 
-        functional_unit = {idx: demand.values * float(unit_vector)}
+        functional_unit = {idx: demand}
 
         with CustomFilter("(almost) singular matrix"):
             lca.lci(demand=functional_unit)
@@ -326,6 +342,13 @@ def process_region(data: Tuple) -> dict[str, ndarray[Any, dtype[Any]] | list[int
             characterized_inventory = (
                 characterization_matrix @ lca.inventory
             ).toarray()
+        # else:
+        #     mc_lca.func_units = functional_unit
+        #     mc_lca.methods = methods
+        #     mc_lca.calculate(iterations=use_distributions, seed=42)
+        #     results = mc_lca.results
+        #     characterized_inventory = np.quantile(results, [0.05, 0.5, 0.95], axis=0)
+        #     mc_lca.store_results()  # Save the Monte Carlo results for GSA
 
         else:
             # Use distributions for LCA calculations
@@ -333,7 +356,10 @@ def process_region(data: Tuple) -> dict[str, ndarray[Any, dtype[Any]] | list[int
             temp_results = []
             params = {}
 
+            print("Starting LCA calculations with distributions...")
+
             for _ in zip(range(use_distributions), lca):
+
                 matrix_result = (characterization_matrix @ lca.inventory).toarray()
                 temp_results.append(matrix_result)
                 for i in range(len(uncertain_parameters)):
@@ -360,6 +386,8 @@ def process_region(data: Tuple) -> dict[str, ndarray[Any, dtype[Any]] | list[int
             characterized_inventory = np.quantile(results, [0.05, 0.5, 0.95], axis=0)
 
         d.append(characterized_inventory)
+        variable_count += 1  # Increment the counter
+        print(f"Processed variable {variable_count}/{len(variables)}: {variable}")
 
         if debug:
             logging.info(
@@ -511,7 +539,7 @@ def _calculate_year(args: tuple):
     with CustomFilter("(almost) singular matrix"):
         lca.lci(factorize=True)
 
-    if shares is True:
+    if shares:
         logging.info("Calculating LCA results with subshares.")
         shares_indices = find_technology_indices(regions, technosphere_indices, geo)
         correlated_arrays = adjust_matrix_based_on_shares(
@@ -543,42 +571,65 @@ def _calculate_year(args: tuple):
     for region in regions:
         bar.update()
         # Iterate over each region
-        results[region] = process_region(
-            (
-                model,
-                scenario,
-                year,
-                region,
-                variables,
-                vars_info[region],
-                scenarios,
-                units,
-                demand_cutoff,
-                lca,
-                characterization_matrix,
-                methods,
-                debug,
-                use_distributions,
-                uncertain_parameters,
-            )
-        )
-
         if use_distributions != 0:
+            # mc_lca = MonteCarloLCA([{0: 1}], methods)
+            results[region] = process_region(
+                (
+                    model,
+                    scenario,
+                    year,
+                    region,
+                    variables,
+                    vars_info[region],
+                    scenarios,
+                    units,
+                    demand_cutoff,
+                    lca,
+                    characterization_matrix,
+                    methods,
+                    debug,
+                    use_distributions,
+                    uncertain_parameters,
+                    # mc_lca,
+                )
+            )
             for method, impacts in results[region]["impact_by_method"].items():
                 total_impacts_by_method[method].extend(impacts)
             all_param_keys.update(results[region]["param_keys"])
+        else:
+            results[region] = process_region(
+                (
+                    model,
+                    scenario,
+                    year,
+                    region,
+                    variables,
+                    vars_info[region],
+                    scenarios,
+                    units,
+                    demand_cutoff,
+                    lca,
+                    characterization_matrix,
+                    methods,
+                    debug,
+                    use_distributions,
+                    uncertain_parameters,
+                    # None, # No Monte Carlo LCA object needed
+                )
+            )
 
     if use_distributions != 0:
-        if shares is True:
+        export_path = STATS_DIR / f"{model}_{scenario}_{year}.xlsx"
+        if shares:
             log_subshares_to_excel(
                 year=year,
                 shares=shares,
-                export_path=STATS_DIR / f"{model}_{scenario}_{year}.xlsx",
+                export_path=export_path,
             )
         log_results_to_excel(
             total_impacts_by_method=total_impacts_by_method,
             methods=methods,
-            filepath=STATS_DIR / f"{model}_{scenario}_{year}.xlsx",
+            filepath=export_path,
         )
         create_mapping_sheet(
             filepaths=filepaths,
@@ -586,13 +637,18 @@ def _calculate_year(args: tuple):
             scenario=scenario,
             year=year,
             parameter_keys=all_param_keys,
-            export_path=STATS_DIR / f"{model}_{scenario}_{year}.xlsx",
+            export_path=export_path,
         )
-        run_stats_analysis(
-            model=model,
-            scenario=scenario,
-            year=year,
+        run_GSA_OLS(
             methods=methods,
-            export_path=STATS_DIR / f"{model}_{scenario}_{year}.xlsx",
+            export_path=export_path,
         )
+        print(f"OLS summaries have been saved to the 'OLS' sheets in {export_path.resolve()}")
+
+        run_GSA_delta(
+            methods=methods,
+            export_path=export_path,
+        )
+        print(f"Delta analysis has been saved to the 'Delta' sheets in {export_path.resolve()}")
+
     return results
