@@ -5,9 +5,9 @@ This module contains functions to calculate the Life Cycle Assessment (LCA) resu
 
 import logging
 import uuid
+from collections import defaultdict
 from pathlib import Path
 from typing import Any, Dict, List, Tuple
-from collections import defaultdict
 
 import bw2calc as bc
 import bw_processing as bwp
@@ -272,7 +272,6 @@ def process_region(data: Tuple) -> dict[str, ndarray[Any, dtype[Any]] | list[int
     variables_demand = {}
     d = []
 
-
     total_demand = (
         scenarios.sel(
             region=region,
@@ -340,7 +339,6 @@ def process_region(data: Tuple) -> dict[str, ndarray[Any, dtype[Any]] | list[int
 
     param_keys = set()
 
-
     if use_distributions == 0:
         # Regular LCA calculations
         with CustomFilter("(almost) singular matrix"):
@@ -364,9 +362,7 @@ def process_region(data: Tuple) -> dict[str, ndarray[Any, dtype[Any]] | list[int
     else:
         # Use distributions for LCA calculations
         # next(lca) is a generator that yields the inventory matrix
-        results = np.zeros(
-            (use_distributions, len(variables_demand), len(methods))
-        )
+        results = np.zeros((use_distributions, len(variables_demand), len(methods)))
         params = defaultdict(list)
 
         params_container = defaultdict(list)
@@ -379,9 +375,7 @@ def process_region(data: Tuple) -> dict[str, ndarray[Any, dtype[Any]] | list[int
                     results[iteration[0], key] = matrix_result.sum(axis=-1)
 
                     for i in range(len(uncertain_parameters)):
-                        param_key = (
-                            f"{uncertain_parameters[i][0]}_to_{uncertain_parameters[i][1]}"
-                        )
+                        param_key = f"{uncertain_parameters[i][0]}_to_{uncertain_parameters[i][1]}"
                         param_keys.add(param_key)
                         value = -lca.technosphere_matrix[
                             uncertain_parameters[i][0], uncertain_parameters[i][1]
@@ -589,7 +583,7 @@ def _calculate_year(args: tuple):
                     # mc_lca,
                 )
             )
-            #for method, impacts in results[region]["impact_by_method"].items():
+            # for method, impacts in results[region]["impact_by_method"].items():
             #    total_impacts_by_method[method].extend(impacts)
             all_param_keys.update(results[region]["param_keys"])
         else:
@@ -622,11 +616,11 @@ def _calculate_year(args: tuple):
                 shares=shares,
                 export_path=export_path,
             )
-        #log_results_to_excel(
+        # log_results_to_excel(
         #    total_impacts_by_method=total_impacts_by_method,
         #    methods=methods,
         #    filepath=export_path,
-        #)
+        # )
         create_mapping_sheet(
             filepaths=filepaths,
             model=model,
@@ -635,13 +629,13 @@ def _calculate_year(args: tuple):
             parameter_keys=all_param_keys,
             export_path=export_path,
         )
-        #run_GSA_OLS(
+        # run_GSA_OLS(
         #    methods=methods,
         #    export_path=export_path,
-        #)
-        #print(
+        # )
+        # print(
         #    f"OLS summaries have been saved to the 'OLS' sheets in {export_path.resolve()}"
-        #)
+        # )
 
         run_GSA_delta(
             methods=methods,

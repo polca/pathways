@@ -365,7 +365,9 @@ class Pathways:
                         results.update(
                             {
                                 (model, scenario, year): result
-                                for year, result in zip(years, p.map(_calculate_year, args))
+                                for year, result in zip(
+                                    years, p.map(_calculate_year, args)
+                                )
                             }
                         )
                 else:

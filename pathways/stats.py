@@ -7,7 +7,7 @@ from zipfile import BadZipFile
 import numpy as np
 import pandas as pd
 import statsmodels.api as sm
-from openpyxl import load_workbook, Workbook
+from openpyxl import Workbook, load_workbook
 from SALib.analyze import delta
 
 
@@ -328,8 +328,14 @@ def run_GSA_OLS(methods: list, export_path: Path):
     X_base = data.drop(columns=["Iteration", "Year"] + methods)
     X_base = sm.add_constant(X_base)
     corr_matrix = X_base.corr().abs()
-    upper_triangle = corr_matrix.where(np.triu(np.ones(corr_matrix.shape), k=1).astype(bool))
-    high_correlation = [column for column in upper_triangle.columns if any(upper_triangle[column] > 0.95)]
+    upper_triangle = corr_matrix.where(
+        np.triu(np.ones(corr_matrix.shape), k=1).astype(bool)
+    )
+    high_correlation = [
+        column
+        for column in upper_triangle.columns
+        if any(upper_triangle[column] > 0.95)
+    ]
 
     if high_correlation:
         print(f"OLS: High multicollinearity detected in columns: {high_correlation}")
