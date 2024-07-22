@@ -41,7 +41,7 @@ setup(
     # Might need to change the directory name as well.
     include_package_data=True,
     install_requires=[
-        "numpy<2.0.0",
+        "numpy==1.24.0",
         "pathlib",
         "pandas",
         "xarray",
@@ -55,6 +55,7 @@ setup(
         "platformdirs",
         "fs",
         "statsmodels",
+        "SALib"
     ],
     url="https://github.com/polca/premise",
     description="Scenario-level LCA of energy systems and transition pathways",

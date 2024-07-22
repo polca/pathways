@@ -1,33 +1,19 @@
 from pathways import Pathways
 
-p = Pathways(datapackage="./image-SSP2-RCP19/datapackage.json")
+p = Pathways(datapackage="remind-SSP2-PkBudg1150-stem-SPS1.zip")
 
-for scenario in [
-    # "SSP2-Base",
-    "SSP2-RCP19"
-]:
-    p.calculate(
-        methods=[
-            "RELICS - metals extraction - Lithium",
-            # "RELICS - metals extraction - Molybdenum",
-        ],
-        regions=[
-            "WEU",
-            # "USA",
-        ],
-        scenarios=[scenario],
-        years=[
-            2010,
-            2020,
-            2030,
-        ],
-        variables=[
-            v
-            for v in p.scenarios.coords["variables"].values
-            if any(i in v for i in ["Industry", "Transport", "Heating"])
-        ],
-        demand_cutoff=0.01,
-        multiprocessing=True,
-    )
-    arr = p.display_results()
-    arr.to_netcdf(f"results_image_{scenario}.nc")
+
+p.calculate(
+    methods=[
+        'EF v3.1 EN15804 - climate change - global warming potential (GWP100)',
+    ],
+    regions=["CH",],
+    scenarios=p.scenarios.pathway.values.tolist(),
+    years=[
+        2050,
+    ],
+    variables=[v for v in p.scenarios.coords["variables"].values if v.startswith("FE")],
+    use_distributions=20,
+    subshares=True,
+    multiprocessing=False
+)

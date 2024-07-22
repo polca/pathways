@@ -214,6 +214,7 @@ class Pathways:
         use_distributions: int = 0,
         subshares: bool = False,
         remove_uncertainty: bool = False,
+        multiprocessing: bool = True,
     ) -> None:
         """
         Calculate Life Cycle Assessment (LCA) results for given methods, models, scenarios, regions, and years.
@@ -356,15 +357,20 @@ class Pathways:
                     )
                     for year in years
                 ]
-                # Process each region in parallel
-                with Pool(cpu_count()) as p:
-                    # store th results as a dictionary with years as keys
-                    results.update(
-                        {
-                            (model, scenario, year): result
-                            for year, result in zip(years, p.map(_calculate_year, args))
-                        }
-                    )
+
+                if multiprocessing:
+                    # Process each region in parallel
+                    with Pool(cpu_count()) as p:
+                        # store the results as a dictionary with years as keys
+                        results.update(
+                            {
+                                (model, scenario, year): result
+                                for year, result in zip(years, p.map(_calculate_year, args))
+                            }
+                        )
+                else:
+                    for arg in args:
+                        results[(model, scenario, arg[2])] = _calculate_year(arg)
 
         # remove None values in results
         results = {k: v for k, v in results.items() if v is not None}

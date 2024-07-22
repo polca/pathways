@@ -4,7 +4,6 @@ This module contains functions to calculate the Life Cycle Assessment (LCA) resu
 """
 
 import logging
-import time
 import uuid
 from pathlib import Path
 from typing import Any, Dict, List, Tuple
@@ -19,7 +18,7 @@ from numpy import dtype, ndarray
 from premise.geomap import Geomap
 from scipy import sparse
 
-from .filesystem_constants import DATA_DIR, DIR_CACHED_DB, STATS_DIR, USER_LOGS_DIR
+from .filesystem_constants import DIR_CACHED_DB, STATS_DIR, USER_LOGS_DIR
 from .lcia import fill_characterization_factors_matrices
 from .stats import (
     create_mapping_sheet,
@@ -287,7 +286,7 @@ def process_region(data: Tuple) -> dict[str, ndarray[Any, dtype[Any]] | list[int
     )
 
     if total_demand == 0:
-        print(
+        logging.info(
             f"Total demand for {region}, {model}, {scenario}, {year} is zero. "
             f"Skipping."
         )
@@ -320,7 +319,7 @@ def process_region(data: Tuple) -> dict[str, ndarray[Any, dtype[Any]] | list[int
         )
 
         if np.sum(demand) == 0:
-            print(
+            logging.info(
                 f"Total demand for {variable} in {region}, {model}, {scenario}, {year} is zero. "
                 f"Skipping."
             )
@@ -348,21 +347,12 @@ def process_region(data: Tuple) -> dict[str, ndarray[Any, dtype[Any]] | list[int
             characterized_inventory = (
                 characterization_matrix @ lca.inventory
             ).toarray()
-        # else:
-        #     mc_lca.func_units = functional_unit
-        #     mc_lca.methods = methods
-        #     mc_lca.calculate(iterations=use_distributions, seed=42)
-        #     results = mc_lca.results
-        #     characterized_inventory = np.quantile(results, [0.05, 0.5, 0.95], axis=0)
-        #     mc_lca.store_results()  # Save the Monte Carlo results for GSA
 
         else:
             # Use distributions for LCA calculations
             # next(lca) is a generator that yields the inventory matrix
             temp_results = []
             params = {}
-
-            print("Starting LCA calculations with distributions...")
 
             for _ in zip(range(use_distributions), lca):
 
@@ -393,7 +383,6 @@ def process_region(data: Tuple) -> dict[str, ndarray[Any, dtype[Any]] | list[int
 
         d.append(characterized_inventory)
         variable_count += 1  # Increment the counter
-        print(f"Processed variable {variable_count}/{len(variables)}: {variable}")
 
         if debug:
             logging.info(
