@@ -243,8 +243,10 @@ def adjust_matrix_based_on_shares(
 
     return data, indices, signs
 
+
 def default_dict_factory():
     return defaultdict(dict)
+
 
 def load_and_normalize_shares(ranges: dict, iterations: int) -> dict:
     """

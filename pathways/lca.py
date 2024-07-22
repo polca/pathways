@@ -4,6 +4,7 @@ This module contains functions to calculate the Life Cycle Assessment (LCA) resu
 """
 
 import logging
+import time
 import uuid
 from pathlib import Path
 from typing import Any, Dict, List, Tuple
@@ -25,15 +26,9 @@ from .stats import (
     log_intensities_to_excel,
     log_results_to_excel,
     log_subshares_to_excel,
-    run_GSA_OLS,
     run_GSA_delta,
+    run_GSA_OLS,
 )
-
-import time
-
-# from .montecarlo import MonteCarloLCA
-# from .sensitivity_analysis import GlobalSensitivityAnalysis
-
 from .subshares import (
     adjust_matrix_based_on_shares,
     find_technology_indices,
@@ -47,6 +42,10 @@ from .utils import (
     get_unit_conversion_factors,
     read_indices_csv,
 )
+
+# from .montecarlo import MonteCarloLCA
+# from .sensitivity_analysis import GlobalSensitivityAnalysis
+
 
 logging.basicConfig(
     level=logging.DEBUG,
@@ -276,12 +275,16 @@ def process_region(data: Tuple) -> dict[str, ndarray[Any, dtype[Any]] | list[int
     param_keys = set()
     params_container = []
 
-    total_demand = scenarios.sel(
-        region=region,
-        model=model,
-        pathway=scenario,
-        year=year,
-    ).sum(dim="variables").values
+    total_demand = (
+        scenarios.sel(
+            region=region,
+            model=model,
+            pathway=scenario,
+            year=year,
+        )
+        .sum(dim="variables")
+        .values
+    )
 
     if total_demand == 0:
         print(
@@ -305,13 +308,16 @@ def process_region(data: Tuple) -> dict[str, ndarray[Any, dtype[Any]] | list[int
 
         # Fetch the demand for the given
         # region, model, pathway, and year
-        demand = scenarios.sel(
-            variables=variable,
-            region=region,
-            model=model,
-            pathway=scenario,
-            year=year,
-        ).values * unit_vector
+        demand = (
+            scenarios.sel(
+                variables=variable,
+                region=region,
+                model=model,
+                pathway=scenario,
+                year=year,
+            ).values
+            * unit_vector
+        )
 
         if np.sum(demand) == 0:
             print(
@@ -643,12 +649,16 @@ def _calculate_year(args: tuple):
             methods=methods,
             export_path=export_path,
         )
-        print(f"OLS summaries have been saved to the 'OLS' sheets in {export_path.resolve()}")
+        print(
+            f"OLS summaries have been saved to the 'OLS' sheets in {export_path.resolve()}"
+        )
 
         run_GSA_delta(
             methods=methods,
             export_path=export_path,
         )
-        print(f"Delta analysis has been saved to the 'Delta' sheets in {export_path.resolve()}")
+        print(
+            f"Delta analysis has been saved to the 'Delta' sheets in {export_path.resolve()}"
+        )
 
     return results
