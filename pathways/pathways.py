@@ -371,7 +371,6 @@ class Pathways:
 
         self._fill_in_result_array(results)
 
-
     def _fill_in_result_array(self, results: dict):
 
         # Assuming DIR_CACHED_DB, results, and self.lca_results are already defined

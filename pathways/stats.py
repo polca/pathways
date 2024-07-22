@@ -1,15 +1,13 @@
 import os
-
 import re
 from pathlib import Path
 from typing import Dict, Set, Tuple
 from zipfile import BadZipFile
 
-import pandas as pd
 import numpy as np
+import pandas as pd
 import statsmodels.api as sm
 from openpyxl import load_workbook
-
 from SALib.analyze import delta
 
 
@@ -339,10 +337,18 @@ def run_GSA_OLS(methods: list, export_path: Path):
 
         # Check for multicollinearity
         corr_matrix = X.corr().abs()
-        upper_triangle = corr_matrix.where(np.triu(np.ones(corr_matrix.shape), k=1).astype(bool))
-        high_correlation = [column for column in upper_triangle.columns if any(upper_triangle[column] > 0.95)]
+        upper_triangle = corr_matrix.where(
+            np.triu(np.ones(corr_matrix.shape), k=1).astype(bool)
+        )
+        high_correlation = [
+            column
+            for column in upper_triangle.columns
+            if any(upper_triangle[column] > 0.95)
+        ]
         if high_correlation:
-            print(f"OLS: High multicollinearity detected in columns: {high_correlation}")
+            print(
+                f"OLS: High multicollinearity detected in columns: {high_correlation}"
+            )
             X = X.drop(columns=high_correlation)
 
         try:
@@ -376,12 +382,16 @@ def run_GSA_delta(methods: list, export_path: Path):
         return
 
     standard_columns = {"Iteration", "Year"}
-    params = [col for col in data.columns if col not in standard_columns and col not in methods]
+    params = [
+        col
+        for col in data.columns
+        if col not in standard_columns and col not in methods
+    ]
 
     problem = {
-        'num_vars': len(params),
-        'names': params,
-        'bounds': [[data[param].min(), data[param].max()] for param in params]
+        "num_vars": len(params),
+        "names": params,
+        "bounds": [[data[param].min(), data[param].max()] for param in params],
     }
 
     try:
@@ -411,13 +421,15 @@ def run_GSA_delta(methods: list, export_path: Path):
         ws.append([f"Delta Moment-Independent Measure for {method}"])
         ws.append(["Parameter", "Delta", "Delta Conf", "S1", "S1 Conf"])
         for i, param in enumerate(params):
-            ws.append([
-                param,
-                delta_results['delta'][i],
-                delta_results['delta_conf'][i],
-                delta_results['S1'][i],
-                delta_results['S1_conf'][i]
-            ])
+            ws.append(
+                [
+                    param,
+                    delta_results["delta"][i],
+                    delta_results["delta_conf"][i],
+                    delta_results["S1"][i],
+                    delta_results["S1_conf"][i],
+                ]
+            )
         ws.append([])
 
     book.save(export_path)
