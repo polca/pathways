@@ -55,7 +55,7 @@ setup(
         "platformdirs",
         "fs",
         "statsmodels",
-        "SALib"
+        "SALib",
     ],
     url="https://github.com/polca/premise",
     description="Scenario-level LCA of energy systems and transition pathways",
