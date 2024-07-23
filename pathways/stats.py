@@ -147,53 +147,47 @@ def log_subshares_to_excel(year: int, shares: dict, total_impacts_df: pd.DataFra
 
     return combined_df
 
-def log_intensities_to_excel(year: int, params: list, export_path: Path):
+def log_intensities_to_excel(year: int, params: list, df_tot_impacts: pd.DataFrame) -> pd.DataFrame:
     """
     Update or create an Excel file with new columns of data, based on model, scenario, and year.
 
     :param year: The year for which the data is logged.
     :param params: Dictionary where keys are the new column names and values are lists of data for each column.
-    :param export_path: The path to the Excel file where the data will be logged.
+
     """
 
     if not params:
         print("Warning: No new data provided to log.")
         return
 
-    try:
-        # merge list of dictionaries into a single dictionary
-        params = {k: v for d in params for k, v in d.items()}
 
-        max_length = max(len(v) for v in params.values())
+    # merge list of dictionaries into a single dictionary
+    params = {k: v for d in params for k, v in d.items()}
 
-        df_new = pd.DataFrame(params)
-        df_new["Iteration"] = range(1, max_length + 1)
-        df_new["Year"] = [year] * max_length
+    max_length = max(len(v) for v in params.values())
 
-        if os.path.exists(export_path):
-            df_existing = pd.read_excel(export_path)
+    df_new = pd.DataFrame(params)
+    df_new["Iteration"] = range(1, max_length + 1)
+    df_new["Year"] = [year] * max_length
 
-            combined_df = pd.merge(
-                df_existing,
-                df_new,
-                on=["Iteration", "Year"],
-                how="outer",
-                suffixes=("", "_new"),
+
+    combined_df = pd.merge(
+        df_tot_impacts,
+        df_new,
+        on=["Iteration", "Year"],
+        how="outer",
+        suffixes=("", "_new"),
+    )
+
+    for col in df_new.columns:
+        if col + "_new" in combined_df:
+            combined_df[col] = combined_df[col].combine_first(
+                combined_df.pop(col + "_new")
             )
 
-            for col in df_new.columns:
-                if col + "_new" in combined_df:
-                    combined_df[col] = combined_df[col].combine_first(
-                        combined_df.pop(col + "_new")
-                    )
+    combined_df = combined_df.loc[:, ~combined_df.columns.str.endswith("_new")]
 
-            combined_df = combined_df.loc[:, ~combined_df.columns.str.endswith("_new")]
-            df = combined_df
-        else:
-            df = df_new
-        df.to_excel(export_path, index=False)
-    except Exception as e:
-        print(f"Failed to update the Excel file: {e}")
+    return combined_df
 
 
 def log_results_to_excel(
@@ -209,15 +203,16 @@ def log_results_to_excel(
     :param filepath: Optional. File path for the Excel file to save the results.
     """
 
+    df = pd.DataFrame(columns=methods + ["Iteration", "Year", "Region"])
 
-    df = pd.DataFrame()
-
-    for method, impacts in total_impacts_by_method.items():
-        df[method] = pd.Series(impacts)
-
-    base_cols = ["Iteration", "Year"] if "Iteration" in df.columns else []
-    other_cols = [col for col in df.columns if col not in base_cols + methods]
-    df = df[base_cols + methods + other_cols]
+    for (region, year), values in total_impacts_by_method.items():
+        df = pd.concat([
+            df,
+            pd.DataFrame(
+                values, columns=methods
+            ).assign(Iteration=range(1, len(values) + 1), Year=year, Region=region)
+            ]
+        )
 
     return df
 

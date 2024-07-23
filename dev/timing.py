@@ -2,6 +2,8 @@ from pathways import Pathways
 
 p = Pathways(datapackage="remind-SSP2-PkBudg1150-stem-SPS1.zip")
 
+vars = [v for v in p.scenarios.coords["variables"].values if v.startswith("FE")]
+
 
 p.calculate(
     methods=[
@@ -15,8 +17,8 @@ p.calculate(
     years=[
         2050,
     ],
-    variables=[v for v in p.scenarios.coords["variables"].values if v.startswith("FE")],
-    use_distributions=20,
+    variables=vars,
+    use_distributions=3,
     subshares=True,
     multiprocessing=False,
 )
