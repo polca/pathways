@@ -536,7 +536,6 @@ def _calculate_year(args: tuple):
         lca.lci(factorize=True)
 
     if shares:
-        logging.info("Calculating LCA results with subshares.")
         shares_indices = find_technology_indices(regions, technosphere_indices, geo)
         correlated_arrays = adjust_matrix_based_on_shares(
             lca=lca,
@@ -561,14 +560,11 @@ def _calculate_year(args: tuple):
             f"Shape: {characterization_matrix.shape}"
         )
 
-    total_impacts_by_method = {method: [] for method in methods}
-    all_param_keys = set()
     bar = pyprind.ProgBar(len(regions))
     for region in regions:
         bar.update()
         # Iterate over each region
         if use_distributions != 0:
-            # mc_lca = MonteCarloLCA([{0: 1}], methods)
             results[region] = process_region(
                 (
                     model,
@@ -586,12 +582,8 @@ def _calculate_year(args: tuple):
                     debug,
                     use_distributions,
                     uncertain_parameters,
-                    # mc_lca,
                 )
             )
-            #for method, impacts in results[region]["impact_by_method"].items():
-            #    total_impacts_by_method[method].extend(impacts)
-            all_param_keys.update(results[region]["param_keys"])
         else:
             results[region] = process_region(
                 (
@@ -610,45 +602,7 @@ def _calculate_year(args: tuple):
                     debug,
                     use_distributions,
                     uncertain_parameters,
-                    # None, # No Monte Carlo LCA object needed
                 )
             )
-
-    if use_distributions != 0:
-        export_path = STATS_DIR / f"{model}_{scenario}_{year}.xlsx"
-        if shares:
-            log_subshares_to_excel(
-                year=year,
-                shares=shares,
-                export_path=export_path,
-            )
-        #log_results_to_excel(
-        #    total_impacts_by_method=total_impacts_by_method,
-        #    methods=methods,
-        #    filepath=export_path,
-        #)
-        create_mapping_sheet(
-            filepaths=filepaths,
-            model=model,
-            scenario=scenario,
-            year=year,
-            parameter_keys=all_param_keys,
-            export_path=export_path,
-        )
-        #run_GSA_OLS(
-        #    methods=methods,
-        #    export_path=export_path,
-        #)
-        #print(
-        #    f"OLS summaries have been saved to the 'OLS' sheets in {export_path.resolve()}"
-        #)
-
-        run_GSA_delta(
-            methods=methods,
-            export_path=export_path,
-        )
-        print(
-            f"Delta analysis has been saved to the 'Delta' sheets in {export_path.resolve()}"
-        )
 
     return results

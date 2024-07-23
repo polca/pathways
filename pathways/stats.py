@@ -97,7 +97,7 @@ def log_double_accounting(
             )
 
 
-def log_subshares_to_excel(year: int, shares: dict, export_path: Path):
+def log_subshares_to_excel(year: int, shares: dict, total_impacts_df: pd.DataFrame) -> pd.DataFrame:
     """
     Logs results to an Excel file named according to model, scenario, and year, specifically for the given year.
     This method assumes that each entry in the shares defaultdict is structured to be directly usable in a DataFrame.
@@ -105,7 +105,7 @@ def log_subshares_to_excel(year: int, shares: dict, export_path: Path):
     Parameters:
     :param year: The specific year for which data is being logged.
     :param shares: A nested defaultdict containing shares data for multiple years and types.
-    :param export_path: The path to the Excel file where the data will be logged.
+    :param total_impacts_df: DataFrame containing total impacts for each method.
     """
 
     data = []
@@ -128,32 +128,24 @@ def log_subshares_to_excel(year: int, shares: dict, export_path: Path):
 
     new_df = pd.DataFrame(data)
 
-    try:
-        if os.path.exists(export_path):
-            df_existing = pd.read_excel(export_path)
-            # Merge new data into existing data, selectively updating share columns
-            combined_df = (
-                df_existing.set_index(["Iteration", "Year"])
-                .combine_first(new_df.set_index(["Iteration", "Year"]))
-                .reset_index()
-            )
-            # Optionally, ensure the columns are in a meaningful order
-            new_columns = [
-                col for col in new_df.columns if col not in ["Iteration", "Year"]
-            ]
-            existing_columns = [
-                col for col in df_existing.columns if col not in new_df.columns
-            ]
-            combined_df = combined_df[
-                ["Iteration", "Year"] + new_columns + existing_columns
-            ]
+    # Merge new data into existing data, selectively updating share columns
+    combined_df = (
+        total_impacts_df.set_index(["Iteration", "Year"])
+        .combine_first(new_df.set_index(["Iteration", "Year"]))
+        .reset_index()
+    )
+    # Optionally, ensure the columns are in a meaningful order
+    new_columns = [
+        col for col in new_df.columns if col not in ["Iteration", "Year"]
+    ]
+    existing_columns = [
+        col for col in total_impacts_df.columns if col not in new_df.columns
+    ]
+    combined_df = combined_df[
+        ["Iteration", "Year"] + new_columns + existing_columns
+    ]
 
-            combined_df.to_excel(export_path, index=False)
-        else:
-            new_df.to_excel(export_path, index=False)
-    except Exception as e:
-        print(f"Error updating Excel file: {str(e)}")
-
+    return combined_df
 
 def log_intensities_to_excel(year: int, params: list, export_path: Path):
     """
@@ -207,7 +199,6 @@ def log_intensities_to_excel(year: int, params: list, export_path: Path):
 def log_results_to_excel(
     total_impacts_by_method: dict,
     methods: list,
-    filepath: Path,
 ):
     """
     Log the characterized inventory results for each LCIA method into separate columns in an Excel file.
@@ -218,10 +209,8 @@ def log_results_to_excel(
     :param filepath: Optional. File path for the Excel file to save the results.
     """
 
-    try:
-        df = pd.read_excel(filepath)
-    except FileNotFoundError:
-        df = pd.DataFrame()
+
+    df = pd.DataFrame()
 
     for method, impacts in total_impacts_by_method.items():
         df[method] = pd.Series(impacts)
@@ -230,7 +219,10 @@ def log_results_to_excel(
     other_cols = [col for col in df.columns if col not in base_cols + methods]
     df = df[base_cols + methods + other_cols]
 
-    df.to_excel(filepath, index=False)
+    return df
+
+
+
 
 
 def create_mapping_sheet(
@@ -239,8 +231,7 @@ def create_mapping_sheet(
     scenario: str,
     year: int,
     parameter_keys: set,
-    export_path: Path,
-):
+) -> pd.DataFrame:
     """
     Create a mapping sheet for the activities with uncertainties.
     :param filepaths: List of paths to data files.
@@ -283,13 +274,7 @@ def create_mapping_sheet(
         ["Activity", "Product", "Location", "Unit", "Index"]
     ]  # Restrict columns if necessary
 
-    try:
-        with pd.ExcelWriter(
-            export_path, mode="a", engine="openpyxl", if_sheet_exists="replace"
-        ) as writer:
-            mapping_df.to_excel(writer, index=False, sheet_name="Mapping")
-    except Exception as e:
-        print(f"Error writing mapping sheet to {export_path}: {str(e)}")
+    return mapping_df
 
 
 def escape_formula(text: str):
@@ -364,60 +349,44 @@ def run_GSA_OLS(methods: list, export_path: Path):
     book.save(export_path)
 
 
-def run_GSA_delta(methods: list, export_path: Path):
+def run_GSA_delta(methods: list, df_tot_impacts: pd.DataFrame) -> pd.DataFrame:
     """
     Runs Delta Moment-Independent Measure analysis for specified methods and writes summaries to an Excel file.
 
     :param methods: List of method names corresponding to dataset columns.
     :param export_path: Path to the directory where the Excel file will be saved.
     """
-    try:
-        data = pd.read_excel(export_path, sheet_name="Sheet1")
-    except FileNotFoundError:
-        print(f"Data file {export_path} not found.")
-        return
 
     standard_columns = {"Iteration", "Year"}
     params = [
         col
-        for col in data.columns
+        for col in df_tot_impacts.columns
         if col not in standard_columns and col not in methods
     ]
 
     problem = {
         "num_vars": len(params),
         "names": params,
-        "bounds": [[data[param].min(), data[param].max()] for param in params],
+        "bounds": [[df_tot_impacts[param].min(), df_tot_impacts[param].max()] for param in params],
     }
 
-    try:
-        book = load_workbook(export_path)
-    except FileNotFoundError:
-        book = pd.ExcelWriter(export_path, engine="openpyxl")
-        book.close()
-        book = load_workbook(export_path)
-
-    if "GSA" not in book.sheetnames:
-        ws = book.create_sheet("GSA")
-    else:
-        ws = book["GSA"]
-        book.remove(ws)
-        ws = book.create_sheet("GSA")
-
+    results = []
     for method in methods:
-        if method not in data.columns:
+        if method not in df_tot_impacts.columns:
             print(f"Data for {method} not found in the file.")
             continue
 
-        param_values = data[params].values
-        Y = data[method].values
+        param_values = df_tot_impacts[params].values
+        Y = df_tot_impacts[method].values
 
         delta_results = delta.analyze(problem, param_values, Y, print_to_console=False)
 
-        ws.append([f"Delta Moment-Independent Measure for {method}"])
-        ws.append(["Parameter", "Delta", "Delta Conf", "S1", "S1 Conf"])
+
+
+        results.append([f"Delta Moment-Independent Measure for {method}"])
+        results.append(["Parameter", "Delta", "Delta Conf", "S1", "S1 Conf"])
         for i, param in enumerate(params):
-            ws.append(
+            results.append(
                 [
                     param,
                     delta_results["delta"][i],
@@ -426,6 +395,6 @@ def run_GSA_delta(methods: list, export_path: Path):
                     delta_results["S1_conf"][i],
                 ]
             )
-        ws.append([])
+        results.append([])
 
-    book.save(export_path)
+    return pd.DataFrame(results)

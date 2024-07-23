@@ -35,6 +35,8 @@ from .utils import (
     resize_scenario_data,
 )
 
+from .stats import log_results_to_excel, log_subshares_to_excel, create_mapping_sheet, run_GSA_delta
+
 
 class Pathways:
     """The Pathways class reads in a datapackage that contains scenario data,
@@ -375,9 +377,9 @@ class Pathways:
         # remove None values in results
         results = {k: v for k, v in results.items() if v is not None}
 
-        self._fill_in_result_array(results)
+        self._fill_in_result_array(results, use_distributions, subshares, methods)
 
-    def _fill_in_result_array(self, results: dict):
+    def _fill_in_result_array(self, results: dict, use_distributions: int, subshares: bool, methods: list) -> None:
 
         # Assuming DIR_CACHED_DB, results, and self.lca_results are already defined
 
@@ -441,6 +443,61 @@ class Pathways:
                                         "variable": list(variables.keys()),
                                     }
                                 ] = summed_data.transpose(0, 2, 1)
+
+            if use_distributions > 0:
+                export_path = STATS_DIR / f"{model}_{scenario}_{year}.xlsx"
+
+                # create Excel workbook using openpyxl
+                with pd.ExcelWriter(export_path, engine="openpyxl") as writer:
+
+                    df_tot_impacts = log_results_to_excel(
+                        total_impacts_by_method=total_impacts_by_method,
+                        methods=methods,
+                    )
+
+                    # create new worksheet called 'Total impacts'
+                    writer.book.create_sheet("Total impacts")
+                    # add df to it
+                    df_tot_impacts.to_excel(writer, sheet_name="Total impacts", index=True)
+
+                    if subshares:
+                        df_shares = log_subshares_to_excel(
+                            year=year,
+                            shares=shares,
+                            total_impacts_df=df_tot_impacts,
+                        )
+
+                        # create new worksheet called 'Subshares'
+                        writer.book.create_sheet("Subshares")
+                        # add df to it
+                        df_shares.to_excel(writer, sheet_name="Subshares", index=True)
+
+                    df_mapping = create_mapping_sheet(
+                        filepaths=filepaths,
+                        model=model,
+                        scenario=scenario,
+                        year=year,
+                        parameter_keys=all_param_keys,
+                    )
+
+                    # create new worksheet called 'Mapping'
+                    writer.book.create_sheet("Mapping")
+                    # add df to it
+                    df_mapping.to_excel(writer, sheet_name="Mapping", index=True)
+
+                    df_GSA = run_GSA_delta(
+                        methods=methods,
+                        df_tot_impacts=df_tot_impacts,
+                    )
+
+                    # create new worksheet called 'Delta'
+                    writer.book.create_sheet("Delta")
+                    # add df to it
+                    df_GSA.to_excel(writer, sheet_name="Delta", index=True)
+
+                    print(
+                        f"Delta analysis has been saved to the 'Delta' sheets in {export_path.resolve()}"
+                    )
 
     def display_results(self, cutoff: float = 0.001) -> xr.DataArray:
         return display_results(self.lca_results, cutoff=cutoff)
