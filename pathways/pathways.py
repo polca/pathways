@@ -19,6 +19,13 @@ from .data_validation import validate_datapackage
 from .filesystem_constants import DATA_DIR, DIR_CACHED_DB, STATS_DIR, USER_LOGS_DIR
 from .lca import _calculate_year, get_lca_matrices
 from .lcia import get_lcia_method_names
+from .stats import (
+    create_mapping_sheet,
+    log_intensities_to_excel,
+    log_results_to_excel,
+    log_subshares_to_excel,
+    run_GSA_delta,
+)
 from .subshares import generate_samples
 from .utils import (
     _get_mapping,
@@ -34,8 +41,6 @@ from .utils import (
     load_units_conversion,
     resize_scenario_data,
 )
-
-from .stats import log_results_to_excel, log_subshares_to_excel, create_mapping_sheet, run_GSA_delta, log_intensities_to_excel
 
 
 class Pathways:
@@ -381,7 +386,9 @@ class Pathways:
 
         self._fill_in_result_array(results, use_distributions, subshares, methods)
 
-    def _fill_in_result_array(self, results: dict, use_distributions: int, subshares: bool, methods: list) -> None:
+    def _fill_in_result_array(
+        self, results: dict, use_distributions: int, subshares: bool, methods: list
+    ) -> None:
 
         # Assuming DIR_CACHED_DB, results, and self.lca_results are already defined
 
@@ -424,7 +431,9 @@ class Pathways:
                         if idx.size > 0:
 
                             if use_distributions > 0:
-                                total_impacts[(region, year)] = d.sum(axis=-1).sum(axis=1)
+                                total_impacts[(region, year)] = d.sum(axis=-1).sum(
+                                    axis=1
+                                )
 
                             summed_data = d[..., idx].sum(axis=-1)
 
@@ -469,7 +478,9 @@ class Pathways:
                     # create new worksheet called 'Total impacts'
                     writer.book.create_sheet("Total impacts")
                     # add df to it
-                    df_tot_impacts.to_excel(writer, sheet_name="Total impacts", index=False)
+                    df_tot_impacts.to_excel(
+                        writer, sheet_name="Total impacts", index=False
+                    )
 
                     # if len(params_container) > 0:
                     #     df_intensities = log_intensities_to_excel(

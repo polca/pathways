@@ -5,20 +5,20 @@ This module contains functions to calculate the Life Cycle Assessment (LCA) resu
 
 import logging
 import uuid
+from collections import defaultdict
 from pathlib import Path
 from typing import Any, Dict, List, Tuple
-from collections import defaultdict
 
 import bw2calc as bc
 import bw_processing as bwp
 import numpy as np
 import pyprind
+from bw2calc import MultiLCA
 from bw2calc.utils import get_datapackage
 from bw_processing import Datapackage
 from numpy import dtype, ndarray
 from premise.geomap import Geomap
 from scipy import sparse
-from bw2calc import MultiLCA
 
 from .filesystem_constants import DIR_CACHED_DB, STATS_DIR, USER_LOGS_DIR
 from .lcia import fill_characterization_factors_matrices
@@ -245,15 +245,15 @@ def remove_double_counting(
 
 
 def create_functional_units(
-        scenarios,
-        region,
-        model,
-        scenario,
-        year,
-        variables,
-        vars_idx,
-        units_map,
-        demand_cutoff
+    scenarios,
+    region,
+    model,
+    scenario,
+    year,
+    variables,
+    vars_idx,
+    units_map,
+    demand_cutoff,
 ) -> [dict, dict]:
 
     variables_demand = {}
@@ -290,14 +290,14 @@ def create_functional_units(
         # Fetch the demand for the given
         # region, model, pathway, and year
         demand = (
-                scenarios.sel(
-                    variables=variable,
-                    region=region,
-                    model=model,
-                    pathway=scenario,
-                    year=year,
-                ).values
-                * unit_vector
+            scenarios.sel(
+                variables=variable,
+                region=region,
+                model=model,
+                pathway=scenario,
+                year=year,
+            ).values
+            * unit_vector
         )
 
         if np.sum(demand) == 0:
@@ -392,8 +392,6 @@ def process_region(data: Tuple) -> dict[str, ndarray[Any, dtype[Any]] | list[int
                     index: -lca.technosphere_matrix[index]
                     for index in lca.uncertain_parameters
                 }
-
-
 
                 #
                 #
@@ -550,7 +548,9 @@ def _calculate_year(args: tuple):
         lca = bc.MultiLCA(
             demands=fus,
             method_config={"impact_categories": []},
-            data_objs=[bw_datapackage,],
+            data_objs=[
+                bw_datapackage,
+            ],
             use_distributions=True if use_distributions > 0 else False,
         )
         lca.uncertain_parameters = uncertain_parameters
