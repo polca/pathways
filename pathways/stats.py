@@ -97,7 +97,9 @@ def log_double_accounting(
             )
 
 
-def log_subshares_to_excel(year: int, shares: dict, total_impacts_df: pd.DataFrame) -> pd.DataFrame:
+def log_subshares_to_excel(
+    year: int, shares: dict, total_impacts_df: pd.DataFrame
+) -> pd.DataFrame:
     """
     Logs results to an Excel file named according to model, scenario, and year, specifically for the given year.
     This method assumes that each entry in the shares defaultdict is structured to be directly usable in a DataFrame.
@@ -135,17 +137,14 @@ def log_subshares_to_excel(year: int, shares: dict, total_impacts_df: pd.DataFra
         .reset_index()
     )
     # Optionally, ensure the columns are in a meaningful order
-    new_columns = [
-        col for col in new_df.columns if col not in ["Iteration", "Year"]
-    ]
+    new_columns = [col for col in new_df.columns if col not in ["Iteration", "Year"]]
     existing_columns = [
         col for col in total_impacts_df.columns if col not in new_df.columns
     ]
-    combined_df = combined_df[
-        ["Iteration", "Year"] + new_columns + existing_columns
-    ]
+    combined_df = combined_df[["Iteration", "Year"] + new_columns + existing_columns]
 
     return combined_df
+
 
 def log_intensities_to_excel(year: int, params: list, export_path: Path):
     """
@@ -209,7 +208,6 @@ def log_results_to_excel(
     :param filepath: Optional. File path for the Excel file to save the results.
     """
 
-
     df = pd.DataFrame()
 
     for method, impacts in total_impacts_by_method.items():
@@ -220,9 +218,6 @@ def log_results_to_excel(
     df = df[base_cols + methods + other_cols]
 
     return df
-
-
-
 
 
 def create_mapping_sheet(
@@ -373,7 +368,10 @@ def run_GSA_delta(methods: list, df_tot_impacts: pd.DataFrame) -> pd.DataFrame:
     problem = {
         "num_vars": len(params),
         "names": params,
-        "bounds": [[df_tot_impacts[param].min(), df_tot_impacts[param].max()] for param in params],
+        "bounds": [
+            [df_tot_impacts[param].min(), df_tot_impacts[param].max()]
+            for param in params
+        ],
     }
 
     results = []
@@ -386,8 +384,6 @@ def run_GSA_delta(methods: list, df_tot_impacts: pd.DataFrame) -> pd.DataFrame:
         Y = df_tot_impacts[method].values
 
         delta_results = delta.analyze(problem, param_values, Y, print_to_console=False)
-
-
 
         results.append([f"Delta Moment-Independent Measure for {method}"])
         results.append(["Parameter", "Delta", "Delta Conf", "S1", "S1 Conf"])
