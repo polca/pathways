@@ -391,8 +391,6 @@ class Pathways:
         self, results: dict, use_distributions: int, shares: [None, dict], methods: list
     ) -> None:
 
-        # Assuming DIR_CACHED_DB, results, and self.lca_results are already defined
-
         # Pre-loading data from disk if possible
         cached_data = {
             data["id_array"]: load_numpy_array_from_disk(
@@ -484,6 +482,15 @@ class Pathways:
                 if region != "other"
             }
 
+            iteration_results = {
+                data["iterations_results"]: load_numpy_array_from_disk(
+                    DIR_CACHED_DB / f"{data['iterations_results']}.npy",
+                )
+                for coord, result in results.items()
+                for region, data in result.items()
+                if region != "other"
+            }
+
             for coord, result in results.items():
                 model, scenario, year = coord
 
@@ -505,8 +512,7 @@ class Pathways:
                         if region == "other":
                             continue
 
-                        id_array = data["id_array"]
-                        total_impacts = np.squeeze(cached_data[id_array]).sum(-1).sum(1)
+                        total_impacts = iteration_results[data["iterations_results"]]
 
                         df_sum_impacts = pd.concat(
                             [
@@ -568,7 +574,7 @@ class Pathways:
                     )
                     df_GSA.to_excel(writer, sheet_name="Global Sensitivity Analysis", index=False)
 
-                    print(f"Statistical analysis: {export_path.resolve()}")
+                print(f"Statistical analysis: {export_path.resolve()}")
 
     def display_results(self, cutoff: float = 0.001) -> xr.DataArray:
         return display_results(self.lca_results, cutoff=cutoff)

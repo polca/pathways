@@ -356,6 +356,7 @@ def process_region(data: Tuple) -> dict[str, ndarray[Any, dtype[Any]] | list[int
     id_uncertainty_indices = None
     id_uncertainty_values = None
     id_technosphere_indices = None
+    id_iter_results_array = None
 
     if use_distributions == 0:
         # Regular LCA calculations
@@ -374,7 +375,6 @@ def process_region(data: Tuple) -> dict[str, ndarray[Any, dtype[Any]] | list[int
         iter_results, iter_param_vals = [], []
         with CustomFilter("(almost) singular matrix"):
             for iteration in range(use_distributions):
-                print(f"------ Iteration {iteration + 1}/{use_distributions}...")
                 next(lca)
                 lca.lci()
 
@@ -394,6 +394,12 @@ def process_region(data: Tuple) -> dict[str, ndarray[Any, dtype[Any]] | list[int
 
         lci_results = np.array(iter_results)
         lci_results = np.quantile(lci_results, [0.05, 0.5, 0.95], axis=0)
+
+        total_results = np.array(iter_results).sum(-1).sum(1)
+
+        # Save the iterations results to disk
+        id_iter_results_array = uuid.uuid4()
+        np.save(file=DIR_CACHED_DB / f"{id_iter_results_array}.npy", arr=total_results)
 
         # Save the uncertainty indices and values to disk
         id_uncertainty_indices = uuid.uuid4()
@@ -430,6 +436,7 @@ def process_region(data: Tuple) -> dict[str, ndarray[Any, dtype[Any]] | list[int
         d["uncertainty_params"] = id_uncertainty_indices
         d["uncertainty_vals"] = id_uncertainty_values
         d["technosphere_indices"] = id_technosphere_indices
+        d["iterations_results"] = id_iter_results_array
 
     return d
 

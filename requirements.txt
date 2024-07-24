@@ -1,4 +1,4 @@
-numpy==1.24.0
+numpy==1.24.4
 pathlib
 pandas
 scipy
@@ -6,7 +6,7 @@ xarray
 premise
 pyyaml
 bw_processing
-bw2calc >= 2.0.dev17
+bw2calc >= 2.0.dev18
 scikit-umfpack
 datapackage
 pyprind

@@ -274,7 +274,11 @@ def run_GSA_delta(
     # merge uncertainty_values and technology_shares
     # based on "iteration" and "region" columns
 
-    df_parameters = uncertainty_values.merge(technology_shares, on=["iteration", "region"])
+    if len(technology_shares) > 0:
+        df_parameters = uncertainty_values.merge(technology_shares, on=["iteration", "region"])
+    else:
+        df_parameters = uncertainty_values
+
     parameters = [param for param in df_parameters.columns if param not in ["iteration", "region"]]
 
     problem = {
@@ -286,14 +290,12 @@ def run_GSA_delta(
         ],
     }
 
-    print(problem)
-
     methods = [m for m in total_impacts.columns if m not in ["iteration", "region"]]
 
     results = []
 
     for method in methods:
-        param_values = df_parameters[params].values
+        param_values = df_parameters[parameters].values
 
         # total impacts for the method
         Y = total_impacts[method].values
@@ -302,7 +304,7 @@ def run_GSA_delta(
 
         results.append([f"Delta Moment-Independent Measure for {method}"])
         results.append(["Parameter", "Delta", "Delta Conf", "S1", "S1 Conf"])
-        for i, param in enumerate(params):
+        for i, param in enumerate(parameters):
             results.append(
                 [
                     param,
