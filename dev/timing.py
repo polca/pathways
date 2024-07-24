@@ -8,17 +8,13 @@ p.calculate(
     methods=[
         "EF v3.1 EN15804 - climate change - global warming potential (GWP100)",
         "EF v3.1 EN15804 - ecotoxicity: freshwater - comparative toxic unit for ecosystems (CTUe)",
-    ] + [m for m in p.lcia_methods if "relics" in m.lower()][-3:],
+    ]
+    + [m for m in p.lcia_methods if "relics" in m.lower()][-3:],
     regions=[
         "CH",
     ],
     scenarios=p.scenarios.pathway.values.tolist(),
-    years=[
-        2020,
-        2030,
-        2040,
-        2050
-    ],
+    years=[2020, 2030, 2040, 2050],
     variables=vars,
     use_distributions=500,
     subshares=True,
