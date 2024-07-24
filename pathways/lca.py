@@ -4,11 +4,11 @@ This module contains functions to calculate the Life Cycle Assessment (LCA) resu
 """
 
 import logging
+import pickle
 import uuid
 from collections import defaultdict
 from pathlib import Path
 from typing import Any, Dict, List, Tuple
-import pickle
 
 import bw2calc as bc
 import bw_processing as bwp
@@ -25,9 +25,9 @@ from .filesystem_constants import DIR_CACHED_DB, STATS_DIR, USER_LOGS_DIR
 from .lcia import fill_characterization_factors_matrices
 from .stats import (
     create_mapping_sheet,
-    log_uncertainty_values,
     log_results,
     log_subshares,
+    log_uncertainty_values,
     run_GSA_delta,
     run_GSA_OLS,
 )
@@ -410,7 +410,10 @@ def process_region(data: Tuple) -> dict[str, ndarray[Any, dtype[Any]] | list[int
 
         # Save the technosphere indices to disk
         id_technosphere_indices = uuid.uuid4()
-        pickle.dump(lca.technosphere_indices, open(DIR_CACHED_DB / f"{id_technosphere_indices}.pkl", "wb"))
+        pickle.dump(
+            lca.technosphere_indices,
+            open(DIR_CACHED_DB / f"{id_technosphere_indices}.pkl", "wb"),
+        )
 
     # Save the characterization vectors to disk
     id_results_array = uuid.uuid4()

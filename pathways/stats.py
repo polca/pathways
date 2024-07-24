@@ -98,7 +98,8 @@ def log_double_accounting(
 
 
 def log_subshares(
-    shares: dict, region: str,
+    shares: dict,
+    region: str,
 ) -> pd.DataFrame:
     """
     Create a pandas DataFrame where the keys of shares are the columns
@@ -113,9 +114,9 @@ def log_subshares(
 
 
 def log_uncertainty_values(
-        region: str,
-        uncertainty_indices: np.array,
-        uncertainty_values: np.array,
+    region: str,
+    uncertainty_indices: np.array,
+    uncertainty_values: np.array,
 ) -> pd.DataFrame:
     """
     Create a pandas DataFrame with the region and uncertainty indices as columns,
@@ -160,21 +161,21 @@ def log_results(
     return df[["iteration", "region"] + methods]
 
 
-def create_mapping_sheet(
-    indices: dict
-) -> pd.DataFrame:
+def create_mapping_sheet(indices: dict) -> pd.DataFrame:
     """
     Create a mapping sheet for the activities with uncertainties.
     """
 
     # Converting the dictionary into a pandas DataFrame
-    df = pd.DataFrame(indices.items(), columns=['Index', 'Value'])
+    df = pd.DataFrame(indices.items(), columns=["Index", "Value"])
 
     # Split the 'Index' column into four separate columns
-    df[['Name', 'Product', 'Unit', 'Region']] = pd.DataFrame(df['Index'].tolist(), index=df.index)
+    df[["Name", "Product", "Unit", "Region"]] = pd.DataFrame(
+        df["Index"].tolist(), index=df.index
+    )
 
     # Drop the now unnecessary 'Index' column
-    df.drop(columns=['Index'], inplace=True)
+    df.drop(columns=["Index"], inplace=True)
 
     return df
 
@@ -274,8 +275,12 @@ def run_GSA_delta(
     # merge uncertainty_values and technology_shares
     # based on "iteration" and "region" columns
 
-    df_parameters = uncertainty_values.merge(technology_shares, on=["iteration", "region"])
-    parameters = [param for param in df_parameters.columns if param not in ["iteration", "region"]]
+    df_parameters = uncertainty_values.merge(
+        technology_shares, on=["iteration", "region"]
+    )
+    parameters = [
+        param for param in df_parameters.columns if param not in ["iteration", "region"]
+    ]
 
     problem = {
         "num_vars": len(parameters),

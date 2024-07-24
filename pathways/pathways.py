@@ -5,6 +5,7 @@ LCA datasets, and LCA matrices.
 """
 
 import logging
+import pickle
 from collections import defaultdict
 from multiprocessing import Pool, cpu_count
 from typing import Any, List, Optional
@@ -14,7 +15,6 @@ import pandas as pd
 import pyprind
 import xarray as xr
 import yaml
-import pickle
 
 from .data_validation import validate_datapackage
 from .filesystem_constants import DATA_DIR, DIR_CACHED_DB, STATS_DIR, USER_LOGS_DIR
@@ -22,9 +22,9 @@ from .lca import _calculate_year, get_lca_matrices
 from .lcia import get_lcia_method_names
 from .stats import (
     create_mapping_sheet,
-    log_uncertainty_values,
     log_results,
     log_subshares,
+    log_uncertainty_values,
     run_GSA_delta,
 )
 from .subshares import generate_samples
@@ -519,7 +519,9 @@ class Pathways:
                             ]
                         )
 
-                        uncertainty_indices = uncertainty_parameters[data["uncertainty_params"]]
+                        uncertainty_indices = uncertainty_parameters[
+                            data["uncertainty_params"]
+                        ]
                         uncertainty_vals = uncertainty_values[data["uncertainty_vals"]]
 
                         df_uncertainty_values = pd.concat(
@@ -553,20 +555,34 @@ class Pathways:
 
                     indices = tehnosphere_indices[data["technosphere_indices"]]
                     # only keep indices which are also present in uncertainty_indices
-                    indices = {k: v for k, v in indices.items() if v in set(uncertainty_indices.flatten().tolist())}
+                    indices = {
+                        k: v
+                        for k, v in indices.items()
+                        if v in set(uncertainty_indices.flatten().tolist())
+                    }
                     df_technosphere_indices = create_mapping_sheet(indices=indices)
 
-                    df_sum_impacts.to_excel(writer, sheet_name="Total impacts", index=False)
-                    df_uncertainty_values.to_excel(writer, sheet_name="Monte Carlo values", index=False)
-                    df_technology_shares.to_excel(writer, sheet_name="Technology shares", index=False)
-                    df_technosphere_indices.to_excel(writer, sheet_name="Indices mapping", index=False)
+                    df_sum_impacts.to_excel(
+                        writer, sheet_name="Total impacts", index=False
+                    )
+                    df_uncertainty_values.to_excel(
+                        writer, sheet_name="Monte Carlo values", index=False
+                    )
+                    df_technology_shares.to_excel(
+                        writer, sheet_name="Technology shares", index=False
+                    )
+                    df_technosphere_indices.to_excel(
+                        writer, sheet_name="Indices mapping", index=False
+                    )
 
                     df_GSA = run_GSA_delta(
                         total_impacts=df_sum_impacts,
                         uncertainty_values=df_uncertainty_values,
-                        technology_shares=df_technology_shares
+                        technology_shares=df_technology_shares,
                     )
-                    df_GSA.to_excel(writer, sheet_name="Global Sensitivity Analysis", index=False)
+                    df_GSA.to_excel(
+                        writer, sheet_name="Global Sensitivity Analysis", index=False
+                    )
 
                     print(f"Statistical analysis: {export_path.resolve()}")
 
