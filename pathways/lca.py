@@ -8,6 +8,7 @@ import uuid
 from collections import defaultdict
 from pathlib import Path
 from typing import Any, Dict, List, Tuple
+import pickle
 
 import bw2calc as bc
 import bw_processing as bwp
@@ -24,9 +25,9 @@ from .filesystem_constants import DIR_CACHED_DB, STATS_DIR, USER_LOGS_DIR
 from .lcia import fill_characterization_factors_matrices
 from .stats import (
     create_mapping_sheet,
-    log_intensities_to_excel,
-    log_results_to_excel,
-    log_subshares_to_excel,
+    log_uncertainty_values,
+    log_results,
+    log_subshares,
     run_GSA_delta,
     run_GSA_OLS,
 )
@@ -255,7 +256,6 @@ def create_functional_units(
     units_map,
     demand_cutoff,
 ) -> [dict, dict]:
-
     variables_demand = {}
 
     total_demand = (
@@ -352,7 +352,10 @@ def process_region(data: Tuple) -> dict[str, ndarray[Any, dtype[Any]] | list[int
         uncertain_parameters,
     ) = data
 
-    d = []
+    lci_results = []
+    id_uncertainty_indices = None
+    id_uncertainty_values = None
+    id_technosphere_indices = None
 
     if use_distributions == 0:
         # Regular LCA calculations
@@ -364,19 +367,14 @@ def process_region(data: Tuple) -> dict[str, ndarray[Any, dtype[Any]] | list[int
             for key, value in lca.inventories.items()
         }
 
-        d.extend(list(characterized_inventories.values()))
+        lci_results.extend(list(characterized_inventories.values()))
 
     else:
-
-        print(lca.uncertain_parameters)
-
         # Use distributions for LCA calculations
-        # next(lca) is a generator that yields the inventory matrix
-        params_container = defaultdict(list)
-        iter_results = []
+        iter_results, iter_param_vals = [], []
         with CustomFilter("(almost) singular matrix"):
             for iteration in range(use_distributions):
-                print(iteration)
+                print(f"------ Iteration {iteration + 1}/{use_distributions}...")
                 next(lca)
                 lca.lci()
 
@@ -387,41 +385,53 @@ def process_region(data: Tuple) -> dict[str, ndarray[Any, dtype[Any]] | list[int
 
                 # create a numpy array with the results
                 iter_results.append(np.array(list(characterized_inventories.values())))
+                iter_param_vals.append(
+                    [
+                        -lca.technosphere_matrix[index]
+                        for index in lca.uncertain_parameters
+                    ]
+                )
 
-                params = {
-                    index: -lca.technosphere_matrix[index]
-                    for index in lca.uncertain_parameters
-                }
+        lci_results = np.array(iter_results)
+        lci_results = np.quantile(lci_results, [0.05, 0.5, 0.95], axis=0)
 
-                #
-                #
-                #     for i in range(len(uncertain_parameters)):
-                #         param_key = (
-                #             f"{uncertain_parameters[i][0]}_to_{uncertain_parameters[i][1]}"
-                #         )
-                #         param_keys.add(param_key)
-                #         value = -lca.technosphere_matrix[
-                #             uncertain_parameters[i][0], uncertain_parameters[i][1]
-                #         ]
-                #         params[param_key].append(value)
-                #
-                # params_container[key].append(params)
+        # Save the uncertainty indices and values to disk
+        id_uncertainty_indices = uuid.uuid4()
+        np.save(
+            file=DIR_CACHED_DB / f"{id_uncertainty_indices}.npy",
+            arr=lca.uncertain_parameters,
+        )
 
-        d = np.array(iter_results)
+        id_uncertainty_values = uuid.uuid4()
+        np.save(
+            file=DIR_CACHED_DB / f"{id_uncertainty_values}.npy",
+            arr=np.stack(iter_param_vals),
+        )
+
+        # Save the technosphere indices to disk
+        id_technosphere_indices = uuid.uuid4()
+        pickle.dump(lca.technosphere_indices, open(DIR_CACHED_DB / f"{id_technosphere_indices}.pkl", "wb"))
 
     # Save the characterization vectors to disk
-    id_array = uuid.uuid4()
-    np.save(file=DIR_CACHED_DB / f"{id_array}.npy", arr=np.stack(d))
+    id_results_array = uuid.uuid4()
+    np.save(file=DIR_CACHED_DB / f"{id_results_array}.npy", arr=np.stack(lci_results))
 
-    # just making sure that the memory is freed. Maybe not needed-check later
-    del d
+    # just making sure that the memory is freed.
+    del lci_results
 
     # returning a dictionary containing the id_array and the variables
     # to be able to fetch them back later
-    return {
-        "id_array": id_array,
+    d = {
+        "id_array": id_results_array,
         "variables": {k: v["demand"] for k, v in fus_details.items()},
     }
+
+    if use_distributions > 0:
+        d["uncertainty_params"] = id_uncertainty_indices
+        d["uncertainty_vals"] = id_uncertainty_values
+        d["technosphere_indices"] = id_technosphere_indices
+
+    return d
 
 
 def _calculate_year(args: tuple):
@@ -532,7 +542,6 @@ def _calculate_year(args: tuple):
 
     bar = pyprind.ProgBar(len(regions))
     for region in regions:
-
         fus, fus_details = create_functional_units(
             scenarios=scenarios,
             region=regions[0],
@@ -554,6 +563,7 @@ def _calculate_year(args: tuple):
             use_distributions=True if use_distributions > 0 else False,
         )
         lca.uncertain_parameters = uncertain_parameters
+        lca.technosphere_indices = technosphere_indices
 
         with CustomFilter("(almost) singular matrix"):
             lca.lci()

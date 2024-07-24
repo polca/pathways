@@ -14,6 +14,7 @@ import pandas as pd
 import pyprind
 import xarray as xr
 import yaml
+import pickle
 
 from .data_validation import validate_datapackage
 from .filesystem_constants import DATA_DIR, DIR_CACHED_DB, STATS_DIR, USER_LOGS_DIR
@@ -21,9 +22,9 @@ from .lca import _calculate_year, get_lca_matrices
 from .lcia import get_lcia_method_names
 from .stats import (
     create_mapping_sheet,
-    log_intensities_to_excel,
-    log_results_to_excel,
-    log_subshares_to_excel,
+    log_uncertainty_values,
+    log_results,
+    log_subshares,
     run_GSA_delta,
 )
 from .subshares import generate_samples
@@ -384,10 +385,10 @@ class Pathways:
         # remove None values in results
         results = {k: v for k, v in results.items() if v is not None}
 
-        self._fill_in_result_array(results, use_distributions, subshares, methods)
+        self._fill_in_result_array(results, use_distributions, shares, methods)
 
     def _fill_in_result_array(
-        self, results: dict, use_distributions: int, subshares: bool, methods: list
+        self, results: dict, use_distributions: int, shares: [None, dict], methods: list
     ) -> None:
 
         # Assuming DIR_CACHED_DB, results, and self.lca_results are already defined
@@ -409,19 +410,15 @@ class Pathways:
             model, scenario, year = coord
             acts_category_idx_dict = result["other"]["acts_category_idx_dict"]
             acts_location_idx_dict = result["other"]["acts_location_idx_dict"]
-            total_impacts = {}
 
-            for region, data in result.items():
+            for region, data_ in result.items():
                 if region == "other":
                     continue
 
-                id_array = data["id_array"]
-                variables = data["variables"]
+                id_array = data_["id_array"]
+                variables = data_["variables"]
 
                 d = np.squeeze(cached_data[id_array])
-
-                if use_distributions > 0:
-                    d = np.quantile(d, [0.05, 0.5, 0.95], axis=0)
 
                 for cat, act_cat_idx in acts_category_idx_dict.items():
                     for loc, act_loc_idx in acts_location_idx_dict.items():
@@ -429,12 +426,6 @@ class Pathways:
                         idx = idx[idx != -1]
 
                         if idx.size > 0:
-
-                            if use_distributions > 0:
-                                total_impacts[(region, year)] = d.sum(axis=-1).sum(
-                                    axis=1
-                                )
-
                             summed_data = d[..., idx].sum(axis=-1)
 
                             try:
@@ -464,71 +455,120 @@ class Pathways:
                                     }
                                 ] = summed_data.transpose(1, 2, 0)
 
-            if use_distributions > 0:
+        if use_distributions > 0:
+
+            uncertainty_parameters = {
+                data["uncertainty_params"]: load_numpy_array_from_disk(
+                    DIR_CACHED_DB / f"{data['uncertainty_params']}.npy",
+                )
+                for coord, result in results.items()
+                for region, data in result.items()
+                if region != "other"
+            }
+
+            uncertainty_values = {
+                data["uncertainty_vals"]: load_numpy_array_from_disk(
+                    DIR_CACHED_DB / f"{data['uncertainty_vals']}.npy",
+                )
+                for coord, result in results.items()
+                for region, data in result.items()
+                if region != "other"
+            }
+
+            tehnosphere_indices = {
+                data["technosphere_indices"]: pickle.load(
+                    open(DIR_CACHED_DB / f"{data['technosphere_indices']}.pkl", "rb")
+                )
+                for coord, result in results.items()
+                for region, data in result.items()
+                if region != "other"
+            }
+
+            for coord, result in results.items():
+                model, scenario, year = coord
+
                 export_path = STATS_DIR / f"{model}_{scenario}_{year}.xlsx"
 
                 # create Excel workbook using openpyxl
                 with pd.ExcelWriter(export_path, engine="openpyxl") as writer:
 
-                    df_tot_impacts = log_results_to_excel(
-                        total_impacts_by_method=total_impacts,
-                        methods=methods,
-                    )
-
-                    # create new worksheet called 'Total impacts'
+                    df_sum_impacts = pd.DataFrame()
+                    df_uncertainty_values = pd.DataFrame()
+                    df_technology_shares = pd.DataFrame()
+                    writer.book.create_sheet("Indices mapping")
+                    writer.book.create_sheet("Monte Carlo values")
+                    writer.book.create_sheet("Technology shares")
                     writer.book.create_sheet("Total impacts")
-                    # add df to it
-                    df_tot_impacts.to_excel(
-                        writer, sheet_name="Total impacts", index=False
-                    )
+                    writer.book.create_sheet("Global Sensitivity Analysis")
 
-                    # if len(params_container) > 0:
-                    #     df_intensities = log_intensities_to_excel(
-                    #         year=year,
-                    #         params=params_container,
-                    #         df_tot_impacts=df_tot_impacts,
-                    #     )
-                    #
+                    for region, data in result.items():
+                        if region == "other":
+                            continue
 
-                    #
-                    # if subshares:
-                    #     df_shares = log_subshares_to_excel(
-                    #         year=year,
-                    #         shares=shares,
-                    #         total_impacts_df=df_tot_impacts,
-                    #     )
-                    #
-                    #     # create new worksheet called 'Subshares'
-                    #     writer.book.create_sheet("Subshares")
-                    #     # add df to it
-                    #     df_shares.to_excel(writer, sheet_name="Subshares", index=True)
-                    #
-                    # df_mapping = create_mapping_sheet(
-                    #     filepaths=filepaths,
-                    #     model=model,
-                    #     scenario=scenario,
-                    #     year=year,
-                    #     parameter_keys=all_param_keys,
-                    # )
-                    #
-                    # # create new worksheet called 'Mapping'
-                    # writer.book.create_sheet("Mapping")
-                    # # add df to it
-                    # df_mapping.to_excel(writer, sheet_name="Mapping", index=True)
-                    #
-                    # df_GSA = run_GSA_delta(
-                    #     methods=methods,
-                    #     df_tot_impacts=df_tot_impacts,
-                    # )
-                    #
-                    # # create new worksheet called 'Delta'
-                    # writer.book.create_sheet("Delta")
-                    # # add df to it
-                    # df_GSA.to_excel(writer, sheet_name="Delta", index=True)
-                    #
-                    print(
-                        f"Delta analysis has been saved to the 'Delta' sheets in {export_path.resolve()}"
+                        id_array = data["id_array"]
+                        total_impacts = np.squeeze(cached_data[id_array]).sum(-1).sum(1)
+
+                        df_sum_impacts = pd.concat(
+                            [
+                                df_sum_impacts,
+                                log_results(
+                                    total_impacts=total_impacts,
+                                    methods=methods,
+                                    region=region,
+                                ),
+                            ]
+                        )
+
+                        uncertainty_indices = uncertainty_parameters[data["uncertainty_params"]]
+                        uncertainty_vals = uncertainty_values[data["uncertainty_vals"]]
+
+                        df_uncertainty_values = pd.concat(
+                            [
+                                df_uncertainty_values,
+                                log_uncertainty_values(
+                                    region=region,
+                                    uncertainty_indices=uncertainty_indices,
+                                    uncertainty_values=uncertainty_vals,
+                                ),
+                            ],
+                        )
+
+                        if shares:
+                            sub_shares = {}
+                            for k, v in shares.items():
+                                for x, y in v.items():
+                                    if x == year:
+                                        for z, w in y.items():
+                                            sub_shares[f"{k} - {z}"] = w
+
+                            df_technology_shares = pd.concat(
+                                [
+                                    df_technology_shares,
+                                    log_subshares(
+                                        shares=sub_shares,
+                                        region=region,
+                                    ),
+                                ],
+                            )
+
+                    indices = tehnosphere_indices[data["technosphere_indices"]]
+                    # only keep indices which are also present in uncertainty_indices
+                    indices = {k: v for k, v in indices.items() if v in set(uncertainty_indices.flatten().tolist())}
+                    df_technosphere_indices = create_mapping_sheet(indices=indices)
+
+                    df_sum_impacts.to_excel(writer, sheet_name="Total impacts", index=False)
+                    df_uncertainty_values.to_excel(writer, sheet_name="Monte Carlo values", index=False)
+                    df_technology_shares.to_excel(writer, sheet_name="Technology shares", index=False)
+                    df_technosphere_indices.to_excel(writer, sheet_name="Indices mapping", index=False)
+
+                    df_GSA = run_GSA_delta(
+                        total_impacts=df_sum_impacts,
+                        uncertainty_values=df_uncertainty_values,
+                        technology_shares=df_technology_shares
                     )
+                    df_GSA.to_excel(writer, sheet_name="Global Sensitivity Analysis", index=False)
+
+                    print(f"Statistical analysis: {export_path.resolve()}")
 
     def display_results(self, cutoff: float = 0.001) -> xr.DataArray:
         return display_results(self.lca_results, cutoff=cutoff)

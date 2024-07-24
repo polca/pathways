@@ -97,176 +97,86 @@ def log_double_accounting(
             )
 
 
-def log_subshares_to_excel(
-    year: int, shares: dict, total_impacts_df: pd.DataFrame
+def log_subshares(
+    shares: dict, region: str,
 ) -> pd.DataFrame:
     """
-    Logs results to an Excel file named according to model, scenario, and year, specifically for the given year.
-    This method assumes that each entry in the shares defaultdict is structured to be directly usable in a DataFrame.
-
-    Parameters:
-    :param year: The specific year for which data is being logged.
-    :param shares: A nested defaultdict containing shares data for multiple years and types.
-    :param total_impacts_df: DataFrame containing total impacts for each method.
+    Create a pandas DataFrame where the keys of shares are the columns
+    and the values are the values. The region is added as a column.
     """
 
-    data = []
+    df = pd.DataFrame(shares)
+    df["region"] = region
+    df["iteration"] = range(1, len(df) + 1)
 
-    first_tech = next(iter(shares), None)
-    if not first_tech or year not in shares[first_tech]:
-        print(f"No data found for year {year} in any technology.")
-        return
-
-    num_iterations = len(shares[first_tech][year][next(iter(shares[first_tech][year]))])
-    for i in range(num_iterations):
-        iteration_data = {"Iteration": i + 1, "Year": year}
-        for tech, years_data in shares.items():
-            if year in years_data:
-                for subtype, values in years_data[year].items():
-                    iteration_data[f"{tech}_{subtype}"] = (
-                        values[i] if i < len(values) else None
-                    )
-        data.append(iteration_data)
-
-    new_df = pd.DataFrame(data)
-
-    # Merge new data into existing data, selectively updating share columns
-    combined_df = (
-        total_impacts_df.set_index(["Iteration", "Year"])
-        .combine_first(new_df.set_index(["Iteration", "Year"]))
-        .reset_index()
-    )
-    # Optionally, ensure the columns are in a meaningful order
-    new_columns = [col for col in new_df.columns if col not in ["Iteration", "Year"]]
-    existing_columns = [
-        col for col in total_impacts_df.columns if col not in new_df.columns
-    ]
-    combined_df = combined_df[["Iteration", "Year"] + new_columns + existing_columns]
-
-    return combined_df
+    return df[["iteration", "region"] + list(shares.keys())]
 
 
-def log_intensities_to_excel(
-    year: int, params: list, df_tot_impacts: pd.DataFrame
+def log_uncertainty_values(
+        region: str,
+        uncertainty_indices: np.array,
+        uncertainty_values: np.array,
 ) -> pd.DataFrame:
     """
-    Update or create an Excel file with new columns of data, based on model, scenario, and year.
+    Create a pandas DataFrame with the region and uncertainty indices as columns,
+    the uncertainty values as values, and the iteration number as the index.
 
-    :param year: The year for which the data is logged.
-    :param params: Dictionary where keys are the new column names and values are lists of data for each column.
+    :param region: Name of the region
+    :param uncertainty_indices: Indices of the uncertainty values
+    :param uncertainty_values: Uncertainty values
+    :return: DataFrame with region as column, uncertainty indices as indices and uncertainty values as values
 
     """
 
-    if not params:
-        print("Warning: No new data provided to log.")
-        return
+    # convert 2D numpy array to list of tuples
+    uncertainty_indices = uncertainty_indices.tolist()
+    uncertainty_indices = [[str(x) for x in index] for index in uncertainty_indices]
+    uncertainty_indices = ["::".join(index) for index in uncertainty_indices]
 
-    # merge list of dictionaries into a single dictionary
-    params = {k: v for d in params for k, v in d.items()}
+    df = pd.DataFrame(uncertainty_values, columns=uncertainty_indices)
+    df["region"] = region
+    df["iteration"] = range(1, len(df) + 1)
 
-    max_length = max(len(v) for v in params.values())
-
-    df_new = pd.DataFrame(params)
-    df_new["Iteration"] = range(1, max_length + 1)
-    df_new["Year"] = [year] * max_length
-
-    combined_df = pd.merge(
-        df_tot_impacts,
-        df_new,
-        on=["Iteration", "Year"],
-        how="outer",
-        suffixes=("", "_new"),
-    )
-
-    for col in df_new.columns:
-        if col + "_new" in combined_df:
-            combined_df[col] = combined_df[col].combine_first(
-                combined_df.pop(col + "_new")
-            )
-
-    combined_df = combined_df.loc[:, ~combined_df.columns.str.endswith("_new")]
-
-    return combined_df
+    return df[["iteration", "region"] + uncertainty_indices]
 
 
-def log_results_to_excel(
-    total_impacts_by_method: dict,
+def log_results(
+    total_impacts: np.array,
     methods: list,
+    region: str,
 ):
     """
     Log the characterized inventory results for each LCIA method into separate columns in an Excel file.
 
-    :param total_impacts_by_method: Dictionary where keys are method names and values are lists of impacts
-    from all regions and distributions.
+    :param total_impacts: numpy array of total impacts for each method.
     :param methods: List of method names.
-    :param filepath: Optional. File path for the Excel file to save the results.
+    :param region: Region name as a string.
     """
 
-    df = pd.DataFrame(columns=methods + ["Iteration", "Year", "Region"])
+    df = pd.DataFrame(total_impacts, columns=methods)
+    df["region"] = region
+    df["iteration"] = range(1, len(df) + 1)
 
-    for (region, year), values in total_impacts_by_method.items():
-        df = pd.concat(
-            [
-                df,
-                pd.DataFrame(values, columns=methods).assign(
-                    Iteration=range(1, len(values) + 1), Year=year, Region=region
-                ),
-            ]
-        )
-
-    return df
+    return df[["iteration", "region"] + methods]
 
 
 def create_mapping_sheet(
-    filepaths: list,
-    model: str,
-    scenario: str,
-    year: int,
-    parameter_keys: set,
+    indices: dict
 ) -> pd.DataFrame:
     """
     Create a mapping sheet for the activities with uncertainties.
-    :param filepaths: List of paths to data files.
-    :param model: Model name as a string.
-    :param scenario: Scenario name as a string.
-    :param year: Year as an integer.
-    :param parameter_keys: List of parameter keys used in intensity iterations.
-    :param export_path: Path to the directory where the Excel file will be saved.
     """
 
-    def filter_filepaths(suffix: str, contains: list):
-        return [
-            Path(fp)
-            for fp in filepaths
-            if all(kw in fp for kw in contains)
-            and Path(fp).suffix == suffix
-            and Path(fp).exists()
-        ]
+    # Converting the dictionary into a pandas DataFrame
+    df = pd.DataFrame(indices.items(), columns=['Index', 'Value'])
 
-    unique_indices = {int(idx) for key in parameter_keys for idx in key.split("_to_")}
+    # Split the 'Index' column into four separate columns
+    df[['Name', 'Product', 'Unit', 'Region']] = pd.DataFrame(df['Index'].tolist(), index=df.index)
 
-    fps = filter_filepaths(".csv", [model, scenario, str(year)])
-    if len(fps) < 1:
-        raise ValueError(f"No relevant files found for {model}, {scenario}, {year}")
+    # Drop the now unnecessary 'Index' column
+    df.drop(columns=['Index'], inplace=True)
 
-    technosphere_indices_path = None
-    for fp in fps:
-        if "A_matrix_index" in fp.name:
-            technosphere_indices_path = fp
-            break
-
-    if not technosphere_indices_path:
-        raise FileNotFoundError("Technosphere indices file not found.")
-
-    technosphere_inds = pd.read_csv(technosphere_indices_path, sep=";", header=None)
-    technosphere_inds.columns = ["Activity", "Product", "Unit", "Location", "Index"]
-
-    mapping_df = technosphere_inds[technosphere_inds["Index"].isin(unique_indices)]
-    mapping_df = mapping_df[
-        ["Activity", "Product", "Location", "Unit", "Index"]
-    ]  # Restrict columns if necessary
-
-    return mapping_df
+    return df
 
 
 def escape_formula(text: str):
@@ -347,40 +257,48 @@ def run_GSA_OLS(methods: list, export_path: Path):
     book.save(export_path)
 
 
-def run_GSA_delta(methods: list, df_tot_impacts: pd.DataFrame) -> pd.DataFrame:
+def run_GSA_delta(
+    total_impacts: pd.DataFrame,
+    uncertainty_values: pd.DataFrame,
+    technology_shares: pd.DataFrame,
+) -> pd.DataFrame:
     """
     Runs Delta Moment-Independent Measure analysis for specified methods and writes summaries to an Excel file.
 
-    :param methods: List of method names corresponding to dataset columns.
-    :param export_path: Path to the directory where the Excel file will be saved.
+    :param total_impacts: DataFrame with total impacts for each method.
+    :param uncertainty_values: DataFrame with uncertainty values.
+    :param technology_shares: DataFrame with technology shares.
+    :return: DataFrame with Delta Moment-Independent Measure analysis results.
     """
 
-    standard_columns = {"Iteration", "Year"}
-    params = [
-        col
-        for col in df_tot_impacts.columns
-        if col not in standard_columns and col not in methods
-    ]
+    # merge uncertainty_values and technology_shares
+    # based on "iteration" and "region" columns
+
+    df_parameters = uncertainty_values.merge(technology_shares, on=["iteration", "region"])
+    parameters = [param for param in df_parameters.columns if param not in ["iteration", "region"]]
 
     problem = {
-        "num_vars": len(params),
-        "names": params,
+        "num_vars": len(parameters),
+        "names": parameters,
         "bounds": [
-            [df_tot_impacts[param].min(), df_tot_impacts[param].max()]
-            for param in params
+            [df_parameters[param].min(), df_parameters[param].max()]
+            for param in parameters
         ],
     }
 
+    print(problem)
+
+    methods = [m for m in total_impacts.columns if m not in ["iteration", "region"]]
+
     results = []
+
     for method in methods:
-        if method not in df_tot_impacts.columns:
-            print(f"Data for {method} not found in the file.")
-            continue
+        param_values = df_parameters[params].values
 
-        param_values = df_tot_impacts[params].values
-        Y = df_tot_impacts[method].values
+        # total impacts for the method
+        Y = total_impacts[method].values
 
-        delta_results = delta.analyze(problem, param_values, Y, print_to_console=False)
+        delta_results = delta.analyze(problem, param_values, Y)
 
         results.append([f"Delta Moment-Independent Measure for {method}"])
         results.append(["Parameter", "Delta", "Delta Conf", "S1", "S1 Conf"])
