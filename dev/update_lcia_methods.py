@@ -1,5 +1,6 @@
-import bw2data
 import json
+
+import bw2data
 
 bw2data.projects.set_current("ei310")
 
@@ -11,20 +12,13 @@ for m in bw2data.methods:
     dm = {
         "name": list(method.name),
         "unit": method.metadata["unit"],
-
     }
     exc = []
     for name, cf in method.load():
         act = bw2data.get_activity(name)
         name = act["name"]
         cat = list(act["categories"])
-        exc.append(
-            {
-                "name": name,
-                "categories": cat,
-                "amount": cf
-            }
-        )
+        exc.append({"name": name, "categories": cat, "amount": cf})
     dm["exchanges"] = exc
     lcia.append(dm)
 
