@@ -20,9 +20,9 @@ p.calculate(
         2050
     ],
     variables=vars,
-    use_distributions=500,
+    use_distributions=100,
     subshares=True,
-    multiprocessing=True,
+    multiprocessing=False,
 )
 
 p.export_results()
