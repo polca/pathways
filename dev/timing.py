@@ -15,13 +15,13 @@ p.calculate(
     ],
     scenarios=p.scenarios.pathway.values.tolist(),
     years=[
-        2020,
-        2030,
-        2040,
+        #2020,
+        #2030,
+        #2040,
         2050
     ],
     variables=vars,
-    use_distributions=100,
+    use_distributions=0,
     subshares=True,
     multiprocessing=True,
 )
