@@ -11,10 +11,10 @@ dictionary, checking unclassified activities, and getting activity indices.
 import csv
 import logging
 import warnings
+from collections import OrderedDict
 from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, List, Set, Tuple, Union
-from collections import OrderedDict
 
 import numpy as np
 import pandas as pd
@@ -575,11 +575,15 @@ def _group_technosphere_indices(
 
     # create an ordered dictionary to store the indices
     acts_dict = OrderedDict(
-        (value, [
-            int(technosphere_indices[a])
-            for a in technosphere_indices
-            if group_by(a) == value
-        ]) for value in group_values
+        (
+            value,
+            [
+                int(technosphere_indices[a])
+                for a in technosphere_indices
+                if group_by(a) == value
+            ],
+        )
+        for value in group_values
     )
 
     return acts_dict

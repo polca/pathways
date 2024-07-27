@@ -8,14 +8,14 @@ import logging
 import pickle
 from collections import defaultdict
 from multiprocessing import Pool, cpu_count
-from typing import Any, List, Optional
 from pathlib import Path
+from typing import Any, List, Optional
 
 import numpy as np
 import pandas as pd
+import sparse as sp
 import xarray as xr
 import yaml
-import sparse as sp
 
 from .data_validation import validate_datapackage
 from .filesystem_constants import DATA_DIR, DIR_CACHED_DB, STATS_DIR, USER_LOGS_DIR
@@ -45,7 +45,11 @@ from .utils import (
 
 
 def _fill_in_result_array(
-        coords: tuple, result: dict, use_distributions: int, shares: [None, dict], methods: list
+    coords: tuple,
+    result: dict,
+    use_distributions: int,
+    shares: [None, dict],
+    methods: list,
 ) -> np.ndarray:
     def _load_array(filepath):
         if len(filepath) == 1:
@@ -58,14 +62,10 @@ def _fill_in_result_array(
                 return sp.load_npz(DIR_CACHED_DB / filepath[0]).todense()
         else:
             if Path(filepath[0]).suffix == ".npy":
-                return np.stack([
-                    np.load(DIR_CACHED_DB / f)
-                    for f in filepath
-                ], axis=-1)
-            return np.stack([
-                sp.load_npz(DIR_CACHED_DB / f).todense()
-                for f in filepath
-            ], axis=-1)
+                return np.stack([np.load(DIR_CACHED_DB / f) for f in filepath], axis=-1)
+            return np.stack(
+                [sp.load_npz(DIR_CACHED_DB / f).todense() for f in filepath], axis=-1
+            )
 
     # Pre-loading data from disk if possible
     cached_data = {
@@ -73,7 +73,12 @@ def _fill_in_result_array(
         for region, data in result.items()
     }
 
-    uncertainty_parameters, uncertainty_values, tehnosphere_indices, iteration_results = None, None, None, None
+    (
+        uncertainty_parameters,
+        uncertainty_values,
+        tehnosphere_indices,
+        iteration_results,
+    ) = (None, None, None, None)
 
     if use_distributions > 0:
         uncertainty_parameters = {
@@ -206,9 +211,7 @@ def statistical_analysis(
 
         df_technosphere_indices = create_mapping_sheet(indices=indices)
 
-        df_sum_impacts.to_excel(
-            writer, sheet_name="Total impacts", index=False
-        )
+        df_sum_impacts.to_excel(writer, sheet_name="Total impacts", index=False)
         df_uncertainty_values.to_excel(
             writer, sheet_name="Monte Carlo values", index=False
         )
@@ -588,28 +591,31 @@ class Pathways:
 
                 for c, coord in enumerate([c[0] for c in args]):
                     model, scenario, year = coord
-                    self.lca_results.loc[dict(
-                        model=model,
-                        scenario=scenario,
-                        year=year,
-                    )] = r[c]
+                    self.lca_results.loc[
+                        dict(
+                            model=model,
+                            scenario=scenario,
+                            year=year,
+                        )
+                    ] = r[c]
 
         else:
             for coords, values in results.items():
                 model, scenario, year = coords
 
-                self.lca_results.loc[dict(
-                    model=model,
-                    scenario=scenario,
-                    year=year,
-                )] = _fill_in_result_array(
+                self.lca_results.loc[
+                    dict(
+                        model=model,
+                        scenario=scenario,
+                        year=year,
+                    )
+                ] = _fill_in_result_array(
                     coords,
                     values,
                     use_distributions,
                     shares,
                     methods,
                 )
-
 
     def display_results(self, cutoff: float = 0.001) -> xr.DataArray:
         return display_results(self.lca_results, cutoff=cutoff)
