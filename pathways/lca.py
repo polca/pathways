@@ -14,13 +14,13 @@ import bw2calc as bc
 import bw_processing as bwp
 import numpy as np
 import pyprind
+import sparse as sp
 from bw2calc import MultiLCA
 from bw2calc.utils import get_datapackage
 from bw_processing import Datapackage
 from numpy import dtype, ndarray
 from premise.geomap import Geomap
 from scipy import sparse
-import sparse as sp
 
 from .filesystem_constants import DIR_CACHED_DB, STATS_DIR, USER_LOGS_DIR
 from .lcia import fill_characterization_factors_matrices
@@ -368,10 +368,12 @@ def process_region(data: Tuple) -> Dict[str, str | List[str] | List[int]]:
             lca.lci()
 
         # Create a numpy array with the results
-        inventory_results = np.array([
-            (characterization_matrix @ value).toarray()
-            for value in lca.inventories.values()
-        ])
+        inventory_results = np.array(
+            [
+                (characterization_matrix @ value).toarray()
+                for value in lca.inventories.values()
+            ]
+        )
 
         iter_results = np.zeros(
             (
@@ -387,7 +389,11 @@ def process_region(data: Tuple) -> Dict[str, str | List[str] | List[int]]:
 
         # Save iteration results to disk
         iter_results_file = f"iter_results_{uuid.uuid4()}.npz"
-        sp.save_npz(filename=DIR_CACHED_DB / iter_results_file, matrix=sp.COO(iter_results), compressed=True)
+        sp.save_npz(
+            filename=DIR_CACHED_DB / iter_results_file,
+            matrix=sp.COO(iter_results),
+            compressed=True,
+        )
         iter_results_files.append(iter_results_file)
 
     else:
@@ -398,10 +404,12 @@ def process_region(data: Tuple) -> Dict[str, str | List[str] | List[int]]:
                 lca.lci()
 
                 # Create a numpy array with the results
-                inventory_results = np.array([
-                    (characterization_matrix @ value).toarray()
-                    for value in lca.inventories.values()
-                ])
+                inventory_results = np.array(
+                    [
+                        (characterization_matrix @ value).toarray()
+                        for value in lca.inventories.values()
+                    ]
+                )
                 iter_param_vals = [
                     -lca.technosphere_matrix[index]
                     for index in lca.uncertain_parameters
@@ -417,11 +425,17 @@ def process_region(data: Tuple) -> Dict[str, str | List[str] | List[int]]:
                 )
 
                 for (cat, loc), idx in dict_loc_cat.items():
-                    iter_results[:, :, cat, loc] = inventory_results[:, :, idx].sum(axis=2)
+                    iter_results[:, :, cat, loc] = inventory_results[:, :, idx].sum(
+                        axis=2
+                    )
 
                 # Save iteration results to disk
                 iter_results_file = f"iter_results_{uuid.uuid4()}.npz"
-                sp.save_npz(filename=DIR_CACHED_DB / iter_results_file, matrix=sp.COO(iter_results), compressed=True)
+                sp.save_npz(
+                    filename=DIR_CACHED_DB / iter_results_file,
+                    matrix=sp.COO(iter_results),
+                    compressed=True,
+                )
                 iter_results_files.append(iter_results_file)
 
                 # Save iteration parameter values to disk
@@ -451,8 +465,12 @@ def process_region(data: Tuple) -> Dict[str, str | List[str] | List[int]]:
     }
 
     if use_distributions > 0:
-        d["uncertainty_params"] = [str(id_uncertainty_indices),]
-        d["technosphere_indices"] = [str(id_technosphere_indices),]
+        d["uncertainty_params"] = [
+            str(id_uncertainty_indices),
+        ]
+        d["technosphere_indices"] = [
+            str(id_technosphere_indices),
+        ]
         d["iterations_param_vals"] = iter_param_vals_files
 
     return d

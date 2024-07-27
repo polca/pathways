@@ -305,11 +305,7 @@ def run_GSA_delta(
         # total impacts for the method
         Y = total_impacts[method].values
 
-        delta_results = delta.analyze(
-            problem=problem,
-            X=param_values,
-            Y=Y
-        )
+        delta_results = delta.analyze(problem=problem, X=param_values, Y=Y)
 
         for i, param in enumerate(parameters):
             results.append(
@@ -323,4 +319,7 @@ def run_GSA_delta(
                 ]
             )
 
-    return pd.DataFrame(results, columns=["LCIA method", "Parameter", "Delta", "Delta Conf", "S1", "S1 Conf"])
+    return pd.DataFrame(
+        results,
+        columns=["LCIA method", "Parameter", "Delta", "Delta Conf", "S1", "S1 Conf"],
+    )
