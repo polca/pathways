@@ -20,6 +20,7 @@ from bw_processing import Datapackage
 from numpy import dtype, ndarray
 from premise.geomap import Geomap
 from scipy import sparse
+import sparse as sp
 
 from .filesystem_constants import DIR_CACHED_DB, STATS_DIR, USER_LOGS_DIR
 from .lcia import fill_characterization_factors_matrices
@@ -300,20 +301,6 @@ def create_functional_units(
             * unit_vector
         )
 
-        if np.sum(demand) == 0:
-            logging.info(
-                f"Total demand for {variable} in {region}, {model}, {scenario}, {year} is zero. "
-                f"Skipping."
-            )
-            continue
-
-        # If the demand is below the cut-off criteria, skip to the next iteration
-        share = demand / total_demand
-
-        # If the total demand is zero, return None
-        if share < demand_cutoff:
-            continue
-
         variables_demand[variable] = {
             "id": idx,
             "demand": demand,
@@ -327,7 +314,7 @@ def create_functional_units(
     }, variables_demand
 
 
-def process_region(data: Tuple) -> dict[str, ndarray[Any, dtype[Any]] | list[int]]:
+def process_region(data: Tuple) -> Dict[str, str | List[str] | List[int]]:
     """
     Process the region data.
     :param data: Tuple containing the model, scenario, year, region, variables, vars_idx, scenarios, units_map,
@@ -352,94 +339,121 @@ def process_region(data: Tuple) -> dict[str, ndarray[Any, dtype[Any]] | list[int
         uncertain_parameters,
     ) = data
 
-    lci_results = []
     id_uncertainty_indices = None
-    id_uncertainty_values = None
     id_technosphere_indices = None
-    id_iter_results_array = None
+    iter_results_files = []
+    iter_param_vals_files = []
+
+    dict_loc_cat = {}
+
+    cat_counter = 0
+    for cat, act_cat_idx in lca.acts_category_idx_dict.items():
+        loc_counter = 0
+        for loc, act_loc_idx in lca.acts_location_idx_dict.items():
+            # Find the intersection of indices
+            idx = np.intersect1d(act_cat_idx, act_loc_idx)
+            # Filter out any -1 indices
+            filtered_idx = idx[idx != -1]
+
+            if filtered_idx.size > 0:
+                # Assign the filtered index array to the dict_loc_cat with (cat, loc) as key
+                dict_loc_cat[(cat_counter, loc_counter)] = filtered_idx
+
+            loc_counter += 1
+        cat_counter += 1
 
     if use_distributions == 0:
         # Regular LCA calculations
         with CustomFilter("(almost) singular matrix"):
             lca.lci()
 
-        characterized_inventories = {
-            key: (characterization_matrix @ value).toarray()
-            for key, value in lca.inventories.items()
-        }
+        # Create a numpy array with the results
+        inventory_results = np.array([
+            (characterization_matrix @ value).toarray()
+            for value in lca.inventories.values()
+        ])
 
-        lci_results.extend(list(characterized_inventories.values()))
+        iter_results = np.zeros(
+            (
+                inventory_results.shape[0],
+                inventory_results.shape[1],
+                len(lca.acts_category_idx_dict),
+                len(lca.acts_location_idx_dict),
+            )
+        )
+
+        for (cat, loc), idx in dict_loc_cat.items():
+            iter_results[:, :, cat, loc] = inventory_results[:, :, idx].sum(axis=2)
+
+        # Save iteration results to disk
+        iter_results_file = f"iter_results_{uuid.uuid4()}.npz"
+        sp.save_npz(filename=DIR_CACHED_DB / iter_results_file, matrix=sp.COO(iter_results), compressed=True)
+        iter_results_files.append(iter_results_file)
 
     else:
         # Use distributions for LCA calculations
-        iter_results, iter_param_vals = [], []
         with CustomFilter("(almost) singular matrix"):
             for iteration in range(use_distributions):
                 next(lca)
                 lca.lci()
 
-                characterized_inventories = {
-                    key: (characterization_matrix @ value).toarray()
-                    for key, value in lca.inventories.items()
-                }
+                # Create a numpy array with the results
+                inventory_results = np.array([
+                    (characterization_matrix @ value).toarray()
+                    for value in lca.inventories.values()
+                ])
+                iter_param_vals = [
+                    -lca.technosphere_matrix[index]
+                    for index in lca.uncertain_parameters
+                ]
 
-                # create a numpy array with the results
-                iter_results.append(np.array(list(characterized_inventories.values())))
-                iter_param_vals.append(
-                    [
-                        -lca.technosphere_matrix[index]
-                        for index in lca.uncertain_parameters
-                    ]
+                iter_results = np.zeros(
+                    (
+                        inventory_results.shape[0],
+                        inventory_results.shape[1],
+                        len(lca.acts_category_idx_dict),
+                        len(lca.acts_location_idx_dict),
+                    )
                 )
 
-        lci_results = np.array(iter_results)
-        lci_results = np.quantile(lci_results, [0.05, 0.5, 0.95], axis=0)
+                for (cat, loc), idx in dict_loc_cat.items():
+                    iter_results[:, :, cat, loc] = inventory_results[:, :, idx].sum(axis=2)
 
-        total_results = np.array(iter_results).sum(-1).sum(1)
+                # Save iteration results to disk
+                iter_results_file = f"iter_results_{uuid.uuid4()}.npz"
+                sp.save_npz(filename=DIR_CACHED_DB / iter_results_file, matrix=sp.COO(iter_results), compressed=True)
+                iter_results_files.append(iter_results_file)
 
-        # Save the iterations results to disk
-        id_iter_results_array = uuid.uuid4()
-        np.save(file=DIR_CACHED_DB / f"{id_iter_results_array}.npy", arr=total_results)
+                # Save iteration parameter values to disk
+                iter_param_vals_file = f"iter_param_vals_{uuid.uuid4()}.npy"
+                np.save(file=DIR_CACHED_DB / iter_param_vals_file, arr=iter_param_vals)
+                iter_param_vals_files.append(iter_param_vals_file)
 
-        # Save the uncertainty indices and values to disk
-        id_uncertainty_indices = uuid.uuid4()
+        # Save the uncertainty indices to disk
+        id_uncertainty_indices = f"mc_indices_{uuid.uuid4()}.npy"
         np.save(
-            file=DIR_CACHED_DB / f"{id_uncertainty_indices}.npy",
+            file=DIR_CACHED_DB / id_uncertainty_indices,
             arr=lca.uncertain_parameters,
         )
 
-        id_uncertainty_values = uuid.uuid4()
-        np.save(
-            file=DIR_CACHED_DB / f"{id_uncertainty_values}.npy",
-            arr=np.stack(iter_param_vals),
-        )
-
         # Save the technosphere indices to disk
-        id_technosphere_indices = uuid.uuid4()
+        id_technosphere_indices = f"tech_indices_{uuid.uuid4()}.pkl"
         pickle.dump(
             lca.technosphere_indices,
-            open(DIR_CACHED_DB / f"{id_technosphere_indices}.pkl", "wb"),
+            open(DIR_CACHED_DB / id_technosphere_indices, "wb"),
         )
 
-    # Save the characterization vectors to disk
-    id_results_array = uuid.uuid4()
-    np.save(file=DIR_CACHED_DB / f"{id_results_array}.npy", arr=np.stack(lci_results))
-
-    # just making sure that the memory is freed.
-    del lci_results
-
-    # returning a dictionary containing the id_array and the variables
+    # Returning a dictionary containing the id_array and the variables
     # to be able to fetch them back later
     d = {
-        "id_array": id_results_array,
+        "iterations_results": iter_results_files,
         "variables": {k: v["demand"] for k, v in fus_details.items()},
     }
 
     if use_distributions > 0:
-        d["uncertainty_params"] = id_uncertainty_indices
-        d["uncertainty_vals"] = id_uncertainty_values
-        d["technosphere_indices"] = id_technosphere_indices
-        d["iterations_results"] = id_iter_results_array
+        d["uncertainty_params"] = [str(id_uncertainty_indices),]
+        d["technosphere_indices"] = [str(id_technosphere_indices),]
+        d["iterations_param_vals"] = iter_param_vals_files
 
     return d
 
@@ -488,7 +502,8 @@ def _calculate_year(args: tuple):
         geo.model = model
         geo.geo = geo
 
-    # Try to load LCA matrices for the given model, scenario, and year
+    # Try to load LCA matrices for
+    # the given model, scenario, and year
     try:
         (
             bw_datapackage,
@@ -536,7 +551,7 @@ def _calculate_year(args: tuple):
     acts_category_idx_dict = _group_technosphere_indices(
         technosphere_indices=technosphere_indices,
         group_by=lambda x: classifications.get(x[:3], "unclassified"),
-        group_values=list(set(lca_results.coords["act_category"].values)),
+        group_values=lca_results.coords["act_category"].values.tolist(),
     )
 
     acts_location_idx_dict = _group_technosphere_indices(
@@ -544,11 +559,6 @@ def _calculate_year(args: tuple):
         group_by=lambda x: x[-1],
         group_values=locations,
     )
-
-    results["other"] = {
-        "acts_category_idx_dict": acts_category_idx_dict,
-        "acts_location_idx_dict": acts_location_idx_dict,
-    }
 
     bar = pyprind.ProgBar(len(regions))
     for region in regions:
@@ -574,6 +584,8 @@ def _calculate_year(args: tuple):
         )
         lca.uncertain_parameters = uncertain_parameters
         lca.technosphere_indices = technosphere_indices
+        lca.acts_category_idx_dict = acts_category_idx_dict
+        lca.acts_location_idx_dict = acts_location_idx_dict
 
         with CustomFilter("(almost) singular matrix"):
             lca.lci()
@@ -589,6 +601,12 @@ def _calculate_year(args: tuple):
             bw_correlated = get_subshares_matrix(correlated_arrays)
             lca.packages.append(get_datapackage(bw_correlated))
             lca.use_arrays = True
+
+        lca.technosphere_indices = {
+            k: v
+            for k, v in lca.technosphere_indices.items()
+            if v in {value for tup in lca.uncertain_parameters for value in tup}
+        }
 
         characterization_matrix = fill_characterization_factors_matrices(
             methods=methods,

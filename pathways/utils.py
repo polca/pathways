@@ -14,6 +14,7 @@ import warnings
 from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, List, Set, Tuple, Union
+from collections import OrderedDict
 
 import numpy as np
 import pandas as pd
@@ -219,7 +220,7 @@ def create_lca_results_array(
     return xr.DataArray(np.zeros(dims), coords=coords, dims=list(coords.keys()))
 
 
-def export_results_to_parquet(lca_results: xr.DataArray, filepath: str):
+def export_results_to_parquet(lca_results: xr.DataArray, filepath: str) -> str:
     """
     Export the LCA results to a parquet file.
     :param lca_results: Xarray DataArray with LCA results.
@@ -257,6 +258,8 @@ def export_results_to_parquet(lca_results: xr.DataArray, filepath: str):
     df.to_parquet(path=filepath, compression="gzip")
 
     print(f"Results exported to {filepath}")
+
+    return filepath
 
 
 def display_results(
@@ -570,14 +573,14 @@ def _group_technosphere_indices(
              and a 2D numpy array of indices, where rows have been padded with -1 to ensure equal lengths.
     """
 
-    acts_dict = {}
-    for value in group_values:
-        x = [
+    # create an ordered dictionary to store the indices
+    acts_dict = OrderedDict(
+        (value, [
             int(technosphere_indices[a])
             for a in technosphere_indices
             if group_by(a) == value
-        ]
-        acts_dict[value] = x
+        ]) for value in group_values
+    )
 
     return acts_dict
 

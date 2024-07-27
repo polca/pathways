@@ -134,7 +134,7 @@ def log_uncertainty_values(
     uncertainty_indices = [[str(x) for x in index] for index in uncertainty_indices]
     uncertainty_indices = ["::".join(index) for index in uncertainty_indices]
 
-    df = pd.DataFrame(uncertainty_values, columns=uncertainty_indices)
+    df = pd.DataFrame(uncertainty_values.T, columns=uncertainty_indices)
     df["region"] = region
     df["iteration"] = range(1, len(df) + 1)
 
@@ -154,7 +154,7 @@ def log_results(
     :param region: Region name as a string.
     """
 
-    df = pd.DataFrame(total_impacts, columns=methods)
+    df = pd.DataFrame(total_impacts.T, columns=methods)
     df["region"] = region
     df["iteration"] = range(1, len(df) + 1)
 
@@ -305,13 +305,16 @@ def run_GSA_delta(
         # total impacts for the method
         Y = total_impacts[method].values
 
-        delta_results = delta.analyze(problem, param_values, Y)
+        delta_results = delta.analyze(
+            problem=problem,
+            X=param_values,
+            Y=Y
+        )
 
-        results.append([f"Delta Moment-Independent Measure for {method}"])
-        results.append(["Parameter", "Delta", "Delta Conf", "S1", "S1 Conf"])
         for i, param in enumerate(parameters):
             results.append(
                 [
+                    method,
                     param,
                     delta_results["delta"][i],
                     delta_results["delta_conf"][i],
@@ -319,6 +322,5 @@ def run_GSA_delta(
                     delta_results["S1_conf"][i],
                 ]
             )
-        results.append([])
 
-    return pd.DataFrame(results)
+    return pd.DataFrame(results, columns=["LCIA method", "Parameter", "Delta", "Delta Conf", "S1", "S1 Conf"])

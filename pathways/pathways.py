@@ -9,12 +9,13 @@ import pickle
 from collections import defaultdict
 from multiprocessing import Pool, cpu_count
 from typing import Any, List, Optional
+from pathlib import Path
 
 import numpy as np
 import pandas as pd
-import pyprind
 import xarray as xr
 import yaml
+import sparse as sp
 
 from .data_validation import validate_datapackage
 from .filesystem_constants import DATA_DIR, DIR_CACHED_DB, STATS_DIR, USER_LOGS_DIR
@@ -38,10 +39,195 @@ from .utils import (
     fetch_inventories_locations,
     harmonize_units,
     load_classifications,
-    load_numpy_array_from_disk,
     load_units_conversion,
     resize_scenario_data,
 )
+
+
+def _fill_in_result_array(
+        coords: tuple, result: dict, use_distributions: int, shares: [None, dict], methods: list
+) -> np.ndarray:
+    def _load_array(filepath):
+        if len(filepath) == 1:
+            if Path(filepath[0]).suffix == ".npy":
+                return np.load(DIR_CACHED_DB / filepath[0])
+            elif Path(filepath[0]).suffix == ".pkl":
+                with open(DIR_CACHED_DB / filepath[0], "rb") as f:
+                    return pickle.load(f)
+            else:
+                return sp.load_npz(DIR_CACHED_DB / filepath[0]).todense()
+        else:
+            if Path(filepath[0]).suffix == ".npy":
+                return np.stack([
+                    np.load(DIR_CACHED_DB / f)
+                    for f in filepath
+                ], axis=-1)
+            return np.stack([
+                sp.load_npz(DIR_CACHED_DB / f).todense()
+                for f in filepath
+            ], axis=-1)
+
+    # Pre-loading data from disk if possible
+    cached_data = {
+        region: _load_array(data["iterations_results"])
+        for region, data in result.items()
+    }
+
+    uncertainty_parameters, uncertainty_values, tehnosphere_indices, iteration_results = None, None, None, None
+
+    if use_distributions > 0:
+        uncertainty_parameters = {
+            region: _load_array(data["uncertainty_params"])
+            for region, data in result.items()
+        }
+
+        uncertainty_values = {
+            region: _load_array(data["iterations_param_vals"])
+            for region, data in result.items()
+        }
+
+        tehnosphere_indices = {
+            region: _load_array(data["technosphere_indices"])
+            for region, data in result.items()
+        }
+
+        iteration_results = {
+            region: _load_array(data["iterations_results"])
+            for region, data in result.items()
+        }
+
+    model, scenario, year = coords
+
+    results = []
+
+    for region, data_ in result.items():
+
+        d = cached_data[region]
+
+        if use_distributions > 0:
+            d = np.quantile(d, [0.05, 0.5, 0.95], axis=-1)
+            d = d.transpose(3, 1, 4, 2, 0)
+        else:
+            d = d.transpose(2, 0, 3, 1)
+
+        results.append(d)
+
+    if use_distributions > 0:
+        statistical_analysis(
+            model=model,
+            scenario=scenario,
+            year=year,
+            methods=methods,
+            result=result,
+            uncertainty_parameters=uncertainty_parameters,
+            uncertainty_values=uncertainty_values,
+            tehnosphere_indices=tehnosphere_indices,
+            iteration_results=iteration_results,
+            shares=shares,
+        )
+
+    return np.stack(results, axis=2)
+
+
+def statistical_analysis(
+    model: str,
+    scenario: str,
+    year: int,
+    methods: list,
+    result: dict,
+    uncertainty_parameters: dict,
+    uncertainty_values: dict,
+    tehnosphere_indices: dict,
+    iteration_results: dict,
+    shares: dict = None,
+):
+    export_path = STATS_DIR / f"{model}_{scenario}_{year}.xlsx"
+
+    # create Excel workbook using openpyxl
+    with pd.ExcelWriter(export_path, engine="openpyxl") as writer:
+
+        df_sum_impacts = pd.DataFrame()
+        df_uncertainty_values = pd.DataFrame()
+        df_technology_shares = pd.DataFrame()
+        writer.book.create_sheet("Indices mapping")
+        writer.book.create_sheet("Monte Carlo values")
+        writer.book.create_sheet("Technology shares")
+        writer.book.create_sheet("Total impacts")
+        writer.book.create_sheet("GSA")
+
+        for region, data in result.items():
+
+            total_impacts = np.sum(iteration_results[region], axis=(0, 2, 3))
+
+            df_sum_impacts = pd.concat(
+                [
+                    df_sum_impacts,
+                    log_results(
+                        total_impacts=total_impacts,
+                        methods=methods,
+                        region=region,
+                    ),
+                ]
+            )
+
+            uncertainty_indices = uncertainty_parameters[region]
+            uncertainty_vals = uncertainty_values[region]
+
+            df_uncertainty_values = pd.concat(
+                [
+                    df_uncertainty_values,
+                    log_uncertainty_values(
+                        region=region,
+                        uncertainty_indices=uncertainty_indices,
+                        uncertainty_values=uncertainty_vals,
+                    ),
+                ],
+            )
+
+            if shares:
+                sub_shares = {}
+                for k, v in shares.items():
+                    for x, y in v.items():
+                        if x == year:
+                            for z, w in y.items():
+                                sub_shares[f"{k} - {z}"] = w
+
+                df_technology_shares = pd.concat(
+                    [
+                        df_technology_shares,
+                        log_subshares(
+                            shares=sub_shares,
+                            region=region,
+                        ),
+                    ],
+                )
+
+        indices = tehnosphere_indices[region]
+
+        df_technosphere_indices = create_mapping_sheet(indices=indices)
+
+        df_sum_impacts.to_excel(
+            writer, sheet_name="Total impacts", index=False
+        )
+        df_uncertainty_values.to_excel(
+            writer, sheet_name="Monte Carlo values", index=False
+        )
+        df_technology_shares.to_excel(
+            writer, sheet_name="Technology shares", index=False
+        )
+        df_technosphere_indices.to_excel(
+            writer, sheet_name="Indices mapping", index=False
+        )
+
+        df_GSA_results = run_GSA_delta(
+            total_impacts=df_sum_impacts,
+            uncertainty_values=df_uncertainty_values,
+            technology_shares=df_technology_shares,
+        )
+
+        df_GSA_results.to_excel(writer, sheet_name="GSA", index=False)
+
+        print(f"Statistical analysis: {export_path.resolve()}")
 
 
 class Pathways:
@@ -380,225 +566,58 @@ class Pathways:
                         )
                 else:
                     for arg in args:
-                        results[(model, scenario, arg[2])] = _calculate_year(arg)
+                        results[(arg[0], arg[1], arg[2])] = _calculate_year(arg)
 
         # remove None values in results
         results = {k: v for k, v in results.items() if v is not None}
 
-        self._fill_in_result_array(results, use_distributions, shares, methods)
+        if multiprocessing:
+            with Pool(cpu_count()) as p:
+                args = [
+                    (
+                        coords,
+                        result,
+                        use_distributions,
+                        shares,
+                        methods,
+                    )
+                    for coords, result in results.items()
+                ]
 
-    def _fill_in_result_array(
-        self, results: dict, use_distributions: int, shares: [None, dict], methods: list
-    ) -> None:
+                r = p.starmap(_fill_in_result_array, args)
 
-        # Pre-loading data from disk if possible
-        cached_data = {
-            data["id_array"]: load_numpy_array_from_disk(
-                DIR_CACHED_DB / f"{data['id_array']}.npy",
-            )
-            for coord, result in results.items()
-            for region, data in result.items()
-            if region != "other"
-        }
+                for c, coord in enumerate([c[0] for c in args]):
+                    model, scenario, year = coord
+                    self.lca_results.loc[dict(
+                        model=model,
+                        scenario=scenario,
+                        year=year,
+                    )] = r[c]
 
-        # use pyprint to display progress
-        progress_bar = pyprind.ProgBar(len(results))
-        for coord, result in results.items():
-            progress_bar.update()
-            model, scenario, year = coord
-            acts_category_idx_dict = result["other"]["acts_category_idx_dict"]
-            acts_location_idx_dict = result["other"]["acts_location_idx_dict"]
+        else:
+            for coords, values in results.items():
+                model, scenario, year = coords
 
-            for region, data_ in result.items():
-                if region == "other":
-                    continue
-
-                id_array = data_["id_array"]
-                variables = data_["variables"]
-
-                d = np.squeeze(cached_data[id_array])
-
-                for cat, act_cat_idx in acts_category_idx_dict.items():
-                    for loc, act_loc_idx in acts_location_idx_dict.items():
-                        idx = np.intersect1d(act_cat_idx, act_loc_idx)
-                        idx = idx[idx != -1]
-
-                        if idx.size > 0:
-                            summed_data = d[..., idx].sum(axis=-1)
-
-                            try:
-                                self.lca_results.loc[
-                                    {
-                                        "region": region,
-                                        "model": model,
-                                        "scenario": scenario,
-                                        "year": year,
-                                        "act_category": cat,
-                                        "location": loc,
-                                        "variable": list(variables.keys()),
-                                    }
-                                ] = summed_data
-
-                            except ValueError:
-                                # transpose quantile dimension to the penultimate dimension
-                                self.lca_results.loc[
-                                    {
-                                        "region": region,
-                                        "model": model,
-                                        "scenario": scenario,
-                                        "year": year,
-                                        "act_category": cat,
-                                        "location": loc,
-                                        "variable": list(variables.keys()),
-                                    }
-                                ] = summed_data.transpose(1, 2, 0)
-
-        if use_distributions > 0:
-
-            uncertainty_parameters = {
-                data["uncertainty_params"]: load_numpy_array_from_disk(
-                    DIR_CACHED_DB / f"{data['uncertainty_params']}.npy",
+                self.lca_results.loc[dict(
+                    model=model,
+                    scenario=scenario,
+                    year=year,
+                )] = _fill_in_result_array(
+                    coords,
+                    values,
+                    use_distributions,
+                    shares,
+                    methods,
                 )
-                for coord, result in results.items()
-                for region, data in result.items()
-                if region != "other"
-            }
 
-            uncertainty_values = {
-                data["uncertainty_vals"]: load_numpy_array_from_disk(
-                    DIR_CACHED_DB / f"{data['uncertainty_vals']}.npy",
-                )
-                for coord, result in results.items()
-                for region, data in result.items()
-                if region != "other"
-            }
-
-            tehnosphere_indices = {
-                data["technosphere_indices"]: pickle.load(
-                    open(DIR_CACHED_DB / f"{data['technosphere_indices']}.pkl", "rb")
-                )
-                for coord, result in results.items()
-                for region, data in result.items()
-                if region != "other"
-            }
-
-            iteration_results = {
-                data["iterations_results"]: load_numpy_array_from_disk(
-                    DIR_CACHED_DB / f"{data['iterations_results']}.npy",
-                )
-                for coord, result in results.items()
-                for region, data in result.items()
-                if region != "other"
-            }
-
-            for coord, result in results.items():
-                model, scenario, year = coord
-
-                export_path = STATS_DIR / f"{model}_{scenario}_{year}.xlsx"
-
-                # create Excel workbook using openpyxl
-                with pd.ExcelWriter(export_path, engine="openpyxl") as writer:
-
-                    df_sum_impacts = pd.DataFrame()
-                    df_uncertainty_values = pd.DataFrame()
-                    df_technology_shares = pd.DataFrame()
-                    writer.book.create_sheet("Indices mapping")
-                    writer.book.create_sheet("Monte Carlo values")
-                    writer.book.create_sheet("Technology shares")
-                    writer.book.create_sheet("Total impacts")
-                    writer.book.create_sheet("Global Sensitivity Analysis")
-
-                    for region, data in result.items():
-                        if region == "other":
-                            continue
-
-                        total_impacts = iteration_results[data["iterations_results"]]
-
-                        df_sum_impacts = pd.concat(
-                            [
-                                df_sum_impacts,
-                                log_results(
-                                    total_impacts=total_impacts,
-                                    methods=methods,
-                                    region=region,
-                                ),
-                            ]
-                        )
-
-                        uncertainty_indices = uncertainty_parameters[
-                            data["uncertainty_params"]
-                        ]
-                        uncertainty_vals = uncertainty_values[data["uncertainty_vals"]]
-
-                        df_uncertainty_values = pd.concat(
-                            [
-                                df_uncertainty_values,
-                                log_uncertainty_values(
-                                    region=region,
-                                    uncertainty_indices=uncertainty_indices,
-                                    uncertainty_values=uncertainty_vals,
-                                ),
-                            ],
-                        )
-
-                        if shares:
-                            sub_shares = {}
-                            for k, v in shares.items():
-                                for x, y in v.items():
-                                    if x == year:
-                                        for z, w in y.items():
-                                            sub_shares[f"{k} - {z}"] = w
-
-                            df_technology_shares = pd.concat(
-                                [
-                                    df_technology_shares,
-                                    log_subshares(
-                                        shares=sub_shares,
-                                        region=region,
-                                    ),
-                                ],
-                            )
-
-                    indices = tehnosphere_indices[data["technosphere_indices"]]
-                    # only keep indices which are also present in uncertainty_indices
-                    indices = {
-                        k: v
-                        for k, v in indices.items()
-                        if v in set(uncertainty_indices.flatten().tolist())
-                    }
-                    df_technosphere_indices = create_mapping_sheet(indices=indices)
-
-                    df_sum_impacts.to_excel(
-                        writer, sheet_name="Total impacts", index=False
-                    )
-                    df_uncertainty_values.to_excel(
-                        writer, sheet_name="Monte Carlo values", index=False
-                    )
-                    df_technology_shares.to_excel(
-                        writer, sheet_name="Technology shares", index=False
-                    )
-                    df_technosphere_indices.to_excel(
-                        writer, sheet_name="Indices mapping", index=False
-                    )
-
-                    df_GSA = run_GSA_delta(
-                        total_impacts=df_sum_impacts,
-                        uncertainty_values=df_uncertainty_values,
-                        technology_shares=df_technology_shares,
-                    )
-                    df_GSA.to_excel(
-                        writer, sheet_name="Global Sensitivity Analysis", index=False
-                    )
-
-                print(f"Statistical analysis: {export_path.resolve()}")
 
     def display_results(self, cutoff: float = 0.001) -> xr.DataArray:
         return display_results(self.lca_results, cutoff=cutoff)
 
-    def export_results(self, filename: str = None) -> None:
+    def export_results(self, filename: str = None) -> str:
         """
         Export the non-zero LCA results to a compressed parquet file.
         :param filename: str. The name of the file to save the results.
         :return: None
         """
-        export_results_to_parquet(self.lca_results, filename)
+        return export_results_to_parquet(self.lca_results, filename)
