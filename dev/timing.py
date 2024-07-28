@@ -2,7 +2,7 @@ from pathways import Pathways
 
 p = Pathways(
     datapackage="remind-SSP2-PkBudg1150-stem-SPS1.zip",
-    geography_mapping="geo_mapping_remind.yaml"
+    geography_mapping="geo_mapping_remind.yaml",
 )
 
 vars = [v for v in p.scenarios.coords["variables"].values if v.startswith("FE")]
@@ -17,12 +17,7 @@ p.calculate(
         "CH",
     ],
     scenarios=p.scenarios.pathway.values.tolist(),
-    years=[
-        2020,
-        2030,
-        2040,
-        2050
-    ],
+    years=[2020, 2030, 2040, 2050],
     variables=vars,
     use_distributions=1000,
     subshares=True,
