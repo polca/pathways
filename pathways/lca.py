@@ -411,10 +411,12 @@ def process_region(data: Tuple) -> Dict[str, str | List[str] | List[int]]:
                         for value in lca.inventories.values()
                     ]
                 )
-                iter_param_vals.append([
-                    -lca.technosphere_matrix[index]
-                    for index in lca.uncertain_parameters
-                ])
+                iter_param_vals.append(
+                    [
+                        -lca.technosphere_matrix[index]
+                        for index in lca.uncertain_parameters
+                    ]
+                )
 
                 iter_results = np.zeros(
                     (
@@ -431,7 +433,9 @@ def process_region(data: Tuple) -> Dict[str, str | List[str] | List[int]]:
                     )
 
                 # Save iteration results to disk
-                iter_results_filepath = DIR_CACHED_DB / f"iter_results_{uuid.uuid4()}.npz"
+                iter_results_filepath = (
+                    DIR_CACHED_DB / f"iter_results_{uuid.uuid4()}.npz"
+                )
                 sp.save_npz(
                     filename=iter_results_filepath,
                     matrix=sp.COO(iter_results),
@@ -444,14 +448,18 @@ def process_region(data: Tuple) -> Dict[str, str | List[str] | List[int]]:
         np.save(file=iter_param_vals_filepath, arr=np.stack(iter_param_vals, axis=-1))
 
         # Save the uncertainty indices to disk
-        id_uncertainty_indices_filepath = DIR_CACHED_DB / f"mc_indices_{uuid.uuid4()}.npy"
+        id_uncertainty_indices_filepath = (
+            DIR_CACHED_DB / f"mc_indices_{uuid.uuid4()}.npy"
+        )
         np.save(
             file=id_uncertainty_indices_filepath,
             arr=lca.uncertain_parameters,
         )
 
         # Save the technosphere indices to disk
-        id_technosphere_indices_filepath = DIR_CACHED_DB / f"tech_indices_{uuid.uuid4()}.pkl"
+        id_technosphere_indices_filepath = (
+            DIR_CACHED_DB / f"tech_indices_{uuid.uuid4()}.pkl"
+        )
         pickle.dump(
             lca.technosphere_indices,
             open(id_technosphere_indices_filepath, "wb"),
@@ -567,7 +575,6 @@ def _calculate_year(args: tuple):
             )
 
     results = {}
-
 
     acts_category_idx_dict = _group_technosphere_indices(
         technosphere_indices=technosphere_indices,

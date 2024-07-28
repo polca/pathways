@@ -39,9 +39,9 @@ from .utils import (
     fetch_inventories_locations,
     harmonize_units,
     load_classifications,
+    load_geography_mapping,
     load_units_conversion,
     resize_scenario_data,
-    load_geography_mapping
 )
 
 
@@ -65,9 +65,7 @@ def _fill_in_result_array(
         else:
             if Path(filepath[0]).suffix == ".npy":
                 return np.stack([np.load(f) for f in filepath], axis=-1)
-            return np.stack(
-                [sp.load_npz(f).todense() for f in filepath], axis=-1
-            )
+            return np.stack([sp.load_npz(f).todense() for f in filepath], axis=-1)
 
     # Pre-loading data from disk if possible
     iteration_results = {
@@ -84,7 +82,9 @@ def _fill_in_result_array(
         array = iteration_results[region]
 
         if use_distributions > 0:
-            array = np.quantile(array, [0.05, 0.5, 0.95], method="closest_observation", axis=-1)
+            array = np.quantile(
+                array, [0.05, 0.5, 0.95], method="closest_observation", axis=-1
+            )
             array = array.transpose(3, 1, 4, 2, 0)
         else:
             array = array.transpose(2, 0, 3, 1)

@@ -67,6 +67,7 @@ def read_indices_csv(file_path: Path) -> dict[tuple[str, str, str, str], int]:
     indices = {tuple([str(x) for x in k]): v for k, v in indices.items()}
     return indices
 
+
 def load_geography_mapping(mapping: [dict, str]) -> dict:
     """
     Load the geography mapping.
@@ -82,6 +83,7 @@ def load_geography_mapping(mapping: [dict, str]) -> dict:
         return data
     else:
         raise ValueError("Invalid geography mapping")
+
 
 def load_classifications():
     """Load the activities classifications."""
