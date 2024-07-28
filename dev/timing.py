@@ -11,8 +11,8 @@ p.calculate(
     methods=[
         "EF v3.1 EN15804 - climate change - global warming potential (GWP100)",
         "EF v3.1 EN15804 - ecotoxicity: freshwater - comparative toxic unit for ecosystems (CTUe)",
-    ],
-    # + [m for m in p.lcia_methods if "relics" in m.lower()][-3:],
+    ]
+    + [m for m in p.lcia_methods if "relics" in m.lower()][-5:],
     regions=[
         "CH",
     ],
@@ -24,7 +24,7 @@ p.calculate(
         2050
     ],
     variables=vars,
-    use_distributions=100,
+    use_distributions=1000,
     subshares=True,
     multiprocessing=True,
     statistical_analysis=True,
