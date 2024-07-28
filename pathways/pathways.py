@@ -9,7 +9,7 @@ import pickle
 from collections import defaultdict
 from multiprocessing import Pool, cpu_count
 from pathlib import Path
-from typing import Any, List, Optional
+from typing import List, Optional
 
 import numpy as np
 import pandas as pd
@@ -41,6 +41,7 @@ from .utils import (
     load_classifications,
     load_units_conversion,
     resize_scenario_data,
+    load_geography_mapping
 )
 
 
@@ -50,37 +51,47 @@ def _fill_in_result_array(
     use_distributions: int,
     shares: [None, dict],
     methods: list,
+    statistiscal_analysis: bool,
 ) -> np.ndarray:
     def _load_array(filepath):
         if len(filepath) == 1:
             if Path(filepath[0]).suffix == ".npy":
-                return np.load(DIR_CACHED_DB / filepath[0])
+                return np.load(filepath[0])
             elif Path(filepath[0]).suffix == ".pkl":
-                with open(DIR_CACHED_DB / filepath[0], "rb") as f:
+                with open(filepath[0], "rb") as f:
                     return pickle.load(f)
             else:
-                return sp.load_npz(DIR_CACHED_DB / filepath[0]).todense()
+                return sp.load_npz(filepath[0]).todense()
         else:
             if Path(filepath[0]).suffix == ".npy":
-                return np.stack([np.load(DIR_CACHED_DB / f) for f in filepath], axis=-1)
+                return np.stack([np.load(f) for f in filepath], axis=-1)
             return np.stack(
-                [sp.load_npz(DIR_CACHED_DB / f).todense() for f in filepath], axis=-1
+                [sp.load_npz(f).todense() for f in filepath], axis=-1
             )
 
     # Pre-loading data from disk if possible
-    cached_data = {
+    iteration_results = {
         region: _load_array(data["iterations_results"])
         for region, data in result.items()
     }
 
-    (
-        uncertainty_parameters,
-        uncertainty_values,
-        tehnosphere_indices,
-        iteration_results,
-    ) = (None, None, None, None)
+    model, scenario, year = coords
 
-    if use_distributions > 0:
+    results = []
+
+    for region, data_ in result.items():
+
+        array = iteration_results[region]
+
+        if use_distributions > 0:
+            array = np.quantile(array, [0.05, 0.5, 0.95], method="closest_observation", axis=-1)
+            array = array.transpose(3, 1, 4, 2, 0)
+        else:
+            array = array.transpose(2, 0, 3, 1)
+
+        results.append(array)
+
+    if use_distributions > 0 and statistiscal_analysis:
         uncertainty_parameters = {
             region: _load_array(data["uncertainty_params"])
             for region, data in result.items()
@@ -96,28 +107,6 @@ def _fill_in_result_array(
             for region, data in result.items()
         }
 
-        iteration_results = {
-            region: _load_array(data["iterations_results"])
-            for region, data in result.items()
-        }
-
-    model, scenario, year = coords
-
-    results = []
-
-    for region, data_ in result.items():
-
-        d = cached_data[region]
-
-        if use_distributions > 0:
-            d = np.quantile(d, [0.05, 0.5, 0.95], axis=-1)
-            d = d.transpose(3, 1, 4, 2, 0)
-        else:
-            d = d.transpose(2, 0, 3, 1)
-
-        results.append(d)
-
-    if use_distributions > 0:
         statistical_analysis(
             model=model,
             scenario=scenario,
@@ -242,7 +231,7 @@ class Pathways:
 
     """
 
-    def __init__(self, datapackage, debug=False):
+    def __init__(self, datapackage, geography_mapping: [dict, str] = None, debug=False):
         self.datapackage = datapackage
         self.data, dataframe, self.filepaths = validate_datapackage(
             _read_datapackage(datapackage)
@@ -270,6 +259,11 @@ class Pathways:
         self.lcia_methods = get_lcia_method_names()
         self.units = load_units_conversion()
         self.lcia_matrix = None
+
+        # a mapping of geographies can be added
+        # to aggregate locations to a higher level
+        # e.g. from countries to regions
+        self.geography_mapping = load_geography_mapping(geography_mapping) or None
 
         clean_cache_directory()
 
@@ -412,6 +406,7 @@ class Pathways:
         subshares: bool = False,
         remove_uncertainty: bool = False,
         multiprocessing: bool = True,
+        statistical_analysis: bool = False,
     ) -> None:
         """
         Calculate Life Cycle Assessment (LCA) results for given methods, models, scenarios, regions, and years.
@@ -503,6 +498,12 @@ class Pathways:
         if self.lca_results is None:
             locations = fetch_inventories_locations(technosphere_index)
 
+            # if geography mapping is provided, aggregate locations
+            if self.geography_mapping:
+                locations = list(set(list(self.geography_mapping.values())))
+            else:
+                self.geography_mapping = {loc: loc for loc in locations}
+
             self.lca_results = create_lca_results_array(
                 methods=methods,
                 years=years,
@@ -546,6 +547,7 @@ class Pathways:
                         self.classifications,
                         self.scenarios,
                         self.reverse_classifications,
+                        self.geography_mapping,
                         self.debug,
                         use_distributions,
                         shares,
@@ -557,7 +559,7 @@ class Pathways:
 
                 if multiprocessing:
                     # Process each region in parallel
-                    with Pool(cpu_count()) as p:
+                    with Pool(cpu_count(), maxtasksperchild=1000) as p:
                         # store the results as a dictionary with years as keys
                         results.update(
                             {
@@ -575,7 +577,7 @@ class Pathways:
         results = {k: v for k, v in results.items() if v is not None}
 
         if multiprocessing:
-            with Pool(cpu_count()) as p:
+            with Pool(cpu_count(), maxtasksperchild=1000) as p:
                 args = [
                     (
                         coords,
@@ -583,6 +585,7 @@ class Pathways:
                         use_distributions,
                         shares,
                         methods,
+                        statistical_analysis,
                     )
                     for coords, result in results.items()
                 ]
@@ -615,6 +618,7 @@ class Pathways:
                     use_distributions,
                     shares,
                     methods,
+                    statistical_analysis,
                 )
 
     def display_results(self, cutoff: float = 0.001) -> xr.DataArray:

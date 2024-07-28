@@ -53,7 +53,7 @@ def read_indices_csv(file_path: Path) -> dict[tuple[str, str, str, str], int]:
     :rtype: Dict[Tuple[str, str, str, str], str]
     """
     indices = dict()
-    with open(file_path) as read_obj:
+    with open(file_path, encoding="utf-8") as read_obj:
         csv_reader = csv.reader(read_obj, delimiter=";")
         for row in csv_reader:
             try:
@@ -63,8 +63,25 @@ def read_indices_csv(file_path: Path) -> dict[tuple[str, str, str, str], int]:
                     f"Error reading row {row} from {file_path}: {err}. "
                     f"Could it be that the file uses commas instead of semicolons?"
                 )
+    # remove any unicode characters
+    indices = {tuple([str(x) for x in k]): v for k, v in indices.items()}
     return indices
 
+def load_geography_mapping(mapping: [dict, str]) -> dict:
+    """
+    Load the geography mapping.
+    :param mapping: dict or yaml file with the geography mapping.
+    :return: dict
+    """
+
+    if isinstance(mapping, dict):
+        return mapping
+    elif isinstance(mapping, str):
+        with open(mapping, "r") as f:
+            data = yaml.full_load(f)
+        return data
+    else:
+        raise ValueError("Invalid geography mapping")
 
 def load_classifications():
     """Load the activities classifications."""
@@ -561,7 +578,10 @@ def check_unclassified_activities(
 
 
 def _group_technosphere_indices(
-    technosphere_indices: dict, group_by, group_values: list
+    technosphere_indices: dict,
+    group_by,
+    group_values: list,
+    mapping: dict = None,
 ) -> dict:
     """
     Generalized function to group technosphere indices by an arbitrary attribute (category, location, etc.).
@@ -569,6 +589,7 @@ def _group_technosphere_indices(
     :param technosphere_indices: Mapping of activities to their indices in the technosphere matrix.
     :param group_by: A function that takes an activity and returns its group value (e.g., category or location).
     :param group_values: The set of all possible group values (e.g., all categories or locations).
+    :param mapping: A dictionary mapping.
     :return: A tuple containing a list of lists of indices, a dictionary mapping group values to lists of indices,
              and a 2D numpy array of indices, where rows have been padded with -1 to ensure equal lengths.
     """
@@ -585,6 +606,20 @@ def _group_technosphere_indices(
         )
         for value in group_values
     )
+
+    if mapping:
+        aggregated = {}
+        for k, v in acts_dict.items():
+            if mapping.get(k, k) in aggregated:
+                aggregated[mapping.get(k, k)].extend(v)
+            else:
+                aggregated[mapping.get(k, k)] = v
+
+        # reorder the dictionary to match with the
+        # order of mapping.values()
+        aggregated = {k: aggregated[k] for k in mapping.values()}
+
+        return aggregated
 
     return acts_dict
 

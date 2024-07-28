@@ -51,9 +51,6 @@ def test_load_matrix_and_index(tmp_path):
         temp_file
     )
 
-    print("distributions_array", distributions_array)
-    print("expected_output", expected_output[3])
-
     # Check that the output matches the expected output
     # but they have different dtypes
 

@@ -204,7 +204,7 @@ def get_lca_matrices(
 
 def find_uncertain_parameters(
     distributions_array: np.ndarray, indices_array: np.ndarray
-) -> list[tuple[int, int]]:
+) -> list[tuple]:
     """
     Find the uncertain parameters in the distributions array.
     They will be used for the stats report
@@ -339,10 +339,10 @@ def process_region(data: Tuple) -> Dict[str, str | List[str] | List[int]]:
         uncertain_parameters,
     ) = data
 
-    id_uncertainty_indices = None
-    id_technosphere_indices = None
+    id_uncertainty_indices_filepath = None
+    id_technosphere_indices_filepath = None
     iter_results_files = []
-    iter_param_vals_files = []
+    iter_param_vals_filepath = None
 
     dict_loc_cat = {}
 
@@ -388,16 +388,17 @@ def process_region(data: Tuple) -> Dict[str, str | List[str] | List[int]]:
             iter_results[:, :, cat, loc] = inventory_results[:, :, idx].sum(axis=2)
 
         # Save iteration results to disk
-        iter_results_file = f"iter_results_{uuid.uuid4()}.npz"
+        iter_results_filepath = DIR_CACHED_DB / f"iter_results_{uuid.uuid4()}.npz"
         sp.save_npz(
-            filename=DIR_CACHED_DB / iter_results_file,
+            filename=iter_results_filepath,
             matrix=sp.COO(iter_results),
             compressed=True,
         )
-        iter_results_files.append(iter_results_file)
+        iter_results_files.append(iter_results_filepath)
 
     else:
         # Use distributions for LCA calculations
+        iter_param_vals = []
         with CustomFilter("(almost) singular matrix"):
             for iteration in range(use_distributions):
                 next(lca)
@@ -410,10 +411,10 @@ def process_region(data: Tuple) -> Dict[str, str | List[str] | List[int]]:
                         for value in lca.inventories.values()
                     ]
                 )
-                iter_param_vals = [
+                iter_param_vals.append([
                     -lca.technosphere_matrix[index]
                     for index in lca.uncertain_parameters
-                ]
+                ])
 
                 iter_results = np.zeros(
                     (
@@ -430,31 +431,30 @@ def process_region(data: Tuple) -> Dict[str, str | List[str] | List[int]]:
                     )
 
                 # Save iteration results to disk
-                iter_results_file = f"iter_results_{uuid.uuid4()}.npz"
+                iter_results_filepath = DIR_CACHED_DB / f"iter_results_{uuid.uuid4()}.npz"
                 sp.save_npz(
-                    filename=DIR_CACHED_DB / iter_results_file,
+                    filename=iter_results_filepath,
                     matrix=sp.COO(iter_results),
                     compressed=True,
                 )
-                iter_results_files.append(iter_results_file)
+                iter_results_files.append(iter_results_filepath)
 
-                # Save iteration parameter values to disk
-                iter_param_vals_file = f"iter_param_vals_{uuid.uuid4()}.npy"
-                np.save(file=DIR_CACHED_DB / iter_param_vals_file, arr=iter_param_vals)
-                iter_param_vals_files.append(iter_param_vals_file)
+        # Save iteration parameter values to disk
+        iter_param_vals_filepath = DIR_CACHED_DB / f"iter_param_vals_{uuid.uuid4()}.npy"
+        np.save(file=iter_param_vals_filepath, arr=np.stack(iter_param_vals, axis=-1))
 
         # Save the uncertainty indices to disk
-        id_uncertainty_indices = f"mc_indices_{uuid.uuid4()}.npy"
+        id_uncertainty_indices_filepath = DIR_CACHED_DB / f"mc_indices_{uuid.uuid4()}.npy"
         np.save(
-            file=DIR_CACHED_DB / id_uncertainty_indices,
+            file=id_uncertainty_indices_filepath,
             arr=lca.uncertain_parameters,
         )
 
         # Save the technosphere indices to disk
-        id_technosphere_indices = f"tech_indices_{uuid.uuid4()}.pkl"
+        id_technosphere_indices_filepath = DIR_CACHED_DB / f"tech_indices_{uuid.uuid4()}.pkl"
         pickle.dump(
             lca.technosphere_indices,
-            open(DIR_CACHED_DB / id_technosphere_indices, "wb"),
+            open(id_technosphere_indices_filepath, "wb"),
         )
 
     # Returning a dictionary containing the id_array and the variables
@@ -466,12 +466,14 @@ def process_region(data: Tuple) -> Dict[str, str | List[str] | List[int]]:
 
     if use_distributions > 0:
         d["uncertainty_params"] = [
-            str(id_uncertainty_indices),
+            str(id_uncertainty_indices_filepath),
         ]
         d["technosphere_indices"] = [
-            str(id_technosphere_indices),
+            str(id_technosphere_indices_filepath),
         ]
-        d["iterations_param_vals"] = iter_param_vals_files
+        d["iterations_param_vals"] = [
+            str(iter_param_vals_filepath),
+        ]
 
     return d
 
@@ -496,6 +498,7 @@ def _calculate_year(args: tuple):
         classifications,
         scenarios,
         reverse_classifications,
+        geography_mapping,
         debug,
         use_distributions,
         shares,
@@ -522,6 +525,7 @@ def _calculate_year(args: tuple):
 
     # Try to load LCA matrices for
     # the given model, scenario, and year
+
     try:
         (
             bw_datapackage,
@@ -564,7 +568,6 @@ def _calculate_year(args: tuple):
 
     results = {}
 
-    locations = lca_results.coords["location"].values.tolist()
 
     acts_category_idx_dict = _group_technosphere_indices(
         technosphere_indices=technosphere_indices,
@@ -575,7 +578,8 @@ def _calculate_year(args: tuple):
     acts_location_idx_dict = _group_technosphere_indices(
         technosphere_indices=technosphere_indices,
         group_by=lambda x: x[-1],
-        group_values=locations,
+        group_values=list(set([x[-1] for x in technosphere_indices.keys()])),
+        mapping=geography_mapping,
     )
 
     bar = pyprind.ProgBar(len(regions))
