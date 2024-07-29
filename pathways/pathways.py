@@ -51,7 +51,6 @@ def _fill_in_result_array(
     use_distributions: int,
     shares: [None, dict],
     methods: list,
-    statistiscal_analysis: bool,
 ) -> np.ndarray:
     def _load_array(filepath):
         if len(filepath) == 1:
@@ -91,7 +90,7 @@ def _fill_in_result_array(
 
         results.append(array)
 
-    if use_distributions > 0 and statistiscal_analysis:
+    if use_distributions > 0:
         uncertainty_parameters = {
             region: _load_array(data["uncertainty_params"])
             for region, data in result.items()
@@ -107,7 +106,7 @@ def _fill_in_result_array(
             for region, data in result.items()
         }
 
-        statistical_analysis(
+        log_mc_parameters_to_excel(
             model=model,
             scenario=scenario,
             year=year,
@@ -123,7 +122,7 @@ def _fill_in_result_array(
     return np.stack(results, axis=2)
 
 
-def statistical_analysis(
+def log_mc_parameters_to_excel(
     model: str,
     scenario: str,
     year: int,
@@ -147,7 +146,6 @@ def statistical_analysis(
         writer.book.create_sheet("Monte Carlo values")
         writer.book.create_sheet("Technology shares")
         writer.book.create_sheet("Total impacts")
-        writer.book.create_sheet("GSA")
 
         for region, data in result.items():
 
@@ -211,15 +209,7 @@ def statistical_analysis(
             writer, sheet_name="Indices mapping", index=False
         )
 
-        df_GSA_results = run_GSA_delta(
-            total_impacts=df_sum_impacts,
-            uncertainty_values=df_uncertainty_values,
-            technology_shares=df_technology_shares,
-        )
-
-        df_GSA_results.to_excel(writer, sheet_name="GSA", index=False)
-
-        print(f"Statistical analysis: {export_path.resolve()}")
+        print(f"Monte Carlo parameters added to: {export_path.resolve()}")
 
 
 class Pathways:
@@ -406,7 +396,6 @@ class Pathways:
         subshares: bool = False,
         remove_uncertainty: bool = False,
         multiprocessing: bool = True,
-        statistical_analysis: bool = False,
     ) -> None:
         """
         Calculate Life Cycle Assessment (LCA) results for given methods, models, scenarios, regions, and years.
@@ -585,7 +574,6 @@ class Pathways:
                         use_distributions,
                         shares,
                         methods,
-                        statistical_analysis,
                     )
                     for coords, result in results.items()
                 ]
@@ -618,7 +606,6 @@ class Pathways:
                     use_distributions,
                     shares,
                     methods,
-                    statistical_analysis,
                 )
 
     def display_results(self, cutoff: float = 0.001) -> xr.DataArray:
@@ -631,3 +618,52 @@ class Pathways:
         :return: None
         """
         return export_results_to_parquet(self.lca_results, filename)
+
+    def run_gsa(self, method: str = "delta") -> None:
+        """
+        Run a global sensitivity analysis (GSA) on the LCA results.
+        Updates Excel files with the GSA results.
+        :param method: str. The method used for the GSA. Default is 'delta'. Only 'delta' is supported at the moment.
+        :return: None.
+        """
+        if method != "delta":
+            raise ValueError(f"Method {method} is not supported.")
+
+        for model in self.lca_results.coords["model"].values:
+            for scenario in self.lca_results.coords["scenario"].values:
+                for year in self.lca_results.coords["year"].values:
+                    export_path = STATS_DIR / f"{model}_{scenario}_{year}.xlsx"
+
+                    # load content of "Monte Carlo values" sheet into a pandas DataFrame
+                    df_mc_vals = pd.read_excel(
+                        export_path, sheet_name="Monte Carlo values"
+                    )
+
+                    # load content of "Technology shares" sheet into a pandas DataFrame
+                    # if it exists
+
+                    try:
+                        df_technology_shares = pd.read_excel(
+                            export_path, sheet_name="Technology shares",
+                        )
+                    except:
+                        df_technology_shares = None
+
+                    # load content of "Total impacts" sheet into a pandas DataFrame
+
+                    df_sum_impacts = pd.read_excel(
+                        export_path, sheet_name="Total impacts"
+                    )
+
+                    # open Excel workbook
+                    with pd.ExcelWriter(export_path, engine="openpyxl", mode="a") as writer:
+
+                        df_GSA_results = run_GSA_delta(
+                            total_impacts=df_sum_impacts,
+                            uncertainty_values=df_mc_vals,
+                            technology_shares=df_technology_shares,
+                        )
+
+                        df_GSA_results.to_excel(writer, sheet_name=f"GSA {method.capitalize()}", index=False)
+
+                    print(f"GSA results added to: {export_path.resolve()}")

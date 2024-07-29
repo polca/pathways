@@ -162,7 +162,7 @@ def load_units_conversion() -> dict:
 
 
 def create_lca_results_array(
-    methods: [List[str], None],
+    methods: List[str],
     years: List[int],
     regions: List[str],
     locations: List[str],
@@ -201,8 +201,18 @@ def create_lca_results_array(
     """
 
     # check if any of the list parameters is empty, and if so, throw an error
-    if not all([methods, years, regions, locations, models, scenarios]):
-        raise ValueError("Empty list parameter")
+    if len(methods) == 0:
+        raise ValueError("Empty list of methods")
+    if len(years) == 0:
+        raise ValueError("Empty list of years")
+    if len(regions) == 0:
+        raise ValueError("Empty list of regions")
+    if len(locations) == 0:
+        raise ValueError("Empty list of locations")
+    if len(models) == 0:
+        raise ValueError("Empty list of models")
+    if len(scenarios) == 0:
+        raise ValueError("Empty list of scenarios")
 
     # Define the coordinates for the xarray DataArray
     coords = {
