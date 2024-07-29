@@ -644,7 +644,8 @@ class Pathways:
 
                     try:
                         df_technology_shares = pd.read_excel(
-                            export_path, sheet_name="Technology shares",
+                            export_path,
+                            sheet_name="Technology shares",
                         )
                     except:
                         df_technology_shares = None
@@ -656,7 +657,9 @@ class Pathways:
                     )
 
                     # open Excel workbook
-                    with pd.ExcelWriter(export_path, engine="openpyxl", mode="a") as writer:
+                    with pd.ExcelWriter(
+                        export_path, engine="openpyxl", mode="a"
+                    ) as writer:
 
                         df_GSA_results = run_GSA_delta(
                             total_impacts=df_sum_impacts,
@@ -664,6 +667,8 @@ class Pathways:
                             technology_shares=df_technology_shares,
                         )
 
-                        df_GSA_results.to_excel(writer, sheet_name=f"GSA {method.capitalize()}", index=False)
+                        df_GSA_results.to_excel(
+                            writer, sheet_name=f"GSA {method.capitalize()}", index=False
+                        )
 
                     print(f"GSA results added to: {export_path.resolve()}")
