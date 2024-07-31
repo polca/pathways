@@ -10,6 +10,8 @@ import statsmodels.api as sm
 from openpyxl import Workbook, load_workbook
 from SALib.analyze import delta
 
+from pathways.filesystem_constants import STATS_DIR
+
 
 def log_double_accounting(
     filtered_names: Dict[Tuple[str, ...], Set[str]],
@@ -323,3 +325,146 @@ def run_GSA_delta(
         results,
         columns=["LCIA method", "Parameter", "Delta", "Delta Conf", "S1", "S1 Conf"],
     )
+
+
+def log_mc_parameters_to_excel(
+    model: str,
+    scenario: str,
+    year: int,
+    methods: list,
+    result: dict,
+    uncertainty_parameters: dict,
+    uncertainty_values: dict,
+    tehnosphere_indices: dict,
+    iteration_results: dict,
+    shares: dict = None,
+):
+    export_path = STATS_DIR / f"{model}_{scenario}_{year}.xlsx"
+
+    # create Excel workbook using openpyxl
+    with pd.ExcelWriter(export_path, engine="openpyxl") as writer:
+
+        df_sum_impacts = pd.DataFrame()
+        df_uncertainty_values = pd.DataFrame()
+        df_technology_shares = pd.DataFrame()
+        writer.book.create_sheet("Indices mapping")
+        writer.book.create_sheet("Monte Carlo values")
+        writer.book.create_sheet("Technology shares")
+        writer.book.create_sheet("Total impacts")
+
+        for region, data in result.items():
+
+            total_impacts = np.sum(iteration_results[region], axis=(0, 2, 3))
+
+            df_sum_impacts = pd.concat(
+                [
+                    df_sum_impacts,
+                    log_results(
+                        total_impacts=total_impacts,
+                        methods=methods,
+                        region=region,
+                    ),
+                ]
+            )
+
+            uncertainty_indices = uncertainty_parameters[region]
+            uncertainty_vals = uncertainty_values[region]
+
+            df_uncertainty_values = pd.concat(
+                [
+                    df_uncertainty_values,
+                    log_uncertainty_values(
+                        region=region,
+                        uncertainty_indices=uncertainty_indices,
+                        uncertainty_values=uncertainty_vals,
+                    ),
+                ],
+            )
+
+            if shares:
+                sub_shares = {}
+                for k, v in shares.items():
+                    for x, y in v.items():
+                        if x == year:
+                            for z, w in y.items():
+                                sub_shares[f"{k} - {z}"] = w
+
+                df_technology_shares = pd.concat(
+                    [
+                        df_technology_shares,
+                        log_subshares(
+                            shares=sub_shares,
+                            region=region,
+                        ),
+                    ],
+                )
+
+        indices = tehnosphere_indices[region]
+
+        df_technosphere_indices = create_mapping_sheet(indices=indices)
+
+        df_sum_impacts.to_excel(writer, sheet_name="Total impacts", index=False)
+        df_uncertainty_values.to_excel(
+            writer, sheet_name="Monte Carlo values", index=False
+        )
+        df_technology_shares.to_excel(
+            writer, sheet_name="Technology shares", index=False
+        )
+        df_technosphere_indices.to_excel(
+            writer, sheet_name="Indices mapping", index=False
+        )
+
+        print(f"Monte Carlo parameters added to: {export_path.resolve()}")
+
+
+def run_gsa(directory: [str, None] = STATS_DIR, method: str = "delta") -> None:
+    """
+    Run a global sensitivity analysis (GSA) on the LCA results.
+    Updates Excel files with the GSA results.
+    :param method: str. The method used for the GSA. Default is 'delta'. Only 'delta' is supported at the moment.
+    :param directory: str. The directory where the Excel files are stored. Default is 'stats'.
+    :return: None.
+    """
+    if method != "delta":
+        raise ValueError(f"Method {method} is not supported.")
+
+    # iterate through the Excel files in the directory
+
+    for file in Path(directory).rglob("*.xlsx"):
+        # load content of "Monte Carlo values" sheet into a pandas DataFrame
+        df_mc_vals = pd.read_excel(
+            file, sheet_name="Monte Carlo values"
+        )
+
+        # load content of "Technology shares" sheet into a pandas DataFrame
+        # if it exists
+
+        try:
+            df_technology_shares = pd.read_excel(
+                file,
+                sheet_name="Technology shares",
+            )
+        except:
+            df_technology_shares = None
+
+        # load content of "Total impacts" sheet into a pandas DataFrame
+        df_sum_impacts = pd.read_excel(
+            file, sheet_name="Total impacts"
+        )
+
+        # open Excel workbook
+        with pd.ExcelWriter(
+            file, engine="openpyxl", mode="a"
+        ) as writer:
+
+            df_GSA_results = run_GSA_delta(
+                total_impacts=df_sum_impacts,
+                uncertainty_values=df_mc_vals,
+                technology_shares=df_technology_shares,
+            )
+
+            df_GSA_results.to_excel(
+                writer, sheet_name=f"GSA {method.capitalize()}", index=False
+            )
+
+        print(f"GSA results added to: {file.resolve()}")
