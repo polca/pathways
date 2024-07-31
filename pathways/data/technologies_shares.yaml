@@ -1,32 +1,52 @@
-### When different technology configurations or alternatives are found,
-### we are taking the best performing technology in terms of GWP.
 Wind: ### Check if IAMs make the distinction between onshore and offshore
-  onshore:
-    name: electricity production, wind, <1MW turbine, onshore
+  onshore-DDPM:
+    name: electricity production, wind, 1-3MW turbine, onshore, direct drive
     reference product: electricity, high voltage
     unit: kilowatt hour
     share:
       2020:
-        loc: 0.96
+        loc: 0.19
       2050:
-        minimum: 0.83
-        maximum: 0.96
+        minimum: 0.17
+        maximum: 0.19
         uncertainty_type: uniform
-  offshore:
+  onshore-Gearbox:
+    name: electricity production, wind, 1-3MW turbine, onshore
+    reference product: electricity, high voltage
+    unit: kilowatt hour
+    share:
+      2020:
+        loc: 0.77
+      2050:
+        minimum: 0.67
+        maximum: 0.77
+        uncertainty_type: uniform
+  offshore-DDPM:
+    name: electricity production, wind, 1-3MW turbine, offshore, direct drive
+    reference product: electricity, high voltage
+    unit: kilowatt hour
+    share:
+      2020:
+        loc: 0.022
+      2050:
+        minimum: 0.022
+        maximum: 0.15
+        uncertainty_type: uniform
+  offshore-Gearbox:
     name: electricity production, wind, 1-3MW turbine, offshore
     reference product: electricity, high voltage
     unit: kilowatt hour
     share:
       2020:
-        loc: 0.04
+        loc: 0.018
       2050:
-        minimum: 0.04
-        maximum: 0.17
+        minimum: 0.018
+        maximum: 0.10
         uncertainty_type: uniform
 PV:
   c-Si:
-    name: electricity production, photovoltaic, at 93 kWp slanted-roof, multi-Si, laminated, integrated
-    reference product: electricity production, photovoltaic, at 93 kWp slanted-roof, multi-Si, laminated, integrated
+    name: electricity production, photovoltaic, photovoltaic slanted-roof installation, 3 kWp, multi-Si, laminated, integrated
+    reference product: electricity, low voltage
     unit: kilowatt hour
     share:
       2020:
@@ -36,8 +56,8 @@ PV:
         maximum: 0.9440
         uncertainty_type: uniform
   CdTe:
-    name: electricity production, photovoltaic, at 3kWp slanted-roof, CdTe, panel, mounted
-    reference product: electricity production, photovoltaic, at 3kWp slanted-roof, CdTe, panel, mounted
+    name: electricity production, photovoltaic, photovoltaic slanted-roof installation, 3 kWp, CdTe, laminated, integrated
+    reference product: electricity, low voltage
     unit: kilowatt hour
     share:
       2020:
@@ -47,7 +67,7 @@ PV:
         maximum: 0.2500
         uncertainty_type: uniform
   CIGS:
-    name: electricity production, photovoltaic, 3kWp slanted-roof installation, CdTe, laminated, integrated
+    name: electricity production, photovoltaic, photovoltaic slanted-roof installation, 3 kWp, CIS, panel, mounted
     reference product: electricity, low voltage
     unit: kilowatt hour
     share:
@@ -69,7 +89,7 @@ PV:
         maximum: 0.0090
         uncertainty_type: uniform
   Perovskite:
-    name: electricity production, photovoltaic, perovskite
+    name: electricity production, photovoltaic, 0.5kWp, perovskite-on-silicon tandem
     reference product: electricity, low voltage
     unit: kilowatt hour
     share:
@@ -80,7 +100,7 @@ PV:
         maximum: 0.3000
         uncertainty_type: uniform
   GaAs:
-    name: electricity production, photovoltaic, GaAs
+    name: electricity production, photovoltaic, 0.28kWp, GaAs
     reference product: electricity, low voltage
     unit: kilowatt hour
     share:
@@ -183,120 +203,175 @@ Electrolyzer:
         uncertainty_type: uniform
 Battery-Mobile:
   NMC111:
-    name: battery cell, NMC-111 # NMC alternatives w/ hyphen: version from E. Crenna et al. (2021)
-    reference product: battery cell
-    unit: kilogram
+    name: market for battery capacity, Li-ion, NMC111
+    reference product: battery capacity, Li-ion, NMC111
+    unit: kilowatt hour
     share:
       2020:
-        loc: 0.25
+        loc: 0.04
       2050:
         minimum: 0.0
-        maximum: 0.22
+        maximum: 0.04
         uncertainty_type: uniform
-  NMC622:
-    name: battery cell, NMC-622 # This is the activity currently link to the transport needs
-    reference product: battery cell
-    unit: kilogram
-    share:
-      2020:
-        loc: 0.45
-      2050:
-        minimum: 0.0
-        maximum: 0.45
-        uncertainty_type: uniform
-  NMC811:
-    name: battery cell, NMC-811
-    reference product: battery cell
-    unit: kilogram
+  NMC523:
+    name: market for battery capacity, Li-ion, NMC523
+    reference product: battery capacity, Li-ion, NMC523
+    unit: kilowatt hour
     share:
       2020:
         loc: 0.05
       2050:
-        minimum: 0.0
-        maximum: 0.75
-        uncertainty_type: uniform
-  NCA:
-    name: battery cell, NCA
-    reference product: battery cell
-    unit: kilogram
-    share:
-      2020:
-        loc: 0.15
-      2050:
-        minimum: 0.0
-        maximum: 0.15
-        uncertainty_type: uniform
-  LFP:
-    name: battery cell, LFP
-    reference product: battery cell
-    unit: kilogram
-    share:
-      2020:
-        loc: 0.1
-      2050:
-        minimum: 0.0
-        maximum: 0.1
-        uncertainty_type: uniform
-  LiS:
-    name: battery cell production, LiS
-    reference product: battery cell, LiS
-    unit: kilogram
-    share:
-      2020:
-        loc: 0.0
-      2050:
-        minimum: 0.0
-        maximum: 0.9
-        uncertainty_type: uniform
-  LiO2:
-    name: battery cell production, Li-O2
-    reference product: battery cell, Li-O2
-    unit: kilogram
-    share:
-      2020:
-        loc: 0.0
-      2050:
-        minimum: 0.0
-        maximum: 0.1
-        uncertainty_type: uniform
-Battery-Stationary: ### Home storage uses NMC811 (w/o hyphen) in the current premise version
-  NMC111:
-    name: market for battery cell, Li-ion, NMC111
-    reference product: battery cell, Li-ion, NMC111
-    unit: kilogram
-    share:
-      2020:
-        loc: 0.24
-      2050:
-        minimum: 0.0
-        maximum: 0.205
+        minimum: 0.02
+        maximum: 0.29
         uncertainty_type: uniform
   NMC622:
-    name: battery cell, NMC-622 # This activity is the same as before - We need to create a copy of the activity
-    reference product: battery cell
-    unit: kilogram
+    name: market for battery capacity, Li-ion, NMC622
+    reference product: battery capacity, Li-ion, NMC622
+    unit: kilowatt hour
+    share:
+      2020:
+        loc: 0.25
+      2050:
+        minimum: 0.02
+        maximum: 0.29
+        uncertainty_type: uniform
+  NMC811:
+    name: market for battery capacity, Li-ion, NMC811
+    reference product: battery capacity, Li-ion, NMC811
+    unit: kilowatt hour
     share:
       2020:
         loc: 0.13
       2050:
+        minimum: 0.218
+        maximum: 0.47
+        uncertainty_type: uniform
+  NMC955:
+    name: market for battery capacity, Li-ion, NMC955
+    reference product: battery capacity, Li-ion, NMC955
+    unit: kilowatt hour
+    share:
+      2020:
+        loc: 0.04
+      2050:
+        minimum: 0.218
+        maximum: 0.47
+        uncertainty_type: uniform
+  NCA:
+    name: market for battery capacity, Li-ion, NCA
+    reference product: battery capacity, Li-ion, NCA
+    unit: kilowatt hour
+    share:
+      2020:
+        loc: 0.21
+      2050:
+        minimum: 0.01
+        maximum: 0.188
+        uncertainty_type: uniform
+  LFP:
+    name: market for battery capacity, Li-ion, LFP
+    reference product: battery capacity, Li-ion, LFP
+    unit: kilowatt hour
+    share:
+      2020:
+        loc: 0.28
+      2050:
+        minimum: 0.28
+        maximum: 0.388
+        uncertainty_type: uniform
+  LiS:
+    name: market for battery capacity, Li-sulfur, Li-S
+    reference product: battery capacity, Li-sulfur, Li-S
+    unit: kilowatt hour
+    share:
+      2020:
+        loc: 0.0
+      2050:
+        minimum: 0.0
+        maximum: 0.90
+        uncertainty_type: uniform
+  LiO2:
+    name: market for battery capacity, Li-ion, Li-O2
+    reference product: battery capacity, Li-ion, Li-O2
+    unit:
+    share:
+      2020:
+        loc: 0.0
+      2050:
+        minimum: 0.0
+        maximum: 0.10
+        uncertainty_type: uniform
+  SIB:
+    name: market for battery capacity, Sodium-ion, SiB
+    reference product: battery capacity, Sodium-ion, SiB
+    unit: kilowatt hour
+    share:
+      2020:
+        loc: 0.0
+      2050:
+        minimum: 0.03
+        maximum: 0.39
+        uncertainty_type: uniform
+Battery-Stationary:
+  NMC111-Stationary:
+    name: market for battery capacity, Li-ion, NMC111, stationary
+    reference product: battery capacity, Li-ion, NMC111
+    unit: kilowatt hour
+    share:
+      2020:
+        loc: 0.04
+      2050:
+        minimum: 0.0
+        maximum: 0.04
+        uncertainty_type: uniform
+  NMC523-Stationary:
+    name: market for battery capacity, Li-ion, NMC523, stationary
+    reference product: battery capacity, Li-ion, NMC523
+    unit: kilowatt hour
+    share:
+      2020:
+        loc: 0.05
+      2050:
         minimum: 0.02
         maximum: 0.30
         uncertainty_type: uniform
-  NMC811:
-    name: market for battery cell, Li-ion, NMC811 # Connected to home storage system
-    reference product: battery cell, Li-ion, NMC811
-    unit: kilogram
+  NMC622-Stationary:
+    name: market for battery capacity, Li-ion, NMC622, stationary
+    reference product: battery capacity, Li-ion, NMC622
+    unit: kilowatt hour
     share:
       2020:
-        loc: 0.03
+        loc: 0.21
+      2050:
+        minimum: 0.02
+        maximum: 0.30
+        uncertainty_type: uniform
+  NMC811-Stationary:
+    name: market for battery capacity, Li-ion, NMC811, stationary
+    reference product: battery capacity, Li-ion, NMC811
+    unit: kilowatt hour
+    share:
+      2020:
+        loc: 0.09
       2050:
         minimum: 0.039
         maximum: 0.44
         uncertainty_type: uniform
-  Lead-Acid:
-    name: market for battery, lead acid, rechargeable, stationary
-    reference product: battery, lead acid, rechargeable, stationary
-    unit: kilogram
+  NMC955-Stationary:
+    name: market for battery capacity, Li-ion, NMC955, stationary
+    reference product: battery capacity, Li-ion, NMC955
+    unit: kilowatt hour
+    share:
+      2020:
+        loc: 0.01
+      2050:
+        minimum: 0.039
+        maximum: 0.44
+        uncertainty_type: uniform
+  Lead-Acid-Stationary:
+    name: market for battery capacity, lead acid, rechargeable, stationary
+    reference product: battery capacity, lead acid
+    unit: kilowatt hour
     share:
       2020:
         loc: 0.10
@@ -304,10 +379,10 @@ Battery-Stationary: ### Home storage uses NMC811 (w/o hyphen) in the current pre
         minimum: 0.0
         maximum: 0.095
         uncertainty_type: uniform
-  LFP:
-    name: market for battery cell, Li-ion, LFP
-    reference product: battery cell, Li-ion, LFP
-    unit: kilogram
+  LFP-Stationary:
+    name: market for battery capacity, Li-ion, LFP, stationary
+    reference product: battery capacity, Li-ion, LFP
+    unit: kilowatt hour
     share:
       2020:
         loc: 0.40
@@ -315,10 +390,10 @@ Battery-Stationary: ### Home storage uses NMC811 (w/o hyphen) in the current pre
         minimum: 0.17
         maximum: 0.40
         uncertainty_type: uniform
-  SIB:
-    name: battery cell production, SIB, with NMMT cathode and fossil-HC anode
-    reference product: battery cell, SIB, with NMMT cathode and fossil-HC anode
-    unit: kilogram
+  SIB-Stationary:
+    name: market for battery capacity, Sodium-ion, SiB, stationary
+    reference product: battery capacity, Sodium-ion, SiB
+    unit: kilowatt hour
     share:
       2020:
         loc: 0.05
@@ -326,10 +401,10 @@ Battery-Stationary: ### Home storage uses NMC811 (w/o hyphen) in the current pre
         minimum: 0.05
         maximum: 0.33
         uncertainty_type: uniform
-  Redox-Flow: # CHECK WITH ROMAIN: Different unit + Modeling in the LCA
-    name: vanadium-redox flow battery system assembly, 8.3 megawatt hour
-    reference product: vanadium-redox flow battery system
-    unit: unit # DIFFERENT UNIT!!!
+  Redox-Flow-Stationary:
+    name: market for battery capacity, redox-flow, Vanadium, stationary
+    reference product: battery capacity, redox-flow, Vanadium
+    unit: kilowatt hour
     share:
       2020:
         loc: 0.05
