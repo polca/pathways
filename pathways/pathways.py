@@ -39,7 +39,7 @@ from .utils import (
     fetch_inventories_locations,
     harmonize_units,
     load_classifications,
-    load_geography_mapping,
+    load_mapping,
     load_units_conversion,
     resize_scenario_data,
 )
@@ -221,7 +221,13 @@ class Pathways:
 
     """
 
-    def __init__(self, datapackage, geography_mapping: [dict, str] = None, debug=False):
+    def __init__(
+            self,
+            datapackage,
+            geography_mapping: [dict, str] = None,
+            activities_mapping: [dict, str] = None,
+            debug=False
+    ):
         self.datapackage = datapackage
         self.data, dataframe, self.filepaths = validate_datapackage(
             _read_datapackage(datapackage)
@@ -253,7 +259,8 @@ class Pathways:
         # a mapping of geographies can be added
         # to aggregate locations to a higher level
         # e.g. from countries to regions
-        self.geography_mapping = load_geography_mapping(geography_mapping) or None
+        self.geography_mapping = load_mapping(geography_mapping) or None
+        self.activities_mapping = load_mapping(activities_mapping) or None
 
         clean_cache_directory()
 
@@ -493,6 +500,11 @@ class Pathways:
             else:
                 self.geography_mapping = {loc: loc for loc in locations}
 
+            if self.activities_mapping:
+                classifications = list(set(list(self.activities_mapping.values())))
+            else:
+                classifications = list(set(list(self.classifications.values())))
+
             self.lca_results = create_lca_results_array(
                 methods=methods,
                 years=years,
@@ -500,7 +512,7 @@ class Pathways:
                 locations=locations,
                 models=models,
                 scenarios=scenarios,
-                classifications=self.classifications,
+                classifications=classifications,
                 mapping=self.mapping,
                 use_distributions=use_distributions > 0,
             )
@@ -537,6 +549,7 @@ class Pathways:
                         self.scenarios,
                         self.reverse_classifications,
                         self.geography_mapping,
+                        self.activities_mapping,
                         self.debug,
                         use_distributions,
                         shares,

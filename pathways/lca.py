@@ -507,6 +507,7 @@ def _calculate_year(args: tuple):
         scenarios,
         reverse_classifications,
         geography_mapping,
+        activities_mapping,
         debug,
         use_distributions,
         shares,
@@ -580,6 +581,7 @@ def _calculate_year(args: tuple):
         technosphere_indices=technosphere_indices,
         group_by=lambda x: classifications.get(x[:3], "unclassified"),
         group_values=lca_results.coords["act_category"].values.tolist(),
+        mapping=activities_mapping,
     )
 
     acts_location_idx_dict = _group_technosphere_indices(

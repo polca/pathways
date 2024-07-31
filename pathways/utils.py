@@ -68,7 +68,7 @@ def read_indices_csv(file_path: Path) -> dict[tuple[str, str, str, str], int]:
     return indices
 
 
-def load_geography_mapping(mapping: [dict, str]) -> dict:
+def load_mapping(mapping: [dict, str]) -> dict:
     """
     Load the geography mapping.
     :param mapping: dict or yaml file with the geography mapping.
@@ -168,7 +168,7 @@ def create_lca_results_array(
     locations: List[str],
     models: List[str],
     scenarios: List[str],
-    classifications: dict,
+    classifications: list,
     mapping: dict,
     use_distributions: bool = False,
 ) -> xr.DataArray:
@@ -216,7 +216,7 @@ def create_lca_results_array(
 
     # Define the coordinates for the xarray DataArray
     coords = {
-        "act_category": list(set(classifications.values())),
+        "act_category": classifications,
         "variable": list(mapping.keys()),
         "year": years,
         "region": regions,
