@@ -432,9 +432,7 @@ def run_gsa(directory: [str, None] = STATS_DIR, method: str = "delta") -> None:
 
     for file in Path(directory).rglob("*.xlsx"):
         # load content of "Monte Carlo values" sheet into a pandas DataFrame
-        df_mc_vals = pd.read_excel(
-            file, sheet_name="Monte Carlo values"
-        )
+        df_mc_vals = pd.read_excel(file, sheet_name="Monte Carlo values")
 
         # load content of "Technology shares" sheet into a pandas DataFrame
         # if it exists
@@ -448,14 +446,10 @@ def run_gsa(directory: [str, None] = STATS_DIR, method: str = "delta") -> None:
             df_technology_shares = None
 
         # load content of "Total impacts" sheet into a pandas DataFrame
-        df_sum_impacts = pd.read_excel(
-            file, sheet_name="Total impacts"
-        )
+        df_sum_impacts = pd.read_excel(file, sheet_name="Total impacts")
 
         # open Excel workbook
-        with pd.ExcelWriter(
-            file, engine="openpyxl", mode="a"
-        ) as writer:
+        with pd.ExcelWriter(file, engine="openpyxl", mode="a") as writer:
 
             df_GSA_results = run_GSA_delta(
                 total_impacts=df_sum_impacts,
