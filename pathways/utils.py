@@ -168,7 +168,7 @@ def create_lca_results_array(
     locations: List[str],
     models: List[str],
     scenarios: List[str],
-    classifications: list,
+    classifications: dict,
     mapping: dict,
     use_distributions: bool = False,
 ) -> xr.DataArray:
@@ -216,7 +216,7 @@ def create_lca_results_array(
 
     # Define the coordinates for the xarray DataArray
     coords = {
-        "act_category": classifications,
+        "act_category": list(set(list(classifications.values()))),
         "variable": list(mapping.keys()),
         "year": years,
         "region": regions,

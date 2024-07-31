@@ -152,10 +152,7 @@ class Pathways:
                 yaml.full_load(self.data.get_resource("classifications").raw_read())
             )
 
-        # create a reverse mapping
-        self.reverse_classifications = defaultdict(list)
-        for k, v in self.classifications.items():
-            self.reverse_classifications[v].append(k)
+
 
         self.lca_results = None
         self.lcia_methods = get_lcia_method_names()
@@ -171,9 +168,15 @@ class Pathways:
             self.geography_mapping = None
 
         if activities_mapping:
-            self.activities_mapping = load_mapping(activities_mapping)
-        else:
-            self.activities_mapping = None
+            mapping = load_mapping(activities_mapping)
+            for k, v in self.classifications.items():
+                if v in mapping:
+                    self.classifications[k] = mapping[v]
+
+        # create a reverse mapping
+        self.reverse_classifications = defaultdict(list)
+        for k, v in self.classifications.items():
+            self.reverse_classifications[v].append(k)
 
         clean_cache_directory()
 
@@ -413,11 +416,6 @@ class Pathways:
             else:
                 self.geography_mapping = {loc: loc for loc in locations}
 
-            if self.activities_mapping:
-                classifications = list(set(list(self.activities_mapping.values())))
-            else:
-                classifications = list(set(list(self.classifications.values())))
-
             self.lca_results = create_lca_results_array(
                 methods=methods,
                 years=years,
@@ -425,10 +423,13 @@ class Pathways:
                 locations=locations,
                 models=models,
                 scenarios=scenarios,
-                classifications=classifications,
+                classifications=self.classifications,
                 mapping=self.mapping,
                 use_distributions=use_distributions > 0,
             )
+
+            print(self.lca_results.coords["act_category"].values.tolist())
+            print(self.lca_results.coords["location"].values.tolist())
 
         # generate share of sub-technologies
         shares = None
@@ -462,7 +463,6 @@ class Pathways:
                         self.scenarios,
                         self.reverse_classifications,
                         self.geography_mapping,
-                        self.activities_mapping,
                         self.debug,
                         use_distributions,
                         shares,

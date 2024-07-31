@@ -6,32 +6,22 @@ This module contains functions to calculate the Life Cycle Assessment (LCA) resu
 import logging
 import pickle
 import uuid
-from collections import defaultdict
 from pathlib import Path
-from typing import Any, Dict, List, Tuple
+from typing import Dict, List, Tuple
 
 import bw2calc as bc
 import bw_processing as bwp
 import numpy as np
 import pyprind
 import sparse as sp
-from bw2calc import MultiLCA
 from bw2calc.utils import get_datapackage
 from bw_processing import Datapackage
-from numpy import dtype, ndarray
 from premise.geomap import Geomap
 from scipy import sparse
 
-from .filesystem_constants import DIR_CACHED_DB, STATS_DIR, USER_LOGS_DIR
+from .filesystem_constants import DIR_CACHED_DB, USER_LOGS_DIR
 from .lcia import fill_characterization_factors_matrices
-from .stats import (
-    create_mapping_sheet,
-    log_results,
-    log_subshares,
-    log_uncertainty_values,
-    run_GSA_delta,
-    run_GSA_OLS,
-)
+
 from .subshares import (
     adjust_matrix_based_on_shares,
     find_technology_indices,
@@ -130,7 +120,6 @@ def get_lca_matrices(
     :type scenario: str
     :param year: The year of the scenario.
     :type year: int
-    :param remove_infrastructure: Whether to remove infrastructure exchanges from the technosphere matrix.
     :rtype: Tuple[sparse.csr_matrix, sparse.csr_matrix, Dict, Dict, List]
     """
 
@@ -225,8 +214,6 @@ def remove_double_counting(
     Remove double counting from a technosphere matrix by zeroing out the demanded row values
     in all columns, except for those on the diagonal.
     :param technosphere_matrix: bw2calc.LCA object
-    :param demand: dict with demand values
-    :param activities_to_exclude: list of row indices to zero out
     :return: Technosphere matrix with double counting removed
     """
 
@@ -507,7 +494,6 @@ def _calculate_year(args: tuple):
         scenarios,
         reverse_classifications,
         geography_mapping,
-        activities_mapping,
         debug,
         use_distributions,
         shares,
@@ -581,8 +567,10 @@ def _calculate_year(args: tuple):
         technosphere_indices=technosphere_indices,
         group_by=lambda x: classifications.get(x[:3], "unclassified"),
         group_values=lca_results.coords["act_category"].values.tolist(),
-        mapping=activities_mapping,
     )
+
+    # reorder keys of acts_category_idx_dict based on lca_results.coords["act_category"].values
+    acts_category_idx_dict = {k: acts_category_idx_dict[k] for k in lca_results.coords["act_category"].values.tolist()}
 
     acts_location_idx_dict = _group_technosphere_indices(
         technosphere_indices=technosphere_indices,
@@ -590,6 +578,9 @@ def _calculate_year(args: tuple):
         group_values=list(set([x[-1] for x in technosphere_indices.keys()])),
         mapping=geography_mapping,
     )
+
+    # reorder keys of acts_location_idx_dict based on lca_results.coords["location"].values
+    acts_location_idx_dict = {k: acts_location_idx_dict[k] for k in lca_results.coords["location"].values.tolist()}
 
     bar = pyprind.ProgBar(len(regions))
     for region in regions:
