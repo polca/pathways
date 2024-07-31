@@ -21,7 +21,6 @@ from scipy import sparse
 
 from .filesystem_constants import DIR_CACHED_DB, USER_LOGS_DIR
 from .lcia import fill_characterization_factors_matrices
-
 from .subshares import (
     adjust_matrix_based_on_shares,
     find_technology_indices,
@@ -570,7 +569,10 @@ def _calculate_year(args: tuple):
     )
 
     # reorder keys of acts_category_idx_dict based on lca_results.coords["act_category"].values
-    acts_category_idx_dict = {k: acts_category_idx_dict[k] for k in lca_results.coords["act_category"].values.tolist()}
+    acts_category_idx_dict = {
+        k: acts_category_idx_dict[k]
+        for k in lca_results.coords["act_category"].values.tolist()
+    }
 
     acts_location_idx_dict = _group_technosphere_indices(
         technosphere_indices=technosphere_indices,
@@ -580,7 +582,10 @@ def _calculate_year(args: tuple):
     )
 
     # reorder keys of acts_location_idx_dict based on lca_results.coords["location"].values
-    acts_location_idx_dict = {k: acts_location_idx_dict[k] for k in lca_results.coords["location"].values.tolist()}
+    acts_location_idx_dict = {
+        k: acts_location_idx_dict[k]
+        for k in lca_results.coords["location"].values.tolist()
+    }
 
     bar = pyprind.ProgBar(len(regions))
     for region in regions:
