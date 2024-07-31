@@ -222,11 +222,11 @@ class Pathways:
     """
 
     def __init__(
-            self,
-            datapackage,
-            geography_mapping: [dict, str] = None,
-            activities_mapping: [dict, str] = None,
-            debug=False
+        self,
+        datapackage,
+        geography_mapping: [dict, str] = None,
+        activities_mapping: [dict, str] = None,
+        debug=False,
     ):
         self.datapackage = datapackage
         self.data, dataframe, self.filepaths = validate_datapackage(

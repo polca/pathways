@@ -3,7 +3,7 @@ from pathways import Pathways
 p = Pathways(
     datapackage="remind-SSP2-PkBudg1150-stem-SPS1.zip",
     geography_mapping="geo_mapping_remind.yaml",
-    activities_mapping="act_categories_agg.yaml"
+    activities_mapping="act_categories_agg.yaml",
 )
 
 vars = [v for v in p.scenarios.coords["variables"].values if v.startswith("FE")]
