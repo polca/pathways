@@ -21,9 +21,7 @@ from .data_validation import validate_datapackage
 from .filesystem_constants import DATA_DIR, USER_LOGS_DIR
 from .lca import _calculate_year, get_lca_matrices
 from .lcia import get_lcia_method_names
-from .stats import (
-    log_mc_parameters_to_excel,
-)
+from .stats import log_mc_parameters_to_excel
 from .subshares import generate_samples
 from .utils import (
     _get_mapping,
