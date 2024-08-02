@@ -32,7 +32,7 @@ can be installed from the Github repo  with ``pip``:
 
 ```bash
 
-  pip install pathways
+  pip git+https://github.com/polca/pathways.git
 
 ```
 
@@ -88,7 +88,7 @@ p.calculate(
     regions=regions,
     years=years,
     variables=variables,
-    use_distributions=0 # optional, number of iterations for Monte Carlo analysis
+    use_distributions=0 # optional, if > 0: number of iterations for Monte Carlo analysis
 )
 
 ```
@@ -128,9 +128,8 @@ You can display the LCA results with an optional cutoff parameter to filter insi
 
 ```
 
-It can be further formatted
-to a pandas' DataFrame or export to a CSV/Excel file using the built-in
-methods of ``xarray``.
+It can be further formatted  to a pandas' DataFrame or 
+exported to a CSV/Excel file using the built-in methods of ``xarray``.
     
 ```python
 
@@ -139,7 +138,7 @@ methods of ``xarray``.
 
 ```
 
-Or the result cna be exoprted as a Parquet file:
+Or the result can be exported as a Parquet file for further use in `pandas` or `dask`:
 
 ```python
 
