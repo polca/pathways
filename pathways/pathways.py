@@ -426,9 +426,6 @@ class Pathways:
                 use_distributions=use_distributions > 0,
             )
 
-            print(self.lca_results.coords["act_category"].values.tolist())
-            print(self.lca_results.coords["location"].values.tolist())
-
         # generate share of sub-technologies
         shares = None
         if subshares is True:
