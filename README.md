@@ -149,6 +149,23 @@ Or the result can be exported as a Parquet file for further use in `pandas` or `
 Results can be visualized using your favorite plotting library.
 ![Screenshot](example/figures/fig5.png)
 
+
+Finally, when running a Monte Carlo analysis (i.e., when `use_distributions` is greater than 0), 
+parameters of the Monte Carlo analysis (coordinates of uncertain exchanges, values for each iteration, etc.) are 
+stored in Excel files. It is possible to run Global Sensitivity Analysis (GSA) on the results of the 
+Monte Carlo analysis, like so:
+
+```python
+
+    from pathways import run_gsa
+    run_gsa(method="delta")
+
+```
+
+The method argument can only be "delta" for now, and it will run a 
+Delta Moment-Independent Measure (DMIM) sensitivity analysis on the 
+results of the Monte Carlo analysis.
+
 ## Contributing
 
 Contributions are welcome, and they are greatly appreciated! Every
