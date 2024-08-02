@@ -115,7 +115,7 @@ model accounts for and might demand during the system's life cycle,
 following the same workflow presented in [@Volkart:2018] (see 5 in Figure 1). 
 
 Finally, Global Sensitivity Analysis (GSA) can be performed on the results.
-Currently, `pathways` supports the use of the `SALib` library for GSA [@Herman2017, Iwanaga2022],
+Currently, `pathways` supports the use of the `SALib` library for GSA [@Herman2017, @Iwanaga2022],
 notably the Delta Moment-Independent Measure (DMIM) method [@BORGONOVO2007771], to rank
 the influence of the database exchanges on the results.
 

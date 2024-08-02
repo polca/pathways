@@ -162,9 +162,10 @@ Monte Carlo analysis, like so:
 
 ```
 
-The method argument can only be "delta" for now, and it will run a 
+The method argument can only be "delta" for now. It will run a 
 Delta Moment-Independent Measure (DMIM) sensitivity analysis on the 
-results of the Monte Carlo analysis.
+results of the Monte Carlo analysis, to rank the influence of each
+uncertain exchange on the results' distribution.
 
 ## Contributing
 
