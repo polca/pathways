@@ -150,8 +150,6 @@ class Pathways:
                 yaml.full_load(self.data.get_resource("classifications").raw_read())
             )
 
-
-
         self.lca_results = None
         self.lcia_methods = get_lcia_method_names()
         self.units = load_units_conversion()
