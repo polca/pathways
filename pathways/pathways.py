@@ -5,20 +5,23 @@ LCA datasets, and LCA matrices.
 """
 
 import logging
+import pickle
 from collections import defaultdict
 from multiprocessing import Pool, cpu_count
-from typing import Any, List, Optional
+from pathlib import Path
+from typing import List, Optional
 
 import numpy as np
 import pandas as pd
-import pyprind
+import sparse as sp
 import xarray as xr
 import yaml
 
 from .data_validation import validate_datapackage
-from .filesystem_constants import DATA_DIR, DIR_CACHED_DB, STATS_DIR, USER_LOGS_DIR
+from .filesystem_constants import DATA_DIR, USER_LOGS_DIR
 from .lca import _calculate_year, get_lca_matrices
 from .lcia import get_lcia_method_names
+from .stats import log_mc_parameters_to_excel
 from .subshares import generate_samples
 from .utils import (
     _get_mapping,
@@ -30,10 +33,87 @@ from .utils import (
     fetch_inventories_locations,
     harmonize_units,
     load_classifications,
-    load_numpy_array_from_disk,
+    load_mapping,
     load_units_conversion,
     resize_scenario_data,
 )
+
+
+def _fill_in_result_array(
+    coords: tuple,
+    result: dict,
+    use_distributions: int,
+    shares: [None, dict],
+    methods: list,
+) -> np.ndarray:
+    def _load_array(filepath):
+        if len(filepath) == 1:
+            if Path(filepath[0]).suffix == ".npy":
+                return np.load(filepath[0])
+            elif Path(filepath[0]).suffix == ".pkl":
+                with open(filepath[0], "rb") as f:
+                    return pickle.load(f)
+            else:
+                return sp.load_npz(filepath[0]).todense()
+        else:
+            if Path(filepath[0]).suffix == ".npy":
+                return np.stack([np.load(f) for f in filepath], axis=-1)
+            return np.stack([sp.load_npz(f).todense() for f in filepath], axis=-1)
+
+    # Pre-loading data from disk if possible
+    iteration_results = {
+        region: _load_array(data["iterations_results"])
+        for region, data in result.items()
+    }
+
+    model, scenario, year = coords
+
+    results = []
+
+    for region, data_ in result.items():
+
+        array = iteration_results[region]
+
+        if use_distributions > 0:
+            array = np.quantile(
+                array, [0.05, 0.5, 0.95], method="closest_observation", axis=-1
+            )
+            array = array.transpose(3, 1, 4, 2, 0)
+        else:
+            array = array.transpose(2, 0, 3, 1)
+
+        results.append(array)
+
+    if use_distributions > 0:
+        uncertainty_parameters = {
+            region: _load_array(data["uncertainty_params"])
+            for region, data in result.items()
+        }
+
+        uncertainty_values = {
+            region: _load_array(data["iterations_param_vals"])
+            for region, data in result.items()
+        }
+
+        tehnosphere_indices = {
+            region: _load_array(data["technosphere_indices"])
+            for region, data in result.items()
+        }
+
+        log_mc_parameters_to_excel(
+            model=model,
+            scenario=scenario,
+            year=year,
+            methods=methods,
+            result=result,
+            uncertainty_parameters=uncertainty_parameters,
+            uncertainty_values=uncertainty_values,
+            tehnosphere_indices=tehnosphere_indices,
+            iteration_results=iteration_results,
+            shares=shares,
+        )
+
+    return np.stack(results, axis=2)
 
 
 class Pathways:
@@ -45,7 +125,13 @@ class Pathways:
 
     """
 
-    def __init__(self, datapackage, debug=False):
+    def __init__(
+        self,
+        datapackage,
+        geography_mapping: [dict, str] = None,
+        activities_mapping: [dict, str] = None,
+        debug=False,
+    ):
         self.datapackage = datapackage
         self.data, dataframe, self.filepaths = validate_datapackage(
             _read_datapackage(datapackage)
@@ -64,15 +150,29 @@ class Pathways:
                 yaml.full_load(self.data.get_resource("classifications").raw_read())
             )
 
-        # create a reverse mapping
-        self.reverse_classifications = defaultdict(list)
-        for k, v in self.classifications.items():
-            self.reverse_classifications[v].append(k)
-
         self.lca_results = None
         self.lcia_methods = get_lcia_method_names()
         self.units = load_units_conversion()
         self.lcia_matrix = None
+
+        # a mapping of geographies can be added
+        # to aggregate locations to a higher level
+        # e.g. from countries to regions
+        if geography_mapping:
+            self.geography_mapping = load_mapping(geography_mapping)
+        else:
+            self.geography_mapping = None
+
+        if activities_mapping:
+            mapping = load_mapping(activities_mapping)
+            for k, v in self.classifications.items():
+                if v in mapping:
+                    self.classifications[k] = mapping[v]
+
+        # create a reverse mapping
+        self.reverse_classifications = defaultdict(list)
+        for k, v in self.classifications.items():
+            self.reverse_classifications[v].append(k)
 
         clean_cache_directory()
 
@@ -306,6 +406,12 @@ class Pathways:
         if self.lca_results is None:
             locations = fetch_inventories_locations(technosphere_index)
 
+            # if geography mapping is provided, aggregate locations
+            if self.geography_mapping:
+                locations = list(set(list(self.geography_mapping.values())))
+            else:
+                self.geography_mapping = {loc: loc for loc in locations}
+
             self.lca_results = create_lca_results_array(
                 methods=methods,
                 years=years,
@@ -349,6 +455,7 @@ class Pathways:
                         self.classifications,
                         self.scenarios,
                         self.reverse_classifications,
+                        self.geography_mapping,
                         self.debug,
                         use_distributions,
                         shares,
@@ -360,7 +467,7 @@ class Pathways:
 
                 if multiprocessing:
                     # Process each region in parallel
-                    with Pool(cpu_count()) as p:
+                    with Pool(cpu_count(), maxtasksperchild=1000) as p:
                         # store the results as a dictionary with years as keys
                         results.update(
                             {
@@ -372,85 +479,61 @@ class Pathways:
                         )
                 else:
                     for arg in args:
-                        results[(model, scenario, arg[2])] = _calculate_year(arg)
+                        results[(arg[0], arg[1], arg[2])] = _calculate_year(arg)
 
         # remove None values in results
         results = {k: v for k, v in results.items() if v is not None}
 
-        self._fill_in_result_array(results)
+        if multiprocessing:
+            with Pool(cpu_count(), maxtasksperchild=1000) as p:
+                args = [
+                    (
+                        coords,
+                        result,
+                        use_distributions,
+                        shares,
+                        methods,
+                    )
+                    for coords, result in results.items()
+                ]
 
-    def _fill_in_result_array(self, results: dict):
+                r = p.starmap(_fill_in_result_array, args)
 
-        # Assuming DIR_CACHED_DB, results, and self.lca_results are already defined
+                for c, coord in enumerate([c[0] for c in args]):
+                    model, scenario, year = coord
+                    self.lca_results.loc[
+                        dict(
+                            model=model,
+                            scenario=scenario,
+                            year=year,
+                        )
+                    ] = r[c]
 
-        # Pre-loading data from disk if possible
-        cached_data = {
-            data["id_array"]: load_numpy_array_from_disk(
-                DIR_CACHED_DB / f"{data['id_array']}.npy",
-            )
-            for coord, result in results.items()
-            for region, data in result.items()
-            if region != "other"
-        }
+        else:
+            for coords, values in results.items():
+                model, scenario, year = coords
 
-        # use pyprint to display progress
-        progress_bar = pyprind.ProgBar(len(results))
-        for coord, result in results.items():
-            progress_bar.update()
-            model, scenario, year = coord
-            acts_category_idx_dict = result["other"]["acts_category_idx_dict"]
-            acts_location_idx_dict = result["other"]["acts_location_idx_dict"]
-
-            for region, data in result.items():
-                if region == "other":
-                    continue
-
-                id_array = data["id_array"]
-                variables = data["variables"]
-
-                d = cached_data[id_array]
-
-                for cat, act_cat_idx in acts_category_idx_dict.items():
-                    for loc, act_loc_idx in acts_location_idx_dict.items():
-                        idx = np.intersect1d(act_cat_idx, act_loc_idx)
-                        idx = idx[idx != -1]
-
-                        if idx.size > 0:
-                            summed_data = d[..., idx].sum(axis=-1)
-                            try:
-                                self.lca_results.loc[
-                                    {
-                                        "region": region,
-                                        "model": model,
-                                        "scenario": scenario,
-                                        "year": year,
-                                        "act_category": cat,
-                                        "location": loc,
-                                        "variable": list(variables.keys()),
-                                    }
-                                ] = summed_data
-
-                            except ValueError:
-                                # transpose quantile dimension to the penultimate dimension
-                                self.lca_results.loc[
-                                    {
-                                        "region": region,
-                                        "model": model,
-                                        "scenario": scenario,
-                                        "year": year,
-                                        "act_category": cat,
-                                        "location": loc,
-                                        "variable": list(variables.keys()),
-                                    }
-                                ] = summed_data.transpose(0, 2, 1)
+                self.lca_results.loc[
+                    dict(
+                        model=model,
+                        scenario=scenario,
+                        year=year,
+                    )
+                ] = _fill_in_result_array(
+                    coords,
+                    values,
+                    use_distributions,
+                    shares,
+                    methods,
+                )
 
     def display_results(self, cutoff: float = 0.001) -> xr.DataArray:
         return display_results(self.lca_results, cutoff=cutoff)
 
-    def export_results(self, filename: str = None) -> None:
+    def export_results(self, filename: str = None) -> str:
         """
         Export the non-zero LCA results to a compressed parquet file.
         :param filename: str. The name of the file to save the results.
         :return: None
         """
-        export_results_to_parquet(self.lca_results, filename)
+        return export_results_to_parquet(self.lca_results, filename)

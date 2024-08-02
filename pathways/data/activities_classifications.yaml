@@ -20358,12 +20358,12 @@
 - hour
 : Other
 ? !!python/tuple
-- "formaldehyde production, methanol oxidation\xC2\_"
+- "formaldehyde production, methanol oxidation"
 - formaldehyde
 - kilogram
 : Manufacture of basic chemicals
 ? !!python/tuple
-- "formaldehyde production, methanol oxidation\xC2\_"
+- "formaldehyde production, methanol oxidation"
 - steam, in chemical industry
 - kilogram
 : Manufacture of basic chemicals
@@ -23976,52 +23976,52 @@
 - kilogram
 : Manufacture of basic chemicals
 ? !!python/tuple
-- "hydrocarbons purification, molecular sieve separation of naphtha\xC2\_"
+- "hydrocarbons purification, molecular sieve separation of naphtha"
 - 1,1-dimethylcyclopentane
 - kilogram
 : Manufacture of basic chemicals
 ? !!python/tuple
-- "hydrocarbons purification, molecular sieve separation of naphtha\xC2\_"
+- "hydrocarbons purification, molecular sieve separation of naphtha"
 - 2,3-dimethylbutane
 - kilogram
 : Manufacture of basic chemicals
 ? !!python/tuple
-- "hydrocarbons purification, molecular sieve separation of naphtha\xC2\_"
+- "hydrocarbons purification, molecular sieve separation of naphtha"
 - 2-methylpentane
 - kilogram
 : Manufacture of basic chemicals
 ? !!python/tuple
-- "hydrocarbons purification, molecular sieve separation of naphtha\xC2\_"
+- "hydrocarbons purification, molecular sieve separation of naphtha"
 - fraction 1 from naphtha separation
 - kilogram
 : Manufacture of basic chemicals
 ? !!python/tuple
-- "hydrocarbons purification, molecular sieve separation of naphtha\xC2\_"
+- "hydrocarbons purification, molecular sieve separation of naphtha"
 - fraction 7 from naphtha separation
 - kilogram
 : Manufacture of basic chemicals
 ? !!python/tuple
-- "hydrocarbons purification, molecular sieve separation of naphtha\xC2\_"
+- "hydrocarbons purification, molecular sieve separation of naphtha"
 - fraction 8 from naphtha separation
 - kilogram
 : Manufacture of basic chemicals
 ? !!python/tuple
-- "hydrocarbons purification, molecular sieve separation of naphtha\xC2\_"
+- "hydrocarbons purification, molecular sieve separation of naphtha"
 - heptane
 - kilogram
 : Manufacture of basic chemicals
 ? !!python/tuple
-- "hydrocarbons purification, molecular sieve separation of naphtha\xC2\_"
+- "hydrocarbons purification, molecular sieve separation of naphtha"
 - hexane
 - kilogram
 : Manufacture of basic chemicals
 ? !!python/tuple
-- "hydrocarbons purification, molecular sieve separation of naphtha\xC2\_"
+- "hydrocarbons purification, molecular sieve separation of naphtha"
 - methylcyclohexane
 - kilogram
 : Manufacture of basic chemicals
 ? !!python/tuple
-- "hydrocarbons purification, molecular sieve separation of naphtha\xC2\_"
+- "hydrocarbons purification, molecular sieve separation of naphtha"
 - methylcyclopentane
 - kilogram
 : Manufacture of basic chemicals
@@ -76430,3 +76430,99 @@
 - zucchini
 - kilogram
 : Growing of vegetables and melons roots and tubers
+? !!python/tuple
+- cooling energy production, at -45 °C, R-134a compression refrigeration system 1 MW
+- cooling energy, at -45 °C
+- megajoule
+: Steam and air conditioning supply
+? !!python/tuple
+- cooling energy production, at -45 °C, propylene compression refrigeration system 1 MW
+- cooling energy, at -45 °C
+- megajoule
+: Steam and air conditioning supply
+? !!python/tuple
+- cooling energy production, at -25 °C, ammonia compression refrigeration system 1 MW
+- cooling energy, at -25 °C
+- megajoule
+: Steam and air conditioning supply
+? !!python/tuple
+- cooling energy production, at -55 °C, propylene-ethylene compression refrigeration system 1 MW
+- cooling energy, at -55 °C
+- megajoule
+: Steam and air conditioning supply
+? !!python/tuple
+- market for cooling energy, at -55 °C
+- cooling energy, at -55 °C
+- megajoule
+: Steam and air conditioning supply
+? !!python/tuple
+- market for cooling energy, at -15 °C
+- cooling energy, at -15 °C
+- megajoule
+: Steam and air conditioning supply
+? !!python/tuple
+- cooling energy production, at -25 °C, propylene compression refrigeration system
+  1 MW
+- cooling energy, at -25 °C
+- megajoule
+: Steam and air conditioning supply
+? !!python/tuple
+- cooling energy production, at -100 °C, R-134a-carbon dioxide-ethylene compression refrigeration system 1 MW
+- cooling energy, at -100 °C
+- megajoule
+: Steam and air conditioning supply
+? !!python/tuple
+- market for cooling energy, at -160 °C
+- cooling energy, at -160 °C
+- megajoule
+: Steam and air conditioning supply
+? !!python/tuple
+- cooling energy production, at -15 °C, R-134a compression refrigeration system 1 MW
+- cooling energy, at -15 °C
+- megajoule
+: Steam and air conditioning supply
+? !!python/tuple
+- market for cooling energy, at -45 °C
+- cooling energy, at -45 °C
+- megajoule
+: Steam and air conditioning supply
+? !!python/tuple
+- market for cooling energy, at -100 °C
+- cooling energy, at -100 °C
+- megajoule
+: Steam and air conditioning supply
+? !!python/tuple
+- cooling energy production, at -100 °C, propylene-ethylene compression refrigeration system 1 MW
+- cooling energy, at -100 °C
+- megajoule
+: Steam and air conditioning supply
+? !!python/tuple
+- cooling energy production, at -160 °C, propylene-ethylene-methane compression refrigeration system 1 MW
+- cooling energy, at -160 °C
+- megajoule
+: Steam and air conditioning supply
+? !!python/tuple
+- polyethyleneimine (PEI) production, for sorbent-based direct air capture system
+- polyethyleneimine
+- kilogram
+: Manufacture of basic chemicals
+? !!python/tuple
+- silica gel production, for sorbent-based direct air capture system
+- silica gel
+- kilogram
+: Manufacture of basic chemical
+? !!python/tuple
+- carbon dioxide, captured at cement production plant, using direct separation
+- carbon dioxide, captured at cement plant
+- kilogram
+: Carbon capture
+? !!python/tuple
+- carbon dioxide, captured at cement production plant, using oxyfuel
+- carbon dioxide, captured at cement plant
+- kilogram
+: Carbon capture
+? !!python/tuple
+- carbon dioxide, captured at cement production plant, using monoethanolamine
+- carbon dioxide, captured at cement plant
+- kilogram
+: Carbon capture

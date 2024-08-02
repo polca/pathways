@@ -4,30 +4,23 @@ This module contains functions to calculate the Life Cycle Assessment (LCA) resu
 """
 
 import logging
+import pickle
 import uuid
 from pathlib import Path
-from typing import Any, Dict, List, Tuple
+from typing import Dict, List, Tuple
 
 import bw2calc as bc
 import bw_processing as bwp
 import numpy as np
 import pyprind
+import sparse as sp
 from bw2calc.utils import get_datapackage
 from bw_processing import Datapackage
-from numpy import dtype, ndarray
 from premise.geomap import Geomap
 from scipy import sparse
 
-from .filesystem_constants import DIR_CACHED_DB, STATS_DIR, USER_LOGS_DIR
+from .filesystem_constants import DIR_CACHED_DB, USER_LOGS_DIR
 from .lcia import fill_characterization_factors_matrices
-from .stats import (
-    create_mapping_sheet,
-    log_intensities_to_excel,
-    log_results_to_excel,
-    log_subshares_to_excel,
-    run_GSA_delta,
-    run_GSA_OLS,
-)
 from .subshares import (
     adjust_matrix_based_on_shares,
     find_technology_indices,
@@ -126,7 +119,6 @@ def get_lca_matrices(
     :type scenario: str
     :param year: The year of the scenario.
     :type year: int
-    :param remove_infrastructure: Whether to remove infrastructure exchanges from the technosphere matrix.
     :rtype: Tuple[sparse.csr_matrix, sparse.csr_matrix, Dict, Dict, List]
     """
 
@@ -200,7 +192,7 @@ def get_lca_matrices(
 
 def find_uncertain_parameters(
     distributions_array: np.ndarray, indices_array: np.ndarray
-) -> list[tuple[int, int]]:
+) -> list[tuple]:
     """
     Find the uncertain parameters in the distributions array.
     They will be used for the stats report
@@ -221,8 +213,6 @@ def remove_double_counting(
     Remove double counting from a technosphere matrix by zeroing out the demanded row values
     in all columns, except for those on the diagonal.
     :param technosphere_matrix: bw2calc.LCA object
-    :param demand: dict with demand values
-    :param activities_to_exclude: list of row indices to zero out
     :return: Technosphere matrix with double counting removed
     """
 
@@ -242,37 +232,18 @@ def remove_double_counting(
     return technosphere_matrix.tocsr()
 
 
-def process_region(data: Tuple) -> dict[str, ndarray[Any, dtype[Any]] | list[int]]:
-    """
-    Process the region data.
-    :param data: Tuple containing the model, scenario, year, region, variables, vars_idx, scenarios, units_map,
-                    demand_cutoff, lca, characterization_matrix, debug, use_distributions, uncertain_parameters.
-    :return: Dictionary containing the region data.
-    """
-    (
-        model,
-        scenario,
-        year,
-        region,
-        variables,
-        vars_idx,
-        scenarios,
-        units_map,
-        demand_cutoff,
-        lca,
-        characterization_matrix,
-        methods,
-        debug,
-        use_distributions,
-        uncertain_parameters,
-        # mc_lca,
-    ) = data
-
+def create_functional_units(
+    scenarios,
+    region,
+    model,
+    scenario,
+    year,
+    variables,
+    vars_idx,
+    units_map,
+    demand_cutoff,
+) -> [dict, dict]:
     variables_demand = {}
-    d = []
-    impacts_by_method = {method: [] for method in methods}
-    param_keys = set()
-    params_container = []
 
     total_demand = (
         scenarios.sel(
@@ -290,9 +261,7 @@ def process_region(data: Tuple) -> dict[str, ndarray[Any, dtype[Any]] | list[int
             f"Total demand for {region}, {model}, {scenario}, {year} is zero. "
             f"Skipping."
         )
-        return d
 
-    variable_count = 0
     for v, variable in enumerate(variables):
         idx, dataset = vars_idx[variable]["idx"], vars_idx[variable]["dataset"]
         # Compute the unit conversion vector for the given activities
@@ -318,103 +287,189 @@ def process_region(data: Tuple) -> dict[str, ndarray[Any, dtype[Any]] | list[int
             * unit_vector
         )
 
-        if np.sum(demand) == 0:
-            logging.info(
-                f"Total demand for {variable} in {region}, {model}, {scenario}, {year} is zero. "
-                f"Skipping."
-            )
-            continue
-
-        # If the demand is below the cut-off criteria, skip to the next iteration
-        share = demand / total_demand
-
-        # If the total demand is zero, return None
-        if share < demand_cutoff:
-            continue
-
         variables_demand[variable] = {
             "id": idx,
             "demand": demand,
+            "fu": {idx: demand},
+            "dataset": dataset,
+            "unit vector": unit_vector,
         }
 
-        functional_unit = {idx: demand}
+    return {
+        key: value["fu"] for key, value in variables_demand.items()
+    }, variables_demand
 
+
+def process_region(data: Tuple) -> Dict[str, str | List[str] | List[int]]:
+    """
+    Process the region data.
+    :param data: Tuple containing the model, scenario, year, region, variables, vars_idx, scenarios, units_map,
+                    demand_cutoff, lca, characterization_matrix, debug, use_distributions, uncertain_parameters.
+    :return: Dictionary containing the region data.
+    """
+    (
+        model,
+        scenario,
+        year,
+        region,
+        variables,
+        fus_details,
+        scenarios,
+        units_map,
+        demand_cutoff,
+        lca,
+        characterization_matrix,
+        methods,
+        debug,
+        use_distributions,
+        uncertain_parameters,
+    ) = data
+
+    id_uncertainty_indices_filepath = None
+    id_technosphere_indices_filepath = None
+    iter_results_files = []
+    iter_param_vals_filepath = None
+
+    dict_loc_cat = {}
+
+    cat_counter = 0
+    for cat, act_cat_idx in lca.acts_category_idx_dict.items():
+        loc_counter = 0
+        for loc, act_loc_idx in lca.acts_location_idx_dict.items():
+            # Find the intersection of indices
+            idx = np.intersect1d(act_cat_idx, act_loc_idx)
+            # Filter out any -1 indices
+            filtered_idx = idx[idx != -1]
+
+            if filtered_idx.size > 0:
+                # Assign the filtered index array to the dict_loc_cat with (cat, loc) as key
+                dict_loc_cat[(cat_counter, loc_counter)] = filtered_idx
+
+            loc_counter += 1
+        cat_counter += 1
+
+    if use_distributions == 0:
+        # Regular LCA calculations
         with CustomFilter("(almost) singular matrix"):
-            lca.lci(demand=functional_unit)
+            lca.lci()
 
-        if use_distributions == 0:
-            # Regular LCA
-            characterized_inventory = (
-                characterization_matrix @ lca.inventory
-            ).toarray()
-
-        else:
-            # Use distributions for LCA calculations
-            # next(lca) is a generator that yields the inventory matrix
-            temp_results = []
-            params = {}
-
-            for _ in zip(range(use_distributions), lca):
-
-                matrix_result = (characterization_matrix @ lca.inventory).toarray()
-                temp_results.append(matrix_result)
-                for i in range(len(uncertain_parameters)):
-                    param_key = (
-                        f"{uncertain_parameters[i][0]}_to_{uncertain_parameters[i][1]}"
-                    )
-                    param_keys.add(param_key)
-                    if param_key not in params:
-                        params[param_key] = []
-                    value = -lca.technosphere_matrix[
-                        uncertain_parameters[i][0], uncertain_parameters[i][1]
-                    ]
-                    params[param_key].append(value)
-
-            params_container.append(params)
-
-            results = np.array(temp_results)
-            for idx, method in enumerate(methods):
-                # Sum over items for each stochastic result, not across all results
-                method_impacts = results[:, idx, :].sum(axis=1)
-                impacts_by_method[method] = method_impacts.tolist()
-
-            # calculate quantiles along the first dimension
-            characterized_inventory = np.quantile(results, [0.05, 0.5, 0.95], axis=0)
-
-        d.append(characterized_inventory)
-        variable_count += 1  # Increment the counter
-
-        if debug:
-            logging.info(
-                f"var.: {variable}, name: {dataset[0][:50]}, "
-                f"ref.: {dataset[1]}, unit: {dataset[2][:50]}, idx: {idx},"
-                f"loc.: {dataset[3]}, demand: {variables_demand[variable]['demand']}, "
-                f"unit conv.: {unit_vector}, "
-                f"impact: {np.round(characterized_inventory.sum(axis=-1) / variables_demand[variable]['demand'], 3)}. "
-            )
-
-    if len(params_container) > 0:
-        log_intensities_to_excel(
-            year=year,
-            params=params_container,
-            export_path=STATS_DIR / f"{model}_{scenario}_{year}.xlsx",
+        # Create a numpy array with the results
+        inventory_results = np.array(
+            [
+                (characterization_matrix @ value).toarray()
+                for value in lca.inventories.values()
+            ]
         )
 
-    # Save the characterization vectors to disk
-    id_array = uuid.uuid4()
-    np.save(file=DIR_CACHED_DB / f"{id_array}.npy", arr=np.stack(d))
+        iter_results = np.zeros(
+            (
+                inventory_results.shape[0],
+                inventory_results.shape[1],
+                len(lca.acts_category_idx_dict),
+                len(lca.acts_location_idx_dict),
+            )
+        )
 
-    # just making sure that the memory is freed. Maybe not needed-check later
-    del d
+        for (cat, loc), idx in dict_loc_cat.items():
+            iter_results[:, :, cat, loc] = inventory_results[:, :, idx].sum(axis=2)
 
-    # returning a dictionary containing the id_array and the variables
+        # Save iteration results to disk
+        iter_results_filepath = DIR_CACHED_DB / f"iter_results_{uuid.uuid4()}.npz"
+        sp.save_npz(
+            filename=iter_results_filepath,
+            matrix=sp.COO(iter_results),
+            compressed=True,
+        )
+        iter_results_files.append(iter_results_filepath)
+
+    else:
+        # Use distributions for LCA calculations
+        iter_param_vals = []
+        with CustomFilter("(almost) singular matrix"):
+            for iteration in range(use_distributions):
+                next(lca)
+                lca.lci()
+
+                # Create a numpy array with the results
+                inventory_results = np.array(
+                    [
+                        (characterization_matrix @ value).toarray()
+                        for value in lca.inventories.values()
+                    ]
+                )
+                iter_param_vals.append(
+                    [
+                        -lca.technosphere_matrix[index]
+                        for index in lca.uncertain_parameters
+                    ]
+                )
+
+                iter_results = np.zeros(
+                    (
+                        inventory_results.shape[0],
+                        inventory_results.shape[1],
+                        len(lca.acts_category_idx_dict),
+                        len(lca.acts_location_idx_dict),
+                    )
+                )
+
+                for (cat, loc), idx in dict_loc_cat.items():
+                    iter_results[:, :, cat, loc] = inventory_results[:, :, idx].sum(
+                        axis=2
+                    )
+
+                # Save iteration results to disk
+                iter_results_filepath = (
+                    DIR_CACHED_DB / f"iter_results_{uuid.uuid4()}.npz"
+                )
+                sp.save_npz(
+                    filename=iter_results_filepath,
+                    matrix=sp.COO(iter_results),
+                    compressed=True,
+                )
+                iter_results_files.append(iter_results_filepath)
+
+        # Save iteration parameter values to disk
+        iter_param_vals_filepath = DIR_CACHED_DB / f"iter_param_vals_{uuid.uuid4()}.npy"
+        np.save(file=iter_param_vals_filepath, arr=np.stack(iter_param_vals, axis=-1))
+
+        # Save the uncertainty indices to disk
+        id_uncertainty_indices_filepath = (
+            DIR_CACHED_DB / f"mc_indices_{uuid.uuid4()}.npy"
+        )
+        np.save(
+            file=id_uncertainty_indices_filepath,
+            arr=lca.uncertain_parameters,
+        )
+
+        # Save the technosphere indices to disk
+        id_technosphere_indices_filepath = (
+            DIR_CACHED_DB / f"tech_indices_{uuid.uuid4()}.pkl"
+        )
+        pickle.dump(
+            lca.technosphere_indices,
+            open(id_technosphere_indices_filepath, "wb"),
+        )
+
+    # Returning a dictionary containing the id_array and the variables
     # to be able to fetch them back later
-    return {
-        "id_array": id_array,
-        "variables": {k: v["demand"] for k, v in variables_demand.items()},
-        "impact_by_method": impacts_by_method,
-        "param_keys": param_keys,
+    d = {
+        "iterations_results": iter_results_files,
+        "variables": {k: v["demand"] for k, v in fus_details.items()},
     }
+
+    if use_distributions > 0:
+        d["uncertainty_params"] = [
+            str(id_uncertainty_indices_filepath),
+        ]
+        d["technosphere_indices"] = [
+            str(id_technosphere_indices_filepath),
+        ]
+        d["iterations_param_vals"] = [
+            str(iter_param_vals_filepath),
+        ]
+
+    return d
 
 
 def _calculate_year(args: tuple):
@@ -437,6 +492,7 @@ def _calculate_year(args: tuple):
         classifications,
         scenarios,
         reverse_classifications,
+        geography_mapping,
         debug,
         use_distributions,
         shares,
@@ -461,7 +517,9 @@ def _calculate_year(args: tuple):
         geo.model = model
         geo.geo = geo
 
-    # Try to load LCA matrices for the given model, scenario, and year
+    # Try to load LCA matrices for
+    # the given model, scenario, and year
+
     try:
         (
             bw_datapackage,
@@ -504,150 +562,112 @@ def _calculate_year(args: tuple):
 
     results = {}
 
-    locations = lca_results.coords["location"].values.tolist()
-
     acts_category_idx_dict = _group_technosphere_indices(
         technosphere_indices=technosphere_indices,
         group_by=lambda x: classifications.get(x[:3], "unclassified"),
-        group_values=list(set(lca_results.coords["act_category"].values)),
+        group_values=lca_results.coords["act_category"].values.tolist(),
     )
+
+    # reorder keys of acts_category_idx_dict based on lca_results.coords["act_category"].values
+    acts_category_idx_dict = {
+        k: acts_category_idx_dict[k]
+        for k in lca_results.coords["act_category"].values.tolist()
+    }
 
     acts_location_idx_dict = _group_technosphere_indices(
         technosphere_indices=technosphere_indices,
         group_by=lambda x: x[-1],
-        group_values=locations,
+        group_values=list(set([x[-1] for x in technosphere_indices.keys()])),
+        mapping=geography_mapping,
     )
 
-    results["other"] = {
-        "acts_category_idx_dict": acts_category_idx_dict,
-        "acts_location_idx_dict": acts_location_idx_dict,
+    # reorder keys of acts_location_idx_dict based on lca_results.coords["location"].values
+    acts_location_idx_dict = {
+        k: acts_location_idx_dict[k]
+        for k in lca_results.coords["location"].values.tolist()
     }
 
-    lca = bc.LCA(
-        demand={0: 1},
-        data_objs=[
-            bw_datapackage,
-        ],
-        use_distributions=True if use_distributions > 0 else False,
-    )
-
-    with CustomFilter("(almost) singular matrix"):
-        lca.lci(factorize=True)
-
-    if shares:
-        logging.info("Calculating LCA results with subshares.")
-        shares_indices = find_technology_indices(regions, technosphere_indices, geo)
-        correlated_arrays = adjust_matrix_based_on_shares(
-            lca=lca,
-            shares_dict=shares_indices,
-            subshares=shares,
-            year=year,
-        )
-        bw_correlated = get_subshares_matrix(correlated_arrays)
-        lca.packages.append(get_datapackage(bw_correlated))
-        lca.use_arrays = True
-
-    characterization_matrix = fill_characterization_factors_matrices(
-        methods=methods,
-        biosphere_matrix_dict=lca.dicts.biosphere,
-        biosphere_dict=biosphere_indices,
-        debug=debug,
-    )
-
-    if debug:
-        logging.info(
-            f"Characterization matrix created. "
-            f"Shape: {characterization_matrix.shape}"
-        )
-
-    total_impacts_by_method = {method: [] for method in methods}
-    all_param_keys = set()
     bar = pyprind.ProgBar(len(regions))
     for region in regions:
-        bar.update()
-        # Iterate over each region
-        if use_distributions != 0:
-            # mc_lca = MonteCarloLCA([{0: 1}], methods)
-            results[region] = process_region(
-                (
-                    model,
-                    scenario,
-                    year,
-                    region,
-                    variables,
-                    vars_info[region],
-                    scenarios,
-                    units,
-                    demand_cutoff,
-                    lca,
-                    characterization_matrix,
-                    methods,
-                    debug,
-                    use_distributions,
-                    uncertain_parameters,
-                    # mc_lca,
-                )
-            )
-            for method, impacts in results[region]["impact_by_method"].items():
-                total_impacts_by_method[method].extend(impacts)
-            all_param_keys.update(results[region]["param_keys"])
-        else:
-            results[region] = process_region(
-                (
-                    model,
-                    scenario,
-                    year,
-                    region,
-                    variables,
-                    vars_info[region],
-                    scenarios,
-                    units,
-                    demand_cutoff,
-                    lca,
-                    characterization_matrix,
-                    methods,
-                    debug,
-                    use_distributions,
-                    uncertain_parameters,
-                    # None, # No Monte Carlo LCA object needed
-                )
-            )
-
-    if use_distributions != 0:
-        export_path = STATS_DIR / f"{model}_{scenario}_{year}.xlsx"
-        if shares:
-            log_subshares_to_excel(
-                year=year,
-                shares=shares,
-                export_path=export_path,
-            )
-        log_results_to_excel(
-            total_impacts_by_method=total_impacts_by_method,
-            methods=methods,
-            filepath=export_path,
-        )
-        create_mapping_sheet(
-            filepaths=filepaths,
+        fus, fus_details = create_functional_units(
+            scenarios=scenarios,
+            region=regions[0],
             model=model,
             scenario=scenario,
             year=year,
-            parameter_keys=all_param_keys,
-            export_path=export_path,
-        )
-        run_GSA_OLS(
-            methods=methods,
-            export_path=export_path,
-        )
-        print(
-            f"OLS summaries have been saved to the 'OLS' sheets in {export_path.resolve()}"
+            variables=variables,
+            vars_idx=vars_info[region],
+            units_map=units,
+            demand_cutoff=demand_cutoff,
         )
 
-        run_GSA_delta(
-            methods=methods,
-            export_path=export_path,
+        lca = bc.MultiLCA(
+            demands=fus,
+            method_config={"impact_categories": []},
+            data_objs=[
+                bw_datapackage,
+            ],
+            use_distributions=True if use_distributions > 0 else False,
         )
-        print(
-            f"Delta analysis has been saved to the 'Delta' sheets in {export_path.resolve()}"
+        lca.uncertain_parameters = uncertain_parameters
+        lca.technosphere_indices = technosphere_indices
+        lca.acts_category_idx_dict = acts_category_idx_dict
+        lca.acts_location_idx_dict = acts_location_idx_dict
+
+        with CustomFilter("(almost) singular matrix"):
+            lca.lci()
+
+        if shares:
+            shares_indices = find_technology_indices(regions, technosphere_indices, geo)
+            correlated_arrays = adjust_matrix_based_on_shares(
+                lca=lca,
+                shares_dict=shares_indices,
+                subshares=shares,
+                year=year,
+            )
+            bw_correlated = get_subshares_matrix(correlated_arrays)
+            lca.packages.append(get_datapackage(bw_correlated))
+            lca.use_arrays = True
+
+        lca.technosphere_indices = {
+            k: v
+            for k, v in lca.technosphere_indices.items()
+            if v in {value for tup in lca.uncertain_parameters for value in tup}
+        }
+
+        characterization_matrix = fill_characterization_factors_matrices(
+            methods=methods,
+            biosphere_matrix_dict=lca.dicts.biosphere,
+            biosphere_dict=biosphere_indices,
+            debug=debug,
+        )
+
+        if debug:
+            logging.info(
+                f"Characterization matrix created. "
+                f"Shape: {characterization_matrix.shape}"
+            )
+
+        bar.update()
+        # Iterate over each region
+        results[region] = process_region(
+            (
+                model,
+                scenario,
+                year,
+                region,
+                variables,
+                fus_details,
+                scenarios,
+                units,
+                demand_cutoff,
+                lca,
+                characterization_matrix,
+                methods,
+                debug,
+                use_distributions,
+                uncertain_parameters,
+            )
         )
 
     return results

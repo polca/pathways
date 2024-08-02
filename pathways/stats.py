@@ -7,8 +7,10 @@ from zipfile import BadZipFile
 import numpy as np
 import pandas as pd
 import statsmodels.api as sm
-from openpyxl import load_workbook
+from openpyxl import Workbook, load_workbook
 from SALib.analyze import delta
+
+from pathways.filesystem_constants import STATS_DIR
 
 
 def log_double_accounting(
@@ -97,199 +99,87 @@ def log_double_accounting(
             )
 
 
-def log_subshares_to_excel(year: int, shares: dict, export_path: Path):
+def log_subshares(
+    shares: dict,
+    region: str,
+) -> pd.DataFrame:
     """
-    Logs results to an Excel file named according to model, scenario, and year, specifically for the given year.
-    This method assumes that each entry in the shares defaultdict is structured to be directly usable in a DataFrame.
-
-    Parameters:
-    :param year: The specific year for which data is being logged.
-    :param shares: A nested defaultdict containing shares data for multiple years and types.
-    :param export_path: The path to the Excel file where the data will be logged.
+    Create a pandas DataFrame where the keys of shares are the columns
+    and the values are the values. The region is added as a column.
     """
 
-    data = []
+    df = pd.DataFrame(shares)
+    df["region"] = region
+    df["iteration"] = range(1, len(df) + 1)
 
-    first_tech = next(iter(shares), None)
-    if not first_tech or year not in shares[first_tech]:
-        print(f"No data found for year {year} in any technology.")
-        return
-
-    num_iterations = len(shares[first_tech][year][next(iter(shares[first_tech][year]))])
-    for i in range(num_iterations):
-        iteration_data = {"Iteration": i + 1, "Year": year}
-        for tech, years_data in shares.items():
-            if year in years_data:
-                for subtype, values in years_data[year].items():
-                    iteration_data[f"{tech}_{subtype}"] = (
-                        values[i] if i < len(values) else None
-                    )
-        data.append(iteration_data)
-
-    new_df = pd.DataFrame(data)
-
-    try:
-        if os.path.exists(export_path):
-            df_existing = pd.read_excel(export_path)
-            # Merge new data into existing data, selectively updating share columns
-            combined_df = (
-                df_existing.set_index(["Iteration", "Year"])
-                .combine_first(new_df.set_index(["Iteration", "Year"]))
-                .reset_index()
-            )
-            # Optionally, ensure the columns are in a meaningful order
-            new_columns = [
-                col for col in new_df.columns if col not in ["Iteration", "Year"]
-            ]
-            existing_columns = [
-                col for col in df_existing.columns if col not in new_df.columns
-            ]
-            combined_df = combined_df[
-                ["Iteration", "Year"] + new_columns + existing_columns
-            ]
-
-            combined_df.to_excel(export_path, index=False)
-        else:
-            new_df.to_excel(export_path, index=False)
-    except Exception as e:
-        print(f"Error updating Excel file: {str(e)}")
+    return df[["iteration", "region"] + list(shares.keys())]
 
 
-def log_intensities_to_excel(year: int, params: list, export_path: Path):
+def log_uncertainty_values(
+    region: str,
+    uncertainty_indices: np.array,
+    uncertainty_values: np.array,
+) -> pd.DataFrame:
     """
-    Update or create an Excel file with new columns of data, based on model, scenario, and year.
+    Create a pandas DataFrame with the region and uncertainty indices as columns,
+    the uncertainty values as values, and the iteration number as the index.
 
-    :param year: The year for which the data is logged.
-    :param params: Dictionary where keys are the new column names and values are lists of data for each column.
-    :param export_path: The path to the Excel file where the data will be logged.
+    :param region: Name of the region
+    :param uncertainty_indices: Indices of the uncertainty values
+    :param uncertainty_values: Uncertainty values
+    :return: DataFrame with region as column, uncertainty indices as indices and uncertainty values as values
+
     """
 
-    if not params:
-        print("Warning: No new data provided to log.")
-        return
+    # convert 2D numpy array to list of tuples
+    uncertainty_indices = uncertainty_indices.tolist()
+    uncertainty_indices = [[str(x) for x in index] for index in uncertainty_indices]
+    uncertainty_indices = ["::".join(index) for index in uncertainty_indices]
 
-    try:
-        # merge list of dictionaries into a single dictionary
-        params = {k: v for d in params for k, v in d.items()}
+    df = pd.DataFrame(uncertainty_values.T, columns=uncertainty_indices)
+    df["region"] = region
+    df["iteration"] = range(1, len(df) + 1)
 
-        max_length = max(len(v) for v in params.values())
-
-        df_new = pd.DataFrame(params)
-        df_new["Iteration"] = range(1, max_length + 1)
-        df_new["Year"] = [year] * max_length
-
-        if os.path.exists(export_path):
-            df_existing = pd.read_excel(export_path)
-
-            combined_df = pd.merge(
-                df_existing,
-                df_new,
-                on=["Iteration", "Year"],
-                how="outer",
-                suffixes=("", "_new"),
-            )
-
-            for col in df_new.columns:
-                if col + "_new" in combined_df:
-                    combined_df[col] = combined_df[col].combine_first(
-                        combined_df.pop(col + "_new")
-                    )
-
-            combined_df = combined_df.loc[:, ~combined_df.columns.str.endswith("_new")]
-            df = combined_df
-        else:
-            df = df_new
-        df.to_excel(export_path, index=False)
-    except Exception as e:
-        print(f"Failed to update the Excel file: {e}")
+    return df[["iteration", "region"] + uncertainty_indices]
 
 
-def log_results_to_excel(
-    total_impacts_by_method: dict,
+def log_results(
+    total_impacts: np.array,
     methods: list,
-    filepath: Path,
+    region: str,
 ):
     """
     Log the characterized inventory results for each LCIA method into separate columns in an Excel file.
 
-    :param total_impacts_by_method: Dictionary where keys are method names and values are lists of impacts
-    from all regions and distributions.
+    :param total_impacts: numpy array of total impacts for each method.
     :param methods: List of method names.
-    :param filepath: Optional. File path for the Excel file to save the results.
+    :param region: Region name as a string.
     """
 
-    try:
-        df = pd.read_excel(filepath)
-    except FileNotFoundError:
-        df = pd.DataFrame()
+    df = pd.DataFrame(total_impacts.T, columns=methods)
+    df["region"] = region
+    df["iteration"] = range(1, len(df) + 1)
 
-    for method, impacts in total_impacts_by_method.items():
-        df[method] = pd.Series(impacts)
-
-    base_cols = ["Iteration", "Year"] if "Iteration" in df.columns else []
-    other_cols = [col for col in df.columns if col not in base_cols + methods]
-    df = df[base_cols + methods + other_cols]
-
-    df.to_excel(filepath, index=False)
+    return df[["iteration", "region"] + methods]
 
 
-def create_mapping_sheet(
-    filepaths: list,
-    model: str,
-    scenario: str,
-    year: int,
-    parameter_keys: set,
-    export_path: Path,
-):
+def create_mapping_sheet(indices: dict) -> pd.DataFrame:
     """
     Create a mapping sheet for the activities with uncertainties.
-    :param filepaths: List of paths to data files.
-    :param model: Model name as a string.
-    :param scenario: Scenario name as a string.
-    :param year: Year as an integer.
-    :param parameter_keys: List of parameter keys used in intensity iterations.
-    :param export_path: Path to the directory where the Excel file will be saved.
     """
 
-    def filter_filepaths(suffix: str, contains: list):
-        return [
-            Path(fp)
-            for fp in filepaths
-            if all(kw in fp for kw in contains)
-            and Path(fp).suffix == suffix
-            and Path(fp).exists()
-        ]
+    # Converting the dictionary into a pandas DataFrame
+    df = pd.DataFrame(indices.items(), columns=["Index", "Value"])
 
-    unique_indices = {int(idx) for key in parameter_keys for idx in key.split("_to_")}
+    # Split the 'Index' column into four separate columns
+    df[["Name", "Product", "Unit", "Region"]] = pd.DataFrame(
+        df["Index"].tolist(), index=df.index
+    )
 
-    fps = filter_filepaths(".csv", [model, scenario, str(year)])
-    if len(fps) < 1:
-        raise ValueError(f"No relevant files found for {model}, {scenario}, {year}")
+    # Drop the now unnecessary 'Index' column
+    df.drop(columns=["Index"], inplace=True)
 
-    technosphere_indices_path = None
-    for fp in fps:
-        if "A_matrix_index" in fp.name:
-            technosphere_indices_path = fp
-            break
-
-    if not technosphere_indices_path:
-        raise FileNotFoundError("Technosphere indices file not found.")
-
-    technosphere_inds = pd.read_csv(technosphere_indices_path, sep=";", header=None)
-    technosphere_inds.columns = ["Activity", "Product", "Unit", "Location", "Index"]
-
-    mapping_df = technosphere_inds[technosphere_inds["Index"].isin(unique_indices)]
-    mapping_df = mapping_df[
-        ["Activity", "Product", "Location", "Unit", "Index"]
-    ]  # Restrict columns if necessary
-
-    try:
-        with pd.ExcelWriter(
-            export_path, mode="a", engine="openpyxl", if_sheet_exists="replace"
-        ) as writer:
-            mapping_df.to_excel(writer, index=False, sheet_name="Mapping")
-    except Exception as e:
-        print(f"Error writing mapping sheet to {export_path}: {str(e)}")
+    return df
 
 
 def escape_formula(text: str):
@@ -313,116 +203,116 @@ def run_GSA_OLS(methods: list, export_path: Path):
     try:
         book = load_workbook(export_path)
     except FileNotFoundError:
-        book = pd.ExcelWriter(export_path, engine="openpyxl")
-        book.close()
+        book = Workbook()
+        book.save(export_path)
         book = load_workbook(export_path)
 
     data = pd.read_excel(export_path, sheet_name="Sheet1")
 
-    if "OLS" not in book.sheetnames:
-        ws = book.create_sheet("OLS")
-    else:
+    if "OLS" in book.sheetnames:
         ws = book["OLS"]
         book.remove(ws)
-        ws = book.create_sheet("OLS")
 
-    for idx, method in enumerate(methods):
+    ws = book.create_sheet("OLS")
+
+    X_base = data.drop(columns=["Iteration", "Year"] + methods)
+    X_base = sm.add_constant(X_base)
+    corr_matrix = X_base.corr().abs()
+    upper_triangle = corr_matrix.where(
+        np.triu(np.ones(corr_matrix.shape), k=1).astype(bool)
+    )
+    high_correlation = [
+        column
+        for column in upper_triangle.columns
+        if any(upper_triangle[column] > 0.95)
+    ]
+
+    if high_correlation:
+        print(f"OLS: High multicollinearity detected in columns: {high_correlation}")
+        X_base = X_base.drop(columns=high_correlation)
+
+    results = []
+    for method in methods:
         if method not in data.columns:
             print(f"Data for {method} not found in the file.")
             continue
 
         Y = data[method]
-        X = data.drop(columns=["Iteration", "Year"] + methods)
-        X = sm.add_constant(X)
-
-        # Check for multicollinearity
-        corr_matrix = X.corr().abs()
-        upper_triangle = corr_matrix.where(
-            np.triu(np.ones(corr_matrix.shape), k=1).astype(bool)
-        )
-        high_correlation = [
-            column
-            for column in upper_triangle.columns
-            if any(upper_triangle[column] > 0.95)
-        ]
-        if high_correlation:
-            print(
-                f"OLS: High multicollinearity detected in columns: {high_correlation}"
-            )
-            X = X.drop(columns=high_correlation)
+        X = X_base.copy()
 
         try:
             model_results = sm.OLS(Y, X).fit()
             summary = model_results.summary().as_text()
             summary_lines = summary.split("\n")
 
-            ws.append([f"OLS Summary for {method}"])
+            results.append([f"OLS Summary for {method}"])
             for line in summary_lines:
                 line = escape_formula(line)
                 columns = re.split(r"\s{2,}", line)
-                ws.append(columns)
-            ws.append([])
+                results.append(columns)
+            results.append([])
         except Exception as e:
             print(f"Error running OLS for method {method}: {e}")
+
+    for result in results:
+        ws.append(result)
 
     book.save(export_path)
 
 
-def run_GSA_delta(methods: list, export_path: Path):
+def run_GSA_delta(
+    total_impacts: pd.DataFrame,
+    uncertainty_values: pd.DataFrame,
+    technology_shares: pd.DataFrame,
+) -> pd.DataFrame:
     """
     Runs Delta Moment-Independent Measure analysis for specified methods and writes summaries to an Excel file.
 
-    :param methods: List of method names corresponding to dataset columns.
-    :param export_path: Path to the directory where the Excel file will be saved.
+    :param total_impacts: DataFrame with total impacts for each method.
+    :param uncertainty_values: DataFrame with uncertainty values.
+    :param technology_shares: DataFrame with technology shares.
+    :return: DataFrame with Delta Moment-Independent Measure analysis results.
     """
-    try:
-        data = pd.read_excel(export_path, sheet_name="Sheet1")
-    except FileNotFoundError:
-        print(f"Data file {export_path} not found.")
-        return
 
-    standard_columns = {"Iteration", "Year"}
-    params = [
-        col
-        for col in data.columns
-        if col not in standard_columns and col not in methods
+    # merge uncertainty_values and technology_shares
+    # based on "iteration" and "region" columns
+
+    if len(technology_shares) > 0:
+        df_parameters = uncertainty_values.merge(
+            technology_shares, on=["iteration", "region"]
+        )
+    else:
+        df_parameters = uncertainty_values
+
+    parameters = [
+        param for param in df_parameters.columns if param not in ["iteration", "region"]
     ]
 
     problem = {
-        "num_vars": len(params),
-        "names": params,
-        "bounds": [[data[param].min(), data[param].max()] for param in params],
+        "num_vars": len(parameters),
+        "names": parameters,
+        "bounds": [
+            [df_parameters[param].min(), df_parameters[param].max()]
+            for param in parameters
+        ],
     }
 
-    try:
-        book = load_workbook(export_path)
-    except FileNotFoundError:
-        book = pd.ExcelWriter(export_path, engine="openpyxl")
-        book.close()
-        book = load_workbook(export_path)
+    methods = [m for m in total_impacts.columns if m not in ["iteration", "region"]]
 
-    if "GSA" not in book.sheetnames:
-        ws = book.create_sheet("GSA")
-    else:
-        ws = book["GSA"]
-        book.remove(ws)
-        ws = book.create_sheet("GSA")
+    results = []
 
     for method in methods:
-        if method not in data.columns:
-            print(f"Data for {method} not found in the file.")
-            continue
+        param_values = df_parameters[parameters].values
 
-        param_values = data[params].values
-        Y = data[method].values
+        # total impacts for the method
+        Y = total_impacts[method].values
 
-        delta_results = delta.analyze(problem, param_values, Y, print_to_console=False)
+        delta_results = delta.analyze(problem=problem, X=param_values, Y=Y)
 
-        ws.append([f"Delta Moment-Independent Measure for {method}"])
-        ws.append(["Parameter", "Delta", "Delta Conf", "S1", "S1 Conf"])
-        for i, param in enumerate(params):
-            ws.append(
+        for i, param in enumerate(parameters):
+            results.append(
                 [
+                    method,
                     param,
                     delta_results["delta"][i],
                     delta_results["delta_conf"][i],
@@ -430,6 +320,145 @@ def run_GSA_delta(methods: list, export_path: Path):
                     delta_results["S1_conf"][i],
                 ]
             )
-        ws.append([])
 
-    book.save(export_path)
+    return pd.DataFrame(
+        results,
+        columns=["LCIA method", "Parameter", "Delta", "Delta Conf", "S1", "S1 Conf"],
+    )
+
+
+def log_mc_parameters_to_excel(
+    model: str,
+    scenario: str,
+    year: int,
+    methods: list,
+    result: dict,
+    uncertainty_parameters: dict,
+    uncertainty_values: dict,
+    tehnosphere_indices: dict,
+    iteration_results: dict,
+    shares: dict = None,
+):
+    export_path = STATS_DIR / f"{model}_{scenario}_{year}.xlsx"
+
+    # create Excel workbook using openpyxl
+    with pd.ExcelWriter(export_path, engine="openpyxl") as writer:
+
+        df_sum_impacts = pd.DataFrame()
+        df_uncertainty_values = pd.DataFrame()
+        df_technology_shares = pd.DataFrame()
+        writer.book.create_sheet("Indices mapping")
+        writer.book.create_sheet("Monte Carlo values")
+        writer.book.create_sheet("Technology shares")
+        writer.book.create_sheet("Total impacts")
+
+        for region, data in result.items():
+
+            total_impacts = np.sum(iteration_results[region], axis=(0, 2, 3))
+
+            df_sum_impacts = pd.concat(
+                [
+                    df_sum_impacts,
+                    log_results(
+                        total_impacts=total_impacts,
+                        methods=methods,
+                        region=region,
+                    ),
+                ]
+            )
+
+            uncertainty_indices = uncertainty_parameters[region]
+            uncertainty_vals = uncertainty_values[region]
+
+            df_uncertainty_values = pd.concat(
+                [
+                    df_uncertainty_values,
+                    log_uncertainty_values(
+                        region=region,
+                        uncertainty_indices=uncertainty_indices,
+                        uncertainty_values=uncertainty_vals,
+                    ),
+                ],
+            )
+
+            if shares:
+                sub_shares = {}
+                for k, v in shares.items():
+                    for x, y in v.items():
+                        if x == year:
+                            for z, w in y.items():
+                                sub_shares[f"{k} - {z}"] = w
+
+                df_technology_shares = pd.concat(
+                    [
+                        df_technology_shares,
+                        log_subshares(
+                            shares=sub_shares,
+                            region=region,
+                        ),
+                    ],
+                )
+
+        indices = tehnosphere_indices[region]
+
+        df_technosphere_indices = create_mapping_sheet(indices=indices)
+
+        df_sum_impacts.to_excel(writer, sheet_name="Total impacts", index=False)
+        df_uncertainty_values.to_excel(
+            writer, sheet_name="Monte Carlo values", index=False
+        )
+        df_technology_shares.to_excel(
+            writer, sheet_name="Technology shares", index=False
+        )
+        df_technosphere_indices.to_excel(
+            writer, sheet_name="Indices mapping", index=False
+        )
+
+        print(f"Monte Carlo parameters added to: {export_path.resolve()}")
+
+
+def run_gsa(directory: [str, None] = STATS_DIR, method: str = "delta") -> None:
+    """
+    Run a global sensitivity analysis (GSA) on the LCA results.
+    Updates Excel files with the GSA results.
+    :param method: str. The method used for the GSA. Default is 'delta'. Only 'delta' is supported at the moment.
+    :param directory: str. The directory where the Excel files are stored. Default is 'stats'.
+    :return: None.
+    """
+    if method != "delta":
+        raise ValueError(f"Method {method} is not supported.")
+
+    # iterate through the Excel files in the directory
+
+    for file in Path(directory).rglob("*.xlsx"):
+        # load content of "Monte Carlo values" sheet into a pandas DataFrame
+        df_mc_vals = pd.read_excel(file, sheet_name="Monte Carlo values")
+
+        # load content of "Technology shares" sheet into a pandas DataFrame
+        # if it exists
+
+        try:
+            df_technology_shares = pd.read_excel(
+                file,
+                sheet_name="Technology shares",
+            )
+        except:
+            df_technology_shares = None
+
+        # load content of "Total impacts" sheet into a pandas DataFrame
+        df_sum_impacts = pd.read_excel(file, sheet_name="Total impacts")
+
+        # open Excel workbook
+        with pd.ExcelWriter(file, engine="openpyxl", mode="a") as writer:
+
+            df_GSA_results = run_GSA_delta(
+                total_impacts=df_sum_impacts,
+                uncertainty_values=df_mc_vals,
+                technology_shares=df_technology_shares,
+            )
+
+            df_GSA_results.to_excel(
+                writer, sheet_name=f"GSA {method.capitalize()}", index=False
+            )
+
+        print(f"GSA results added to: {file.resolve()}")

@@ -41,7 +41,7 @@ setup(
     # Might need to change the directory name as well.
     include_package_data=True,
     install_requires=[
-        "numpy==1.24.0",
+        "numpy==1.24.4",
         "pathlib",
         "pandas",
         "xarray",
@@ -49,7 +49,7 @@ setup(
         "premise",
         "pyyaml",
         "bw_processing",
-        "bw2calc>=2.0.dev17",
+        "bw2calc>=2.0.dev18",
         "datapackage",
         "pyprind",
         "platformdirs",

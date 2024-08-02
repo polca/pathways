@@ -187,7 +187,7 @@ def get_subshares_matrix(
 
 
 def adjust_matrix_based_on_shares(
-    lca: bw2calc.LCA,
+    lca: bw2calc.MultiLCA,
     shares_dict: dict,
     subshares: dict,
     year: int,

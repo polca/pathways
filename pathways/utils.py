@@ -11,6 +11,7 @@ dictionary, checking unclassified activities, and getting activity indices.
 import csv
 import logging
 import warnings
+from collections import OrderedDict
 from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, List, Set, Tuple, Union
@@ -52,7 +53,7 @@ def read_indices_csv(file_path: Path) -> dict[tuple[str, str, str, str], int]:
     :rtype: Dict[Tuple[str, str, str, str], str]
     """
     indices = dict()
-    with open(file_path) as read_obj:
+    with open(file_path, encoding="utf-8") as read_obj:
         csv_reader = csv.reader(read_obj, delimiter=";")
         for row in csv_reader:
             try:
@@ -62,7 +63,26 @@ def read_indices_csv(file_path: Path) -> dict[tuple[str, str, str, str], int]:
                     f"Error reading row {row} from {file_path}: {err}. "
                     f"Could it be that the file uses commas instead of semicolons?"
                 )
+    # remove any unicode characters
+    indices = {tuple([str(x) for x in k]): v for k, v in indices.items()}
     return indices
+
+
+def load_mapping(mapping: [dict, str]) -> dict:
+    """
+    Load the geography mapping.
+    :param mapping: dict or yaml file with the geography mapping.
+    :return: dict
+    """
+
+    if isinstance(mapping, dict):
+        return mapping
+    elif isinstance(mapping, str):
+        with open(mapping, "r") as f:
+            data = yaml.full_load(f)
+        return data
+    else:
+        raise ValueError("Invalid geography mapping")
 
 
 def load_classifications():
@@ -142,7 +162,7 @@ def load_units_conversion() -> dict:
 
 
 def create_lca_results_array(
-    methods: [List[str], None],
+    methods: List[str],
     years: List[int],
     regions: List[str],
     locations: List[str],
@@ -181,12 +201,22 @@ def create_lca_results_array(
     """
 
     # check if any of the list parameters is empty, and if so, throw an error
-    if not all([methods, years, regions, locations, models, scenarios]):
-        raise ValueError("Empty list parameter")
+    if len(methods) == 0:
+        raise ValueError("Empty list of methods")
+    if len(years) == 0:
+        raise ValueError("Empty list of years")
+    if len(regions) == 0:
+        raise ValueError("Empty list of regions")
+    if len(locations) == 0:
+        raise ValueError("Empty list of locations")
+    if len(models) == 0:
+        raise ValueError("Empty list of models")
+    if len(scenarios) == 0:
+        raise ValueError("Empty list of scenarios")
 
     # Define the coordinates for the xarray DataArray
     coords = {
-        "act_category": list(set(classifications.values())),
+        "act_category": list(set(list(classifications.values()))),
         "variable": list(mapping.keys()),
         "year": years,
         "region": regions,
@@ -219,7 +249,7 @@ def create_lca_results_array(
     return xr.DataArray(np.zeros(dims), coords=coords, dims=list(coords.keys()))
 
 
-def export_results_to_parquet(lca_results: xr.DataArray, filepath: str):
+def export_results_to_parquet(lca_results: xr.DataArray, filepath: str) -> str:
     """
     Export the LCA results to a parquet file.
     :param lca_results: Xarray DataArray with LCA results.
@@ -257,6 +287,8 @@ def export_results_to_parquet(lca_results: xr.DataArray, filepath: str):
     df.to_parquet(path=filepath, compression="gzip")
 
     print(f"Results exported to {filepath}")
+
+    return filepath
 
 
 def display_results(
@@ -558,7 +590,10 @@ def check_unclassified_activities(
 
 
 def _group_technosphere_indices(
-    technosphere_indices: dict, group_by, group_values: list
+    technosphere_indices: dict,
+    group_by,
+    group_values: list,
+    mapping: dict = None,
 ) -> dict:
     """
     Generalized function to group technosphere indices by an arbitrary attribute (category, location, etc.).
@@ -566,18 +601,37 @@ def _group_technosphere_indices(
     :param technosphere_indices: Mapping of activities to their indices in the technosphere matrix.
     :param group_by: A function that takes an activity and returns its group value (e.g., category or location).
     :param group_values: The set of all possible group values (e.g., all categories or locations).
+    :param mapping: A dictionary mapping.
     :return: A tuple containing a list of lists of indices, a dictionary mapping group values to lists of indices,
              and a 2D numpy array of indices, where rows have been padded with -1 to ensure equal lengths.
     """
 
-    acts_dict = {}
-    for value in group_values:
-        x = [
-            int(technosphere_indices[a])
-            for a in technosphere_indices
-            if group_by(a) == value
-        ]
-        acts_dict[value] = x
+    # create an ordered dictionary to store the indices
+    acts_dict = OrderedDict(
+        (
+            value,
+            [
+                int(technosphere_indices[a])
+                for a in technosphere_indices
+                if group_by(a) == value
+            ],
+        )
+        for value in group_values
+    )
+
+    if mapping:
+        aggregated = {}
+        for k, v in acts_dict.items():
+            if mapping.get(k, k) in aggregated:
+                aggregated[mapping.get(k, k)].extend(v)
+            else:
+                aggregated[mapping.get(k, k)] = v
+
+        # reorder the dictionary to match with the
+        # order of mapping.values()
+        aggregated = {k: aggregated[k] for k in mapping.values()}
+
+        return aggregated
 
     return acts_dict
 
