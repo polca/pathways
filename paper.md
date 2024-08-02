@@ -19,7 +19,7 @@ authors:
     affiliation: "1,2"
 
 affiliations:
- - name: Laboratory for Energy Systems Analysis, Paul Scherrer Institute, 5232 Villigen, Switzerland
+ - name: Laboratory for Energy Systems Analysis, Centers for Energy and Environmental Sciences and Nuclear Engineering and Sciences, Paul Scherrer Institute, 5232 Villigen, Switzerland
    index: 1
  - name: Chair of Energy Systems Analysis, Institute of Energy and Process Engineering, ETH Zürich, 8092 Zürich, Switzerland
    index: 2
@@ -103,16 +103,21 @@ production volume. For each technology, `pathways` retrieves the corresponding
 LCI dataset by looking it up in the mapping file (2 in Figure 1). The lookup
 indicates `pathways` which LCA matrices to fetch from the data package (3 in Figure 1).
 The LCA matrices are loaded in `bw2calc` (the LCA calculation module of `brightway`)
-and multiplied by the production volume (see 4 in Figure 1). Some post-processing 
-is done on the inventory matrices, including dealing 
+and multiplied by the production volume (see 4 in Figure 1). The results are aggregated 
+and saved in a dataframe, where impacts are broken down per technology, region, 
+time step, geographical origin of impact, life-cycle stage and impact assessment 
+method (6 in Figure 1).
+
+Some post-processing is done on the inventory matrices, including dealing 
 with double accounting. For this purpose, the original LCI database is adjusted by 
 zeroing out all regional energy inputs that the energy system 
 model accounts for and might demand during the system's life cycle,
 following the same workflow presented in [@Volkart:2018] (see 5 in Figure 1). 
-Finally, the results are aggregated and saved in a dataframe, 
-where impacts are broken down per technology, region, time step,
-geographical origin of impact, life-cycle stage and impact assessment 
-method (6 in Figure 1).
+
+Finally, Global Sensitivity Analysis (GSA) can be performed on the results.
+Currently, `pathways` supports the use of the `SALib` library for GSA [@Herman2017, Iwanaga2022],
+notably the Delta Moment-Independent Measure (DMIM) method [@BORGONOVO2007771], to rank
+the influence of the database exchanges on the results.
 
 ![`pathways` workflow: from data package to impact assessment.\label{fig:workflow}](assets/workflow_diagram.png)
 
