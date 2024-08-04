@@ -7,8 +7,8 @@ Wind: ### Check if IAMs make the distinction between onshore and offshore
       2020:
         loc: 0.19
       2050:
-        minimum: 0.17
-        maximum: 0.19
+        minimum: 0.15
+        maximum: 0.25
         uncertainty_type: uniform
   onshore-Gearbox:
     name: electricity production, wind, 1-3MW turbine, onshore
@@ -18,7 +18,8 @@ Wind: ### Check if IAMs make the distinction between onshore and offshore
       2020:
         loc: 0.77
       2050:
-        minimum: 0.67
+#        minimum: 0.67
+        minimum: 0.60
         maximum: 0.77
         uncertainty_type: uniform
   offshore-DDPM:
@@ -52,7 +53,7 @@ PV:
       2020:
         loc: 0.9440
       2050:
-        minimum: 0.6250
+        minimum: 0.50
         maximum: 0.9440
         uncertainty_type: uniform
   CdTe:
@@ -154,19 +155,19 @@ Fuel cell - Stationary:
         loc: 0.3684
       2050:
         minimum: 0.117
-        maximum:  0.40
+        maximum:  0.60
         uncertainty_type: uniform
-  PAFC:
-    name: null
-    reference product: null
-    unit: kilowatt hour
-    share:
-      2020:
-        loc: 0.5263
-      2050:
-        minimum: 0.0
-        maximum: 0.4750
-        uncertainty_type: uniform
+#  PAFC:
+#    name: null
+#    reference product: null
+#    unit: kilowatt hour
+#    share:
+#      2020:
+#        loc: 0.5263
+#      2050:
+#        minimum: 0.0
+#        maximum: 0.4750
+#        uncertainty_type: uniform
 Electrolyzer:
   PEM:
     name: hydrogen production, gaseous, 30 bar, from PEM electrolysis, from grid electricity
@@ -177,7 +178,7 @@ Electrolyzer:
         loc: 0.5
       2050:
         minimum: 0.5057
-        maximum: 0.75
+        maximum: 0.80
         uncertainty_type: uniform
   Alkaline:
     name: hydrogen production, gaseous, 20 bar, from AEC electrolysis, from grid electricity
@@ -199,7 +200,7 @@ Electrolyzer:
         loc: 0.0
       2050:
         minimum: 0.0
-        maximum: 0.25
+        maximum: 0.30
         uncertainty_type: uniform
 Battery-Mobile:
   NMC111:
@@ -221,7 +222,8 @@ Battery-Mobile:
       2020:
         loc: 0.05
       2050:
-        minimum: 0.02
+#        minimum: 0.02
+        minimum: 0.0
         maximum: 0.29
         uncertainty_type: uniform
   NMC622:
@@ -232,7 +234,8 @@ Battery-Mobile:
       2020:
         loc: 0.25
       2050:
-        minimum: 0.02
+#        minimum: 0.02
+        minimum: 0.0
         maximum: 0.29
         uncertainty_type: uniform
   NMC811:
@@ -241,10 +244,11 @@ Battery-Mobile:
     unit: kilowatt hour
     share:
       2020:
-        loc: 0.13
+        loc: 0.130
       2050:
-        minimum: 0.218
-        maximum: 0.47
+#        minimum: 0.218
+        minimum: 0.04
+        maximum: 0.470
         uncertainty_type: uniform
   NMC955:
     name: market for battery capacity, Li-ion, NMC955
@@ -254,8 +258,9 @@ Battery-Mobile:
       2020:
         loc: 0.04
       2050:
-        minimum: 0.218
-        maximum: 0.47
+#        minimum: 0.218
+        minimum: 0.04
+        maximum: 0.470
         uncertainty_type: uniform
   NCA:
     name: market for battery capacity, Li-ion, NCA
@@ -265,7 +270,7 @@ Battery-Mobile:
       2020:
         loc: 0.21
       2050:
-        minimum: 0.01
+        minimum: 0.010
         maximum: 0.188
         uncertainty_type: uniform
   LFP:
@@ -276,7 +281,8 @@ Battery-Mobile:
       2020:
         loc: 0.28
       2050:
-        minimum: 0.28
+#        minimum: 0.280
+        minimum: 0.05
         maximum: 0.388
         uncertainty_type: uniform
   LiS:
@@ -293,7 +299,7 @@ Battery-Mobile:
   LiO2:
     name: market for battery capacity, Li-ion, Li-O2
     reference product: battery capacity, Li-ion, Li-O2
-    unit:
+    unit: kilowatt hour
     share:
       2020:
         loc: 0.0
@@ -387,7 +393,7 @@ Battery-Stationary:
       2020:
         loc: 0.40
       2050:
-        minimum: 0.17
+        minimum: 0.05
         maximum: 0.40
         uncertainty_type: uniform
   SIB-Stationary:

@@ -94,8 +94,16 @@ def check_subshares(data: dict) -> dict:
     """
 
     for category, technologies in data.items():
+        technologies_to_remove = []
         totals = defaultdict(float)
         for technology, params in technologies.items():
+            name = params.get("name")
+            if name in {"null", "Null", None} or not name.strip():
+                logging.warning(
+                    f"Technology '{technology}' in category '{category}' is being removed due to invalid name '{name}'."
+                )
+                technologies_to_remove.append(technology)
+                continue
             if "share" in params:
                 for year, share in params["share"].items():
                     if "loc" in share:
@@ -105,12 +113,19 @@ def check_subshares(data: dict) -> dict:
                     f"Technology '{technology}' in category '{category}' does not have a 'share' key"
                 )
 
-        # if any values of totals is not equal to 1, we log it
+        for tech in technologies_to_remove:
+            del technologies[tech]
+
         for year, total_value in totals.items():
             if not np.isclose(total_value, 1.00, rtol=1e-3):
                 logging.warning(
-                    f"Total of '{year}' values in category '{category}' does not add up to 1.00 (Total: {total_value})"
+                    f"Total of '{year}' values in category '{category}' does not add up to 1.00 (Total: {total_value}). Adjusting values."
                 )
+                for technology, params in technologies.items():
+                    if "share" in params and year in params["share"] and "loc" in params["share"][year]:
+                        # Adjust the share value
+                        params["share"][year]["loc"] /= total_value
+
     return data
 
 
