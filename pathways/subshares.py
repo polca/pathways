@@ -122,7 +122,11 @@ def check_subshares(data: dict) -> dict:
                     f"Total of '{year}' values in category '{category}' does not add up to 1.00 (Total: {total_value}). Adjusting values."
                 )
                 for technology, params in technologies.items():
-                    if "share" in params and year in params["share"] and "loc" in params["share"][year]:
+                    if (
+                        "share" in params
+                        and year in params["share"]
+                        and "loc" in params["share"][year]
+                    ):
                         # Adjust the share value
                         params["share"][year]["loc"] /= total_value
 
