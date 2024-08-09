@@ -14,7 +14,6 @@ import bw_processing as bwp
 import numpy as np
 import pyprind
 import sparse as sp
-from bw2calc.utils import get_datapackage
 from bw_processing import Datapackage
 from premise.geomap import Geomap
 from scipy import sparse
@@ -34,10 +33,6 @@ from .utils import (
     get_unit_conversion_factors,
     read_indices_csv,
 )
-
-# from .montecarlo import MonteCarloLCA
-# from .sensitivity_analysis import GlobalSensitivityAnalysis
-
 
 logging.basicConfig(
     level=logging.DEBUG,
@@ -609,10 +604,6 @@ def _calculate_year(args: tuple):
             ],
             use_distributions=True if use_distributions > 0 else False,
         )
-        lca.uncertain_parameters = uncertain_parameters
-        lca.technosphere_indices = technosphere_indices
-        lca.acts_category_idx_dict = acts_category_idx_dict
-        lca.acts_location_idx_dict = acts_location_idx_dict
 
         with CustomFilter("(almost) singular matrix"):
             lca.lci()
@@ -626,8 +617,22 @@ def _calculate_year(args: tuple):
                 year=year,
             )
             bw_correlated = get_subshares_matrix(correlated_arrays)
-            lca.packages.append(get_datapackage(bw_correlated))
-            lca.use_arrays = True
+
+            lca = bc.MultiLCA(
+                demands=fus,
+                method_config={"impact_categories": []},
+                data_objs=[bw_datapackage, bw_correlated],
+                use_distributions=True if use_distributions > 0 else False,
+                use_arrays=True,
+            )
+
+            with CustomFilter("(almost) singular matrix"):
+                lca.lci()
+
+        lca.uncertain_parameters = uncertain_parameters
+        lca.technosphere_indices = technosphere_indices
+        lca.acts_category_idx_dict = acts_category_idx_dict
+        lca.acts_location_idx_dict = acts_location_idx_dict
 
         lca.technosphere_indices = {
             k: v

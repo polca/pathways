@@ -53,7 +53,8 @@ PV:
       2020:
         loc: 0.9440
       2050:
-        minimum: 0.50
+#        minimum: 0.50
+        minimum: 0.40
         maximum: 0.9440
         uncertainty_type: uniform
   CdTe:
@@ -64,7 +65,7 @@ PV:
       2020:
         loc: 0.0400
       2050:
-        minimum: 0.0400
+        minimum: 0.0
         maximum: 0.2500
         uncertainty_type: uniform
   CIGS:
@@ -75,7 +76,7 @@ PV:
       2020:
         loc: 0.0150
       2050:
-        minimum: 0.0150
+        minimum: 0.0
         maximum: 0.1250
         uncertainty_type: uniform
   a-Si:
@@ -87,11 +88,11 @@ PV:
         loc: 0.0010
       2050:
         minimum: 0.0000
-        maximum: 0.0090
+        maximum: 0.001
         uncertainty_type: uniform
   Perovskite:
     name: electricity production, photovoltaic, 0.5kWp, perovskite-on-silicon tandem
-    reference product: electricity, low voltage
+    reference product: electricity production, photovoltaic, 0.5kWp, perovskite-on-silicon tandem
     unit: kilowatt hour
     share:
       2020:
@@ -102,7 +103,7 @@ PV:
         uncertainty_type: uniform
   GaAs:
     name: electricity production, photovoltaic, 0.28kWp, GaAs
-    reference product: electricity, low voltage
+    reference product: electricity production, photovoltaic, 0.28kWp, GaAs
     unit: kilowatt hour
     share:
       2020:
@@ -144,7 +145,7 @@ Fuel cell - Stationary:
         loc: 0.1053
       2050:
         minimum: 0.1150
-        maximum: 0.85
+        maximum: 0.9
         uncertainty_type: uniform
   SOFC:
     name: electricity, residential, by conversion of hydrogen using fuel cell, SOFC, allocated by exergy, distributed by pipeline, produced by Electrolysis, PEM using electricity from grid
@@ -155,7 +156,7 @@ Fuel cell - Stationary:
         loc: 0.3684
       2050:
         minimum: 0.117
-        maximum:  0.60
+        maximum:  0.9
         uncertainty_type: uniform
 #  PAFC:
 #    name: null
@@ -177,8 +178,10 @@ Electrolyzer:
       2020:
         loc: 0.5
       2050:
-        minimum: 0.5057
-        maximum: 0.80
+#        minimum: 0.5057
+        minimum: 0.40
+#        maximum: 0.8
+        maximum: 0.85
         uncertainty_type: uniform
   Alkaline:
     name: hydrogen production, gaseous, 20 bar, from AEC electrolysis, from grid electricity
@@ -200,12 +203,13 @@ Electrolyzer:
         loc: 0.0
       2050:
         minimum: 0.0
-        maximum: 0.30
+#        maximum: 0.3
+        maximum: 0.35
         uncertainty_type: uniform
 Battery-Mobile:
   NMC111:
     name: market for battery capacity, Li-ion, NMC111
-    reference product: battery capacity, Li-ion, NMC111
+    reference product: electricity storage capacity
     unit: kilowatt hour
     share:
       2020:
@@ -216,7 +220,7 @@ Battery-Mobile:
         uncertainty_type: uniform
   NMC523:
     name: market for battery capacity, Li-ion, NMC523
-    reference product: battery capacity, Li-ion, NMC523
+    reference product: electricity storage capacity
     unit: kilowatt hour
     share:
       2020:
@@ -228,7 +232,7 @@ Battery-Mobile:
         uncertainty_type: uniform
   NMC622:
     name: market for battery capacity, Li-ion, NMC622
-    reference product: battery capacity, Li-ion, NMC622
+    reference product: electricity storage capacity
     unit: kilowatt hour
     share:
       2020:
@@ -240,54 +244,54 @@ Battery-Mobile:
         uncertainty_type: uniform
   NMC811:
     name: market for battery capacity, Li-ion, NMC811
-    reference product: battery capacity, Li-ion, NMC811
+    reference product: electricity storage capacity
     unit: kilowatt hour
     share:
       2020:
         loc: 0.130
       2050:
 #        minimum: 0.218
-        minimum: 0.04
+        minimum: 0.0
         maximum: 0.470
         uncertainty_type: uniform
   NMC955:
     name: market for battery capacity, Li-ion, NMC955
-    reference product: battery capacity, Li-ion, NMC955
+    reference product: electricity storage capacity
     unit: kilowatt hour
     share:
       2020:
         loc: 0.04
       2050:
 #        minimum: 0.218
-        minimum: 0.04
+        minimum: 0.0
         maximum: 0.470
         uncertainty_type: uniform
   NCA:
     name: market for battery capacity, Li-ion, NCA
-    reference product: battery capacity, Li-ion, NCA
+    reference product: electricity storage capacity
     unit: kilowatt hour
     share:
       2020:
         loc: 0.21
       2050:
-        minimum: 0.010
+        minimum: 0.0
         maximum: 0.188
         uncertainty_type: uniform
   LFP:
     name: market for battery capacity, Li-ion, LFP
-    reference product: battery capacity, Li-ion, LFP
+    reference product: electricity storage capacity
     unit: kilowatt hour
     share:
       2020:
         loc: 0.28
       2050:
 #        minimum: 0.280
-        minimum: 0.05
+        minimum: 0.0
         maximum: 0.388
         uncertainty_type: uniform
   LiS:
     name: market for battery capacity, Li-sulfur, Li-S
-    reference product: battery capacity, Li-sulfur, Li-S
+    reference product: electricity storage capacity
     unit: kilowatt hour
     share:
       2020:
@@ -298,7 +302,7 @@ Battery-Mobile:
         uncertainty_type: uniform
   LiO2:
     name: market for battery capacity, Li-ion, Li-O2
-    reference product: battery capacity, Li-ion, Li-O2
+    reference product: electricity storage capacity
     unit: kilowatt hour
     share:
       2020:
@@ -309,19 +313,19 @@ Battery-Mobile:
         uncertainty_type: uniform
   SIB:
     name: market for battery capacity, Sodium-ion, SiB
-    reference product: battery capacity, Sodium-ion, SiB
+    reference product: electricity storage capacity
     unit: kilowatt hour
     share:
       2020:
         loc: 0.0
       2050:
-        minimum: 0.03
+        minimum: 0.0
         maximum: 0.39
         uncertainty_type: uniform
 Battery-Stationary:
   NMC111-Stationary:
     name: market for battery capacity, Li-ion, NMC111, stationary
-    reference product: battery capacity, Li-ion, NMC111
+    reference product: electricity storage capacity
     unit: kilowatt hour
     share:
       2020:
@@ -332,89 +336,89 @@ Battery-Stationary:
         uncertainty_type: uniform
   NMC523-Stationary:
     name: market for battery capacity, Li-ion, NMC523, stationary
-    reference product: battery capacity, Li-ion, NMC523
+    reference product: electricity storage capacity
     unit: kilowatt hour
     share:
       2020:
         loc: 0.05
       2050:
-        minimum: 0.02
+        minimum: 0.0
         maximum: 0.30
         uncertainty_type: uniform
   NMC622-Stationary:
     name: market for battery capacity, Li-ion, NMC622, stationary
-    reference product: battery capacity, Li-ion, NMC622
+    reference product: electricity storage capacity
     unit: kilowatt hour
     share:
       2020:
         loc: 0.21
       2050:
-        minimum: 0.02
+        minimum: 0.0
         maximum: 0.30
         uncertainty_type: uniform
   NMC811-Stationary:
     name: market for battery capacity, Li-ion, NMC811, stationary
-    reference product: battery capacity, Li-ion, NMC811
+    reference product: electricity storage capacity
     unit: kilowatt hour
     share:
       2020:
         loc: 0.09
       2050:
-        minimum: 0.039
+        minimum: 0.0
         maximum: 0.44
         uncertainty_type: uniform
   NMC955-Stationary:
     name: market for battery capacity, Li-ion, NMC955, stationary
-    reference product: battery capacity, Li-ion, NMC955
+    reference product: electricity storage capacity
     unit: kilowatt hour
     share:
       2020:
         loc: 0.01
       2050:
-        minimum: 0.039
+        minimum: 0.0
         maximum: 0.44
         uncertainty_type: uniform
   Lead-Acid-Stationary:
     name: market for battery capacity, lead acid, rechargeable, stationary
-    reference product: battery capacity, lead acid
+    reference product: electricity storage capacity
     unit: kilowatt hour
     share:
       2020:
         loc: 0.10
       2050:
         minimum: 0.0
-        maximum: 0.095
+        maximum: 0.1
         uncertainty_type: uniform
   LFP-Stationary:
     name: market for battery capacity, Li-ion, LFP, stationary
-    reference product: battery capacity, Li-ion, LFP
+    reference product: electricity storage capacity
     unit: kilowatt hour
     share:
       2020:
         loc: 0.40
       2050:
-        minimum: 0.05
+        minimum: 0.0
         maximum: 0.40
         uncertainty_type: uniform
   SIB-Stationary:
     name: market for battery capacity, Sodium-ion, SiB, stationary
-    reference product: battery capacity, Sodium-ion, SiB
+    reference product: electricity storage capacity
     unit: kilowatt hour
     share:
       2020:
         loc: 0.05
       2050:
-        minimum: 0.05
+        minimum: 0.0
         maximum: 0.33
         uncertainty_type: uniform
   Redox-Flow-Stationary:
     name: market for battery capacity, redox-flow, Vanadium, stationary
-    reference product: battery capacity, redox-flow, Vanadium
+    reference product: electricity storage capacity
     unit: kilowatt hour
     share:
       2020:
         loc: 0.05
       2050:
-        minimum: 0.05
+        minimum: 0.0
         maximum: 0.33
         uncertainty_type: uniform
