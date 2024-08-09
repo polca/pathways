@@ -18,7 +18,7 @@ requirements:
     - python
     - setuptools
   run:
-    - numpy
+    - numpy==1.24.4
     - pathlib
     - pandas
     - scipy
@@ -32,6 +32,8 @@ requirements:
     - platformdirs
     - fs
     - SALib
+    - cvxopt
+    - scikit-umfpack
 test:
   imports:
     - pathways

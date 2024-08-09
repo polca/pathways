@@ -48,6 +48,8 @@ setup(
         "scipy",
         "premise",
         "pyyaml",
+        "cvxopt",
+        "scikit-umfpack",
         "bw_processing",
         "bw2calc>=2.0.dev18",
         "datapackage",
