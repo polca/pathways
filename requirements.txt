@@ -7,6 +7,7 @@ premise
 pyyaml
 bw_processing
 bw2calc >= 2.0.dev18
+cvxopt
 scikit-umfpack
 datapackage
 pyprind
