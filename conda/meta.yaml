@@ -32,6 +32,9 @@ requirements:
     - platformdirs
     - fs
     - SALib
+    - pydantic>=2.8.2
+    - pyarrow
+    - fastparquet
 test:
   imports:
     - pathways

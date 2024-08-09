@@ -76526,3 +76526,1675 @@
 - carbon dioxide, captured at cement plant
 - kilogram
 : Carbon capture
+? !!python/tuple
+- municipal waste incineration, at incineration plant, with semi-dry air pollution
+  control, without flue gas condensation, with electricity and heat recovery
+- municipal solid waste
+- kilogram
+: Treatment and disposal of nonhazardous waste
+? !!python/tuple
+- municipal waste incineration, at incineration plant, with semi-dry air pollution
+  control, with flue gas condensation, with electricity and heat recovery
+- municipal solid waste
+- kilogram
+: Treatment and disposal of nonhazardous waste
+? !!python/tuple
+- municipal waste incineration, at incineration plant, with wet air pollution control,
+  without flue gas condensation, with electricity and heat recovery
+- municipal solid waste
+- kilogram
+: Treatment and disposal of nonhazardous waste
+? !!python/tuple
+- municipal waste incineration, at incineration plant, with wet air pollution control,
+  with flue gas condensation, with electricity and heat recovery
+- municipal solid waste
+- kilogram
+: Treatment and disposal of nonhazardous waste
+? !!python/tuple
+- municipal waste incineration, at incineration plant, with semi-dry air pollution
+  control, with flue gas condensation, with electricity recovery only, with carbon
+  capture and storage
+- municipal solid waste
+- kilogram
+: Treatment and disposal of nonhazardous waste
+? !!python/tuple
+- municipal waste incineration, at incineration plant, with semi-dry air pollution
+  control, with flue gas condensation, with electricity and heat recovery, with
+  carbon capture and storage
+- municipal solid waste
+- kilogram
+: Treatment and disposal of nonhazardous waste
+? !!python/tuple
+- municipal waste incineration, at incineration plant, with wet air pollution control,
+  with flue gas condensation, with electricity and heat recovery, with carbon capture
+  and storage
+- municipal solid waste
+- kilogram
+: Treatment and disposal of nonhazardous waste
+? !!python/tuple
+- municipal waste incineration, at incineration plant, with wet air pollution control,
+  with flue gas condensation, with electricity and optimized heat recovery, with
+  carbon capture and storage
+- municipal solid waste
+- kilogram
+: Treatment and disposal of nonhazardous waste
+? !!python/tuple
+- municipal waste incineration, at incineration plant, with semi-dry air pollution
+  control, without flue gas condensation, with electricity recovery only, energy
+  allocation
+- municipal solid waste
+- kilogram
+: Treatment and disposal of nonhazardous waste
+? !!python/tuple
+- municipal waste incineration, at incineration plant, with semi-dry air pollution
+  control, without flue gas condensation, with electricity recovery only, energy
+  allocation
+- electricity, medium voltage
+- kilowatt hour
+: Electric power generation transmission and distribution
+? !!python/tuple
+- municipal waste incineration, at incineration plant, with semi-dry air pollution
+  control, without flue gas condensation, with electricity and heat recovery, energy
+  allocation
+- municipal solid waste
+- kilogram
+: Treatment and disposal of nonhazardous waste
+? !!python/tuple
+- municipal waste incineration, at incineration plant, with semi-dry air pollution
+  control, without flue gas condensation, with electricity and heat recovery, energy
+  allocation
+- electricity, medium voltage
+- kilowatt hour
+: Electric power generation transmission and distribution
+? !!python/tuple
+- municipal waste incineration, at incineration plant, with semi-dry air pollution
+  control, without flue gas condensation, with electricity and heat recovery, energy
+  allocation
+- heat, district or industrial, other than natural gas
+- megajoule
+: Steam and air conditioning supply
+? !!python/tuple
+- municipal waste incineration, at incineration plant, with semi-dry air pollution
+  control, with flue gas condensation, with electricity and heat recovery, energy
+  allocation
+- municipal solid waste
+- kilogram
+: Treatment and disposal of nonhazardous waste
+? !!python/tuple
+- municipal waste incineration, at incineration plant, with semi-dry air pollution
+  control, with flue gas condensation, with electricity and heat recovery, energy
+  allocation
+- electricity, medium voltage
+- kilowatt hour
+: Electric power generation transmission and distribution
+? !!python/tuple
+- municipal waste incineration, at incineration plant, with semi-dry air pollution
+  control, with flue gas condensation, with electricity and heat recovery, energy
+  allocation
+- heat, district or industrial, other than natural gas
+- megajoule
+: Steam and air conditioning supply
+? !!python/tuple
+- municipal waste incineration, at incineration plant, with wet air pollution control,
+  without flue gas condensation, with electricity and heat recovery, energy allocation
+- municipal solid waste
+- kilogram
+: Treatment and disposal of nonhazardous waste
+? !!python/tuple
+- municipal waste incineration, at incineration plant, with wet air pollution control,
+  without flue gas condensation, with electricity and heat recovery, energy allocation
+- electricity, medium voltage
+- kilowatt hour
+: Electric power generation transmission and distribution
+? !!python/tuple
+- municipal waste incineration, at incineration plant, with wet air pollution control,
+  without flue gas condensation, with electricity and heat recovery, energy allocation
+- heat, district or industrial, other than natural gas
+- megajoule
+: Steam and air conditioning supply
+? !!python/tuple
+- municipal waste incineration, at incineration plant, with wet air pollution control,
+  with flue gas condensation, with electricity and heat recovery, energy allocation
+- municipal solid waste
+- kilogram
+: Treatment and disposal of nonhazardous waste
+? !!python/tuple
+- municipal waste incineration, at incineration plant, with wet air pollution control,
+  with flue gas condensation, with electricity and heat recovery, energy allocation
+- electricity, medium voltage
+- kilowatt hour
+: Electric power generation transmission and distribution
+? !!python/tuple
+- municipal waste incineration, at incineration plant, with wet air pollution control,
+  with flue gas condensation, with electricity and heat recovery, energy allocation
+- heat, district or industrial, other than natural gas
+- megajoule
+: Steam and air conditioning supply
+? !!python/tuple
+- municipal waste incineration, at incineration plant, with semi-dry air pollution
+  control, with flue gas condensation, with electricity recovery only, with carbon
+  capture and storage, energy allocation
+- municipal solid waste
+- kilogram
+: Treatment and disposal of nonhazardous waste
+? !!python/tuple
+- municipal waste incineration, at incineration plant, with semi-dry air pollution
+  control, with flue gas condensation, with electricity recovery only, with carbon
+  capture and storage, energy allocation
+- electricity, medium voltage
+- kilowatt hour
+: Electric power generation transmission and distribution
+? !!python/tuple
+- municipal waste incineration, at incineration plant, with semi-dry air pollution
+  control, with flue gas condensation, with electricity and heat recovery, with
+  carbon capture and storage, energy allocation
+- municipal solid waste
+- kilogram
+: Treatment and disposal of nonhazardous waste
+? !!python/tuple
+- municipal waste incineration, at incineration plant, with semi-dry air pollution
+  control, with flue gas condensation, with electricity and heat recovery, with
+  carbon capture and storage, energy allocation
+- electricity, medium voltage
+- kilowatt hour
+: Electric power generation transmission and distribution
+? !!python/tuple
+- municipal waste incineration, at incineration plant, with semi-dry air pollution
+  control, with flue gas condensation, with electricity and heat recovery, with
+  carbon capture and storage, energy allocation
+- heat, district or industrial, other than natural gas
+- megajoule
+: Steam and air conditioning supply
+? !!python/tuple
+- municipal waste incineration, at incineration plant, with wet air pollution control,
+  with flue gas condensation, with electricity and heat recovery, with carbon capture
+  and storage, energy allocation
+- municipal solid waste
+- kilogram
+: Treatment and disposal of nonhazardous waste
+? !!python/tuple
+- municipal waste incineration, at incineration plant, with wet air pollution control,
+  with flue gas condensation, with electricity and heat recovery, with carbon capture
+  and storage, energy allocation
+- electricity, medium voltage
+- kilowatt hour
+: Electric power generation transmission and distribution
+? !!python/tuple
+- municipal waste incineration, at incineration plant, with wet air pollution control,
+  with flue gas condensation, with electricity and heat recovery, with carbon capture
+  and storage, energy allocation
+- heat, district or industrial, other than natural gas
+- megajoule
+: Steam and air conditioning supply
+? !!python/tuple
+- municipal waste incineration, at incineration plant, with wet air pollution control,
+  with flue gas condensation, with electricity and optimized heat recovery, with
+  carbon capture and storage, energy allocation
+- municipal solid waste
+- kilogram
+: Treatment and disposal of nonhazardous waste
+? !!python/tuple
+- municipal waste incineration, at incineration plant, with wet air pollution control,
+  with flue gas condensation, with electricity and optimized heat recovery, with
+  carbon capture and storage, energy allocation
+- electricity, medium voltage
+- kilowatt hour
+: Electric power generation transmission and distribution
+? !!python/tuple
+- municipal waste incineration, at incineration plant, with wet air pollution control,
+  with flue gas condensation, with electricity and optimized heat recovery, with
+  carbon capture and storage, energy allocation
+- heat, district or industrial, other than natural gas
+- megajoule
+: Steam and air conditioning supply
+? !!python/tuple
+- municipal waste incineration, at incineration plant, with semi-dry air pollution
+  control, without flue gas condensation, with electricity recovery only, exergy
+  allocation
+- municipal solid waste
+- kilogram
+: Treatment and disposal of nonhazardous waste
+? !!python/tuple
+- municipal waste incineration, at incineration plant, with semi-dry air pollution
+  control, without flue gas condensation, with electricity recovery only, exergy
+  allocation
+- electricity, medium voltage
+- kilowatt hour
+: Electric power generation transmission and distribution
+? !!python/tuple
+- municipal waste incineration, at incineration plant, with semi-dry air pollution
+  control, without flue gas condensation, with electricity and heat recovery, exergy
+  allocation
+- municipal solid waste
+- kilogram
+: Treatment and disposal of nonhazardous waste
+? !!python/tuple
+- municipal waste incineration, at incineration plant, with semi-dry air pollution
+  control, without flue gas condensation, with electricity and heat recovery, exergy
+  allocation
+- electricity, medium voltage
+- kilowatt hour
+: Electric power generation transmission and distribution
+? !!python/tuple
+- municipal waste incineration, at incineration plant, with semi-dry air pollution
+  control, without flue gas condensation, with electricity and heat recovery, exergy
+  allocation
+- heat, district or industrial, other than natural gas
+- megajoule
+: Steam and air conditioning supply
+? !!python/tuple
+- municipal waste incineration, at incineration plant, with semi-dry air pollution
+  control, with flue gas condensation, with electricity and heat recovery, exergy
+  allocation
+- municipal solid waste
+- kilogram
+: Treatment and disposal of nonhazardous waste
+? !!python/tuple
+- municipal waste incineration, at incineration plant, with semi-dry air pollution
+  control, with flue gas condensation, with electricity and heat recovery, exergy
+  allocation
+- electricity, medium voltage
+- kilowatt hour
+: Electric power generation transmission and distribution
+? !!python/tuple
+- municipal waste incineration, at incineration plant, with semi-dry air pollution
+  control, with flue gas condensation, with electricity and heat recovery, exergy
+  allocation
+- heat, district or industrial, other than natural gas
+- megajoule
+: Steam and air conditioning supply
+? !!python/tuple
+- municipal waste incineration, at incineration plant, with wet air pollution control,
+  without flue gas condensation, with electricity and heat recovery, exergy allocation
+- municipal solid waste
+- kilogram
+: Treatment and disposal of nonhazardous waste
+? !!python/tuple
+- municipal waste incineration, at incineration plant, with wet air pollution control,
+  without flue gas condensation, with electricity and heat recovery, exergy allocation
+- electricity, medium voltage
+- kilowatt hour
+: Electric power generation transmission and distribution
+? !!python/tuple
+- municipal waste incineration, at incineration plant, with wet air pollution control,
+  without flue gas condensation, with electricity and heat recovery, exergy allocation
+- heat, district or industrial, other than natural gas
+- megajoule
+: Steam and air conditioning supply
+? !!python/tuple
+- municipal waste incineration, at incineration plant, with wet air pollution control,
+  with flue gas condensation, with electricity and heat recovery, exergy allocation
+- municipal solid waste
+- kilogram
+: Treatment and disposal of nonhazardous waste
+? !!python/tuple
+- municipal waste incineration, at incineration plant, with wet air pollution control,
+  with flue gas condensation, with electricity and heat recovery, exergy allocation
+- electricity, medium voltage
+- kilowatt hour
+: Electric power generation transmission and distribution
+? !!python/tuple
+- municipal waste incineration, at incineration plant, with wet air pollution control,
+  with flue gas condensation, with electricity and heat recovery, exergy allocation
+- heat, district or industrial, other than natural gas
+- megajoule
+: Steam and air conditioning supply
+? !!python/tuple
+- municipal waste incineration, at incineration plant, with semi-dry air pollution
+  control, with flue gas condensation, with electricity recovery only, with carbon
+  capture and storage, exergy allocation
+- municipal solid waste
+- kilogram
+: Treatment and disposal of nonhazardous waste
+? !!python/tuple
+- municipal waste incineration, at incineration plant, with semi-dry air pollution
+  control, with flue gas condensation, with electricity recovery only, with carbon
+  capture and storage, exergy allocation
+- electricity, medium voltage
+- kilowatt hour
+: Electric power generation transmission and distribution
+? !!python/tuple
+- municipal waste incineration, at incineration plant, with semi-dry air pollution
+  control, with flue gas condensation, with electricity and heat recovery, with
+  carbon capture and storage, exergy allocation
+- municipal solid waste
+- kilogram
+: Treatment and disposal of nonhazardous waste
+? !!python/tuple
+- municipal waste incineration, at incineration plant, with semi-dry air pollution
+  control, with flue gas condensation, with electricity and heat recovery, with
+  carbon capture and storage, exergy allocation
+- electricity, medium voltage
+- kilowatt hour
+: Electric power generation transmission and distribution
+? !!python/tuple
+- municipal waste incineration, at incineration plant, with semi-dry air pollution
+  control, with flue gas condensation, with electricity and heat recovery, with
+  carbon capture and storage, exergy allocation
+- heat, district or industrial, other than natural gas
+- megajoule
+: Steam and air conditioning supply
+? !!python/tuple
+- municipal waste incineration, at incineration plant, with wet air pollution control,
+  with flue gas condensation, with electricity and heat recovery, with carbon capture
+  and storage, exergy allocation
+- municipal solid waste
+- kilogram
+: Treatment and disposal of nonhazardous waste
+? !!python/tuple
+- municipal waste incineration, at incineration plant, with wet air pollution control,
+  with flue gas condensation, with electricity and heat recovery, with carbon capture
+  and storage, exergy allocation
+- electricity, medium voltage
+- kilowatt hour
+: Electric power generation transmission and distribution
+? !!python/tuple
+- municipal waste incineration, at incineration plant, with wet air pollution control,
+  with flue gas condensation, with electricity and heat recovery, with carbon capture
+  and storage, exergy allocation
+- heat, district or industrial, other than natural gas
+- megajoule
+: Steam and air conditioning supply
+? !!python/tuple
+- municipal waste incineration, at incineration plant, with wet air pollution control,
+  with flue gas condensation, with electricity and optimized heat recovery, with
+  carbon capture and storage, exergy allocation
+- municipal solid waste
+- kilogram
+: Treatment and disposal of nonhazardous waste
+? !!python/tuple
+- municipal waste incineration, at incineration plant, with wet air pollution control,
+  with flue gas condensation, with electricity and optimized heat recovery, with
+  carbon capture and storage, exergy allocation
+- electricity, medium voltage
+- kilowatt hour
+: Electric power generation transmission and distribution
+? !!python/tuple
+- municipal waste incineration, at incineration plant, with wet air pollution control,
+  with flue gas condensation, with electricity and optimized heat recovery, with
+  carbon capture and storage, exergy allocation
+- heat, district or industrial, other than natural gas
+- megajoule
+: Steam and air conditioning supply
+? !!python/tuple
+- municipal waste incineration, at incineration plant, with semi-dry air pollution
+  control, without flue gas condensation, with electricity recovery only, economic
+  allocation
+- municipal solid waste
+- kilogram
+: Treatment and disposal of nonhazardous waste
+? !!python/tuple
+- municipal waste incineration, at incineration plant, with semi-dry air pollution
+  control, without flue gas condensation, with electricity recovery only, economic
+  allocation
+- electricity, medium voltage
+- kilowatt hour
+: Electric power generation transmission and distribution
+? !!python/tuple
+- municipal waste incineration, at incineration plant, with semi-dry air pollution
+  control, without flue gas condensation, with electricity and heat recovery, economic
+  allocation
+- municipal solid waste
+- kilogram
+: Treatment and disposal of nonhazardous waste
+? !!python/tuple
+- municipal waste incineration, at incineration plant, with semi-dry air pollution
+  control, without flue gas condensation, with electricity and heat recovery, economic
+  allocation
+- electricity, medium voltage
+- kilowatt hour
+: Electric power generation transmission and distribution
+? !!python/tuple
+- municipal waste incineration, at incineration plant, with semi-dry air pollution
+  control, without flue gas condensation, with electricity and heat recovery, economic
+  allocation
+- heat, district or industrial, other than natural gas
+- megajoule
+: Steam and air conditioning supply
+? !!python/tuple
+- municipal waste incineration, at incineration plant, with semi-dry air pollution
+  control, with flue gas condensation, with electricity and heat recovery, economic
+  allocation
+- municipal solid waste
+- kilogram
+: Treatment and disposal of nonhazardous waste
+? !!python/tuple
+- municipal waste incineration, at incineration plant, with semi-dry air pollution
+  control, with flue gas condensation, with electricity and heat recovery, economic
+  allocation
+- electricity, medium voltage
+- kilowatt hour
+: Electric power generation transmission and distribution
+? !!python/tuple
+- municipal waste incineration, at incineration plant, with semi-dry air pollution
+  control, with flue gas condensation, with electricity and heat recovery, economic
+  allocation
+- heat, district or industrial, other than natural gas
+- megajoule
+: Steam and air conditioning supply
+? !!python/tuple
+- municipal waste incineration, at incineration plant, with wet air pollution control,
+  without flue gas condensation, with electricity and heat recovery, economic allocation
+- municipal solid waste
+- kilogram
+: Treatment and disposal of nonhazardous waste
+? !!python/tuple
+- municipal waste incineration, at incineration plant, with wet air pollution control,
+  without flue gas condensation, with electricity and heat recovery, economic allocation
+- electricity, medium voltage
+- kilowatt hour
+: Electric power generation transmission and distribution
+? !!python/tuple
+- municipal waste incineration, at incineration plant, with wet air pollution control,
+  without flue gas condensation, with electricity and heat recovery, economic allocation
+- heat, district or industrial, other than natural gas
+- megajoule
+: Steam and air conditioning supply
+? !!python/tuple
+- municipal waste incineration, at incineration plant, with wet air pollution control,
+  with flue gas condensation, with electricity and heat recovery, economic allocation
+- municipal solid waste
+- kilogram
+: Treatment and disposal of nonhazardous waste
+? !!python/tuple
+- municipal waste incineration, at incineration plant, with wet air pollution control,
+  with flue gas condensation, with electricity and heat recovery, economic allocation
+- electricity, medium voltage
+- kilowatt hour
+: Electric power generation transmission and distribution
+? !!python/tuple
+- municipal waste incineration, at incineration plant, with wet air pollution control,
+  with flue gas condensation, with electricity and heat recovery, economic allocation
+- heat, district or industrial, other than natural gas
+- megajoule
+: Steam and air conditioning supply
+? !!python/tuple
+- municipal waste incineration, at incineration plant, with semi-dry air pollution
+  control, with flue gas condensation, with electricity recovery only, with carbon
+  capture and storage, economic allocation
+- municipal solid waste
+- kilogram
+: Treatment and disposal of nonhazardous waste
+? !!python/tuple
+- municipal waste incineration, at incineration plant, with semi-dry air pollution
+  control, with flue gas condensation, with electricity recovery only, with carbon
+  capture and storage, economic allocation
+- electricity, medium voltage
+- kilowatt hour
+: Electric power generation transmission and distribution
+? !!python/tuple
+- municipal waste incineration, at incineration plant, with semi-dry air pollution
+  control, with flue gas condensation, with electricity and heat recovery, with
+  carbon capture and storage, economic allocation
+- municipal solid waste
+- kilogram
+: Treatment and disposal of nonhazardous waste
+? !!python/tuple
+- municipal waste incineration, at incineration plant, with semi-dry air pollution
+  control, with flue gas condensation, with electricity and heat recovery, with
+  carbon capture and storage, economic allocation
+- electricity, medium voltage
+- kilowatt hour
+: Electric power generation transmission and distribution
+? !!python/tuple
+- municipal waste incineration, at incineration plant, with semi-dry air pollution
+  control, with flue gas condensation, with electricity and heat recovery, with
+  carbon capture and storage, economic allocation
+- heat, district or industrial, other than natural gas
+- megajoule
+: Steam and air conditioning supply
+? !!python/tuple
+- municipal waste incineration, at incineration plant, with wet air pollution control,
+  with flue gas condensation, with electricity and heat recovery, with carbon capture
+  and storage, economic allocation
+- municipal solid waste
+- kilogram
+: Treatment and disposal of nonhazardous waste
+? !!python/tuple
+- municipal waste incineration, at incineration plant, with wet air pollution control,
+  with flue gas condensation, with electricity and heat recovery, with carbon capture
+  and storage, economic allocation
+- electricity, medium voltage
+- kilowatt hour
+: Electric power generation transmission and distribution
+? !!python/tuple
+- municipal waste incineration, at incineration plant, with wet air pollution control,
+  with flue gas condensation, with electricity and heat recovery, with carbon capture
+  and storage, economic allocation
+- heat, district or industrial, other than natural gas
+- megajoule
+: Steam and air conditioning supply
+? !!python/tuple
+- municipal waste incineration, at incineration plant, with wet air pollution control,
+  with flue gas condensation, with electricity and optimized heat recovery, with
+  carbon capture and storage, economic allocation
+- municipal solid waste
+- kilogram
+: Treatment and disposal of nonhazardous waste
+? !!python/tuple
+- municipal waste incineration, at incineration plant, with wet air pollution control,
+  with flue gas condensation, with electricity and optimized heat recovery, with
+  carbon capture and storage, economic allocation
+- electricity, medium voltage
+- kilowatt hour
+: Electric power generation transmission and distribution
+? !!python/tuple
+- municipal waste incineration, at incineration plant, with wet air pollution control,
+  with flue gas condensation, with electricity and optimized heat recovery, with
+  carbon capture and storage, economic allocation
+- heat, district or industrial, other than natural gas
+- megajoule
+: Steam and air conditioning supply
+? !!python/tuple
+- market for battery, Li-ion, NMC622
+- battery, Li-ion, NMC622
+- kilogram
+: Manufacture of batteries and accumulators
+? !!python/tuple
+- battery production, Li-ion, NMC622
+- battery, Li-ion, NMC622
+- kilogram
+: Manufacture of batteries and accumulators
+? !!python/tuple
+- market for battery, Li-ion, NMC523
+- battery, Li-ion, NMC523
+- kilogram
+: Manufacture of batteries and accumulators
+? !!python/tuple
+- battery production, Li-ion, NMC523
+- battery, Li-ion, NMC523
+- kilogram
+: Manufacture of batteries and accumulators
+? !!python/tuple
+- market for battery, Li-ion, NMC955
+- battery, Li-ion, NMC955
+- kilogram
+: Manufacture of batteries and accumulators
+? !!python/tuple
+- battery production, Li-ion, NMC955
+- battery, Li-ion, NMC955
+- kilogram
+: Manufacture of batteries and accumulators
+? !!python/tuple
+- battery cell production, Li-ion, NMC523
+- battery cell, Li-ion, NMC523
+- kilogram
+: Manufacture of batteries and accumulators
+? !!python/tuple
+- battery cell production, Li-ion, NMC955
+- battery cell, Li-ion, NMC955
+- kilogram
+: Manufacture of batteries and accumulators
+? !!python/tuple
+- cathode, NMC523, for Li-ion battery
+- cathode, NMC523, for Li-ion battery
+- kilogram
+: Manufacture of batteries and accumulators
+? !!python/tuple
+- cathode, NMC955, for Li-ion battery
+- cathode, NMC955, for Li-ion battery
+- kilogram
+: Manufacture of batteries and accumulators
+? !!python/tuple
+- NMC523 oxide
+- NMC523 oxide
+- kilogram
+: Manufacture of batteries and accumulators
+? !!python/tuple
+- NMC955 oxide
+- NMC955 oxide
+- kilogram
+: Manufacture of batteries and accumulators
+? !!python/tuple
+- NMC523 hydroxide
+- NMC523 hydroxide
+- kilogram
+: Manufacture of batteries and accumulators
+? !!python/tuple
+- NMC955 hydroxide
+- NMC955 hydroxide
+- kilogram
+: Manufacture of batteries and accumulators
+? !!python/tuple
+- market for battery, Li-ion, LTO
+- battery, Li-ion, LTO
+- kilogram
+: Manufacture of batteries and accumulators
+? !!python/tuple
+- market for battery, Li-sulfur, Li-S
+- battery, Li-S
+- kilogram
+: Manufacture of batteries and accumulators
+? !!python/tuple
+- market for battery, Li-oxygen, Li-O2
+- battery, Li-O2
+- kilogram
+: Manufacture of batteries and accumulators
+? !!python/tuple
+- bipolar plate production, for VRFB system
+- bipolar plate, for VRFB system
+- kilogram
+: Manufacture of batteries and accumulators
+? !!python/tuple
+- market for battery, redox-flow, Vanadium
+- battery, redox-flow, Vanadium
+- kilogram
+: Manufacture of batteries and accumulators
+? !!python/tuple
+- market for used redox-flow battery
+- used redox-flow battery
+- kilogram
+: Manufacture of batteries and accumulators
+? !!python/tuple
+- battery module production, for SiB battery
+- battery, SiB module
+- kilogram
+: Manufacture of batteries and accumulators
+? !!python/tuple
+- market for battery, Sodium-ion, SiB
+- battery, SiB
+- kilogram
+: Manufacture of batteries and accumulators
+? !!python/tuple
+- market for battery capacity, Li-ion, LFP
+- electricity storage capacity
+- kilowatt hour
+: Manufacture of batteries and accumulators
+? !!python/tuple
+- market for battery capacity, Li-ion, NMC111
+- electricity storage capacity
+- kilowatt hour
+: Manufacture of batteries and accumulators
+? !!python/tuple
+- market for battery capacity, Li-ion, NMC523
+- electricity storage capacity
+- kilowatt hour
+: Manufacture of batteries and accumulators
+? !!python/tuple
+- market for battery capacity, Li-ion, NMC622
+- electricity storage capacity
+- kilowatt hour
+: Manufacture of batteries and accumulators
+? !!python/tuple
+- market for battery capacity, Li-ion, NMC811
+- electricity storage capacity
+- kilowatt hour
+: Manufacture of batteries and accumulators
+? !!python/tuple
+- market for battery capacity, Li-ion, NMC955
+- electricity storage capacity
+- kilowatt hour
+: Manufacture of batteries and accumulators
+? !!python/tuple
+- market for battery capacity, Li-ion, NCA
+- electricity storage capacity
+- kilowatt hour
+: Manufacture of batteries and accumulators
+? !!python/tuple
+- market for battery capacity, Li-ion, LTO
+- electricity storage capacity
+- kilowatt hour
+: Manufacture of batteries and accumulators
+? !!python/tuple
+- market for battery capacity, Li-ion, LiMn2O4
+- electricity storage capacity
+- kilowatt hour
+: Manufacture of batteries and accumulators
+? !!python/tuple
+- market for battery capacity, Li-sulfur, Li-S
+- electricity storage capacity
+- kilowatt hour
+: Manufacture of batteries and accumulators
+? !!python/tuple
+- market for battery capacity, Li-ion, Li-O2
+- electricity storage capacity
+- kilowatt hour
+: Manufacture of batteries and accumulators
+? !!python/tuple
+- market for battery capacity, Sodium-ion, SiB
+- electricity storage capacity
+- kilowatt hour
+: Manufacture of batteries and accumulators
+? !!python/tuple
+- market for battery capacity, Sodium-Nickel-Chloride, Na-NiCl
+- electricity storage capacity
+- kilowatt hour
+: Manufacture of batteries and accumulators
+? !!python/tuple
+- market for battery capacity (MIX scenario)
+- electricity storage capacity
+- kilowatt hour
+: Manufacture of batteries and accumulators
+? !!python/tuple
+- market for battery capacity (LFP scenario)
+- electricity storage capacity
+- kilowatt hour
+: Manufacture of batteries and accumulators
+? !!python/tuple
+- market for battery capacity (NCx scenario)
+- electricity storage capacity
+- kilowatt hour
+: Manufacture of batteries and accumulators
+? !!python/tuple
+- market for battery capacity (PLiB scenario)
+- electricity storage capacity
+- kilowatt hour
+: Manufacture of batteries and accumulators
+? !!python/tuple
+- market for battery capacity, Li-ion, LFP, stationary
+- electricity storage capacity
+- kilowatt hour
+: Manufacture of batteries and accumulators
+? !!python/tuple
+- market for battery capacity, Li-ion, NMC111, stationary
+- electricity storage capacity
+- kilowatt hour
+: Manufacture of batteries and accumulators
+? !!python/tuple
+- market for battery capacity, Li-ion, NMC523, stationary
+- electricity storage capacity
+- kilowatt hour
+: Manufacture of batteries and accumulators
+? !!python/tuple
+- market for battery capacity, Li-ion, NMC622, stationary
+- electricity storage capacity
+- kilowatt hour
+: Manufacture of batteries and accumulators
+? !!python/tuple
+- market for battery capacity, Li-ion, NMC811, stationary
+- electricity storage capacity
+- kilowatt hour
+: Manufacture of batteries and accumulators
+? !!python/tuple
+- market for battery capacity, Li-ion, NMC955, stationary
+- electricity storage capacity
+- kilowatt hour
+: Manufacture of batteries and accumulators
+? !!python/tuple
+- market for battery capacity, redox-flow, Vanadium, stationary
+- electricity storage capacity
+- kilowatt hour
+: Manufacture of batteries and accumulators
+? !!python/tuple
+- market for battery capacity, lead acid, rechargeable, stationary
+- electricity storage capacity
+- kilowatt hour
+: Manufacture of batteries and accumulators
+? !!python/tuple
+- market for battery capacity, Sodium-ion, SiB, stationary
+- electricity storage capacity
+- kilowatt hour
+: Manufacture of batteries and accumulators
+? !!python/tuple
+- market for battery capacity, Sodium-Nickel-Chloride, Na-NiCl, stationary
+- electricity storage capacity
+- kilowatt hour
+: Manufacture of batteries and accumulators
+? !!python/tuple
+- market for battery capacity, stationary (CONT scenario)
+- electricity storage capacity
+- kilowatt hour
+: Manufacture of batteries and accumulators
+? !!python/tuple
+- market for battery capacity, stationary (TC scenario)
+- electricity storage capacity
+- kilowatt hour
+: Manufacture of batteries and accumulators
+? !!python/tuple
+- kick Scooter, battery electric, <1kW
+- kick Scooter, battery electric, <1kW
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- transport, Kick Scooter, battery electric, <1kW
+- transport, Kick Scooter, battery electric, <1kW
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- motorbike, battery electric, <4kW
+- motorbike, battery electric, <4kW
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- transport, Motorbike, battery electric, <4kW
+- transport, Motorbike, battery electric, <4kW
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- motorbike, battery electric, 4-11kW
+- motorbike, battery electric, 4-11kW
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- transport, Motorbike, battery electric, 4-11kW
+- transport, Motorbike, battery electric, 4-11kW
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- motorbike, battery electric, 11-35kW
+- motorbike, battery electric, 11-35kW
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- transport, Motorbike, battery electric, 11-35kW
+- transport, Motorbike, battery electric, 11-35kW
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- motorbike, battery electric, >35kW
+- motorbike, battery electric, >35kW
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- transport, Motorbike, battery electric, >35kW
+- transport, Motorbike, battery electric, >35kW
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- scooter, battery electric, <4kW
+- scooter, battery electric, <4kW
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- transport, Scooter, battery electric, <4kW
+- transport, Scooter, battery electric, <4kW
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- scooter, battery electric, 4-11kW
+- scooter, battery electric, 4-11kW
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- transport, Scooter, battery electric, 4-11kW
+- transport, Scooter, battery electric, 4-11kW
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- bicycle, electric (<25 km/h)
+- bicycle, electric (<25 km/h)
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- transport, Bicycle, electric (<25 km/h)
+- transport, Bicycle, electric (<25 km/h)
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- bicycle, electric (<45 km/h)
+- bicycle, electric (<45 km/h)
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- transport, Bicycle, electric (<45 km/h)
+- transport, Bicycle, electric (<45 km/h)
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- bicycle, battery electric, cargo bike
+- bicycle, battery electric, cargo bike
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- transport, Bicycle, battery electric, cargo bike
+- transport, Bicycle, battery electric, cargo bike
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, freight, lorry, battery electric, 3.5t gross weight, long haul
+- transport, freight, lorry
+- ton kilometer
+: Freight transport by road
+? !!python/tuple
+- transport, freight, lorry, battery electric, 7.5t gross weight, long haul
+- transport, freight, lorry
+- ton kilometer
+: Freight transport by road
+? !!python/tuple
+- transport, freight, lorry, battery electric, 18t gross weight, long haul
+- transport, freight, lorry
+- ton kilometer
+: Freight transport by road
+? !!python/tuple
+- transport, freight, lorry, battery electric, 26t gross weight, long haul
+- transport, freight, lorry
+- ton kilometer
+: Freight transport by road
+? !!python/tuple
+- transport, freight, lorry, battery electric, 32t gross weight, long haul
+- transport, freight, lorry
+- ton kilometer
+: Freight transport by road
+? !!python/tuple
+- transport, freight, lorry, battery electric, 40t gross weight, long haul
+- transport, freight, lorry
+- ton kilometer
+: Freight transport by road
+? !!python/tuple
+- transport, freight, lorry, battery electric, 60t gross weight, long haul
+- transport, freight, lorry
+- ton kilometer
+: Freight transport by road
+? !!python/tuple
+- light duty truck, battery electric, 3.5t gross weight, long haul
+- light duty truck
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- light duty truck, battery electric, 7.5t gross weight, long haul
+- light duty truck
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- medium duty truck, battery electric, 18t gross weight, long haul
+- medium duty truck
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- medium duty truck, battery electric, 26t gross weight, long haul
+- medium duty truck
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- heavy duty truck, battery electric, 32t gross weight, long haul
+- heavy duty truck
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- heavy duty truck, battery electric, 40t gross weight, long haul
+- heavy duty truck
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- heavy duty truck, battery electric, 60t gross weight, long haul
+- heavy duty truck
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- passenger bus, battery electric - overnight charging, 13m double deck urban bus
+- passenger bus
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- passenger bus, battery electric - overnight charging, 13m single deck urban bus
+- passenger bus
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- passenger bus, battery electric - overnight charging, 18m articulated urban bus
+- passenger bus
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- passenger bus, battery electric - overnight charging, 9m midibus
+- passenger bus
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- transport, passenger bus, battery electric - overnight charging, 13m double deck
+  urban bus
+- transport, passenger bus
+- person kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger bus, battery electric - overnight charging, 13m single deck
+  urban bus
+- transport, passenger bus
+- person kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger bus, battery electric - overnight charging, 18m articulated
+  urban bus
+- transport, passenger bus
+- person kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger bus, battery electric - overnight charging, 9m midibus
+- transport, passenger bus
+- person kilometer
+: Other passenger land transport
+? !!python/tuple
+- passenger car, battery electric, Large
+- passenger car
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- passenger car, battery electric, Large SUV
+- passenger car
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- passenger car, battery electric, Lower medium
+- passenger car
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- passenger car, battery electric, Medium
+- passenger car
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- passenger car, battery electric, Medium SUV
+- passenger car
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- passenger car, battery electric, Micro
+- passenger car
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- passenger car, battery electric, Mini
+- passenger car
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- passenger car, battery electric, Small
+- passenger car
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- passenger car, battery electric, Van
+- passenger car
+- unit
+: Manufacture of motor vehicles
+? !!python/tuple
+- transport, passenger car, battery electric, Large
+- transport, passenger car
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, battery electric, Large SUV
+- transport, passenger car
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, battery electric, Lower medium
+- transport, passenger car
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, battery electric, Medium
+- transport, passenger car
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, battery electric, Medium SUV
+- transport, passenger car
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, battery electric, Micro
+- transport, passenger car
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, battery electric, Mini
+- transport, passenger car
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, battery electric, Small
+- transport, passenger car
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger car, battery electric, Van
+- transport, passenger car
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- production of locomotive, diesel-electric
+- locomotive diesel-electric
+- unit
+: Manufacture of railway locomotives and rolling stock
+? !!python/tuple
+- production of locomotive, electric catenary
+- locomotive electric, catenary
+- unit
+: Manufacture of railway locomotives and rolling stock
+? !!python/tuple
+- production of locomotive, fuel cell, hydrogen
+- locomotive fuel cell, hydrogen
+- unit
+: Manufacture of railway locomotives and rolling stock
+? !!python/tuple
+- transport, freight train, diesel-electric
+- transport, freight train
+- ton kilometer
+: Freight rail transport
+? !!python/tuple
+- transport, freight train, electric
+- transport, freight train
+- ton kilometer
+: Freight rail transport
+? !!python/tuple
+- transport, freight train, fuel cell, hydrogen
+- transport, freight train
+- ton kilometer
+: Freight rail transport
+? !!python/tuple
+- internal combustion engine, for lorry, adapted to locomotives
+- internal combustion engine, for lorry
+- kilogram
+: Manufacture of motor vehicles
+? !!python/tuple
+- fuel tank, for diesel vehicle, adapted to locomotives
+- fuel tank
+- kilogram
+: Manufacture of motor vehicles
+? !!python/tuple
+- coating, drying, optical lithography
+- gaAs wafer with resist patterned
+- square meter
+: Manufacture of electronic components and boards
+? !!python/tuple
+- electroplating
+- gaAs wafer with resist and gold particles
+- square meter
+: Manufacture of electronic components and boards
+? !!python/tuple
+- wet etching
+- gaAs wafer with gold particles
+- square meter
+: Manufacture of electronic components and boards
+? !!python/tuple
+- metal organic vapor phase epitaxy (MOVPE)
+- gaAs wafer with nanowires
+- square meter
+: Manufacture of electronic components and boards
+? !!python/tuple
+- epitaxial lift-off (ELO)
+- gaAs wafer - re-polished for reuse
+- square meter
+: Manufacture of electronic components and boards
+? !!python/tuple
+- polycrystalline GaAs boule production
+- polycrystalline GaAs boule
+- kilogram
+: Manufacture of electronic components and boards
+? !!python/tuple
+- 7N gallium production
+- 7N Gallium
+- kilogram
+: Manufacture of electronic components and boards
+? !!python/tuple
+- 7N arsenic production
+- 7N Arsenic
+- kilogram
+: Manufacture of electronic components and boards
+? !!python/tuple
+- single-crystal GaAs boule production
+- single-crystal GaAs boule
+- kilogram
+: Manufacture of electronic components and boards
+? !!python/tuple
+- gaAs ingot production - x-ray, cropping, grinding notch
+- single-crystal GaAs ingot
+- kilogram
+: Manufacture of electronic components and boards
+? !!python/tuple
+- diamond saw production
+- diamond saw
+- unit
+: Manufacture of metalforming machinery and machine tools
+? !!python/tuple
+- synthetic diamond production
+- synthetic diamond
+- kilogram
+: Manufacture of electronic components and boards
+? !!python/tuple
+- raw GaAs wafer production
+- raw GaAs wafer
+- square meter
+: Manufacture of electronic components and boards
+? !!python/tuple
+- sawing slurry production
+- sawing slurry
+- kilogram
+: Manufacture of electronic components and boards
+? !!python/tuple
+- etched GaAs wafer production - cleaning, etching
+- etched GaAs wafer
+- square meter
+: Manufacture of electronic components and boards
+? !!python/tuple
+- pre-polished GaAs wafer production
+- pre-polished GaAs wafer
+- square meter
+: Manufacture of electronic components and boards
+? !!python/tuple
+- double-polished GaAs wafer production - chemical, mechanical polishing (CMP)
+- double-polished GaAs wafer
+- square meter
+: Manufacture of electronic components and boards
+? !!python/tuple
+- CMP slurry production
+- CMP slurry
+- kilogram
+: Manufacture of electronic components and boards
+? !!python/tuple
+- gaAs wafer production - cleaning, quality control, packing
+- gaAs wafer
+- square meter
+: Manufacture of electronic components and boards
+? !!python/tuple
+- trimethyl aluminum 99% pure production
+- trimethyl aluminum 99% pure
+- kilogram
+: Manufacture of electronic components and boards
+? !!python/tuple
+- methyl aluminum sesquichloride production
+- methyl aluminum sesquichloride
+- kilogram
+: Manufacture of electronic components and boards
+? !!python/tuple
+- trimethyl gallium 99% pure production
+- trimethyl gallium 99% pure
+- kilogram
+: Manufacture of electronic components and boards
+? !!python/tuple
+- gallium chloride production
+- gallium chloride
+- kilogram
+: Manufacture of electronic components and boards
+? !!python/tuple
+- photovoltaic installation, 0.28kWp, GaAs
+- photovoltaic installation, GaAs
+- unit
+: Installation of industrial machinery and equipment
+? !!python/tuple
+- electricity production, photovoltaic, 0.28kWp, GaAs
+- electricity production, photovoltaic, 0.28kWp, GaAs
+- kilowatt hour
+: Electric power generation transmission and distribution
+? !!python/tuple
+- perovskite wafer production
+- perovskite wafer
+- square meter
+: Manufacture of electronic components and boards
+? !!python/tuple
+- perovskite wafer packaging
+- perovskite wafer, packaged
+- square meter
+: Manufacture of electronic components and boards
+? !!python/tuple
+- perovskite wafer transport
+- perovskite wafer, transported
+- square meter
+: Manufacture of electronic components and boards
+? !!python/tuple
+- perovskite wafer cleaning
+- perovskite wafer, cleaned
+- square meter
+: Manufacture of electronic components and boards
+? !!python/tuple
+- PECVD of thin film layer, for perovskite
+- cell, perovskite, to sputter
+- unit
+: Manufacture of electronic components and boards
+? !!python/tuple
+- sputter process 1, perovskite cell
+- perovskite cell, sputtered 1
+- unit
+: Manufacture of electronic components and boards
+? !!python/tuple
+- sputter process 2, perovskite cell
+- perovskite cell, sputtered 2
+- unit
+: Manufacture of electronic components and boards
+? !!python/tuple
+- spiro-OMeTAD deposition of perovskite cell
+- spiro-OMeTAD deposited perovskite cell
+- unit
+: Manufacture of electronic components and boards
+? !!python/tuple
+- perovskite cell deposition
+- deposited perovskite cell
+- unit
+: Manufacture of electronic components and boards
+? !!python/tuple
+- perovskite cell curing 1
+- cured perovskite cell 1
+- unit
+: Manufacture of electronic components and boards
+? !!python/tuple
+- perovskite cell zinc oxide deposition
+- zinc oxide deposited perovskite cell
+- unit
+: Manufacture of electronic components and boards
+? !!python/tuple
+- sputter process 3, perovskite cell
+- perovskite cell, sputtered 3
+- unit
+: Manufacture of electronic components and boards
+? !!python/tuple
+- perovskite cell contact formation
+- metallized perovskite cell
+- unit
+: Manufacture of electronic components and boards
+? !!python/tuple
+- perovskite cell curing 2
+- cured perovskite cell 2
+- unit
+: Manufacture of electronic components and boards
+? !!python/tuple
+- photovoltaic cell production, perovskite
+- photovoltaic cell, perovskite
+- unit
+: Manufacture of electronic components and boards
+? !!python/tuple
+- perovskite module assembly
+- assembled perovskite cell
+- unit
+: Manufacture of electronic components and boards
+? !!python/tuple
+- photovoltaic panel production, 0.5kWp, perovskite
+- photovoltaic panel, perovskite
+- unit
+: Manufacture of electronic components and boards
+? !!python/tuple
+- electricity production, photovoltaic, 0.5kWp, perovskite-on-silicon tandem
+- electricity production, photovoltaic, 0.5kWp, perovskite-on-silicon tandem
+- kilowatt hour
+: Electric power generation transmission and distribution
+? !!python/tuple
+- exhaust abatement, for perovskite
+- abated exhaust
+- cubic meter
+: Manufacture of electronic components and boards
+? !!python/tuple
+- tray cleaning, for perovskite
+- tray cleaning
+- unit
+: Manufacture of electronic components and boards
+? !!python/tuple
+- ultrapure water system activity, for perovskite
+- ultra pure water
+- kilogram
+: Manufacture of electronic components and boards
+? !!python/tuple
+- inhouse waste water treatment, for perovskite production
+- waste water
+- cubic meter
+: Manufacture of electronic components and boards
+? !!python/tuple
+- process cooling, water, for perovskite
+- cooling water, conditioned
+- cubic meter
+: Manufacture of electronic components and boards
+? !!python/tuple
+- process cooling, water, for perovskite
+- cooling water, used
+- cubic meter
+: Manufacture of electronic components and boards
+? !!python/tuple
+- air compressor activity, for perovskite
+- compressed air, 14 bar, low efficiency
+- cubic meter
+: Manufacture of electronic components and boards
+? !!python/tuple
+- process exhaust ventilators, general, for perovskite production
+- exhaust, general
+- cubic meter
+: Manufacture of electronic components and boards
+? !!python/tuple
+- process exhaust ventilators, acidic, for perovskite production
+- exhaust, acidic
+- cubic meter
+: Manufacture of electronic components and boards
+? !!python/tuple
+- process exhaust ventilators, caustic, for perovskite production
+- exhaust, caustic
+- cubic meter
+: Manufacture of electronic components and boards
+? !!python/tuple
+- electricity production, wind, 1-3MW turbine, onshore, direct drive
+- electricity, high voltage
+- kilowatt hour
+: Electric power generation transmission and distribution
+? !!python/tuple
+- electricity production, wind, 1-3MW turbine, onshore, renewable energy products,
+  direct drive
+- electricity, high voltage, renewable energy products
+- kilowatt hour
+: Electric power generation transmission and distribution
+? !!python/tuple
+- electricity production, wind, >3MW turbine, onshore, direct drive
+- electricity, high voltage
+- kilowatt hour
+: Electric power generation transmission and distribution
+? !!python/tuple
+- electricity production, wind, <1MW turbine, onshore, direct drive
+- electricity, high voltage
+- kilowatt hour
+: Electric power generation transmission and distribution
+? !!python/tuple
+- wind turbine construction, 750kW, onshore, direct drive
+- wind turbine, 750kW, onshore
+- unit
+: Manufacture of engines and turbines except aircraft vehicle and cycle eng
+? !!python/tuple
+- wind turbine construction, small-scale, 6kW, onshore, direct drive
+- wind turbine, small-scale, 6kW, onshore
+- unit
+: Manufacture of engines and turbines except aircraft vehicle and cycle eng
+? !!python/tuple
+- market for wind turbine network connection, 4.5MW, onshore, direct drive
+- wind turbine network connection, 4.5MW, onshore
+- unit
+: Manufacture of engines and turbines except aircraft vehicle and cycle eng
+? !!python/tuple
+- market for wind turbine, small-scale, 6kW, onshore, direct drive
+- wind turbine, small-scale, 6kW, onshore
+- unit
+: Manufacture of engines and turbines except aircraft vehicle and cycle eng
+? !!python/tuple
+- electricity production, wind, 1-3MW turbine, offshore, direct drive
+- electricity, high voltage
+- kilowatt hour
+: Electric power generation transmission and distribution
+? !!python/tuple
+- market for wind power plant, 2MW, offshore, moving parts, direct drive
+- wind power plant, 2MW, offshore, moving parts
+- unit
+: Manufacture of engines and turbines except aircraft vehicle and cycle eng
+? !!python/tuple
+- wind power plant construction, 800kW, fixed parts, direct drive
+- wind power plant, 800kW, fixed parts
+- unit
+: Manufacture of engines and turbines except aircraft vehicle and cycle eng
+? !!python/tuple
+- wind turbine construction, 2.3MW, precast concrete tower, onshore, direct drive
+- wind turbine, 2.3MW, onshore
+- unit
+: Manufacture of engines and turbines except aircraft vehicle and cycle eng
+? !!python/tuple
+- wind turbine construction, 2MW, onshore, direct drive
+- wind turbine, 2MW, onshore
+- unit
+: Manufacture of engines and turbines except aircraft vehicle and cycle eng
+? !!python/tuple
+- market for wind power plant, 2MW, offshore, fixed parts, direct drive
+- wind power plant, 2MW, offshore, fixed parts
+- unit
+: Manufacture of engines and turbines except aircraft vehicle and cycle eng
+? !!python/tuple
+- market for wind turbine, 750kW, onshore, direct drive
+- wind turbine, 750kW, onshore
+- unit
+: Manufacture of engines and turbines except aircraft vehicle and cycle eng
+? !!python/tuple
+- market for wind power plant, 800kW, moving parts, direct drive
+- wind power plant, 800kW, moving parts
+- unit
+: Manufacture of engines and turbines except aircraft vehicle and cycle eng
+? !!python/tuple
+- wind power plant construction, 2MW, offshore, moving parts, direct drive
+- wind power plant, 2MW, offshore, moving parts
+- unit
+: Manufacture of engines and turbines except aircraft vehicle and cycle eng
+? !!python/tuple
+- market for wind turbine network connection, 2MW, onshore, direct drive
+- wind turbine network connection, 2MW, onshore
+- unit
+: Manufacture of engines and turbines except aircraft vehicle and cycle eng
+? !!python/tuple
+- market for wind turbine, 2MW, onshore, direct drive
+- wind turbine, 2MW, onshore
+- unit
+: Manufacture of engines and turbines except aircraft vehicle and cycle eng
+? !!python/tuple
+- wind power plant construction, 800kW, moving parts, direct drive
+- wind power plant, 800kW, moving parts
+- unit
+: Manufacture of engines and turbines except aircraft vehicle and cycle eng
+? !!python/tuple
+- electricity production, wind, >3MW turbine, onshore, renewable energy products,
+  direct drive
+- electricity, high voltage, renewable energy products
+- kilowatt hour
+: Electric power generation transmission and distribution
+? !!python/tuple
+- market for wind turbine, 2.3MW, onshore, direct drive
+- wind turbine, 2.3MW, onshore
+- unit
+: Manufacture of engines and turbines except aircraft vehicle and cycle eng
+? !!python/tuple
+- market for wind turbine, 4.5MW, onshore, direct drive
+- wind turbine, 4.5MW, onshore
+- unit
+: Manufacture of engines and turbines except aircraft vehicle and cycle eng
+? !!python/tuple
+- electricity production, wind, <1MW turbine, onshore, renewable energy products,
+  direct drive
+- electricity, high voltage, renewable energy products
+- kilowatt hour
+: Electric power generation transmission and distribution
+? !!python/tuple
+- wind power plant construction, 2MW, offshore, fixed parts, direct drive
+- wind power plant, 2MW, offshore, fixed parts
+- unit
+: Manufacture of engines and turbines except aircraft vehicle and cycle eng
+? !!python/tuple
+- market for wind power plant, 800kW, fixed parts, direct drive
+- wind power plant, 800kW, fixed parts
+- unit
+: Manufacture of engines and turbines except aircraft vehicle and cycle eng
+? !!python/tuple
+- market for wind turbine network connection, 750kW, onshore, direct drive
+- wind turbine network connection, 750kW, onshore
+- unit
+: Manufacture of engines and turbines except aircraft vehicle and cycle eng
+? !!python/tuple
+- market for wind turbine network connection, small-scale, 6kW, onshore, direct
+  drive
+- wind turbine network connection, small-scale, 6kW, onshore
+- unit
+: Manufacture of engines and turbines except aircraft vehicle and cycle eng
+? !!python/tuple
+- wind turbine construction, 4.5MW, onshore, direct drive
+- wind turbine, 4.5MW, onshore
+- unit
+: Manufacture of engines and turbines except aircraft vehicle and cycle eng
+? !!python/tuple
+- transport, motorbike, unspecified
+- transport, motorbike
+- kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, freight, train, unspecified
+- transport, freight, train
+- ton kilometer
+: Freight rail transport
+? !!python/tuple
+- electricity production, from photovoltaic panels_pv (industry)
+- electricity, low voltage
+- kilowatt hour
+: Electric power generation transmission and distribution
+? !!python/tuple
+- electricity production, from photovoltaic panels_pv (services)
+- electricity, low voltage
+- kilowatt hour
+: Electric power generation transmission and distribution
+? !!python/tuple
+- electricity production, from photovoltaic panels_pv residential (multi family)
+- electricity, low voltage
+- kilowatt hour
+: Electric power generation transmission and distribution
+? !!python/tuple
+- electricity production, from photovoltaic panels_pv residential (single family)
+- electricity, low voltage
+- kilowatt hour
+: Electric power generation transmission and distribution
+? !!python/tuple
+- electricity production, from hydrogen fuel cell_hydrogen fuel cell (industrial
+  CHP)
+- electricity, low voltage
+- kilowatt hour
+: Electric power generation transmission and distribution
+? !!python/tuple
+- electricity production, from hydrogen fuel cell_hydrogen fuel cell (services CHP)
+- electricity, low voltage
+- kilowatt hour
+: Electric power generation transmission and distribution
+? !!python/tuple
+- electricity supply, from stationary battery (CONT scenario)_battery (medium)
+- electricity, low voltage
+- kilowatt hour
+: Electric power generation transmission and distribution
+? !!python/tuple
+- electricity supply, from stationary battery (CONT scenario)_battery (industry)
+- electricity, low voltage
+- kilowatt hour
+: Electric power generation transmission and distribution
+? !!python/tuple
+- electricity supply, from stationary battery (CONT scenario)_battery (services)
+- electricity, low voltage
+- kilowatt hour
+: Electric power generation transmission and distribution
+? !!python/tuple
+- electricity supply, from stationary battery (CONT scenario)_battery (single family)
+- electricity, low voltage
+- kilowatt hour
+: Electric power generation transmission and distribution
+? !!python/tuple
+- electricity supply, from stationary battery (CONT scenario)_battery (multi family)
+- electricity, low voltage
+- kilowatt hour
+: Electric power generation transmission and distribution
+? !!python/tuple
+- electricity production, from photovoltaic panels
+- electricity, low voltage
+- kilowatt hour
+: Electric power generation transmission and distribution
+? !!python/tuple
+- electricity production, wind
+- electricity, high voltage
+- kilowatt hour
+: Electric power generation transmission and distribution
+? !!python/tuple
+- electricity production, from hydrogen fuel cell
+- electricity, low voltage
+- kilowatt hour
+: Electric power generation transmission and distribution
+? !!python/tuple
+- electricity supply, from stationary battery (CONT scenario)
+- electricity, low voltage
+- kilowatt hour
+: Electric power generation transmission and distribution
+? !!python/tuple
+- market for final energy use (SPS)
+- energy
+- megajoule
+: Electric power generation transmission and distribution
+? !!python/tuple
+- "market for cooling energy, at -25 °C"
+- "cooling energy, at -25 °C"
+- megajoule
+: Steam and air conditioning supply
+? !!python/tuple
+- "municipal waste incineration, at incineration plant, with semi-dry air pollution control, without flue gas condensation, with electricity recovery only"
+- municipal solid waste
+- kilogram
+: Treatment and disposal of nonhazardous waste

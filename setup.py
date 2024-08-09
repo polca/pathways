@@ -56,6 +56,8 @@ setup(
         "fs",
         "statsmodels",
         "SALib",
+        "pyarrow",
+        "fastparquet"
     ],
     url="https://github.com/polca/pathways",
     description="Scenario-level LCA of energy systems and transition pathways",

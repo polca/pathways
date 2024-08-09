@@ -409,8 +409,8 @@ def resize_scenario_data(
 
 
 def get_activity_indices(
-    activities: List[Tuple[str, str, str, str]],
-    technosphere_index: Dict[Tuple[str, str, str, str], Any],
+    activities: List[Tuple],
+    technosphere_index: Dict[Tuple, Any],
     geo: Geomap,
     debug: bool = False,
 ) -> List[int]:

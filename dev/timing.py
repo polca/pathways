@@ -16,20 +16,14 @@ p.calculate(
     regions=["CH"],
     scenarios=p.scenarios.pathway.values.tolist(),
     years=[
-        2020,
+        #2020,
         # 2030,
         # 2040,
-        # 2050
+        2050
     ],
     variables=vars,
-    use_distributions=20,
+    use_distributions=10,
     subshares=True,
 )
 
 p.export_results()
-
-print(p.lca_results.coords)
-print(p.lca_results.shape)
-print(p.lca_results.sum())
-
-run_gsa()

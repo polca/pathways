@@ -13,3 +13,5 @@ platformdirs
 fs
 statsmodels
 SALib
+pyarrow
+fastparquet
