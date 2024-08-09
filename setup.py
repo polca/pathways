@@ -13,7 +13,7 @@ this_directory = Path(__file__).parent
 README = (this_directory / "README.md").read_text()
 
 # Probably should be changed, __init__.py is no longer required for Python 3
-for dirpath, dirnames, filenames in os.walk("premise"):
+for dirpath, dirnames, filenames in os.walk("pathways"):
     # Ignore dirnames that start with '.'
     if "__init__.py" in filenames:
         pkg = dirpath.replace(os.path.sep, ".")
@@ -57,7 +57,7 @@ setup(
         "statsmodels",
         "SALib",
     ],
-    url="https://github.com/polca/premise",
+    url="https://github.com/polca/pathways",
     description="Scenario-level LCA of energy systems and transition pathways",
     long_description_content_type="text/markdown",
     long_description=README,
