@@ -163,6 +163,7 @@ def find_technology_indices(
                 )[0]
 
                 if activity_index is None:
+                    print(f"Warning: No activity index found for technology '{tech}' in region '{region}'.")
                     continue
 
                 tech_data = regional_indices.setdefault(tech, {"idx": activity_index})
@@ -242,9 +243,9 @@ def adjust_matrix_based_on_shares(
             for name, tech in technologies.items():
                 for consumer in tech["consumer_idx"]:
                     initial_amount = lca.technosphere_matrix[tech["idx"], consumer]
-                    amounts = initial_amount * subshares[tech_category][year][name]
-                    list_indices.append([(tech["idx"], consumer)])
-                    list_amounts.append(amounts * -1)
+                    amounts = initial_amount * subshares[tech_category][year][name] * -1
+                    list_amounts.append(tuple(amounts))
+                    list_indices.append((tech["idx"], consumer))
                     for other_supplier, other_supplier_tech in technologies.items():
                         if other_supplier != name:
                             amounts = (
@@ -252,9 +253,9 @@ def adjust_matrix_based_on_shares(
                                 * subshares[tech_category][year][other_supplier]
                             )
                             list_indices.append(
-                                [(other_supplier_tech["idx"], consumer)]
+                                (other_supplier_tech["idx"], consumer)
                             )
-                            list_amounts.append(amounts * -1)
+                            list_amounts.append(tuple(amounts * -1))
 
     indices = np.array(list_indices, dtype=bwp.INDICES_DTYPE)
     data = np.array(list_amounts)
