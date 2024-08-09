@@ -163,7 +163,9 @@ def find_technology_indices(
                 )[0]
 
                 if activity_index is None:
-                    print(f"Warning: No activity index found for technology '{tech}' in region '{region}'.")
+                    print(
+                        f"Warning: No activity index found for technology '{tech}' in region '{region}'."
+                    )
                     continue
 
                 tech_data = regional_indices.setdefault(tech, {"idx": activity_index})
@@ -252,9 +254,7 @@ def adjust_matrix_based_on_shares(
                                 initial_amount
                                 * subshares[tech_category][year][other_supplier]
                             )
-                            list_indices.append(
-                                (other_supplier_tech["idx"], consumer)
-                            )
+                            list_indices.append((other_supplier_tech["idx"], consumer))
                             list_amounts.append(tuple(amounts * -1))
 
     indices = np.array(list_indices, dtype=bwp.INDICES_DTYPE)

@@ -621,16 +621,13 @@ def _calculate_year(args: tuple):
             lca = bc.MultiLCA(
                 demands=fus,
                 method_config={"impact_categories": []},
-                data_objs=[
-                    bw_datapackage, bw_correlated
-                ],
+                data_objs=[bw_datapackage, bw_correlated],
                 use_distributions=True if use_distributions > 0 else False,
                 use_arrays=True,
             )
 
             with CustomFilter("(almost) singular matrix"):
                 lca.lci()
-
 
         lca.uncertain_parameters = uncertain_parameters
         lca.technosphere_indices = technosphere_indices
