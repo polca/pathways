@@ -32,8 +32,6 @@ requirements:
     - platformdirs
     - fs
     - SALib
-    - cvxopt
-    - scikit-umfpack
 test:
   imports:
     - pathways
