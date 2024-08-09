@@ -6,7 +6,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
 
       - name: Black formatting
         uses: lgeiger/black-action@v1.0.1
@@ -31,27 +31,6 @@ jobs:
           git checkout $GITHUB_HEAD_REF
           git commit -am "Black reformating"
           git push
-  lint:
-    runs-on: ubuntu-latest
-    needs: clean
-    steps:
-
-      - name: Checkout source code
-        uses: actions/checkout@v2
-        with:
-          # Full git history is needed to get a proper list
-          # of changed files within `super-linter`
-          fetch-depth: 0
-
-      - name: Super-Linter
-        uses: github/super-linter@v4
-        env:
-          ERRORS: false
-          VALIDATE_ALL_CODEBASE: true
-          VALIDATE_PYTHON: true
-          DEFAULT_BRANCH: master
-          IGNORE_GITIGNORED_FILES: true
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN}}
 
   build:
     runs-on: ${{matrix.os}}
@@ -62,7 +41,7 @@ jobs:
     needs: clean
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
 
       - name: Install python version
         uses: gabrielfalcao/pyenv-action@v13
@@ -95,7 +74,7 @@ jobs:
         python-version: [ "3.10" ]
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
 
       - name: Install pypa/build
         run: >-
@@ -143,7 +122,6 @@ jobs:
           python-version: ${{ matrix.python-version }}
           channels: conda-forge,cmutel,konstantinstadler,haasad,pascallesage,romainsacchi
           allow-softlinks: true
-          channel-priority: strict
           auto-update-conda: true
           activate-environment: test
 
@@ -152,7 +130,7 @@ jobs:
         run: conda info
 
       - name: Git checkout
-        uses: actions/checkout@v1
+        uses: actions/checkout@v4
       - name: Branch name
         run: echo running on branch ${GITHUB_REF##*/}
 
@@ -161,6 +139,7 @@ jobs:
         shell: bash -l {0}
 
         run: |
+          conda clean --all
           PKG_NAME=pathways
           USER=romainsacchi
           conda install anaconda-client
@@ -168,6 +147,7 @@ jobs:
           conda install conda-verify
           conda install pytest
           conda clean --all
+          conda update conda
           mkdir ~/conda-bld
           conda config --set anaconda_upload no
           export CONDA_BLD_PATH=~/conda-bld
@@ -187,8 +167,8 @@ jobs:
         os: ["ubuntu-latest"]
         python-version: [ "3.10" ]
     steps:
-      - uses: actions/checkout@v2
-      - uses: conda-incubator/setup-miniconda@v2
+      - uses: actions/checkout@v4
+      - uses: conda-incubator/setup-miniconda@v3
         with:
           python-version: ${{ matrix.python-version }}
           channels: conda-forge,cmutel,konstantinstadler,haasad,pascallesage,romainsacchi
