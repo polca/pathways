@@ -7,14 +7,16 @@ from pathlib import Path
 import platformdirs
 import yaml
 
+
 def load_var_file():
-    """ Check if the variable file exists and load it. """
+    """Check if the variable file exists and load it."""
     var_file = Path.cwd() / "variables.yaml"
     if var_file.exists():
         with open(var_file, "r") as f:
             return yaml.safe_load(f)
     else:
         return None
+
 
 VARIABLES = load_var_file() or {}
 
@@ -29,7 +31,9 @@ DATA_DIR.mkdir(parents=True, exist_ok=True)
 if "USER_DATA_BASE_DIR" in VARIABLES:
     USER_DATA_BASE_DIR = Path(VARIABLES.get("USER_DATA_BASE_DIR"))
 else:
-    USER_DATA_BASE_DIR = platformdirs.user_data_path(appname="pathways", appauthor="pylca")
+    USER_DATA_BASE_DIR = platformdirs.user_data_path(
+        appname="pathways", appauthor="pylca"
+    )
 USER_DATA_BASE_DIR.mkdir(parents=True, exist_ok=True)
 
 if "DIR_CACHED_DB" in VARIABLES:
