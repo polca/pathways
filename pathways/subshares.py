@@ -283,8 +283,7 @@ def load_and_normalize_shares(ranges: dict, iterations: int, seed: int) -> dict:
             for y, share in params["share"].items():
                 uncertainty_base = UncertaintyBase.from_dicts(share)
                 random_generator = MCRandomNumberGenerator(
-                    params=uncertainty_base,
-                    seed=seed
+                    params=uncertainty_base, seed=seed
                 )
                 shares[technology_group][y][technology] = np.squeeze(
                     np.array([random_generator.next() for _ in range(iterations)])

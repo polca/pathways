@@ -465,7 +465,7 @@ class Pathways:
                         shares,
                         uncertain_parameters,
                         remove_uncertainty,
-                        seed
+                        seed,
                     )
                     for year in years
                 ]

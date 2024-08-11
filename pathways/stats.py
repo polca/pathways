@@ -344,7 +344,6 @@ def log_mc_parameters_to_excel(
             writer, sheet_name="Technology shares", index=False
         )
 
-
         print(f"Monte Carlo parameters added to: {export_path.resolve()}")
 
 
