@@ -1,9 +1,11 @@
-from SALib.analyze import delta
-import pandas as pd
-from pathlib import Path
 from multiprocessing import Pool, cpu_count
+from pathlib import Path
+
+import pandas as pd
+from SALib.analyze import delta
 
 directory = "/data/user/sacchi_r/stats/"
+
 
 def run_GSA_delta(
     total_impacts: pd.DataFrame,
@@ -71,6 +73,7 @@ def run_GSA_delta(
         columns=["LCIA method", "Parameter", "Delta", "Delta Conf", "S1", "S1 Conf"],
     )
 
+
 def gsa(file):
     # load content of "Monte Carlo values" sheet into a pandas DataFrame
     df_mc_vals = pd.read_excel(file, sheet_name="Monte Carlo values")
@@ -98,9 +101,8 @@ def gsa(file):
             technology_shares=df_technology_shares,
         )
 
-        df_GSA_results.to_excel(
-            writer, sheet_name=f"GSA", index=False
-        )
+        df_GSA_results.to_excel(writer, sheet_name=f"GSA", index=False)
+
 
 with Pool(cpu_count()) as pool:
     pool.map(gsa, Path(directory).glob("*.xlsx"))
