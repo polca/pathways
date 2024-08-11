@@ -330,7 +330,11 @@ def log_mc_parameters_to_excel(
 
         indices = tehnosphere_indices[region]
 
-        df_technosphere_indices = create_mapping_sheet(indices=indices)
+        if indices:
+            df_technosphere_indices = create_mapping_sheet(indices=indices)
+            df_technosphere_indices.to_excel(
+                writer, sheet_name="Indices mapping", index=False
+            )
 
         df_sum_impacts.to_excel(writer, sheet_name="Total impacts", index=False)
         df_uncertainty_values.to_excel(
@@ -339,9 +343,7 @@ def log_mc_parameters_to_excel(
         df_technology_shares.to_excel(
             writer, sheet_name="Technology shares", index=False
         )
-        df_technosphere_indices.to_excel(
-            writer, sheet_name="Indices mapping", index=False
-        )
+
 
         print(f"Monte Carlo parameters added to: {export_path.resolve()}")
 

@@ -314,6 +314,7 @@ class Pathways:
         use_distributions: int = 0,
         subshares: bool = False,
         remove_uncertainty: bool = False,
+        seed: int = 0,
         multiprocessing: bool = True,
     ) -> None:
         """
@@ -345,6 +346,8 @@ class Pathways:
         :type subshares: bool, default is False
         :param remove_uncertainty: Boolean. If True, remove uncertainty from inventory exchanges.
         :type remove_uncertainty: bool, default is False
+        :param seed: Integer. Seed for random number generator.
+        :type seed: int, default is 0
         """
 
         self.scenarios = harmonize_units(self.scenarios, variables)
@@ -430,6 +433,7 @@ class Pathways:
             shares = generate_samples(
                 years=self.scenarios.coords["year"].values.tolist(),
                 iterations=use_distributions,
+                seed=seed,
             )
 
         # Iterate over each combination of model, scenario, and year
@@ -461,6 +465,7 @@ class Pathways:
                         shares,
                         uncertain_parameters,
                         remove_uncertainty,
+                        seed
                     )
                     for year in years
                 ]

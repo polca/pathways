@@ -493,6 +493,7 @@ def _calculate_year(args: tuple):
         shares,
         uncertain_parameters,
         remove_uncertainty,
+        seed
     ) = args
 
     print(f"------ Calculating LCA results for {year}...")
@@ -603,6 +604,7 @@ def _calculate_year(args: tuple):
                 bw_datapackage,
             ],
             use_distributions=True if use_distributions > 0 else False,
+            seed_override=seed
         )
 
         with CustomFilter("(almost) singular matrix"):
