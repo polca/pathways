@@ -1,10 +1,9 @@
+import time
 from multiprocessing import Pool, cpu_count
 from pathlib import Path
 
 import pandas as pd
 from SALib.analyze import delta
-
-import time
 
 directory = "/data/user/sacchi_r/stats_/"
 
@@ -105,6 +104,7 @@ def gsa(file):
         )
 
         df_GSA_results.to_excel(writer, sheet_name=f"GSA", index=False)
+
 
 start = time.time()
 print(start)
