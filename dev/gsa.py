@@ -7,6 +7,7 @@ from SALib.analyze import delta
 
 directory = "./stats/"
 
+
 def run_GSA_delta(
     total_impacts: pd.DataFrame,
     uncertainty_values: pd.DataFrame,
@@ -73,6 +74,7 @@ def run_GSA_delta(
         columns=["LCIA method", "Parameter", "Delta", "Delta Conf", "S1", "S1 Conf"],
     )
 
+
 def gsa(file):
     # load content of "Monte Carlo values" sheet into a pandas DataFrame
     df_mc_vals = pd.read_excel(file, sheet_name="Monte Carlo values")
@@ -111,7 +113,7 @@ start = time.time()
 print(start)
 
 
-#with Pool(cpu_count()) as pool:
+# with Pool(cpu_count()) as pool:
 #    pool.map(gsa, Path(directory).glob("*.xlsx"))
 
 for file in Path(directory).glob("*.xlsx"):
