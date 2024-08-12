@@ -1,7 +1,7 @@
 #!/bin/bash
 #SBATCH --cluster=merlin6                  # Cluster name
 #SBATCH --partition=daily                  # Specify one or multiple partitions
-#SBATCH --time=03:00:00                    # Strongly recommended
+#SBATCH --time=05:00:00                    # Strongly recommended
 #SBATCH --hint=nomultithread               # Mandatory for multithreaded jobs
 #SBATCH --job-name=sweet_sure              # Name your job
 #SBATCH --cpus-per-task=4                  # Request one core per task

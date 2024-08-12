@@ -4,7 +4,9 @@ from pathlib import Path
 import pandas as pd
 from SALib.analyze import delta
 
-directory = "/data/user/sacchi_r/stats/"
+import time
+
+directory = "/data/user/sacchi_r/stats_/"
 
 
 def run_GSA_delta(
@@ -75,6 +77,7 @@ def run_GSA_delta(
 
 
 def gsa(file):
+    print(file)
     # load content of "Monte Carlo values" sheet into a pandas DataFrame
     df_mc_vals = pd.read_excel(file, sheet_name="Monte Carlo values")
 
@@ -103,6 +106,13 @@ def gsa(file):
 
         df_GSA_results.to_excel(writer, sheet_name=f"GSA", index=False)
 
+start = time.time()
+print(start)
+
+print(Path(directory).glob("*.xlsx"))
 
 with Pool(cpu_count()) as pool:
     pool.map(gsa, Path(directory).glob("*.xlsx"))
+
+end = time.time()
+print(end - start)
