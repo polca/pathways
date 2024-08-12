@@ -433,7 +433,6 @@ class Pathways:
             shares = generate_samples(
                 years=self.scenarios.coords["year"].values.tolist(),
                 iterations=use_distributions,
-                seed=seed,
             )
 
         # Iterate over each combination of model, scenario, and year

@@ -5,8 +5,7 @@ from pathlib import Path
 import pandas as pd
 from SALib.analyze import delta
 
-directory = "/data/user/sacchi_r/stats_/"
-
+directory = "./stats/"
 
 def run_GSA_delta(
     total_impacts: pd.DataFrame,
@@ -74,9 +73,7 @@ def run_GSA_delta(
         columns=["LCIA method", "Parameter", "Delta", "Delta Conf", "S1", "S1 Conf"],
     )
 
-
 def gsa(file):
-    print(file)
     # load content of "Monte Carlo values" sheet into a pandas DataFrame
     df_mc_vals = pd.read_excel(file, sheet_name="Monte Carlo values")
 
@@ -94,6 +91,10 @@ def gsa(file):
     # load content of "Total impacts" sheet into a pandas DataFrame
     df_sum_impacts = pd.read_excel(file, sheet_name="Total impacts")
 
+    print("len(df_mc_vals)", len(df_mc_vals))
+    print("len(df_technology_shares)", len(df_technology_shares))
+    print("len(df_sum_impacts)", len(df_sum_impacts))
+
     # open Excel workbook
     with pd.ExcelWriter(file, engine="openpyxl", mode="a") as writer:
 
@@ -109,10 +110,13 @@ def gsa(file):
 start = time.time()
 print(start)
 
-print(Path(directory).glob("*.xlsx"))
 
-with Pool(cpu_count()) as pool:
-    pool.map(gsa, Path(directory).glob("*.xlsx"))
+#with Pool(cpu_count()) as pool:
+#    pool.map(gsa, Path(directory).glob("*.xlsx"))
+
+for file in Path(directory).glob("*.xlsx"):
+    print(file)
+    gsa(file)
 
 end = time.time()
 print(end - start)

@@ -268,7 +268,7 @@ def default_dict_factory():
     return defaultdict(dict)
 
 
-def load_and_normalize_shares(ranges: dict, iterations: int, seed: int) -> dict:
+def load_and_normalize_shares(ranges: dict, iterations: int, ) -> dict:
     """
     Load and normalize shares for parameters to sum to 1 while respecting their specified ranges.
     :param ranges: A dictionary with categories, technologies and market shares data.
@@ -283,7 +283,7 @@ def load_and_normalize_shares(ranges: dict, iterations: int, seed: int) -> dict:
             for y, share in params["share"].items():
                 uncertainty_base = UncertaintyBase.from_dicts(share)
                 random_generator = MCRandomNumberGenerator(
-                    params=uncertainty_base, seed=seed
+                    params=uncertainty_base,
                 )
                 shares[technology_group][y][technology] = np.squeeze(
                     np.array([random_generator.next() for _ in range(iterations)])
@@ -377,7 +377,7 @@ def interpolate_for_year(
         shares[technology_group][target_year][technology] = f(target_year)
 
 
-def generate_samples(years: list, iterations: int = 10, seed: int = None) -> dict:
+def generate_samples(years: list, iterations: int = 10, ) -> dict:
     """
     Generates and adjusts randomly selected shares for parameters to sum to 1
     while respecting their specified ranges, and interpolates missing years.
@@ -387,6 +387,6 @@ def generate_samples(years: list, iterations: int = 10, seed: int = None) -> dic
     :return: A dict with adjusted and interpolated shares for each technology and year.
     """
     ranges = load_subshares()
-    shares = load_and_normalize_shares(ranges, iterations, seed)
+    shares = load_and_normalize_shares(ranges, iterations,)
     interpolate_shares(shares, years)
     return shares
