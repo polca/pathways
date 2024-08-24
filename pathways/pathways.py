@@ -389,9 +389,8 @@ class Pathways:
         # remove keys that are not
         # in self.scenarios.variable.values
         self.mapping = {
-            k: v
-            for k, v in self.mapping.items()
-            if k in self.scenarios.coords["variables"].values
+            k: self.mapping[k]
+            for k in self.scenarios.coords["variables"].values
         }
 
         try:
@@ -516,6 +515,8 @@ class Pathways:
         else:
             for coords, values in results.items():
                 model, scenario, year = coords
+
+                logging.info(f"Variables in lca_results: {self.lca_results.coords['variable'].values}")
 
                 self.lca_results.loc[
                     dict(

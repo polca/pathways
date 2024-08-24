@@ -78198,3 +78198,4079 @@
 - municipal solid waste
 - kilogram
 : Treatment and disposal of nonhazardous waste
+? !!python/tuple
+- metal organic vapor phase epitaxy (MOVPE), for GaAs photovoltaic panel
+- gaAs wafer with nanowires
+- square meter
+: Manufacture of batteries and accumulators
+? !!python/tuple
+- perovskite photovoltaic module assembly
+- perovskite photovoltaic module
+- square meter
+: Manufacture of batteries and accumulators
+? !!python/tuple
+- photovoltaic panel installation, 0.5kWp, perovskite
+- photovoltaic panel, perovskite
+- unit
+: Manufacture of batteries and accumulators
+? !!python/tuple
+- hydrogen supply, hydrogen, from petroleum, by truck, as gaseous, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from petroleum, by truck, as liquid, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from petroleum, by ship, as liquid, over 2000 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from petroleum, by H2 pipeline, as gaseous, over 500
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from electrolysis, PEM, by truck, as gaseous, over
+  500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from electrolysis, PEM, by truck, as liquid, over 500
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from electrolysis, PEM, by ship, as liquid, over 2000
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from electrolysis, PEM, by H2 pipeline, as gaseous,
+  over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from electrolysis, AEC, by truck, as gaseous, over
+  500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from electrolysis, AEC, by truck, as liquid, over 500
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from electrolysis, AEC, by ship, as liquid, over 2000
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from electrolysis, AEC, by H2 pipeline, as gaseous,
+  over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from electrolysis, SOEC, by truck, as gaseous, over
+  500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from electrolysis, SOEC, by truck, as liquid, over
+  500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from electrolysis, SOEC, by ship, as liquid, over 2000
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from electrolysis, SOEC, by H2 pipeline, as gaseous,
+  over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from solar, by truck, as gaseous, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from solar, by truck, as liquid, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from solar, by ship, as liquid, over 2000 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from solar, by H2 pipeline, as gaseous, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from pyrolysis, by truck, as gaseous, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from pyrolysis, by truck, as liquid, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from pyrolysis, by ship, as liquid, over 2000 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from pyrolysis, by H2 pipeline, as gaseous, over 500
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biomass, by truck, as gaseous, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biomass, by truck, as liquid, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biomass, by ship, as liquid, over 2000 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biomass, by H2 pipeline, as gaseous, over 500
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biomass, with CCS, by truck, as gaseous, over
+  500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biomass, with CCS, by truck, as liquid, over 500
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biomass, with CCS, by ship, as liquid, over 2000
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biomass, with CCS, by H2 pipeline, as gaseous,
+  over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from coal, by truck, as gaseous, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from coal, by truck, as liquid, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from coal, by ship, as liquid, over 2000 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from coal, by H2 pipeline, as gaseous, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from coal, with CCS, by truck, as gaseous, over 500
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from coal, with CCS, by truck, as liquid, over 500
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from coal, with CCS, by ship, as liquid, over 2000
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from coal, with CCS, by H2 pipeline, as gaseous, over
+  500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from natural gas, by truck, as gaseous, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from natural gas, by truck, as liquid, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from natural gas, by ship, as liquid, over 2000 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from natural gas, by H2 pipeline, as gaseous, over
+  500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from natural gas, with CCS, by truck, as gaseous, over
+  500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from natural gas, with CCS, by truck, as liquid, over
+  500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from natural gas, with CCS, by ship, as liquid, over
+  2000 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from natural gas, with CCS, by H2 pipeline, as gaseous,
+  over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biogas, by truck, as gaseous, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biogas, by truck, as liquid, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biogas, by ship, as liquid, over 2000 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biogas, by H2 pipeline, as gaseous, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biogas, with CCS, by truck, as gaseous, over 500
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biogas, with CCS, by truck, as liquid, over 500
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biogas, with CCS, by ship, as liquid, over 2000
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biogas, with CCS, by H2 pipeline, as gaseous,
+  over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from petroleum, by truck, as gaseous, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from petroleum, by truck, as liquid, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from petroleum, by ship, as liquid, over 2000 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from petroleum, by H2 pipeline, as gaseous, over 500
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from electrolysis, PEM, by truck, as gaseous, over
+  500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from electrolysis, PEM, by truck, as liquid, over 500
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from electrolysis, PEM, by ship, as liquid, over 2000
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from electrolysis, PEM, by H2 pipeline, as gaseous,
+  over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from electrolysis, AEC, by truck, as gaseous, over
+  500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from electrolysis, AEC, by truck, as liquid, over 500
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from electrolysis, AEC, by ship, as liquid, over 2000
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from electrolysis, AEC, by H2 pipeline, as gaseous,
+  over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from electrolysis, SOEC, by truck, as gaseous, over
+  500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from electrolysis, SOEC, by truck, as liquid, over
+  500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from electrolysis, SOEC, by ship, as liquid, over 2000
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from electrolysis, SOEC, by H2 pipeline, as gaseous,
+  over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from solar, by truck, as gaseous, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from solar, by truck, as liquid, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from solar, by ship, as liquid, over 2000 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from solar, by H2 pipeline, as gaseous, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from pyrolysis, by truck, as gaseous, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from pyrolysis, by truck, as liquid, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from pyrolysis, by ship, as liquid, over 2000 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from pyrolysis, by H2 pipeline, as gaseous, over 500
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biomass, by truck, as gaseous, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biomass, by truck, as liquid, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biomass, by ship, as liquid, over 2000 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biomass, by H2 pipeline, as gaseous, over 500
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biomass, with CCS, by truck, as gaseous, over
+  500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biomass, with CCS, by truck, as liquid, over 500
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biomass, with CCS, by ship, as liquid, over 2000
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biomass, with CCS, by H2 pipeline, as gaseous,
+  over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from coal, by truck, as gaseous, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from coal, by truck, as liquid, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from coal, by ship, as liquid, over 2000 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from coal, by H2 pipeline, as gaseous, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from coal, with CCS, by truck, as gaseous, over 500
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from coal, with CCS, by truck, as liquid, over 500
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from coal, with CCS, by ship, as liquid, over 2000
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from coal, with CCS, by H2 pipeline, as gaseous, over
+  500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from natural gas, by truck, as gaseous, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from natural gas, by truck, as liquid, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from natural gas, by ship, as liquid, over 2000 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from natural gas, by H2 pipeline, as gaseous, over
+  500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from natural gas, with CCS, by truck, as gaseous, over
+  500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from natural gas, with CCS, by truck, as liquid, over
+  500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from natural gas, with CCS, by ship, as liquid, over
+  2000 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from natural gas, with CCS, by H2 pipeline, as gaseous,
+  over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biogas, by truck, as gaseous, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biogas, by truck, as liquid, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biogas, by ship, as liquid, over 2000 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biogas, by H2 pipeline, as gaseous, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biogas, with CCS, by truck, as gaseous, over 500
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biogas, with CCS, by truck, as liquid, over 500
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biogas, with CCS, by ship, as liquid, over 2000
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biogas, with CCS, by H2 pipeline, as gaseous,
+  over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from petroleum, by truck, as gaseous, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from petroleum, by truck, as liquid, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from petroleum, by ship, as liquid, over 2000 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from petroleum, by H2 pipeline, as gaseous, over 500
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from electrolysis, PEM, by truck, as gaseous, over
+  500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from electrolysis, PEM, by truck, as liquid, over 500
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from electrolysis, PEM, by ship, as liquid, over 2000
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from electrolysis, PEM, by H2 pipeline, as gaseous,
+  over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from electrolysis, AEC, by truck, as gaseous, over
+  500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from electrolysis, AEC, by truck, as liquid, over 500
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from electrolysis, AEC, by ship, as liquid, over 2000
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from electrolysis, AEC, by H2 pipeline, as gaseous,
+  over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from electrolysis, SOEC, by truck, as gaseous, over
+  500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from electrolysis, SOEC, by truck, as liquid, over
+  500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from electrolysis, SOEC, by ship, as liquid, over 2000
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from electrolysis, SOEC, by H2 pipeline, as gaseous,
+  over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from solar, by truck, as gaseous, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from solar, by truck, as liquid, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from solar, by ship, as liquid, over 2000 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from solar, by H2 pipeline, as gaseous, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from pyrolysis, by truck, as gaseous, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from pyrolysis, by truck, as liquid, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from pyrolysis, by ship, as liquid, over 2000 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from pyrolysis, by H2 pipeline, as gaseous, over 500
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biomass, by truck, as gaseous, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biomass, by truck, as liquid, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biomass, by ship, as liquid, over 2000 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biomass, by H2 pipeline, as gaseous, over 500
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biomass, with CCS, by truck, as gaseous, over
+  500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biomass, with CCS, by truck, as liquid, over 500
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biomass, with CCS, by ship, as liquid, over 2000
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biomass, with CCS, by H2 pipeline, as gaseous,
+  over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from coal, by truck, as gaseous, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from coal, by truck, as liquid, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from coal, by ship, as liquid, over 2000 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from coal, by H2 pipeline, as gaseous, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from coal, with CCS, by truck, as gaseous, over 500
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from coal, with CCS, by truck, as liquid, over 500
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from coal, with CCS, by ship, as liquid, over 2000
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from coal, with CCS, by H2 pipeline, as gaseous, over
+  500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from natural gas, by truck, as gaseous, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from natural gas, by truck, as liquid, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from natural gas, by ship, as liquid, over 2000 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from natural gas, by H2 pipeline, as gaseous, over
+  500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from natural gas, with CCS, by truck, as gaseous, over
+  500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from natural gas, with CCS, by truck, as liquid, over
+  500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from natural gas, with CCS, by ship, as liquid, over
+  2000 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from natural gas, with CCS, by H2 pipeline, as gaseous,
+  over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biogas, by truck, as gaseous, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biogas, by truck, as liquid, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biogas, by ship, as liquid, over 2000 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biogas, by H2 pipeline, as gaseous, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biogas, with CCS, by truck, as gaseous, over 500
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biogas, with CCS, by truck, as liquid, over 500
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biogas, with CCS, by ship, as liquid, over 2000
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biogas, with CCS, by H2 pipeline, as gaseous,
+  over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from petroleum, by truck, as gaseous, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from petroleum, by truck, as liquid, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from petroleum, by ship, as liquid, over 2000 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from petroleum, by H2 pipeline, as gaseous, over 500
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from electrolysis, PEM, by truck, as gaseous, over
+  500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from electrolysis, PEM, by truck, as liquid, over 500
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from electrolysis, PEM, by ship, as liquid, over 2000
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from electrolysis, PEM, by H2 pipeline, as gaseous,
+  over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from electrolysis, AEC, by truck, as gaseous, over
+  500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from electrolysis, AEC, by truck, as liquid, over 500
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from electrolysis, AEC, by ship, as liquid, over 2000
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from electrolysis, AEC, by H2 pipeline, as gaseous,
+  over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from electrolysis, SOEC, by truck, as gaseous, over
+  500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from electrolysis, SOEC, by truck, as liquid, over
+  500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from electrolysis, SOEC, by ship, as liquid, over 2000
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from electrolysis, SOEC, by H2 pipeline, as gaseous,
+  over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from solar, by truck, as gaseous, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from solar, by truck, as liquid, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from solar, by ship, as liquid, over 2000 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from solar, by H2 pipeline, as gaseous, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from pyrolysis, by truck, as gaseous, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from pyrolysis, by truck, as liquid, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from pyrolysis, by ship, as liquid, over 2000 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from pyrolysis, by H2 pipeline, as gaseous, over 500
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biomass, by truck, as gaseous, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biomass, by truck, as liquid, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biomass, by ship, as liquid, over 2000 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biomass, by H2 pipeline, as gaseous, over 500
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biomass, with CCS, by truck, as gaseous, over
+  500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biomass, with CCS, by truck, as liquid, over 500
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biomass, with CCS, by ship, as liquid, over 2000
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biomass, with CCS, by H2 pipeline, as gaseous,
+  over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from coal, by truck, as gaseous, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from coal, by truck, as liquid, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from coal, by ship, as liquid, over 2000 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from coal, by H2 pipeline, as gaseous, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from coal, with CCS, by truck, as gaseous, over 500
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from coal, with CCS, by truck, as liquid, over 500
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from coal, with CCS, by ship, as liquid, over 2000
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from coal, with CCS, by H2 pipeline, as gaseous, over
+  500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from natural gas, by truck, as gaseous, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from natural gas, by truck, as liquid, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from natural gas, by ship, as liquid, over 2000 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from natural gas, by H2 pipeline, as gaseous, over
+  500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from natural gas, with CCS, by truck, as gaseous, over
+  500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from natural gas, with CCS, by truck, as liquid, over
+  500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from natural gas, with CCS, by ship, as liquid, over
+  2000 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from natural gas, with CCS, by H2 pipeline, as gaseous,
+  over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biogas, by truck, as gaseous, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biogas, by truck, as liquid, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biogas, by ship, as liquid, over 2000 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biogas, by H2 pipeline, as gaseous, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biogas, with CCS, by truck, as gaseous, over 500
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biogas, with CCS, by truck, as liquid, over 500
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biogas, with CCS, by ship, as liquid, over 2000
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biogas, with CCS, by H2 pipeline, as gaseous,
+  over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from petroleum, by truck, as gaseous, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from petroleum, by truck, as liquid, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from petroleum, by ship, as liquid, over 2000 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from petroleum, by H2 pipeline, as gaseous, over 500
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from electrolysis, PEM, by truck, as gaseous, over
+  500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from electrolysis, PEM, by truck, as liquid, over 500
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from electrolysis, PEM, by ship, as liquid, over 2000
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from electrolysis, PEM, by H2 pipeline, as gaseous,
+  over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from electrolysis, AEC, by truck, as gaseous, over
+  500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from electrolysis, AEC, by truck, as liquid, over 500
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from electrolysis, AEC, by ship, as liquid, over 2000
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from electrolysis, AEC, by H2 pipeline, as gaseous,
+  over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from electrolysis, SOEC, by truck, as gaseous, over
+  500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from electrolysis, SOEC, by truck, as liquid, over
+  500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from electrolysis, SOEC, by ship, as liquid, over 2000
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from electrolysis, SOEC, by H2 pipeline, as gaseous,
+  over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from solar, by truck, as gaseous, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from solar, by truck, as liquid, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from solar, by ship, as liquid, over 2000 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from solar, by H2 pipeline, as gaseous, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from pyrolysis, by truck, as gaseous, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from pyrolysis, by truck, as liquid, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from pyrolysis, by ship, as liquid, over 2000 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from pyrolysis, by H2 pipeline, as gaseous, over 500
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biomass, by truck, as gaseous, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biomass, by truck, as liquid, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biomass, by ship, as liquid, over 2000 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biomass, by H2 pipeline, as gaseous, over 500
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biomass, with CCS, by truck, as gaseous, over
+  500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biomass, with CCS, by truck, as liquid, over 500
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biomass, with CCS, by ship, as liquid, over 2000
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biomass, with CCS, by H2 pipeline, as gaseous,
+  over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from coal, by truck, as gaseous, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from coal, by truck, as liquid, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from coal, by ship, as liquid, over 2000 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from coal, by H2 pipeline, as gaseous, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from coal, with CCS, by truck, as gaseous, over 500
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from coal, with CCS, by truck, as liquid, over 500
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from coal, with CCS, by ship, as liquid, over 2000
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from coal, with CCS, by H2 pipeline, as gaseous, over
+  500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from natural gas, by truck, as gaseous, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from natural gas, by truck, as liquid, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from natural gas, by ship, as liquid, over 2000 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from natural gas, by H2 pipeline, as gaseous, over
+  500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from natural gas, with CCS, by truck, as gaseous, over
+  500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from natural gas, with CCS, by truck, as liquid, over
+  500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from natural gas, with CCS, by ship, as liquid, over
+  2000 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from natural gas, with CCS, by H2 pipeline, as gaseous,
+  over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biogas, by truck, as gaseous, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biogas, by truck, as liquid, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biogas, by ship, as liquid, over 2000 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biogas, by H2 pipeline, as gaseous, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biogas, with CCS, by truck, as gaseous, over 500
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biogas, with CCS, by truck, as liquid, over 500
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biogas, with CCS, by ship, as liquid, over 2000
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biogas, with CCS, by H2 pipeline, as gaseous,
+  over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from petroleum, by truck, as gaseous, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from petroleum, by truck, as liquid, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from petroleum, by ship, as liquid, over 2000 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from petroleum, by H2 pipeline, as gaseous, over 500
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from electrolysis, PEM, by truck, as gaseous, over
+  500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from electrolysis, PEM, by truck, as liquid, over 500
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from electrolysis, PEM, by ship, as liquid, over 2000
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from electrolysis, PEM, by H2 pipeline, as gaseous,
+  over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from electrolysis, AEC, by truck, as gaseous, over
+  500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from electrolysis, AEC, by truck, as liquid, over 500
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from electrolysis, AEC, by ship, as liquid, over 2000
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from electrolysis, AEC, by H2 pipeline, as gaseous,
+  over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from electrolysis, SOEC, by truck, as gaseous, over
+  500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from electrolysis, SOEC, by truck, as liquid, over
+  500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from electrolysis, SOEC, by ship, as liquid, over 2000
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from electrolysis, SOEC, by H2 pipeline, as gaseous,
+  over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from solar, by truck, as gaseous, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from solar, by truck, as liquid, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from solar, by ship, as liquid, over 2000 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from solar, by H2 pipeline, as gaseous, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from pyrolysis, by truck, as gaseous, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from pyrolysis, by truck, as liquid, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from pyrolysis, by ship, as liquid, over 2000 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from pyrolysis, by H2 pipeline, as gaseous, over 500
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biomass, by truck, as gaseous, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biomass, by truck, as liquid, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biomass, by ship, as liquid, over 2000 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biomass, by H2 pipeline, as gaseous, over 500
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biomass, with CCS, by truck, as gaseous, over
+  500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biomass, with CCS, by truck, as liquid, over 500
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biomass, with CCS, by ship, as liquid, over 2000
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biomass, with CCS, by H2 pipeline, as gaseous,
+  over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from coal, by truck, as gaseous, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from coal, by truck, as liquid, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from coal, by ship, as liquid, over 2000 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from coal, by H2 pipeline, as gaseous, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from coal, with CCS, by truck, as gaseous, over 500
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from coal, with CCS, by truck, as liquid, over 500
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from coal, with CCS, by ship, as liquid, over 2000
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from coal, with CCS, by H2 pipeline, as gaseous, over
+  500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from natural gas, by truck, as gaseous, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from natural gas, by truck, as liquid, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from natural gas, by ship, as liquid, over 2000 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from natural gas, by H2 pipeline, as gaseous, over
+  500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from natural gas, with CCS, by truck, as gaseous, over
+  500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from natural gas, with CCS, by truck, as liquid, over
+  500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from natural gas, with CCS, by ship, as liquid, over
+  2000 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from natural gas, with CCS, by H2 pipeline, as gaseous,
+  over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biogas, by truck, as gaseous, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biogas, by truck, as liquid, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biogas, by ship, as liquid, over 2000 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biogas, by H2 pipeline, as gaseous, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biogas, with CCS, by truck, as gaseous, over 500
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biogas, with CCS, by truck, as liquid, over 500
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biogas, with CCS, by ship, as liquid, over 2000
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biogas, with CCS, by H2 pipeline, as gaseous,
+  over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from petroleum, by truck, as gaseous, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from petroleum, by truck, as liquid, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from petroleum, by ship, as liquid, over 2000 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from petroleum, by H2 pipeline, as gaseous, over 500
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from electrolysis, PEM, by truck, as gaseous, over
+  500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from electrolysis, PEM, by truck, as liquid, over 500
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from electrolysis, PEM, by ship, as liquid, over 2000
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from electrolysis, PEM, by H2 pipeline, as gaseous,
+  over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from electrolysis, AEC, by truck, as gaseous, over
+  500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from electrolysis, AEC, by truck, as liquid, over 500
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from electrolysis, AEC, by ship, as liquid, over 2000
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from electrolysis, AEC, by H2 pipeline, as gaseous,
+  over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from electrolysis, SOEC, by truck, as gaseous, over
+  500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from electrolysis, SOEC, by truck, as liquid, over
+  500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from electrolysis, SOEC, by ship, as liquid, over 2000
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from electrolysis, SOEC, by H2 pipeline, as gaseous,
+  over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from solar, by truck, as gaseous, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from solar, by truck, as liquid, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from solar, by ship, as liquid, over 2000 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from solar, by H2 pipeline, as gaseous, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from pyrolysis, by truck, as gaseous, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from pyrolysis, by truck, as liquid, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from pyrolysis, by ship, as liquid, over 2000 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from pyrolysis, by H2 pipeline, as gaseous, over 500
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biomass, by truck, as gaseous, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biomass, by truck, as liquid, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biomass, by ship, as liquid, over 2000 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biomass, by H2 pipeline, as gaseous, over 500
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biomass, with CCS, by truck, as gaseous, over
+  500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biomass, with CCS, by truck, as liquid, over 500
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biomass, with CCS, by ship, as liquid, over 2000
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biomass, with CCS, by H2 pipeline, as gaseous,
+  over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from coal, by truck, as gaseous, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from coal, by truck, as liquid, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from coal, by ship, as liquid, over 2000 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from coal, by H2 pipeline, as gaseous, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from coal, with CCS, by truck, as gaseous, over 500
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from coal, with CCS, by truck, as liquid, over 500
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from coal, with CCS, by ship, as liquid, over 2000
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from coal, with CCS, by H2 pipeline, as gaseous, over
+  500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from natural gas, by truck, as gaseous, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from natural gas, by truck, as liquid, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from natural gas, by ship, as liquid, over 2000 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from natural gas, by H2 pipeline, as gaseous, over
+  500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from natural gas, with CCS, by truck, as gaseous, over
+  500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from natural gas, with CCS, by truck, as liquid, over
+  500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from natural gas, with CCS, by ship, as liquid, over
+  2000 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from natural gas, with CCS, by H2 pipeline, as gaseous,
+  over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biogas, by truck, as gaseous, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biogas, by truck, as liquid, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biogas, by ship, as liquid, over 2000 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biogas, by H2 pipeline, as gaseous, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biogas, with CCS, by truck, as gaseous, over 500
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biogas, with CCS, by truck, as liquid, over 500
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biogas, with CCS, by ship, as liquid, over 2000
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biogas, with CCS, by H2 pipeline, as gaseous,
+  over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from petroleum, by truck, as gaseous, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from petroleum, by truck, as liquid, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from petroleum, by ship, as liquid, over 2000 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from petroleum, by H2 pipeline, as gaseous, over 500
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from electrolysis, PEM, by truck, as gaseous, over
+  500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from electrolysis, PEM, by truck, as liquid, over 500
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from electrolysis, PEM, by ship, as liquid, over 2000
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from electrolysis, PEM, by H2 pipeline, as gaseous,
+  over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from electrolysis, AEC, by truck, as gaseous, over
+  500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from electrolysis, AEC, by truck, as liquid, over 500
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from electrolysis, AEC, by ship, as liquid, over 2000
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from electrolysis, AEC, by H2 pipeline, as gaseous,
+  over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from electrolysis, SOEC, by truck, as gaseous, over
+  500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from electrolysis, SOEC, by truck, as liquid, over
+  500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from electrolysis, SOEC, by ship, as liquid, over 2000
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from electrolysis, SOEC, by H2 pipeline, as gaseous,
+  over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from solar, by truck, as gaseous, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from solar, by truck, as liquid, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from solar, by ship, as liquid, over 2000 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from solar, by H2 pipeline, as gaseous, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from pyrolysis, by truck, as gaseous, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from pyrolysis, by truck, as liquid, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from pyrolysis, by ship, as liquid, over 2000 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from pyrolysis, by H2 pipeline, as gaseous, over 500
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biomass, by truck, as gaseous, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biomass, by truck, as liquid, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biomass, by ship, as liquid, over 2000 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biomass, by H2 pipeline, as gaseous, over 500
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biomass, with CCS, by truck, as gaseous, over
+  500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biomass, with CCS, by truck, as liquid, over 500
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biomass, with CCS, by ship, as liquid, over 2000
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biomass, with CCS, by H2 pipeline, as gaseous,
+  over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from coal, by truck, as gaseous, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from coal, by truck, as liquid, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from coal, by ship, as liquid, over 2000 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from coal, by H2 pipeline, as gaseous, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from coal, with CCS, by truck, as gaseous, over 500
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from coal, with CCS, by truck, as liquid, over 500
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from coal, with CCS, by ship, as liquid, over 2000
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from coal, with CCS, by H2 pipeline, as gaseous, over
+  500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from natural gas, by truck, as gaseous, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from natural gas, by truck, as liquid, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from natural gas, by ship, as liquid, over 2000 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from natural gas, by H2 pipeline, as gaseous, over
+  500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from natural gas, with CCS, by truck, as gaseous, over
+  500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from natural gas, with CCS, by truck, as liquid, over
+  500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from natural gas, with CCS, by ship, as liquid, over
+  2000 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from natural gas, with CCS, by H2 pipeline, as gaseous,
+  over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biogas, by truck, as gaseous, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biogas, by truck, as liquid, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biogas, by ship, as liquid, over 2000 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biogas, by H2 pipeline, as gaseous, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biogas, with CCS, by truck, as gaseous, over 500
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biogas, with CCS, by truck, as liquid, over 500
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biogas, with CCS, by ship, as liquid, over 2000
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biogas, with CCS, by H2 pipeline, as gaseous,
+  over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from petroleum, by truck, as gaseous, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from petroleum, by truck, as liquid, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from petroleum, by ship, as liquid, over 2000 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from petroleum, by H2 pipeline, as gaseous, over 500
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from electrolysis, PEM, by truck, as gaseous, over
+  500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from electrolysis, PEM, by truck, as liquid, over 500
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from electrolysis, PEM, by ship, as liquid, over 2000
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from electrolysis, PEM, by H2 pipeline, as gaseous,
+  over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from electrolysis, AEC, by truck, as gaseous, over
+  500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from electrolysis, AEC, by truck, as liquid, over 500
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from electrolysis, AEC, by ship, as liquid, over 2000
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from electrolysis, AEC, by H2 pipeline, as gaseous,
+  over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from electrolysis, SOEC, by truck, as gaseous, over
+  500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from electrolysis, SOEC, by truck, as liquid, over
+  500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from electrolysis, SOEC, by ship, as liquid, over 2000
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from electrolysis, SOEC, by H2 pipeline, as gaseous,
+  over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from solar, by truck, as gaseous, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from solar, by truck, as liquid, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from solar, by ship, as liquid, over 2000 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from solar, by H2 pipeline, as gaseous, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from pyrolysis, by truck, as gaseous, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from pyrolysis, by truck, as liquid, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from pyrolysis, by ship, as liquid, over 2000 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from pyrolysis, by H2 pipeline, as gaseous, over 500
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biomass, by truck, as gaseous, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biomass, by truck, as liquid, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biomass, by ship, as liquid, over 2000 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biomass, by H2 pipeline, as gaseous, over 500
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biomass, with CCS, by truck, as gaseous, over
+  500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biomass, with CCS, by truck, as liquid, over 500
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biomass, with CCS, by ship, as liquid, over 2000
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biomass, with CCS, by H2 pipeline, as gaseous,
+  over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from coal, by truck, as gaseous, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from coal, by truck, as liquid, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from coal, by ship, as liquid, over 2000 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from coal, by H2 pipeline, as gaseous, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from coal, with CCS, by truck, as gaseous, over 500
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from coal, with CCS, by truck, as liquid, over 500
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from coal, with CCS, by ship, as liquid, over 2000
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from coal, with CCS, by H2 pipeline, as gaseous, over
+  500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from natural gas, by truck, as gaseous, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from natural gas, by truck, as liquid, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from natural gas, by ship, as liquid, over 2000 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from natural gas, by H2 pipeline, as gaseous, over
+  500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from natural gas, with CCS, by truck, as gaseous, over
+  500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from natural gas, with CCS, by truck, as liquid, over
+  500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from natural gas, with CCS, by ship, as liquid, over
+  2000 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from natural gas, with CCS, by H2 pipeline, as gaseous,
+  over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biogas, by truck, as gaseous, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biogas, by truck, as liquid, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biogas, by ship, as liquid, over 2000 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biogas, by H2 pipeline, as gaseous, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biogas, with CCS, by truck, as gaseous, over 500
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biogas, with CCS, by truck, as liquid, over 500
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biogas, with CCS, by ship, as liquid, over 2000
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biogas, with CCS, by H2 pipeline, as gaseous,
+  over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from petroleum, by truck, as gaseous, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from petroleum, by truck, as liquid, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from petroleum, by ship, as liquid, over 2000 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from petroleum, by H2 pipeline, as gaseous, over 500
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from electrolysis, PEM, by truck, as gaseous, over
+  500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from electrolysis, PEM, by truck, as liquid, over 500
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from electrolysis, PEM, by ship, as liquid, over 2000
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from electrolysis, PEM, by H2 pipeline, as gaseous,
+  over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from electrolysis, AEC, by truck, as gaseous, over
+  500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from electrolysis, AEC, by truck, as liquid, over 500
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from electrolysis, AEC, by ship, as liquid, over 2000
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from electrolysis, AEC, by H2 pipeline, as gaseous,
+  over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from electrolysis, SOEC, by truck, as gaseous, over
+  500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from electrolysis, SOEC, by truck, as liquid, over
+  500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from electrolysis, SOEC, by ship, as liquid, over 2000
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from electrolysis, SOEC, by H2 pipeline, as gaseous,
+  over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from solar, by truck, as gaseous, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from solar, by truck, as liquid, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from solar, by ship, as liquid, over 2000 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from solar, by H2 pipeline, as gaseous, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from pyrolysis, by truck, as gaseous, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from pyrolysis, by truck, as liquid, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from pyrolysis, by ship, as liquid, over 2000 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from pyrolysis, by H2 pipeline, as gaseous, over 500
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biomass, by truck, as gaseous, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biomass, by truck, as liquid, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biomass, by ship, as liquid, over 2000 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biomass, by H2 pipeline, as gaseous, over 500
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biomass, with CCS, by truck, as gaseous, over
+  500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biomass, with CCS, by truck, as liquid, over 500
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biomass, with CCS, by ship, as liquid, over 2000
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biomass, with CCS, by H2 pipeline, as gaseous,
+  over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from coal, by truck, as gaseous, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from coal, by truck, as liquid, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from coal, by ship, as liquid, over 2000 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from coal, by H2 pipeline, as gaseous, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from coal, with CCS, by truck, as gaseous, over 500
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from coal, with CCS, by truck, as liquid, over 500
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from coal, with CCS, by ship, as liquid, over 2000
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from coal, with CCS, by H2 pipeline, as gaseous, over
+  500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from natural gas, by truck, as gaseous, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from natural gas, by truck, as liquid, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from natural gas, by ship, as liquid, over 2000 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from natural gas, by H2 pipeline, as gaseous, over
+  500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from natural gas, with CCS, by truck, as gaseous, over
+  500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from natural gas, with CCS, by truck, as liquid, over
+  500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from natural gas, with CCS, by ship, as liquid, over
+  2000 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from natural gas, with CCS, by H2 pipeline, as gaseous,
+  over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biogas, by truck, as gaseous, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biogas, by truck, as liquid, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biogas, by ship, as liquid, over 2000 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biogas, by H2 pipeline, as gaseous, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biogas, with CCS, by truck, as gaseous, over 500
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biogas, with CCS, by truck, as liquid, over 500
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biogas, with CCS, by ship, as liquid, over 2000
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biogas, with CCS, by H2 pipeline, as gaseous,
+  over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from petroleum, by truck, as gaseous, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from petroleum, by truck, as liquid, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from petroleum, by ship, as liquid, over 2000 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from petroleum, by H2 pipeline, as gaseous, over 500
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from electrolysis, PEM, by truck, as gaseous, over
+  500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from electrolysis, PEM, by truck, as liquid, over 500
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from electrolysis, PEM, by ship, as liquid, over 2000
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from electrolysis, PEM, by H2 pipeline, as gaseous,
+  over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from electrolysis, AEC, by truck, as gaseous, over
+  500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from electrolysis, AEC, by truck, as liquid, over 500
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from electrolysis, AEC, by ship, as liquid, over 2000
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from electrolysis, AEC, by H2 pipeline, as gaseous,
+  over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from electrolysis, SOEC, by truck, as gaseous, over
+  500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from electrolysis, SOEC, by truck, as liquid, over
+  500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from electrolysis, SOEC, by ship, as liquid, over 2000
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from electrolysis, SOEC, by H2 pipeline, as gaseous,
+  over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from solar, by truck, as gaseous, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from solar, by truck, as liquid, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from solar, by ship, as liquid, over 2000 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from solar, by H2 pipeline, as gaseous, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from pyrolysis, by truck, as gaseous, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from pyrolysis, by truck, as liquid, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from pyrolysis, by ship, as liquid, over 2000 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from pyrolysis, by H2 pipeline, as gaseous, over 500
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biomass, by truck, as gaseous, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biomass, by truck, as liquid, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biomass, by ship, as liquid, over 2000 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biomass, by H2 pipeline, as gaseous, over 500
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biomass, with CCS, by truck, as gaseous, over
+  500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biomass, with CCS, by truck, as liquid, over 500
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biomass, with CCS, by ship, as liquid, over 2000
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biomass, with CCS, by H2 pipeline, as gaseous,
+  over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from coal, by truck, as gaseous, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from coal, by truck, as liquid, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from coal, by ship, as liquid, over 2000 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from coal, by H2 pipeline, as gaseous, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from coal, with CCS, by truck, as gaseous, over 500
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from coal, with CCS, by truck, as liquid, over 500
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from coal, with CCS, by ship, as liquid, over 2000
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from coal, with CCS, by H2 pipeline, as gaseous, over
+  500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from natural gas, by truck, as gaseous, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from natural gas, by truck, as liquid, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from natural gas, by ship, as liquid, over 2000 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from natural gas, by H2 pipeline, as gaseous, over
+  500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from natural gas, with CCS, by truck, as gaseous, over
+  500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from natural gas, with CCS, by truck, as liquid, over
+  500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from natural gas, with CCS, by ship, as liquid, over
+  2000 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from natural gas, with CCS, by H2 pipeline, as gaseous,
+  over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biogas, by truck, as gaseous, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biogas, by truck, as liquid, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biogas, by ship, as liquid, over 2000 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biogas, by H2 pipeline, as gaseous, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biogas, with CCS, by truck, as gaseous, over 500
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biogas, with CCS, by truck, as liquid, over 500
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biogas, with CCS, by ship, as liquid, over 2000
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biogas, with CCS, by H2 pipeline, as gaseous,
+  over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from petroleum, by truck, as gaseous, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from petroleum, by truck, as liquid, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from petroleum, by ship, as liquid, over 2000 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from petroleum, by H2 pipeline, as gaseous, over 500
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from electrolysis, PEM, by truck, as gaseous, over
+  500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from electrolysis, PEM, by truck, as liquid, over 500
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from electrolysis, PEM, by ship, as liquid, over 2000
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from electrolysis, PEM, by H2 pipeline, as gaseous,
+  over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from electrolysis, AEC, by truck, as gaseous, over
+  500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from electrolysis, AEC, by truck, as liquid, over 500
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from electrolysis, AEC, by ship, as liquid, over 2000
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from electrolysis, AEC, by H2 pipeline, as gaseous,
+  over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from electrolysis, SOEC, by truck, as gaseous, over
+  500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from electrolysis, SOEC, by truck, as liquid, over
+  500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from electrolysis, SOEC, by ship, as liquid, over 2000
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from electrolysis, SOEC, by H2 pipeline, as gaseous,
+  over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from solar, by truck, as gaseous, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from solar, by truck, as liquid, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from solar, by ship, as liquid, over 2000 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from solar, by H2 pipeline, as gaseous, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from pyrolysis, by truck, as gaseous, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from pyrolysis, by truck, as liquid, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from pyrolysis, by ship, as liquid, over 2000 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from pyrolysis, by H2 pipeline, as gaseous, over 500
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biomass, by truck, as gaseous, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biomass, by truck, as liquid, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biomass, by ship, as liquid, over 2000 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biomass, by H2 pipeline, as gaseous, over 500
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biomass, with CCS, by truck, as gaseous, over
+  500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biomass, with CCS, by truck, as liquid, over 500
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biomass, with CCS, by ship, as liquid, over 2000
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biomass, with CCS, by H2 pipeline, as gaseous,
+  over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from coal, by truck, as gaseous, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from coal, by truck, as liquid, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from coal, by ship, as liquid, over 2000 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from coal, by H2 pipeline, as gaseous, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from coal, with CCS, by truck, as gaseous, over 500
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from coal, with CCS, by truck, as liquid, over 500
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from coal, with CCS, by ship, as liquid, over 2000
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from coal, with CCS, by H2 pipeline, as gaseous, over
+  500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from natural gas, by truck, as gaseous, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from natural gas, by truck, as liquid, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from natural gas, by ship, as liquid, over 2000 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from natural gas, by H2 pipeline, as gaseous, over
+  500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from natural gas, with CCS, by truck, as gaseous, over
+  500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from natural gas, with CCS, by truck, as liquid, over
+  500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from natural gas, with CCS, by ship, as liquid, over
+  2000 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from natural gas, with CCS, by H2 pipeline, as gaseous,
+  over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biogas, by truck, as gaseous, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biogas, by truck, as liquid, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biogas, by ship, as liquid, over 2000 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biogas, by H2 pipeline, as gaseous, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biogas, with CCS, by truck, as gaseous, over 500
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biogas, with CCS, by truck, as liquid, over 500
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biogas, with CCS, by ship, as liquid, over 2000
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biogas, with CCS, by H2 pipeline, as gaseous,
+  over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from petroleum, by truck, as gaseous, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from petroleum, by truck, as liquid, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from petroleum, by ship, as liquid, over 2000 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from petroleum, by H2 pipeline, as gaseous, over 500
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from electrolysis, PEM, by truck, as gaseous, over
+  500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from electrolysis, PEM, by truck, as liquid, over 500
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from electrolysis, PEM, by ship, as liquid, over 2000
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from electrolysis, PEM, by H2 pipeline, as gaseous,
+  over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from electrolysis, AEC, by truck, as gaseous, over
+  500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from electrolysis, AEC, by truck, as liquid, over 500
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from electrolysis, AEC, by ship, as liquid, over 2000
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from electrolysis, AEC, by H2 pipeline, as gaseous,
+  over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from electrolysis, SOEC, by truck, as gaseous, over
+  500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from electrolysis, SOEC, by truck, as liquid, over
+  500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from electrolysis, SOEC, by ship, as liquid, over 2000
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from electrolysis, SOEC, by H2 pipeline, as gaseous,
+  over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from solar, by truck, as gaseous, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from solar, by truck, as liquid, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from solar, by ship, as liquid, over 2000 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from solar, by H2 pipeline, as gaseous, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from pyrolysis, by truck, as gaseous, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from pyrolysis, by truck, as liquid, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from pyrolysis, by ship, as liquid, over 2000 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from pyrolysis, by H2 pipeline, as gaseous, over 500
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biomass, by truck, as gaseous, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biomass, by truck, as liquid, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biomass, by ship, as liquid, over 2000 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biomass, by H2 pipeline, as gaseous, over 500
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biomass, with CCS, by truck, as gaseous, over
+  500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biomass, with CCS, by truck, as liquid, over 500
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biomass, with CCS, by ship, as liquid, over 2000
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biomass, with CCS, by H2 pipeline, as gaseous,
+  over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from coal, by truck, as gaseous, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from coal, by truck, as liquid, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from coal, by ship, as liquid, over 2000 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from coal, by H2 pipeline, as gaseous, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from coal, with CCS, by truck, as gaseous, over 500
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from coal, with CCS, by truck, as liquid, over 500
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from coal, with CCS, by ship, as liquid, over 2000
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from coal, with CCS, by H2 pipeline, as gaseous, over
+  500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from natural gas, by truck, as gaseous, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from natural gas, by truck, as liquid, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from natural gas, by ship, as liquid, over 2000 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from natural gas, by H2 pipeline, as gaseous, over
+  500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from natural gas, with CCS, by truck, as gaseous, over
+  500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from natural gas, with CCS, by truck, as liquid, over
+  500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from natural gas, with CCS, by ship, as liquid, over
+  2000 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from natural gas, with CCS, by H2 pipeline, as gaseous,
+  over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biogas, by truck, as gaseous, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biogas, by truck, as liquid, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biogas, by ship, as liquid, over 2000 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biogas, by H2 pipeline, as gaseous, over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biogas, with CCS, by truck, as gaseous, over 500
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biogas, with CCS, by truck, as liquid, over 500
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biogas, with CCS, by ship, as liquid, over 2000
+  km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- hydrogen supply, hydrogen, from biogas, with CCS, by H2 pipeline, as gaseous,
+  over 500 km
+- hydrogen, 700 bar
+- kilogram
+: Manufacture of synthetic fuels
+? !!python/tuple
+- electricity supply, from stationary 14.4 kWh LFP battery
+- electricity, high voltage
+- kilowatt hour
+: Manufacture of batteries and accumulators

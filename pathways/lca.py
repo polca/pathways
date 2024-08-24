@@ -236,7 +236,6 @@ def create_functional_units(
     variables,
     vars_idx,
     units_map,
-    demand_cutoff,
 ) -> [dict, dict]:
     variables_demand = {}
 
@@ -337,7 +336,8 @@ def process_region(data: Tuple) -> Dict[str, str | List[str] | List[int]]:
             filtered_idx = idx[idx != -1]
 
             if filtered_idx.size > 0:
-                # Assign the filtered index array to the dict_loc_cat with (cat, loc) as key
+                # Assign the filtered index array
+                # to the dict_loc_cat with (cat, loc) as key
                 dict_loc_cat[(cat_counter, loc_counter)] = filtered_idx
 
             loc_counter += 1
@@ -348,6 +348,9 @@ def process_region(data: Tuple) -> Dict[str, str | List[str] | List[int]]:
         with CustomFilter("(almost) singular matrix"):
             lca.lci()
 
+        if debug:
+            logging.info(f"Iterations no.: {use_distributions}.")
+
         # Create a numpy array with the results
         inventory_results = np.array(
             [
@@ -355,6 +358,13 @@ def process_region(data: Tuple) -> Dict[str, str | List[str] | List[int]]:
                 for value in lca.inventories.values()
             ]
         )
+
+        if debug:
+            logging.info(f"Shape of inventory_results: {inventory_results.shape}")
+
+        if debug:
+            for fu, inventory in lca.inventories.items():
+                logging.info(f"Functional unit: {fu}. Impact: {(characterization_matrix @ inventory).sum()}")
 
         iter_results = np.zeros(
             (
@@ -365,8 +375,15 @@ def process_region(data: Tuple) -> Dict[str, str | List[str] | List[int]]:
             )
         )
 
+        if debug:
+            logging.info(f"Shape of iter_results: {iter_results.shape}")
+
         for (cat, loc), idx in dict_loc_cat.items():
             iter_results[:, :, cat, loc] = inventory_results[:, :, idx].sum(axis=2)
+
+        if debug:
+            for f, fu in enumerate(lca.inventories.keys()):
+                logging.info(f"Functional unit: {fu}. Impact: {iter_results[f].sum()}")
 
         # Save iteration results to disk
         iter_results_filepath = DIR_CACHED_DB / f"iter_results_{uuid.uuid4()}.npz"
@@ -452,6 +469,10 @@ def process_region(data: Tuple) -> Dict[str, str | List[str] | List[int]]:
         "iterations_results": iter_results_files,
         "variables": {k: v["demand"] for k, v in fus_details.items()},
     }
+
+    if debug:
+        logging.info(f"d: {d}")
+        logging.info(f"FUs: {list(lca.inventories.keys())}")
 
     if use_distributions > 0:
         d["uncertainty_params"] = [
@@ -594,8 +615,16 @@ def _calculate_year(args: tuple):
             variables=variables,
             vars_idx=vars_info[region],
             units_map=units,
-            demand_cutoff=demand_cutoff,
         )
+
+        if debug:
+            logging.info(
+                f"Functional units created. "
+                f"Total number of activities: {len(fus)}"
+            )
+            for fu in fus:
+                logging.info(f"Functional unit: {fu}, demand: {fus[fu]}. Details: {fus_details[fu]}")
+            logging.info(f"variables: {variables}")
 
         lca = bc.MultiLCA(
             demands=fus,

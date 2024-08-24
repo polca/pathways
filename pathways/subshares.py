@@ -223,6 +223,8 @@ def adjust_matrix_based_on_shares(
     :return: Tuple containing the data, indices, and signs.
     """
 
+    final_amounts = defaultdict(float)
+
     # get coordinates of nonzero values in the technosphere matrix
     nz_row, nz_col = lca.technosphere_matrix.nonzero()
 
@@ -238,24 +240,43 @@ def adjust_matrix_based_on_shares(
             for technology in technologies.values():
                 technology["consumer_idx"] = get_nz_col_indices(technology["idx"])
 
-    list_indices, list_amounts = [], []
-
     for tech_category, regions in shares_dict.items():
         for region, technologies in regions.items():
             for name, tech in technologies.items():
                 for consumer in tech["consumer_idx"]:
                     initial_amount = lca.technosphere_matrix[tech["idx"], consumer]
-                    amounts = initial_amount * subshares[tech_category][year][name] * -1
-                    list_amounts.append(tuple(amounts))
-                    list_indices.append((tech["idx"], consumer))
+
+                    subshare = subshares[tech_category][year][name]
+
+                    # Distribute the initial amount based on the subshare of the current technology
+                    split_amount = initial_amount * subshare * -1
+
+                    # Add the split amount to the combined amount for this technology and consumer
+                    final_amounts[(tech["idx"], consumer)] += split_amount
+
                     for other_supplier, other_supplier_tech in technologies.items():
                         if other_supplier != name:
-                            amounts = (
+                            additional_amount = (
                                 initial_amount
                                 * subshares[tech_category][year][other_supplier]
+                                * -1
                             )
-                            list_indices.append((other_supplier_tech["idx"], consumer))
-                            list_amounts.append(tuple(amounts * -1))
+                            final_amounts[
+                                (other_supplier_tech["idx"], consumer)
+                            ] += additional_amount
+
+    # Prepare the list of indices and amounts for the modified technosphere matrix
+    list_indices = []
+    list_amounts = []
+
+    # Now, append the combined amounts to list_amounts and list_indices
+    for (tech_idx, consumer_idx), total_amount in final_amounts.items():
+        list_indices.append((tech_idx, consumer_idx))
+        list_amounts.append(tuple(total_amount))
+
+        logging.info(
+            f"Final combined amount for tech index {tech_idx} to consumer index {consumer_idx}: {total_amount}"
+        )
 
     indices = np.array(list_indices, dtype=bwp.INDICES_DTYPE)
     data = np.array(list_amounts)
