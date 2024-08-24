@@ -364,7 +364,9 @@ def process_region(data: Tuple) -> Dict[str, str | List[str] | List[int]]:
 
         if debug:
             for fu, inventory in lca.inventories.items():
-                logging.info(f"Functional unit: {fu}. Impact: {(characterization_matrix @ inventory).sum()}")
+                logging.info(
+                    f"Functional unit: {fu}. Impact: {(characterization_matrix @ inventory).sum()}"
+                )
 
         iter_results = np.zeros(
             (
@@ -619,11 +621,12 @@ def _calculate_year(args: tuple):
 
         if debug:
             logging.info(
-                f"Functional units created. "
-                f"Total number of activities: {len(fus)}"
+                f"Functional units created. " f"Total number of activities: {len(fus)}"
             )
             for fu in fus:
-                logging.info(f"Functional unit: {fu}, demand: {fus[fu]}. Details: {fus_details[fu]}")
+                logging.info(
+                    f"Functional unit: {fu}, demand: {fus[fu]}. Details: {fus_details[fu]}"
+                )
             logging.info(f"variables: {variables}")
 
         lca = bc.MultiLCA(
