@@ -46,6 +46,14 @@ or alternatively, you can clone the repository and install it from the source:
     
 ```
 
+``pathways`` is also available via anaconda:
+
+```bash
+
+    conda install romainsacchi::pathways
+
+```
+
 
 ## Usage
 
