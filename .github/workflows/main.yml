@@ -13,11 +13,6 @@ jobs:
         with:
           args: "./"
 
-      - name: Run isort
-        uses: jamescurtin/isort-action@master
-        with:
-          configuration: --profile black
-
       - name: Check for modified files
         id: git-check
         run: echo ::set-output name=modified::$(if git diff-index --quiet HEAD --; then echo "false"; else echo "true"; fi)
