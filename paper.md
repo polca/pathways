@@ -45,9 +45,9 @@ toxicity impacts, etc.
 
 # Statement of need
 
-Most IAMs and ESMs project cost-optimized future energy supplies within 
+Most IAMs and ESMs project cost- or utility-optimized future scenarios within 
 specified greenhouse gas emissions trajectories, outlining changes needed 
-in regional energy mixes for global warming mitigation [@Riahi:2017]. 
+in regional energy mixes and means of transport for global warming mitigation [@Riahi:2017]. 
 Prospective Life Cycle Assessment (pLCA) is crucial for evaluating the 
 environmental performance of existing and emerging production systems, with 
 a growing body of literature in scenario-based pLCA for emerging technologies 
@@ -72,6 +72,18 @@ IAM scenario outputs using a hybrid-LCA framework. There is also the work of
 bidirectional coupling between ESM and LCA. Yet, these studies focused 
 on specific sectors or technologies and have not yet generalized to broader 
 scenarios and indicators, nor have they made their implementations widely available.
+
+Beyond conventional pLCA approaches, several tools and frameworks have been developed
+that leverage LCA data to support further analysis, often through automation and integration
+with broader modeling frameworks. For example, the `ODYM-RECC` framework integrates LCA data
+to assess resource efficiency within climate mitigation scenarios, providing insights on 
+material demand and supply chain impacts [@RECC:2021]. Similarly, the `Mat-dp` tool, when 
+supplied with suitable input data, can be used to calculate materials needed and estimate 
+environmental impacts of transition scenarios [@Mat-dp:2022], [@Mat-dp:2024]. However, because 
+these tools depend on exogeneous input data, they are not designed to 
+systematically consider the time-dependent technology mixes influencing the production system. 
+This limits their ability to endogenously and dynamically assess evolving environmental impacts 
+and material demand, restricting consistency with the scenario assessed.
 
 To address these challenges, the open-source library `pathways` utilizes the 
 LCA framework `brightway` [@Mutel:2017] to systematically evaluate 
