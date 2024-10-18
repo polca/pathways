@@ -121,14 +121,23 @@ time step, geographical origin of impact, life-cycle stage and impact assessment
 method (6 in Figure 1).
 
 Some post-processing is done on the inventory matrices, including dealing 
-with double accounting. For this purpose, the original LCI database is adjusted by 
+with double counting. For this purpose, the original LCI database is adjusted by 
 zeroing out all regional energy inputs that the energy system 
 model accounts for and might demand during the system's life cycle,
 following the same workflow presented in [@Volkart:2018] (see 5 in Figure 1). 
+The practitioner is required to selectively cancel out overlapping activities already
+accounted for in the scenario. We employ a modular approach in this adjustment process, 
+where practitioners, based on their understanding of the model generating the scenario, 
+can select specific components (e.g., electricity, heat, or specific product inputs) 
+to exclude. For instance, if the IAM models regional electricity generation, the 
+corresponding electricity inputs in the LCA system for upstream processes are 
+removed to prevent double counting. This modular approach enhances transparency and traceability, 
+making it easier to document and track which system components are modified, ensuring consistency between
+the scenario outputs and the LCA.
 
 Finally, Global Sensitivity Analysis (GSA) can be performed on the results.
-Currently, `pathways` supports the use of the `SALib` library for GSA [@Herman2017, @Iwanaga2022],
-notably the Delta Moment-Independent Measure (DMIM) method [@BORGONOVO2007771], to rank
+Currently, `pathways` supports the use of the `SALib` library for GSA [@Herman2017], 
+[@Iwanaga2022], notably the Delta Moment-Independent Measure (DMIM) method [@BORGONOVO2007771], to rank
 the influence of the database exchanges on the results.
 
 ![`pathways` workflow: from data package to impact assessment.\label{fig:workflow}](assets/workflow_diagram.png)
