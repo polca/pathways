@@ -599,7 +599,6 @@ def _calculate_year(args: tuple):
     else:
         activities_to_exclude = None
 
-
     # check unclassified activities
     missing_classifications = check_unclassified_activities(
         technosphere_indices, classifications
