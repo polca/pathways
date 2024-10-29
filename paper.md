@@ -45,9 +45,9 @@ toxicity impacts, etc.
 
 # Statement of need
 
-Most IAMs and ESMs project cost-optimized future energy supplies within 
+Most IAMs and ESMs project cost- or utility-optimized future scenarios within 
 specified greenhouse gas emissions trajectories, outlining changes needed 
-in regional energy mixes for global warming mitigation [@Riahi:2017]. 
+in regional energy mixes and means of transport for global warming mitigation [@Riahi:2017]. 
 Prospective Life Cycle Assessment (pLCA) is crucial for evaluating the 
 environmental performance of existing and emerging production systems, with 
 a growing body of literature in scenario-based pLCA for emerging technologies 
@@ -72,6 +72,18 @@ IAM scenario outputs using a hybrid-LCA framework. There is also the work of
 bidirectional coupling between ESM and LCA. Yet, these studies focused 
 on specific sectors or technologies and have not yet generalized to broader 
 scenarios and indicators, nor have they made their implementations widely available.
+
+Beyond conventional pLCA approaches, several tools and frameworks have been developed
+that leverage LCA data to support further analysis, often through automation and integration
+with broader modeling frameworks. For example, the `ODYM-RECC` framework integrates LCA data
+to assess resource efficiency within climate mitigation scenarios, providing insights on 
+material demand and supply chain impacts [@RECC:2021]. Similarly, the `Mat-dp` tool, when 
+supplied with suitable input data, can be used to calculate materials needed and estimate 
+environmental impacts of transition scenarios [@Mat-dp:2022], [@Mat-dp:2024]. However, because 
+these tools depend on exogeneous input data, they are not designed to 
+systematically consider the time-dependent technology mixes influencing the production system. 
+This limits their ability to endogenously and dynamically assess evolving environmental impacts 
+and material demand, restricting consistency with the scenario assessed.
 
 To address these challenges, the open-source library `pathways` utilizes the 
 LCA framework `brightway` [@Mutel:2017] to systematically evaluate 
@@ -109,14 +121,23 @@ time step, geographical origin of impact, life-cycle stage and impact assessment
 method (6 in Figure 1).
 
 Some post-processing is done on the inventory matrices, including dealing 
-with double accounting. For this purpose, the original LCI database is adjusted by 
+with double counting. For this purpose, the original LCI database is adjusted by 
 zeroing out all regional energy inputs that the energy system 
 model accounts for and might demand during the system's life cycle,
 following the same workflow presented in [@Volkart:2018] (see 5 in Figure 1). 
+The practitioner is required to selectively cancel out overlapping activities already
+accounted for in the scenario. We employ a modular approach in this adjustment process, 
+where practitioners, based on their understanding of the model generating the scenario, 
+can select specific components (e.g., electricity, heat, or specific product inputs) 
+to exclude. For instance, if the IAM models regional electricity generation, the 
+corresponding electricity inputs in the LCA system for upstream processes are 
+removed to prevent double counting. This modular approach enhances transparency and traceability, 
+making it easier to document and track which system components are modified, ensuring consistency between
+the scenario outputs and the LCA.
 
 Finally, Global Sensitivity Analysis (GSA) can be performed on the results.
-Currently, `pathways` supports the use of the `SALib` library for GSA [@Herman2017, @Iwanaga2022],
-notably the Delta Moment-Independent Measure (DMIM) method [@BORGONOVO2007771], to rank
+Currently, `pathways` supports the use of the `SALib` library for GSA [@Herman2017], 
+[@Iwanaga2022], notably the Delta Moment-Independent Measure (DMIM) method [@BORGONOVO2007771], to rank
 the influence of the database exchanges on the results.
 
 ![`pathways` workflow: from data package to impact assessment.\label{fig:workflow}](assets/workflow_diagram.png)

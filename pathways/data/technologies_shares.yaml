@@ -1,4 +1,4 @@
-Wind: ### Check if IAMs make the distinction between onshore and offshore
+Wind:
   onshore-DDPM:
     name: electricity production, wind, 1-3MW turbine, onshore, direct drive
     reference product: electricity, high voltage
