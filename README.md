@@ -25,6 +25,10 @@ and calculates the environmental impacts of the scenario (or a subset of it) ove
 <img src="https://github.com/polca/pathways/blob/main/assets/workflow_diagram.png" />
 </p>
 
+## Requirements
+
+``pathways`` requires Python 3.10 or 3.11. It also requires the packages listed in the `requirements.txt` file.
+
 ## Installation
 
 ``pathways`` is in an early development stage, and
@@ -32,7 +36,7 @@ can be installed from the Github repo  with ``pip``:
 
 ```bash
 
-  pip git+https://github.com/polca/pathways.git
+  pip install git+https://github.com/polca/pathways.git
 
 ```
 
@@ -51,6 +55,17 @@ or alternatively, you can clone the repository and install it from the source:
 ```bash
 
     conda install romainsacchi::pathways
+
+```
+
+.. note:: If you use an ARM architecture, you may want to also install
+    the `scikit-umfpack` package from the `conda-forge` channel for faster calculation.
+    However, you need to make sure that `numpy<=1.24.4` is installed, as `bw2io` is not compatible 
+    with the latest version of `numpy`:
+
+```bash
+
+    conda install -c conda-forge scikit-umfpack
 
 ```
 

@@ -22,11 +22,12 @@ requirements:
     - pathlib
     - pandas
     - scipy
-    - xarray
+    - xarray<=2024.2.0
     - premise
     - pyyaml
     - bw_processing
     - bw2calc
+    - bw2data
     - datapackage
     - pyprind
     - platformdirs
