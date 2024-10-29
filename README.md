@@ -54,7 +54,7 @@ or alternatively, you can clone the repository and install it from the source:
 
 ```bash
 
-    conda install romainsacchi::pathways
+    conda install -c conda-forge -c romainsacchi pathways
 
 ```
 
