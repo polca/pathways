@@ -273,18 +273,16 @@ def log_mc_parameters_to_excel(
 ):
     export_path = STATS_DIR / f"{model}_{scenario}_{year}.xlsx"
 
-    mode = "a" if export_path.exists() else "w"
+    if export_path.exists():
+        mode = "a"
+        if_sheet_exists = "replace"
+    else:
+        mode = "w"
+        if_sheet_exists = None  # No need for if_sheet_exists in write mode
 
-    with pd.ExcelWriter(
-        export_path, engine="openpyxl", mode=mode, if_sheet_exists="replace"
-    ) as writer:
+    with pd.ExcelWriter(export_path, engine="openpyxl", mode=mode, if_sheet_exists=if_sheet_exists) as writer:
         empty_df = pd.DataFrame()  # Empty DataFrame for clearing purposes
-        for sheet in [
-            "Indices mapping",
-            "Monte Carlo values",
-            "Technology shares",
-            "Total impacts",
-        ]:
+        for sheet in ["Indices mapping", "Monte Carlo values", "Technology shares", "Total impacts"]:
             empty_df.to_excel(writer, sheet_name=sheet, index=False)
 
         df_sum_impacts = pd.DataFrame()
