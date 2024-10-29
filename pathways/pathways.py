@@ -316,6 +316,7 @@ class Pathways:
         remove_uncertainty: bool = False,
         seed: int = 0,
         multiprocessing: bool = True,
+        double_accounting: Optional[List[str]] = None,
     ) -> None:
         """
         Calculate Life Cycle Assessment (LCA) results for given methods, models, scenarios, regions, and years.
@@ -348,6 +349,8 @@ class Pathways:
         :type remove_uncertainty: bool, default is False
         :param seed: Integer. Seed for random number generator.
         :type seed: int, default is 0
+        :param double_accounting: List. List of variables for which double accounting processing should be performed.
+        :type double_accounting: Optional[List[str]], default is None
         """
 
         self.scenarios = harmonize_units(self.scenarios, variables)
@@ -463,6 +466,7 @@ class Pathways:
                         uncertain_parameters,
                         remove_uncertainty,
                         seed,
+                        double_accounting,
                     )
                     for year in years
                 ]

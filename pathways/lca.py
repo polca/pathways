@@ -18,7 +18,7 @@ from bw_processing import Datapackage
 from premise.geomap import Geomap
 from scipy import sparse
 
-from .filesystem_constants import DIR_CACHED_DB, USER_LOGS_DIR
+from .filesystem_constants import DIR_CACHED_DB, USER_LOGS_DIR, DATA_DIR
 from .lcia import fill_characterization_factors_matrices
 from .subshares import (
     adjust_matrix_based_on_shares,
@@ -32,7 +32,11 @@ from .utils import (
     fetch_indices,
     get_unit_conversion_factors,
     read_indices_csv,
+    apply_filters,
+    get_combined_filters,
+    read_categories_from_yaml,
 )
+from .stats import log_double_accounting
 
 logging.basicConfig(
     level=logging.DEBUG,
@@ -201,30 +205,41 @@ def find_uncertain_parameters(
     return uncertain_parameters
 
 
-def remove_double_counting(
-    technosphere_matrix: np.array, activities_to_zero: List[int], infra: List[int]
+def remove_double_accounting(
+    lca: bc.LCA,
+    activities_to_exclude: List[int],
+    exceptions: List[int],
 ):
     """
-    Remove double counting from a technosphere matrix by zeroing out the demanded row values
-    in all columns, except for those on the diagonal.
-    :param technosphere_matrix: bw2calc.LCA object
-    :return: Technosphere matrix with double counting removed
+    Remove double counting from a technosphere matrix.
+    :param lca: bw2calc.LCA object
+    :param demand: dict with demand values
+    :param activities_to_exclude: list of activities to exclude
+    :param exceptions: list of exceptions
+    :return: Technosphere matrix with double counting removed.
     """
 
-    # Copy and convert the technosphere matrix
-    # to COO format for easy manipulation
-    technosphere_matrix = technosphere_matrix.tocoo()
+    tm_original = lca.technosphere_matrix.copy()
+    tm_modified = tm_original.tocoo()
 
-    # Create a mask for elements to zero out
-    mask = np.isin(technosphere_matrix.row, activities_to_zero) & (
-        technosphere_matrix.row != technosphere_matrix.col
-    )
+    for act in activities_to_exclude:
+        row_idx = np.where(tm_modified.col == act)[0]
 
-    # Apply the mask to set the relevant elements to zero
-    technosphere_matrix.data[mask] = 0
-    technosphere_matrix.eliminate_zeros()
+        for idx in row_idx:
+            # Skip the diagonal and exceptions
+            if tm_modified.row[idx] != act and (
+                exceptions is None or tm_modified.col[idx] not in exceptions
+            ):
+                tm_modified.data[idx] = 0
 
-    return technosphere_matrix.tocsr()
+    tm_modified = tm_modified.tocsr()
+    tm_modified.eliminate_zeros()
+
+    # Remove double accounting
+    lca.technosphere_matrix = tm_modified
+    lca.lci()
+
+    return lca
 
 
 def create_functional_units(
@@ -517,6 +532,7 @@ def _calculate_year(args: tuple):
         uncertain_parameters,
         remove_uncertainty,
         seed,
+        double_accounting,
     ) = args
 
     print(f"------ Calculating LCA results for {year}...")
@@ -565,6 +581,24 @@ def _calculate_year(args: tuple):
                 f"Skipping {model}, {scenario}, {year}, " f"as data not found."
             )
         return
+
+    if double_accounting is not None:
+        categories = read_categories_from_yaml(DATA_DIR / "smart_categories.yaml")
+        combined_filters, exception_filters = get_combined_filters(
+            categories, double_accounting
+        )
+        activities_to_exclude, exceptions, filtered_names, exception_names = (
+            apply_filters(
+                technosphere_indices,
+                combined_filters,
+                exception_filters,
+                double_accounting,
+            )
+        )
+        log_double_accounting(model, scenario, year, filtered_names, exception_names)
+    else:
+        activities_to_exclude = None
+
 
     # check unclassified activities
     missing_classifications = check_unclassified_activities(
@@ -641,6 +675,12 @@ def _calculate_year(args: tuple):
 
         with CustomFilter("(almost) singular matrix"):
             lca.lci()
+            if activities_to_exclude is not None:
+                lca = remove_double_accounting(
+                    lca=lca,
+                    activities_to_exclude=activities_to_exclude,
+                    exceptions=exceptions,
+                )
 
         if shares:
             shares_indices = find_technology_indices(regions, technosphere_indices, geo)

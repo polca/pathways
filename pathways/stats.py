@@ -1,6 +1,7 @@
 from pathlib import Path
 from typing import Dict, Set, Tuple
 from zipfile import BadZipFile
+from openpyxl import load_workbook
 
 import numpy as np
 import pandas as pd
@@ -10,9 +11,11 @@ from pathways.filesystem_constants import STATS_DIR
 
 
 def log_double_accounting(
+    model: str,
+    scenario: str,
+    year: int,
     filtered_names: Dict[Tuple[str, ...], Set[str]],
     exception_names: Dict[Tuple[str, ...], Set[str]],
-    export_path: Path,
 ):
     """
     Log the unique names of the filtered activities and exceptions to an Excel file,
@@ -22,6 +25,8 @@ def log_double_accounting(
     :param exception_names: Dictionary of category paths to sets of exception names.
     :param export_path: Path to the export Excel file.
     """
+
+    export_path = STATS_DIR / f"{model}_{scenario}_{year}.xlsx"
 
     data_filtered = {
         "/".join(category): list(names)
@@ -40,8 +45,6 @@ def log_double_accounting(
     exception_df = pd.DataFrame(
         dict([(k, pd.Series(v)) for k, v in data_exceptions.items()])
     )
-
-    export_path.parent.mkdir(parents=True, exist_ok=True)
 
     if export_path.exists():
         try:
@@ -270,16 +273,16 @@ def log_mc_parameters_to_excel(
 ):
     export_path = STATS_DIR / f"{model}_{scenario}_{year}.xlsx"
 
-    # create Excel workbook using openpyxl
-    with pd.ExcelWriter(export_path, engine="openpyxl") as writer:
+    mode = "a" if export_path.exists() else "w"
+
+    with pd.ExcelWriter(export_path, engine="openpyxl", mode=mode, if_sheet_exists="replace") as writer:
+        empty_df = pd.DataFrame()  # Empty DataFrame for clearing purposes
+        for sheet in ["Indices mapping", "Monte Carlo values", "Technology shares", "Total impacts"]:
+            empty_df.to_excel(writer, sheet_name=sheet, index=False)
 
         df_sum_impacts = pd.DataFrame()
         df_uncertainty_values = pd.DataFrame()
         df_technology_shares = pd.DataFrame()
-        writer.book.create_sheet("Indices mapping")
-        writer.book.create_sheet("Monte Carlo values")
-        writer.book.create_sheet("Technology shares")
-        writer.book.create_sheet("Total impacts")
 
         for region, data in result.items():
 
