@@ -56,14 +56,14 @@ a growing body of literature in scenario-based pLCA for emerging technologies
 Extending present-day life-cycle inventories into the future using IAM outputs, 
 initially explored by [@MendozaBeltran:2018] and formalized by the Python library 
 `premise` [@Sacchi:2022], forms the methodological basis for pLCA. Efforts in pLCA 
-focus on improving forecasting accuracy. Performing scenario-wide LCAs with 
+focus on improving forecasting accuracy. Performing system-wide LCAs with 
 adjusted life cycle inventories at each time step has potential to enhance 
 sustainability assessments, broadening focus beyond greenhouse gas emissions 
 to include broader environmental impacts like land use, water consumption, 
 and toxicity, addressing both direct and indirect emissions. However, system-wide 
 LCA remains challenging due to computational costs and methodological 
 complexities, such as defining functional units based on IAM outputs and 
-resolving double-counting issues.
+resolving double-counting issues [@Vandepaer:2020],[@Volkart:2018].
 
 Several studies characterize energy scenarios with LCA, including 
 [@Gibon:2015], [@Rauner:2017] and [@Pehl:2017], who quantified ESM or 
@@ -120,20 +120,38 @@ and saved in a dataframe, where impacts are broken down per technology, region,
 time step, geographical origin of impact, life-cycle stage and impact assessment 
 method (6 in Figure 1).
 
-Some post-processing is done on the inventory matrices, including dealing 
-with double counting. For this purpose, the original LCI database is adjusted by 
+Some post-processing is done on the inventory matrices, including managing double counting. 
+Double counting occurs when resource demands are counted multiple times across 
+interconnected system components, inflating environmental impacts. This issue is 
+particularly relevant when the reference scenario (e.g., from an IAM) already accounts
+for total regional demand, such as electricity or transport. For example, if electricity and 
+steel production are interdependent, evaluating total electricity demand as defined by 
+the scenario may lead to overlap: electricity requires steel, and steel production, in turn, 
+requires additional electricity beyond the initial total. This overlap results in duplicative 
+demand estimates.
+
+To address this, the original LCI database is adjusted by 
 zeroing out all regional energy inputs that the energy system 
 model accounts for and might demand during the system's life cycle,
 following the same workflow presented in [@Volkart:2018] (see 5 in Figure 1). 
-The practitioner is required to selectively cancel out overlapping activities already
-accounted for in the scenario. We employ a modular approach in this adjustment process, 
+Practitioners are required to selectively cancel out overlapping activities already
+accounted for by the scenario. We use a modular approach in this adjustment process, 
 where practitioners, based on their understanding of the model generating the scenario, 
-can select specific components (e.g., electricity, heat, or specific product inputs) 
+can select specific activity categories (e.g., electricity, heat, or specific product inputs) 
 to exclude. For instance, if the IAM models regional electricity generation, the 
 corresponding electricity inputs in the LCA system for upstream processes are 
-removed to prevent double counting. This modular approach enhances transparency and traceability, 
-making it easier to document and track which system components are modified, ensuring consistency between
-the scenario outputs and the LCA.
+removed to prevent double counting. Returning to the electricity-steel example, 
+this means the practitioner would exclude electricity inputs for steel production 
+within the LCA, as the scenario’s total electricity demand already covers this requirement.
+
+This process is implemented in the `remove_double_accounting` function, which modifies the 
+technosphere matrix to remove redundant entries. The function identifies flagged 
+products for removal, locates the associated rows, and zeroes out the corresponding positions
+taking any specified exceptions.For instance, in the electricity-steel example, the function
+would find the row corresponding to regional electricity and cancel out the input in the column
+associated with steel production, effectively preventing double counting of electricity demand.
+This modular approach enhances transparency and traceability, making it easier to document and 
+track which system components are modified, ensuring consistency between the scenario outputs and the LCA.
 
 Finally, Global Sensitivity Analysis (GSA) can be performed on the results.
 Currently, `pathways` supports the use of the `SALib` library for GSA [@Herman2017], 
