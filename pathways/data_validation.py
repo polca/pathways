@@ -39,12 +39,21 @@ def validate_datapackage(
 
     # Validate datapackage according
     # to the Frictionless Data specifications
+
     try:
         validate(data_package.descriptor)
     except DataPackageException as e:
+        # we want to remove errors relating to the YAMl file
+        for error in e.errors:
+            if ".yaml" in str(error):
+                e.errors.remove(error)
+
         if e.multiple:
             for error in e.errors:
-                print(f"Invalid datapackage: {error}")
+                if "not one of" in str(error):
+                    e.errors.remove(error)
+                else:
+                    print(f"Invalid datapackage: {error}")
         else:
             raise ValueError(f"Invalid datapackage: {e}")
 
