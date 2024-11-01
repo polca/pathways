@@ -189,7 +189,7 @@ jobs:
         shell: bash -l {0}
 
         run: |
-          conda install -c romainsacchi pathways-dev
-          conda update pathways-dev
+          conda install -c romainsacchi pathways
+          conda update pathways
           conda install pytest
           pytest
