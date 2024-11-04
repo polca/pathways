@@ -147,7 +147,7 @@ within the LCA, as the scenario’s total electricity demand already covers this
 This process is implemented in the `remove_double_accounting` function, which modifies the 
 technosphere matrix to remove redundant entries. The function identifies flagged 
 products for removal, locates the associated rows, and zeroes out the corresponding positions
-taking any specified exceptions.For instance, in the electricity-steel example, the function
+taking any specified exceptions. For instance, in the electricity-steel example, the function
 would find the row corresponding to regional electricity and cancel out the input in the column
 associated with steel production, effectively preventing double counting of electricity demand.
 This modular approach enhances transparency and traceability, making it easier to document and 
