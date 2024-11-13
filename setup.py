@@ -32,7 +32,7 @@ def package_files(directory):
 
 setup(
     name="pathways",
-    version="0.0.1",
+    version="1.0.0",
     python_requires=">=3.9,<3.12",
     packages=packages,
     author="Romain Sacchi <romain.sacchi@psi.ch>",
