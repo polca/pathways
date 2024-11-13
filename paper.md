@@ -54,8 +54,8 @@ a growing body of literature in scenario-based pLCA for emerging technologies
 [@Bisinella:2021].
 
 Extending present-day life-cycle inventories into the future using IAM outputs, 
-initially explored by [@MendozaBeltran:2018] and formalized by the Python library 
-`premise` [@Sacchi:2022], forms the methodological basis for pLCA. Efforts in pLCA 
+initially explored by @MendozaBeltran:2018 and formalized by the Python library 
+`premise` @Sacchi:2022, forms the methodological basis for pLCA. Efforts in pLCA 
 focus on improving forecasting accuracy. Performing system-wide LCAs with 
 adjusted life cycle inventories at each time step has potential to enhance 
 sustainability assessments, broadening focus beyond greenhouse gas emissions 
