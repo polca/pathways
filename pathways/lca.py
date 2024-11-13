@@ -32,6 +32,9 @@ from .utils import (
     fetch_indices,
     get_unit_conversion_factors,
     read_indices_csv,
+    apply_filters,
+    get_combined_filters,
+    read_categories_from_yaml,
 )
 
 logging.basicConfig(
@@ -162,6 +165,7 @@ def get_lca_matrices(
     for matrix_name, fp in [("technosphere_matrix", fp_A), ("biosphere_matrix", fp_B)]:
         data, indices, sign, distributions = load_matrix_and_index(fp)
 
+        # remove uncertainty data
         if remove_uncertainty is True:
             distributions = np.array(
                 [
@@ -517,6 +521,7 @@ def _calculate_year(args: tuple):
         uncertain_parameters,
         remove_uncertainty,
         seed,
+        double_accounting,
     ) = args
 
     print(f"------ Calculating LCA results for {year}...")

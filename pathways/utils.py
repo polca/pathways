@@ -20,7 +20,7 @@ import numpy as np
 import pandas as pd
 import xarray as xr
 import yaml
-from datapackage import DataPackage
+from datapackage import DataPackage, DataPackageException
 from premise.geomap import Geomap
 
 from .filesystem_constants import DATA_DIR, DIR_CACHED_DB, USER_LOGS_DIR
@@ -841,4 +841,7 @@ def _read_datapackage(datapackage: str) -> DataPackage:
 
     :return: DataPackage
     """
+
     return DataPackage(datapackage)
+
+
