@@ -94,7 +94,7 @@ scenario environmental impacts. `pathways` works particularly well with
 data packages produced by `premise`, but can be used with any ESM/IAM scenarios
 and LCA databases. Using LCA matrices which have been modified to reflect
 the scenario's time-dependent technology mixes ensures a consistent and coherent
-characterization of said scenario.
+characterization of the scenario.
 
 
 # Description
