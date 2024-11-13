@@ -54,7 +54,7 @@ a growing body of literature in scenario-based pLCA for emerging technologies
 [@Bisinella:2021].
 
 Extending present-day life-cycle inventories into the future using IAM outputs, 
-initially explored by [@MendozaBeltran:2018] and formalized by the Python library 
+initially explored by @MendozaBeltran:2018 and formalized by the Python library 
 `premise` [@Sacchi:2022], forms the methodological basis for pLCA. Efforts in pLCA 
 focus on improving forecasting accuracy. Performing system-wide LCAs with 
 adjusted life cycle inventories at each time step has potential to enhance 
@@ -66,9 +66,9 @@ complexities, such as defining functional units based on IAM outputs and
 resolving double-counting issues [@Vandepaer:2020],[@Volkart:2018].
 
 Several studies characterize energy scenarios with LCA, including 
-[@Gibon:2015], [@Rauner:2017] and [@Pehl:2017], who quantified ESM or 
+@Gibon:2015, @Rauner:2017 and @Pehl:2017, who quantified ESM or 
 IAM scenario outputs using a hybrid-LCA framework. There is also the work of
-[@Xu:2020], who developed the ambitious EAFESA framework aiming for 
+@Xu:2020, who developed the ambitious EAFESA framework aiming for 
 bidirectional coupling between ESM and LCA. Yet, these studies focused 
 on specific sectors or technologies and have not yet generalized to broader 
 scenarios and indicators, nor have they made their implementations widely available.
@@ -94,7 +94,7 @@ scenario environmental impacts. `pathways` works particularly well with
 data packages produced by `premise`, but can be used with any ESM/IAM scenarios
 and LCA databases. Using LCA matrices which have been modified to reflect
 the scenario's time-dependent technology mixes ensures a consistent and coherent
-characterization of said scenario.
+characterization of the scenario.
 
 
 # Description
@@ -133,7 +133,7 @@ demand estimates.
 To address this, the original LCI database is adjusted by 
 zeroing out all regional energy inputs that the energy system 
 model accounts for and might demand during the system's life cycle,
-following the same workflow presented in [@Volkart:2018] (see 5 in Figure 1). 
+following the same workflow presented in @Volkart:2018 (see 5 in Figure 1). 
 Practitioners are required to selectively cancel out overlapping activities already
 accounted for by the scenario. We use a modular approach in this adjustment process, 
 where practitioners, based on their understanding of the model generating the scenario, 
@@ -147,7 +147,7 @@ within the LCA, as the scenario’s total electricity demand already covers this
 This process is implemented in the `remove_double_accounting` function, which modifies the 
 technosphere matrix to remove redundant entries. The function identifies flagged 
 products for removal, locates the associated rows, and zeroes out the corresponding positions
-taking any specified exceptions.For instance, in the electricity-steel example, the function
+taking any specified exceptions. For instance, in the electricity-steel example, the function
 would find the row corresponding to regional electricity and cancel out the input in the column
 associated with steel production, effectively preventing double counting of electricity demand.
 This modular approach enhances transparency and traceability, making it easier to document and 
