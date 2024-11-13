@@ -1,0 +1,317 @@
+Energy:
+  Electricity:
+    Industrial:
+      PV:
+        ecoinvent_aliases:
+          name_fltr:
+            - electricity production, photovoltaic
+          name_mask:
+            - facade installation
+            - flat-roof installation
+            - slanted-roof installation
+            - electricity production, photovoltaic, at 3kWp slanted-roof, CdTe, panel, mounted
+            - electricity production, photovoltaic, at 3kWp slanted-roof, CIS, laminated, integrated
+#            - commercial
+#            - residential
+          product_fltr:
+            - electricity
+      Hydro:
+        ecoinvent_aliases:
+          name_fltr:
+            - electricity production, hydro
+          product_fltr:
+            - electricity, high voltage
+      Oil:
+        ecoinvent_aliases:
+          name_fltr:
+            - electricity production, at co-generation oil
+            - electricity production, at oil-fired
+            - electricity production, oil
+            - heat and power co-generation, oil
+          product_fltr:
+            - electricity, high voltage
+      Gas:
+        ecoinvent_aliases:
+          name_fltr:
+            - electricity production, at co-generation natural gas-fired
+            - electricity production, at natural gas-fired
+            - electricity production, natural gas
+            - natural gas, burned in
+            - electricity production, from combined cycle plant, synthetic natural gas
+            - heat and power co-generation, natural gas
+          product_fltr:
+            - electricity, high voltage
+            - electricity, low voltage
+      Biogas:
+        ecoinvent_aliases:
+          name_fltr:
+            - biomethane, low pressure burned
+            - heat and power co-generation, biogas
+          product_fltr:
+            - electricity
+      Nuclear:
+        ecoinvent_aliases:
+          name_fltr:
+            - electricity production, nuclear
+          product_fltr:
+            - electricity
+      Waste2Grid:
+        ecoinvent_aliases:
+          name_fltr:
+            - electricity, from municipal waste
+            - treatment of
+          product_fltr:
+            - electricity,
+          product_mask:
+            - electricity, for reuse in municipal waste incineration only
+      Waste2Treatment:
+        ecoinvent_aliases:
+          name_fltr:
+            - treatment of
+          product_fltr:
+            - electricity, for reuse in municipal waste incineration only
+      Wind:
+        ecoinvent_aliases:
+          name_fltr:
+            - electricity production, wind
+          product_fltr:
+            - electricity
+      Geothermal:
+        ecoinvent_aliases:
+          name_fltr:
+            - electricity production, deep geothermal
+          product_fltr:
+            - electricity
+      Hydrogen:
+        ecoinvent_aliases:
+          name_fltr:
+            - electricity production, at hydrogen-fired
+            - electricity production, from hydrogen-fired
+          product_fltr:
+            - electricity
+      Biomass:
+        ecoinvent_aliases:
+          name_fltr:
+            - biomass-fired
+            - co-firing wood
+            - wood-fired
+            - wood
+            - paraná pine
+            - hardwood
+          name_mask:
+            - treatment
+          product_fltr:
+            - electricity
+      Battery:
+        ecoinvent_aliases:
+          name_fltr:
+            - battery
+          product_fltr:
+            - electricity
+      CSP:
+        ecoinvent_aliases:
+          name_fltr:
+            - solar
+            - parabolic trough
+            - 50 MW
+          product_fltr:
+            - electricity
+      CAES:
+        ecoinvent_aliases:
+          name_fltr:
+            - compressed air energy storage
+          product_fltr:
+            - electricity
+      Import:
+        ecoinvent_aliases:
+          name_fltr:
+            - import
+          product_fltr:
+            - electricity
+      Coal:
+        ecoinvent_aliases:
+          name_fltr:
+            - lignite
+            - hard coal
+          product_fltr:
+            - electricity
+      Batteries:
+        ecoinvent_aliases:
+          name_fltr:
+            - battery
+          product_fltr:
+            - electricity
+      Markets:
+        ecoinvent_aliases:
+          name_fltr:
+            - market group for electricity, high voltage
+          product_fltr:
+            - electricity, high voltage
+    Residential:
+      PV:
+        ecoinvent_aliases:
+          name_fltr:
+            -  3kWp
+            -  3 kWp
+          name_mask:
+            - 93 kWp
+          product_fltr:
+            - electricity
+      Hydrogen:
+        ecoinvent_aliases:
+          name_fltr:
+            - electricity, residential, by conversion of hydrogen
+            - electricity, residential, by combustion of hydrogen
+          product_fltr:
+            - electricity
+  Heat:
+    Industrial:
+      CHP and furnace:
+        ecoinvent_aliases:
+          name_fltr:
+            - biomethane, low pressure burned
+            - heat and power co-generation
+            - heat production, at co-generation
+            - co-generation
+            - 1-10MW
+            - one gigawatt
+            - 1000kW
+            - 300kW
+            - 5000kW
+            - 1MW
+            - 100kW
+            - 1000-5000 kW
+            - 160kWe Jakobsberg
+            - 125kWe
+            - 180kWe
+            - refinery gas, burned in furnace
+          name_mask:
+            - treatment
+            - wood pellets, burned in stirling heat and power co-generation unit, 3kW electrical, future
+            - <100kW
+          product_fltr:
+            - heat
+          product_mask:
+            - heat and power co-generation unit
+            - municipal incineration
+      Treatment activities:
+        ecoinvent_aliases:
+          name_fltr:
+            - treatment of
+          product_fltr:
+            - heat, for reuse in municipal waste incineration only
+      Recovery:
+        ecoinvent_aliases:
+          name_fltr:
+            - energy saving, from ventilation system
+            - hot rolling, steel
+            - treatment of
+            - kraft paper production
+            - particleboard production, uncoated, average glue mix
+            - steel production, electric
+            - sulfate pulp production
+          product_fltr:
+            - heat
+            - heat, district or industrial, other than natural gas
+          product_mask:
+            - heat, for reuse in municipal waste incineration only
+            - wheat
+      Steam:
+        ecoinvent_aliases:
+          product_fltr:
+            - heat, from steam, in chemical industry
+      Renewables:
+        ecoinvent_aliases:
+          name_fltr:
+            - concentrating solar power plant
+            - heat production, deep geothermal
+          product_fltr:
+            - heat
+    Residential:
+      Boiler and CHP:
+        ecoinvent_aliases:
+          name_fltr:
+            - <100kW
+            - 10kW
+            - heat, residential
+            - natural gas, burned in polymer electrolyte membrane fuel cell 2kWe, future
+            - wood pellets, burned in stirling heat and power co-generation unit, 3kW electrical, future-
+          product_fltr:
+            - heat
+          product_mask:
+            - heat pump
+      Heat Pump:
+        ecoinvent_aliases:
+          name_fltr:
+            - heat pump
+          product_fltr:
+            - heat,
+          name_mask:
+            - market
+      Solar:
+        ecoinvent_aliases:
+          name_fltr:
+            - solar
+          product_fltr:
+            - heat
+          name_mask:
+            - concentrating
+            - construction
+            - thermal parabolic
+Transport:
+  Freight:
+    Air:
+      ecoinvent_aliases:
+        product_fltr:
+          - transport, freight, aircraft
+    Road:
+      ecoinvent_aliases:
+        product_fltr:
+          - transport, freight, light commercial vehicle
+          - transport, freight, lorry
+          - transport, tractor and trailer, agricultural
+    Rail:
+      ecoinvent_aliases:
+        product_fltr:
+          - transport, freight train
+          - transport, freight, train
+    Water:
+      ecoinvent_aliases:
+        product_fltr:
+          - operation, intermodal shipping container
+          - transport, freight, inland waterways
+          - transport, freight, sea
+  Passengers:
+    Road:
+      ecoinvent_aliases:
+        product_fltr:
+          - transport, passenger car
+          - transport, passenger coach
+          - transport, passenger, electric scooter
+          - transport, passenger, motor scooter
+          - transport, regular bus
+          - transport, trolleybus
+    Air:
+      ecoinvent_aliases:
+        product_fltr:
+          - transport, passenger aircraft
+          - transport, helicopter
+    Rail:
+      ecoinvent_aliases:
+        product_fltr:
+          - transport, passenger train
+          - transport, tram
+    Bicycle:
+      ecoinvent_aliases:
+        product_fltr:
+          - energy use, electric bicycle
+          - transport, passenger, bicycle
+          - transport, passenger electric bicycle
+Exceptions:
+  ### The input to these activities will not be zeroed.
+  ecoinvent_aliases:
+    name_fltr:
+      - electricity production, photovoltaic, commercial
+      - electricity production, photovoltaic, residential
+      - electricity import, from neighboring countries
+#      - market group for electricity, high voltage
