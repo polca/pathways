@@ -82274,3 +82274,18 @@
 - electricity, high voltage
 - kilowatt hour
 : Manufacture of batteries and accumulators
+? !!python/tuple
+- electric cargo bicycle production, without battery and motor
+- electric cargo bicycle, without battery and motor
+- unit
+: Manufacture of bicycles and invalid carriages
+? !!python/tuple
+- transport, passenger bus, liquefied petroleum gas, 13m single deck urban bus, EURO-VI
+- transport, passenger bus, EURO-VI
+- person kilometer
+: Other passenger land transport
+? !!python/tuple
+- transport, passenger bus, gasoline, 13m single deck urban bus, EURO-VI
+- transport, passenger bus, EURO-VI
+- person kilometer
+: Other passenger land transport
