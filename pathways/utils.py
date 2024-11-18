@@ -843,5 +843,3 @@ def _read_datapackage(datapackage: str) -> DataPackage:
     """
 
     return DataPackage(datapackage)
-
-
