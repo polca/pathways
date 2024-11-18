@@ -193,7 +193,7 @@ view of the environmental impacts of a scenario.
 The authors gratefully acknowledge the financial support from the Swiss State 
 Secretariat for Education, Research and Innovation (SERI), under the Horizon 
 Europe project PRISMA (grant agreement no. 101081604). The authors also thank the
-Swiss Federal Office of Energy (SFOE) for the support in the development of the 
-`premise` and `pathways` tools through the SWEET-SURE program.
+Swiss Federal Office of Energy (SFOE) for the support  of `pathways` via the SWEET 
+program for the consortium SURE.
 
 # References
