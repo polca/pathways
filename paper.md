@@ -63,7 +63,7 @@ to include broader environmental impacts like land use, water consumption,
 and toxicity, addressing both direct and indirect emissions. However, system-wide 
 LCA remains challenging due to computational costs and methodological 
 complexities, such as defining functional units based on IAM outputs and 
-resolving double-counting issues [@Vandepaer:2020],[@Volkart:2018].
+resolving double-counting issues [@Vandepaer:2020; @Volkart:2018].
 
 Several studies characterize energy scenarios with LCA, including 
 @Gibon:2015, @Rauner:2017 and @Pehl:2017, who quantified ESM or 
@@ -79,7 +79,7 @@ with broader modeling frameworks. For example, the `ODYM-RECC` framework integra
 to assess resource efficiency within climate mitigation scenarios, providing insights on 
 material demand and supply chain impacts [@RECC:2021]. Similarly, the `Mat-dp` tool, when 
 supplied with suitable input data, can be used to calculate materials needed and estimate 
-environmental impacts of transition scenarios [@Mat-dp:2022], [@Mat-dp:2024]. However, because 
+environmental impacts of transition scenarios [@Mat-dp:2022; @Mat-dp:2024]. However, because 
 these tools depend on exogeneous input data, they are not designed to 
 systematically consider the time-dependent technology mixes influencing the production system. 
 This limits their ability to endogenously and dynamically assess evolving environmental impacts 
@@ -154,8 +154,8 @@ This modular approach enhances transparency and traceability, making it easier t
 track which system components are modified, ensuring consistency between the scenario outputs and the LCA.
 
 Finally, Global Sensitivity Analysis (GSA) can be performed on the results.
-Currently, `pathways` supports the use of the `SALib` library for GSA [@Herman2017], 
-[@Iwanaga2022], notably the Delta Moment-Independent Measure (DMIM) method [@BORGONOVO2007771], to rank
+Currently, `pathways` supports the use of the `SALib` library for GSA [@Herman2017; @Iwanaga2022], 
+notably the Delta Moment-Independent Measure (DMIM) method [@BORGONOVO2007771], to rank
 the influence of the database exchanges on the results.
 
 ![`pathways` workflow: from data package to impact assessment.\label{fig:workflow}](assets/workflow_diagram.png)
