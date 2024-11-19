@@ -1,5 +1,5 @@
 ---
-title: '`pathways`: life cycle assessment of energy transition scenarios'
+title: 'pathways: life cycle assessment of energy transition scenarios'
 tags:
   - Python
   - life cycle assessment
