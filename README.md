@@ -21,9 +21,18 @@ by ``premise``, but can be used with any IAM scenarios and LCA databases.
 ``pathways`` reads a scenario and a corresponding set of scenario-based LCA matrices
 and calculates the environmental impacts of the scenario (or a subset of it) over time.
 
+
 <p align="center">
 <img src="https://github.com/polca/pathways/blob/main/assets/workflow_diagram.png" />
 </p>
+
+If you use ``pathways`` in a scientific publication, we would appreciate
+citations to the following paper:
+
+``
+Sacchi et al., (2024). pathways: life cycle assessment of energy transition scenarios. Journal of Open Source Software, 9(103), 7309, https://doi.org/10.21105/joss.07309
+``
+
 
 ## Requirements
 
