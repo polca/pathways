@@ -82289,3 +82289,80 @@
 - transport, passenger bus, EURO-VI
 - person kilometer
 : Other passenger land transport
+
+? !!python/tuple
+- transport, freight, lorry, gasoline, 7.5t gross weight, EURO-VI, long haul
+- transport, freight, lorry, EURO-VI
+- ton kilometer
+: Freight transport by road
+
+? !!python/tuple
+- transport, freight, lorry, liquefied petroleum gas, 7.5t gross weight, EURO-VI, long haul
+- transport, freight, lorry, EURO-VI
+- ton kilometer
+: Freight transport by road
+
+? !!python/tuple
+- transport, freight, lorry, gasoline, 18t gross weight, EURO-VI, long haul
+- transport, freight, lorry, EURO-VI
+- ton kilometer
+: Freight transport by road
+
+? !!python/tuple
+- transport, freight, lorry, liquefied petroleum gas, 18t gross weight, EURO-VI, long haul
+- transport, freight, lorry, EURO-VI
+- ton kilometer
+: Freight transport by road
+
+? !!python/tuple
+- transport, freight, lorry, gasoline, 40t gross weight, EURO-VI, long haul
+- transport, freight, lorry, EURO-VI
+- ton kilometer
+: Freight transport by road
+
+? !!python/tuple
+- transport, freight, lorry, liquefied petroleum gas, 40t gross weight, EURO-VI, long haul
+- transport, freight, lorry, EURO-VI
+- ton kilometer
+: Freight transport by road
+
+? !!python/tuple
+- transport, passenger car, liquefied petroleum gas, Medium, EURO-6
+- transport, freight, lorry, EURO-VI
+- ton kilometer
+: Freight transport by road
+? !!python/tuple
+- heat production, biomethane, at boiler condensing modulating <100kW_FE_services_biomethane
+- heat, central or small-scale, biomethane
+- megajoule
+: Steam and air conditioning supply
+? !!python/tuple
+- market for ammonia, via steam reforming w/ CCS (APS)
+- ammonia, anhydrous, liquid
+- kilogram
+: Manufacture of fertilizers and nitrogen compounds
+? !!python/tuple
+- market for ammonia, via steam reforming w/ CCS (APS)
+- ammonia, anhydrous, liquid
+- kilogram
+: Manufacture of fertilizers and nitrogen compounds
+? !!python/tuple
+- market for hydrogen, electrolysis (APS)
+- hydrogen, electrolysis
+- kilogram
+: Manufacture of refined petroleum products
+? !!python/tuple
+- market for ammonia (APS)
+- ammonia, anhydrous, liquid
+- kilogram
+: Manufacture of fertilizers and nitrogen compounds
+? !!python/tuple
+- market for energy carriers for transport (SPS)
+- heat
+- megajoule
+: Steam and air conditioning supply
+? !!python/tuple
+- transport, passenger car, liquefied petroleum gas, Medium, EURO-6
+- transport, passenger car, EURO-6
+- kilometer
+: Other passenger land transport

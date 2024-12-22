@@ -148,7 +148,12 @@ def get_unit_conversion_factors(
     """
 
     if scenario_unit != dataset_unit:
-        return np.array(unit_mapping.get(scenario_unit, {})[dataset_unit])
+        try:
+            return np.array(unit_mapping.get(scenario_unit, {})[dataset_unit])
+        except KeyError:
+            raise KeyError(
+                f"Unit conversion factor not found for scenario unit {scenario_unit} and dataset unit {dataset_unit}"
+            )
     return np.array([1])
 
 
@@ -444,16 +449,13 @@ def get_activity_indices(
             idx = technosphere_index.get((activity[0], activity[1], activity[2], loc))
             if idx is not None:
                 indices.append(int(idx))
+                logging.info(
+                    f"Activity {activity} found at index {idx} using location {loc}."
+                )
                 break
         else:
-            # If the index was not found, append None and optionally log
-            indices.append(None)
-
-            if debug:
-                logging.warning(
-                    f"Activity {activity} not found in the technosphere matrix."
-                )
-
+            raise(ValueError(f"Activity {activity} not found in technosphere index for locations {possible_locations}."))
+            #indices.append(None)
     return indices
 
 
@@ -507,6 +509,7 @@ def fetch_indices(
                 "dataset": activities[i],
             }
             for i, (variable, idx) in enumerate(zip(variables, idxs))
+            if idx is not None
         }
 
         if len(variables) != len(idxs):

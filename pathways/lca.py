@@ -127,7 +127,7 @@ def get_lca_matrices(
         return [
             Path(fp)
             for fp in filepaths
-            if all(kw in fp for kw in contains)
+            if all(kw in fp.replace(" ", "") for kw in contains)
             and Path(fp).suffix == suffix
             and Path(fp).exists()
         ]
@@ -138,9 +138,12 @@ def get_lca_matrices(
             raise FileNotFoundError(f"Expected file containing '{keyword}' not found.")
         return matches[0]
 
-    fps = filter_filepaths(".csv", [model, scenario, str(year)])
+    fps = filter_filepaths(
+        suffix=".csv",
+        contains=[model, str(year)] + scenario.replace(" ", "").split("-")
+    )
     if len(fps) != 4:
-        raise ValueError(f"Expected 4 filepaths, got {len(fps)}")
+        raise ValueError(f"Expected 4 filepaths, got {len(fps)} when looking at {filepaths} for terms: {model}, {scenario}, {year}")
 
     fp_technosphere_inds = select_filepath("A_matrix_index", fps)
     fp_biosphere_inds = select_filepath("B_matrix_index", fps)
@@ -261,37 +264,38 @@ def create_functional_units(
         )
 
     for v, variable in enumerate(variables):
-        idx, dataset = vars_idx[variable]["idx"], vars_idx[variable]["dataset"]
-        # Compute the unit conversion vector for the given activities
-        dataset_unit = dataset[2]
+        if variable in vars_idx:
+            idx, dataset = vars_idx[variable]["idx"], vars_idx[variable]["dataset"]
+            # Compute the unit conversion vector for the given activities
+            dataset_unit = dataset[2]
 
-        # check if we need units conversion
-        unit_vector = get_unit_conversion_factors(
-            scenarios.attrs["units"][variable],
-            dataset_unit,
-            units_map,
-        ).astype(float)
+            # check if we need units conversion
+            unit_vector = get_unit_conversion_factors(
+                scenarios.attrs["units"][variable],
+                dataset_unit,
+                units_map,
+            ).astype(float)
 
-        # Fetch the demand for the given
-        # region, model, pathway, and year
-        demand = (
-            scenarios.sel(
-                variables=variable,
-                region=region,
-                model=model,
-                pathway=scenario,
-                year=year,
-            ).values
-            * unit_vector
-        )
+            # Fetch the demand for the given
+            # region, model, pathway, and year
+            demand = (
+                scenarios.sel(
+                    variables=variable,
+                    region=region,
+                    model=model,
+                    pathway=scenario,
+                    year=year,
+                ).values
+                * unit_vector
+            )
 
-        variables_demand[variable] = {
-            "id": idx,
-            "demand": demand,
-            "fu": {idx: demand},
-            "dataset": dataset,
-            "unit vector": unit_vector,
-        }
+            variables_demand[variable] = {
+                "id": idx,
+                "demand": demand,
+                "fu": {idx: demand},
+                "dataset": dataset,
+                "unit vector": unit_vector,
+            }
 
     return {
         key: value["fu"] for key, value in variables_demand.items()
@@ -615,7 +619,7 @@ def _calculate_year(args: tuple):
     for region in regions:
         fus, fus_details = create_functional_units(
             scenarios=scenarios,
-            region=regions[0],
+            region=region,
             model=model,
             scenario=scenario,
             year=year,

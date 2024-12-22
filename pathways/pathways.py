@@ -130,7 +130,7 @@ class Pathways:
         datapackage,
         geography_mapping: [dict, str] = None,
         activities_mapping: [dict, str] = None,
-        debug=False,
+        debug=True,
     ):
         self.datapackage = datapackage
         self.data, dataframe, self.filepaths = validate_datapackage(
@@ -514,7 +514,6 @@ class Pathways:
                             year=year,
                         )
                     ] = r[c]
-
         else:
             for coords, values in results.items():
                 model, scenario, year = coords

@@ -25,3 +25,5 @@ bn pkm/yr:
   passenger kilometer: 1e+9
 Mt CO2/yr:
   kilogram: 1e+9
+Mt:
+  kilogram: 1e+9
