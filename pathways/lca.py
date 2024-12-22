@@ -140,10 +140,12 @@ def get_lca_matrices(
 
     fps = filter_filepaths(
         suffix=".csv",
-        contains=[model, str(year)] + scenario.replace(" ", "").split("-")
+        contains=[model, str(year)] + scenario.replace(" ", "").split("-"),
     )
     if len(fps) != 4:
-        raise ValueError(f"Expected 4 filepaths, got {len(fps)} when looking at {filepaths} for terms: {model}, {scenario}, {year}")
+        raise ValueError(
+            f"Expected 4 filepaths, got {len(fps)} when looking at {filepaths} for terms: {model}, {scenario}, {year}"
+        )
 
     fp_technosphere_inds = select_filepath("A_matrix_index", fps)
     fp_biosphere_inds = select_filepath("B_matrix_index", fps)

@@ -454,8 +454,12 @@ def get_activity_indices(
                 )
                 break
         else:
-            raise(ValueError(f"Activity {activity} not found in technosphere index for locations {possible_locations}."))
-            #indices.append(None)
+            raise (
+                ValueError(
+                    f"Activity {activity} not found in technosphere index for locations {possible_locations}."
+                )
+            )
+            # indices.append(None)
     return indices
 
 
