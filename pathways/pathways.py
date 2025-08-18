@@ -536,8 +536,8 @@ class Pathways:
                     methods,
                 )
 
-    def display_results(self, cutoff: float = 0.001) -> xr.DataArray:
-        return display_results(self.lca_results, cutoff=cutoff)
+    def aggregate_results(self, cutoff: float = 0.001, interpolate: bool = False):
+        self.lca_results = display_results(self.lca_results, cutoff=cutoff, interpolate=interpolate)
 
     def export_results(self, filename: str = None) -> str:
         """

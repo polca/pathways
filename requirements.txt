@@ -6,8 +6,8 @@ xarray
 premise
 pyyaml
 bw_processing
-bw2calc >= 2.0.dev18
-bw2data >= 4.0.dev59
+bw2calc >= 2.0
+bw2data >= 4.0
 datapackage
 pyprind
 platformdirs

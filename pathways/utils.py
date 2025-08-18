@@ -296,53 +296,66 @@ def export_results_to_parquet(lca_results: xr.DataArray, filepath: str) -> str:
     return filepath
 
 
+import numpy as np
+import xarray as xr
+from typing import Union
+
 def display_results(
     lca_results: Union[xr.DataArray, None],
     cutoff: float = 0.001,
     interpolate: bool = False,
 ) -> xr.DataArray:
-    """
-    Display the LCA results.
-    Remove results below a cutoff value and aggregate them into a single category.
-    :param lca_results: The LCA results.
-    :param cutoff: The cutoff value.
-    :param interpolate: A boolean indicating whether to interpolate the results.
-    :return: The LCA results.
-    :rtype: xr.DataArray
-    """
     if lca_results is None:
         raise ValueError("No results to display")
+    if "act_category" not in lca_results.dims:
+        raise ValueError("'act_category' must be a dimension of lca_results")
 
-    if len(lca_results.year) > 1 and interpolate:
+    # Optional interpolation
+    if interpolate and "year" in lca_results.dims and lca_results.sizes.get("year", 0) > 1:
+        y_min = int(np.asarray(lca_results["year"].min()).item())
+        y_max = int(np.asarray(lca_results["year"].max()).item())
         lca_results = lca_results.interp(
-            year=np.arange(lca_results.year.min(), lca_results.year.max() + 1),
-            kwargs={"fill_value": "extrapolate"},
+            year=np.arange(y_min, y_max + 1),
             method="linear",
+            kwargs={"fill_value": "extrapolate"},
         )
 
-    above_cutoff = lca_results.where(lca_results > cutoff)
+    mask = lca_results > cutoff
+    above = lca_results.where(mask)
 
-    # Step 2: Aggregate values below the cutoff across the 'act_category' dimension
-    # Summing all values below the cutoff for each combination of other dimensions
-    below_cutoff = lca_results.where(lca_results <= cutoff).sum(dim="act_category")
+    # Sum below/equal cutoff across act_category, then add it back as a new "other" category
+    other = (
+        lca_results.where(~mask)
+        .sum(dim="act_category", skipna=True)
+        .expand_dims(act_category=["other"])   # <-- create dim and its coord together
+    )
 
-    # Since summing removes the 'act_category', we need to add it back
-    # Create a new coordinate for 'act_category' that includes 'other'
-    new_act_category = np.append(lca_results.act_category.values, "other")
+    # Optional: drop empty categories to reduce size
+    above = above.dropna(dim="act_category", how="all")
 
-    # Create a new DataArray for below-cutoff values with 'act_category' as 'other'
-    # This involves broadcasting below_cutoff to match the original array's dimensions but with 'act_category' replaced
-    other_data = below_cutoff.expand_dims({"act_category": ["other"]}, axis=0)
+    # Concatenate and set final coordinate (existing categories + "other")
+    combined = xr.concat([above, other], dim="act_category")
+    final_act_cats = list(above.get_index("act_category")) + ["other"]
+    combined = combined.assign_coords(act_category=final_act_cats)
 
-    # Step 3: Combine the above-cutoff data with the new 'other' data
-    # Concatenate along the 'act_category' dimension
-    combined = xr.concat([above_cutoff, other_data], dim="act_category")
-
-    # Ensure the 'act_category' coordinate is updated to include 'other'
-    combined = combined.assign_coords({"act_category": new_act_category})
-
+    # prune zeros (pick a small tol if you want to ignore tiny numerical noise)
+    combined = prune_zero_coords(combined, tol=1e-15)
     return combined
 
+def prune_zero_coords(da: xr.DataArray, tol: float = 0.0) -> xr.DataArray:
+    """Drop coordinate labels in every dimension where the entire slice is ~0."""
+    x = da.fillna(0.0)  # treat NaNs as zeros for pruning
+    for dim in list(x.dims):
+        other = [d for d in x.dims if d != dim]
+        mag = np.abs(x.astype(float))  # works with dask too (np.abs is a ufunc)
+
+        if other:  # multi-dim: keep labels where ANY value across other dims > tol
+            keep = (mag > tol).any(dim=other)
+        else:      # 1-D case: elementwise keep mask
+            keep = (mag > tol)
+
+        x = x.sel({dim: keep})
+    return x
 
 def load_numpy_array_from_disk(filepath):
     """
@@ -443,6 +456,8 @@ def get_activity_indices(
 
         # Add default locations to the end of the search list
         possible_locations.extend(["RoW", "GLO", "RER", "CH"])
+        # add IAM equivalents
+        possible_locations.append(geo.ecoinvent_to_iam_location(activity[-1]))
 
         # Attempt to find the index in technosphere_index
         for loc in possible_locations:
@@ -454,14 +469,22 @@ def get_activity_indices(
                 )
                 break
         else:
-            raise (
-                ValueError(
-                    f"Activity {activity} not found in technosphere index for locations {possible_locations}."
-                )
-            )
-            # indices.append(None)
+            print(f"Activity {activity} not found in technosphere index. Skipping")
+            pass
     return indices
 
+def add_lhv(variable, mapping) -> Union[dict, None]:
+
+    """
+    Add the lower heating value (LHV) to the variable if it exists in the mapping.
+    :param variable: The variable to check for LHV.
+    :param mapping: The mapping dictionary containing LHV information.
+    :return: The LHV value if it exists, otherwise None.
+    """
+    if variable in mapping:
+        if "lhv" in mapping[variable]:
+            return mapping[variable]["lhv"]
+    return {}
 
 def fetch_indices(
     mapping: dict, regions: list, variables: list, technosphere_index: dict, geo: Geomap
@@ -484,14 +507,22 @@ def fetch_indices(
     """
 
     # Pre-process mapping data to minimize repetitive data access
-    activities_info = {
-        variable: (
-            mapping[variable]["dataset"][0]["name"],
-            mapping[variable]["dataset"][0]["reference product"],
-            mapping[variable]["dataset"][0]["unit"],
-        )
-        for variable in variables
-    }
+    activities_info = {}
+    for variable in variables:
+        try:
+
+            activities_info[variable] = (
+                mapping[variable]["dataset"][0]["name"],
+                mapping[variable]["dataset"][0]["reference product"],
+                mapping[variable]["dataset"][0]["unit"],
+            )
+
+        except IndexError:
+            logging.error(
+                f"Variable '{variable}' not found in mapping. Ensure it is correctly defined."
+            )
+            print(f"Variable '{variable}' not found in mapping. Ensure it is correctly defined.")
+            pass
 
     # Initialize dictionary to hold indices
     vars_idx = {}
@@ -502,19 +533,33 @@ def fetch_indices(
             (name, ref_product, unit, region)
             for name, ref_product, unit in activities_info.values()
         ]
-
+        idxs = None
         # Use _get_activity_indices to fetch indices
-        idxs = get_activity_indices(activities, technosphere_index, geo)
+        try:
+            idxs = get_activity_indices(activities, technosphere_index, geo)
+        except ValueError as e:
+            logging.error(
+                f"Error fetching indices for region {region}: {e}. "
+                "Ensure that the activities and regions are correctly defined."
+            )
+            print(
+                f"Error fetching indices for region {region}: {e}. "
+                "Ensure that the activities and regions are correctly defined."
+            )
+            pass
 
-        # Map variables to their indices and associated dataset information
-        vars_idx[region] = {
-            variable: {
-                "idx": idx,
-                "dataset": activities[i],
+        if idxs is not None:
+
+            # Map variables to their indices and associated dataset information
+            vars_idx[region] = {
+                variable: {
+                    "idx": idx,
+                    "dataset": activities[i],
+                    "lhv": add_lhv(variable, mapping) if variable in mapping else {},
+                }
+                for i, (variable, idx) in enumerate(zip(variables, idxs))
+                if idx is not None
             }
-            for i, (variable, idx) in enumerate(zip(variables, idxs))
-            if idx is not None
-        }
 
         if len(variables) != len(idxs):
             logging.warning(f"Could not find all activities for region {region}.")

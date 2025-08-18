@@ -27,3 +27,10 @@ Mt CO2/yr:
   kilogram: 1e+9
 Mt:
   kilogram: 1e+9
+
+billion tkm/yr:
+  ton kilometer: 1e+9
+
+billion pkm/yr:
+  person kilometer: 1e+9
+  kilometer: 1e+9
