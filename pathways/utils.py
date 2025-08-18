@@ -300,6 +300,7 @@ import numpy as np
 import xarray as xr
 from typing import Union
 
+
 def display_results(
     lca_results: Union[xr.DataArray, None],
     cutoff: float = 0.001,
@@ -311,7 +312,11 @@ def display_results(
         raise ValueError("'act_category' must be a dimension of lca_results")
 
     # Optional interpolation
-    if interpolate and "year" in lca_results.dims and lca_results.sizes.get("year", 0) > 1:
+    if (
+        interpolate
+        and "year" in lca_results.dims
+        and lca_results.sizes.get("year", 0) > 1
+    ):
         y_min = int(np.asarray(lca_results["year"].min()).item())
         y_max = int(np.asarray(lca_results["year"].max()).item())
         lca_results = lca_results.interp(
@@ -327,7 +332,7 @@ def display_results(
     other = (
         lca_results.where(~mask)
         .sum(dim="act_category", skipna=True)
-        .expand_dims(act_category=["other"])   # <-- create dim and its coord together
+        .expand_dims(act_category=["other"])  # <-- create dim and its coord together
     )
 
     # Optional: drop empty categories to reduce size
@@ -342,6 +347,7 @@ def display_results(
     combined = prune_zero_coords(combined, tol=1e-15)
     return combined
 
+
 def prune_zero_coords(da: xr.DataArray, tol: float = 0.0) -> xr.DataArray:
     """Drop coordinate labels in every dimension where the entire slice is ~0."""
     x = da.fillna(0.0)  # treat NaNs as zeros for pruning
@@ -351,11 +357,12 @@ def prune_zero_coords(da: xr.DataArray, tol: float = 0.0) -> xr.DataArray:
 
         if other:  # multi-dim: keep labels where ANY value across other dims > tol
             keep = (mag > tol).any(dim=other)
-        else:      # 1-D case: elementwise keep mask
-            keep = (mag > tol)
+        else:  # 1-D case: elementwise keep mask
+            keep = mag > tol
 
         x = x.sel({dim: keep})
     return x
+
 
 def load_numpy_array_from_disk(filepath):
     """
@@ -473,8 +480,8 @@ def get_activity_indices(
             pass
     return indices
 
-def add_lhv(variable, mapping) -> Union[dict, None]:
 
+def add_lhv(variable, mapping) -> Union[dict, None]:
     """
     Add the lower heating value (LHV) to the variable if it exists in the mapping.
     :param variable: The variable to check for LHV.
@@ -485,6 +492,7 @@ def add_lhv(variable, mapping) -> Union[dict, None]:
         if "lhv" in mapping[variable]:
             return mapping[variable]["lhv"]
     return {}
+
 
 def fetch_indices(
     mapping: dict, regions: list, variables: list, technosphere_index: dict, geo: Geomap
@@ -521,7 +529,9 @@ def fetch_indices(
             logging.error(
                 f"Variable '{variable}' not found in mapping. Ensure it is correctly defined."
             )
-            print(f"Variable '{variable}' not found in mapping. Ensure it is correctly defined.")
+            print(
+                f"Variable '{variable}' not found in mapping. Ensure it is correctly defined."
+            )
             pass
 
     # Initialize dictionary to hold indices
