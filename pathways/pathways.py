@@ -130,6 +130,7 @@ class Pathways:
         datapackage,
         geography_mapping: [dict, str] = None,
         activities_mapping: [dict, str] = None,
+        ecoinvent_version: str = "3.11",
         debug=True,
     ):
         self.datapackage = datapackage
@@ -137,6 +138,7 @@ class Pathways:
             _read_datapackage(datapackage)
         )
         self.mapping = _get_mapping(self.data)
+        self.ei_version = ecoinvent_version
         try:
             self.mapping.update(self._get_final_energy_mapping())
         except KeyError:
@@ -151,7 +153,7 @@ class Pathways:
             )
 
         self.lca_results = None
-        self.lcia_methods = get_lcia_method_names()
+        self.lcia_methods = get_lcia_method_names(self.ei_version)
         self.units = load_units_conversion()
         self.lcia_matrix = None
 

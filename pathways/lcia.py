@@ -11,12 +11,19 @@ from scipy.sparse import csr_matrix
 
 from .filesystem_constants import DATA_DIR
 
-LCIA_METHODS = DATA_DIR / "lcia_ei310.json"
+LCIA_METHODS_EI310 = DATA_DIR / "lcia_ei310.json"
+LCIA_METHODS_EI311 = DATA_DIR / "lcia_ei311.json"
 
 
-def get_lcia_method_names():
+def get_lcia_method_names(ei_version="3.11"):
     """Get a list of available LCIA methods."""
-    with open(LCIA_METHODS, "r") as f:
+
+    if ei_version != "3.11":
+        filepath = LCIA_METHODS_EI311
+    else:
+        filepath = LCIA_METHODS_EI310
+
+    with open(filepath, "r") as f:
         data = json.load(f)
 
     return [" - ".join(x["name"]) for x in data]
@@ -41,9 +48,15 @@ def format_lcia_method_exchanges(method):
     }
 
 
-def get_lcia_methods(methods: list = None):
+def get_lcia_methods(methods: list = None, ei_version="3.11"):
     """Get a list of available LCIA methods."""
-    with open(LCIA_METHODS, "r") as f:
+
+    if ei_version != "3.11":
+        filepath = LCIA_METHODS_EI311
+    else:
+        filepath = LCIA_METHODS_EI310
+
+    with open(filepath, "r") as f:
         data = json.load(f)
 
     if methods:
