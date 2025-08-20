@@ -244,10 +244,16 @@ def adjust_matrix_based_on_shares(
         for region, technologies in regions.items():
 
             # Check if this category has normalization weights
-            has_normalization_weight = any('normalization_weight' in tech for tech in technologies.values())
+            has_normalization_weight = any(
+                "normalization_weight" in tech for tech in technologies.values()
+            )
             if has_normalization_weight:
                 # Calculate the total normalization weight for this category and year
-                ref_norm = next(tech["normalization_weight"] for tech in technologies.values() if 'normalization_weight' in tech)
+                ref_norm = next(
+                    tech["normalization_weight"]
+                    for tech in technologies.values()
+                    if "normalization_weight" in tech
+                )
 
             for name, tech in technologies.items():
                 for consumer in tech["consumer_idx"]:
@@ -255,7 +261,7 @@ def adjust_matrix_based_on_shares(
                     subshare = subshares[tech_category][year][name]
 
                     # Apply normalization weight if applicable
-                    if has_normalization_weight and 'normalization_weight' in tech:
+                    if has_normalization_weight and "normalization_weight" in tech:
                         normalization_factor = ref_norm / tech["normalization_weight"]
                     else:
                         normalization_factor = 1.0
