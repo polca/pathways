@@ -242,11 +242,23 @@ def adjust_matrix_based_on_shares(
 
     for tech_category, regions in shares_dict.items():
         for region, technologies in regions.items():
+
+            # Check if this category has normalization weights
+            has_normalization_weight = any('normalization_weight' in tech for tech in technologies.values())
+            if has_normalization_weight:
+                # Calculate the total normalization weight for this category and year
+                ref_norm = next(tech["normalization_weight"] for tech in technologies.values() if 'normalization_weight' in tech)
+
             for name, tech in technologies.items():
                 for consumer in tech["consumer_idx"]:
                     initial_amount = lca.technosphere_matrix[tech["idx"], consumer]
-
                     subshare = subshares[tech_category][year][name]
+
+                    # Apply normalization weight if applicable
+                    if has_normalization_weight and 'normalization_weight' in tech:
+                        normalization_factor = ref_norm / tech["normalization_weight"]
+                    else:
+                        normalization_factor = 1.0
 
                     # Distribute the initial amount based on the subshare of the current technology
                     split_amount = initial_amount * subshare * -1

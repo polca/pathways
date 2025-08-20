@@ -27,3 +27,7 @@ Mt CO2/yr:
   kilogram: 1e+9
 Mt:
   kilogram: 1e+9
+GW/yr:
+  unit: 1  # It expects activities scaled to 1 GW
+million veh:
+  unit: 1  # It expects activities scaled to 1 million vehicles
