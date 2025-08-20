@@ -27,6 +27,14 @@ Mt CO2/yr:
   kilogram: 1e+9
 Mt:
   kilogram: 1e+9
+
+billion tkm/yr:
+  ton kilometer: 1e+9
+
+billion pkm/yr:
+  person kilometer: 1e+9
+  kilometer: 1e+9
+
 GW/yr:
   unit: 1  # It expects activities scaled to 1 GW
 million veh:

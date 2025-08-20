@@ -103,8 +103,8 @@ def get_lca_matrices(
     Datapackage,
     dict[tuple[str, str, str, str], int],
     dict[tuple, int],
-    list[tuple[int, int]],
-    [dict, None],
+    list[tuple] | None,
+    dict | None,
 ]:
     """
     Retrieve Life Cycle Assessment (LCA) matrices from disk.
@@ -271,12 +271,47 @@ def create_functional_units(
             # Compute the unit conversion vector for the given activities
             dataset_unit = dataset[2]
 
-            # check if we need units conversion
-            unit_vector = get_unit_conversion_factors(
-                scenarios.attrs["units"][variable],
-                dataset_unit,
-                units_map,
-            ).astype(float)
+            try:
+                # check if we need unit conversions
+                unit_vector = get_unit_conversion_factors(
+                    scenarios.attrs["units"][variable],
+                    dataset_unit,
+                    units_map,
+                ).astype(float)
+
+            except KeyError:
+
+                if "lhv" in vars_idx[variable]:
+                    alternative_unit = vars_idx[variable]["lhv"].get("unit")
+                    conversion_factor = vars_idx[variable]["lhv"].get("value")
+
+                    if alternative_unit and conversion_factor:
+                        unit_vector = (
+                            get_unit_conversion_factors(
+                                scenarios.attrs["units"][variable],
+                                vars_idx[variable]["lhv"]["unit"],
+                                units_map,
+                            ).astype(float)
+                            * vars_idx[variable]["lhv"]["value"]
+                        )
+                    else:
+                        print("--------------")
+                        print(f"Unit conversion factors not found for {variable}.")
+                        print(f"Variable unit: {scenarios.attrs['units'][variable]}")
+                        print(f"Dataset unit: {dataset_unit}")
+                        print(f"Dataset: {dataset}")
+                        print("vars_idx[variable]", vars_idx[variable])
+                        print("--------------")
+                        unit_vector = 1.0
+                else:
+                    print("--------------")
+                    print(f"Unit conversion factors not found for {variable}.")
+                    print(f"Variable unit: {scenarios.attrs['units'][variable]}")
+                    print(f"Dataset unit: {dataset_unit}")
+                    print(f"Dataset: {dataset}")
+                    print("vars_idx[variable]", vars_idx[variable])
+                    print("--------------")
+                    unit_vector = 1.0
 
             # Fetch the demand for the given
             # region, model, pathway, and year

@@ -152,11 +152,10 @@ attribute of the `Pathways` object as an ``xarray.DataArray``.
 
 You can display the LCA results with an optional cutoff parameter to filter insignificant data:
 
-
 ```python
 
-    results = p.display_results(cutoff=0.001)
-    print(results)
+results = p.aggregate_results(cutoff=0.001)
+print(results)
 
 ```
 
