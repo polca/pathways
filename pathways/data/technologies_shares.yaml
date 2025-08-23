@@ -692,8 +692,8 @@ Wind_onshore_network_capacity:
         loc: 0.80
       2050:
         #        minimum: 0.67
-        minimum: 0.60
-        maximum: 0.40
+        minimum: 0.40
+        maximum: 0.60
         uncertainty_type: uniform
   ### These should have been deleted by premise. But this is a double check.
   delete_1:
