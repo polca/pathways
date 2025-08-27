@@ -423,397 +423,397 @@ Battery-Stationary:
         maximum: 0.33
         uncertainty_type: uniform
 ##### CAPACITY ADDITION
-#PV_capacity:
-#  c-Si_capacity:
-#    name: photovoltaic slanted-roof installation, 3kWp, multi-Si, laminated, integrated, on roof
-#    reference product: photovoltaic slanted-roof installation, 3kWp, multi-Si, laminated, integrated, on roof
-#    unit: unit
-#    normalization_weight: 3
-#    share:
-#      2020:
-#        loc: 0.9440
-#      2050:
-##        minimum: 0.50
-#        minimum: 0.40
-#        maximum: 0.9440
-#        uncertainty_type: uniform
-#  CdTe_capacity:
-#    name: photovoltaic slanted-roof installation, 3kWp, CdTe, laminated, integrated, on roof
-#    reference product: photovoltaic slanted-roof installation, 3kWp, CdTe, laminated, integrated, on roof
-#    unit: unit
-#    normalization_weight: 3
-#    share:
-#      2020:
-#        loc: 0.0400
-#      2050:
-#        minimum: 0.0
-#        maximum: 0.2500
-#        uncertainty_type: uniform
-#  CIGS_capacity:
-#    name: photovoltaic slanted-roof installation, 3kWp, CIS, panel, mounted, on roof
-#    reference product: photovoltaic slanted-roof installation, 3kWp, CIS, panel, mounted, on roof
-#    unit: unit
-#    normalization_weight: 3
-#    share:
-#      2020:
-#        loc: 0.0150
-#      2050:
-#        minimum: 0.0
-#        maximum: 0.1250
-#        uncertainty_type: uniform
-#  a-Si_capacity:
-#    name: photovoltaic slanted-roof installation, 3kWp, a-Si, laminated, integrated, on roof
-#    reference product: photovoltaic slanted-roof installation, 3kWp, a-Si, laminated, integrated, on roof
-#    unit: unit
-#    normalization_weight: 3
-#    share:
-#      2020:
-#        loc: 0.0010
-#      2050:
-#        minimum: 0.0000
-#        maximum: 0.001
-#        uncertainty_type: uniform
-#  Perovskite_capacity:
-#    name: photovoltaic panel installation, 0.5kWp, perovskite
-#    reference product: photovoltaic panel, perovskite
-#    unit: unit
-#    normalization_weight: 0.5
-#    share:
-#      2020:
-#        loc: 0.0000
-#      2050:
-#        minimum: 0.0000
-#        maximum: 0.3000
-#        uncertainty_type: uniform
-#  GaAs_capacity:
-#    name: photovoltaic installation, 0.28kWp, GaAs
-#    reference product: photovoltaic installation, GaAs
-#    unit: unit
-#    normalization_weight: 0.28
-#    share:
-#      2020:
-#        loc: 0.0000
-#      2050:
-#        minimum: 0.0000
-#        maximum: 0.1500
-#        uncertainty_type: uniform
-#Wind_onshore_capacity:
-#  onshore-DDPM_capacity:
-#    name: market for wind turbine, 4.5MW, onshore, direct drive
-#    reference product: wind turbine, 4.5MW, onshore
-#    unit: unit
-#    normalization_weight: 4.5
-#    share:
-#      2020:
-#        loc: 0.2
-#      2050:
-#        minimum: 0.20
-#        maximum: 0.40
-#        uncertainty_type: uniform
-#  onshore-Gearbox_capacity:
-#    name: market for wind turbine, 4.5MW, onshore
-#    reference product: wind turbine, 4.5MW, onshore
-#    unit: unit
-#    normalization_weight: 4.5
-#    share:
-#      2020:
-#        loc: 0.8
-#      2050:
-##        minimum: 0.67
-#        minimum: 0.60
-#        maximum: 0.80
-#        uncertainty_type: uniform
-#  ### These should have been deleted by premise. But this is a double check.
-#  delete_1:
-#    name: market for wind power plant, 800kW, moving parts
-#    reference product: wind power plant, 800kW, moving parts
-#    unit: unit
-#    normalization_weight: 0.8
-#    share:
-#      2020:
-#        loc: 0.0
-#      2050:
-#        minimum: 0.0
-#        maximum: 0.0
-#        uncertainty_type: uniform
-#  delete_2:
-#    name: market for wind power plant, 800kW, moving parts, direct drive
-#    reference product: wind power plant, 800kW, moving parts
-#    unit: unit
-#    normalization_weight: 0.8
-#    share:
-#      2020:
-#        loc: 0.0
-#      2050:
-#        minimum: 0.0
-#        maximum: 0.0
-#        uncertainty_type: uniform
-#  delete_3:
-#    name: market for wind turbine, 2.3MW, onshore
-#    reference product: wind turbine, 2.3MW, onshore
-#    unit: unit
-#    normalization_weight: 2.3
-#    share:
-#      2020:
-#        loc: 0.0
-#      2050:
-#        minimum: 0.0
-#        maximum: 0.0
-#        uncertainty_type: uniform
-#  delete_4:
-#    name: market for wind turbine, 2.3MW, onshore, direct drive
-#    reference product: wind turbine, 2.3MW, onshore
-#    unit: unit
-#    normalization_weight: 2.3
-#    share:
-#      2020:
-#        loc: 0.0
-#      2050:
-#        minimum: 0.0
-#        maximum: 0.0
-#        uncertainty_type: uniform
-#  delete_5:
-#    name: market for wind turbine, 2MW, onshore
-#    reference product: wind turbine, 2MW, onshore
-#    unit: unit
-#    normalization_weight: 2
-#    share:
-#      2020:
-#        loc: 0.0
-#      2050:
-#        minimum: 0.0
-#        maximum: 0.0
-#        uncertainty_type: uniform
-#  delete_6:
-#    name: market for wind turbine, 2MW, onshore, direct drive
-#    reference product: wind turbine, 2MW, onshore
-#    unit: unit
-#    normalization_weight: 2
-#    share:
-#      2020:
-#        loc: 0.0
-#      2050:
-#        minimum: 0.0
-#        maximum: 0.0
-#        uncertainty_type: uniform
-#  delete_7:
-#    name: market for wind turbine, 750kW, onshore
-#    reference product: wind turbine, 750kW, onshore
-#    unit: unit
-#    normalization_weight: 0.75
-#    share:
-#      2020:
-#        loc: 0.0
-#      2050:
-#        minimum: 0.0
-#        maximum: 0.0
-#        uncertainty_type: uniform
-#  delete_8:
-#    name: market for wind turbine, 750kW, onshore, direct drive
-#    reference product: wind turbine, 750kW, onshore
-#    unit: unit
-#    normalization_weight: 0.75
-#    share:
-#      2020:
-#        loc: 0.0
-#      2050:
-#        minimum: 0.0
-#        maximum: 0.0
-#        uncertainty_type: uniform
-#  delete_9:
-#    name: market for wind turbine, small-scale, 6kW, onshore
-#    reference product: wind turbine, small-scale, 6kW, onshore
-#    unit: unit
-#    normalization_weight: 0.006
-#    share:
-#      2020:
-#        loc: 0.0
-#      2050:
-#        minimum: 0.0
-#        maximum: 0.0
-#        uncertainty_type: uniform
-#  delete_10:
-#    name: market for wind turbine, small-scale, 6kW, onshore, direct drive
-#    reference product: wind turbine, small-scale, 6kW, onshore
-#    unit: unit
-#    normalization_weight: 0.006
-#    share:
-#      2020:
-#        loc: 0.0
-#      2050:
-#        minimum: 0.0
-#        maximum: 0.0
-#        uncertainty_type: uniform
-#Wind_offshore_capacity:
-#  offshore-DDPM_capacity:
-#    name: market for wind power plant, 2MW, offshore, moving parts, direct drive
-#    reference product: wind power plant, 2MW, offshore, moving parts
-#    unit: unit
-#    normalization_weight: 2
-#    share:
-#      2020:
-#        loc: 0.75
-#      2050:
-#        minimum: 0.40
-#        maximum: 0.90
-#        uncertainty_type: uniform
-#  offshore-Gearbox_capacity:
-#    name: market for wind power plant, 2MW, offshore, moving parts
-#    reference product: wind power plant, 2MW, offshore, moving parts
-#    unit: unit
-#    normalization_weight: 2
-#    share:
-#      2020:
-#        loc: 0.25
-#      2050:
-#        minimum: 0.10
-#        maximum: 0.60
-#        uncertainty_type: uniform
-#Wind_onshore_network_capacity:
-#  onshore-DDPM_capacity:
-#    name: market for wind turbine network connection, 4.5MW, onshore, direct drive
-#    reference product: wind turbine network connection, 4.5MW, onshore
-#    unit: unit
-#    normalization_weight: 4.5
-#    share:
-#      2020:
-#        loc: 0.20
-#      2050:
-#        minimum: 0.20
-#        maximum: 0.40
-#        uncertainty_type: uniform
-#  onshore-Gearbox_capacity:
-#    name: market for wind turbine network connection, 4.5MW, onshore
-#    reference product: wind turbine network connection, 4.5MW, onshore
-#    unit: unit
-#    normalization_weight: 4.5
-#    share:
-#      2020:
-#        loc: 0.80
-#      2050:
-#        #        minimum: 0.67
-#        minimum: 0.40
-#        maximum: 0.60
-#        uncertainty_type: uniform
-#  ### These should have been deleted by premise. But this is a double check.
-#  delete_1:
-#    name: market for wind power plant, 800kW, fixed parts
-#    reference product: wind power plant, 800kW, fixed parts
-#    unit: unit
-#    normalization_weight: 0.8
-#    share:
-#      2020:
-#        loc: 0.0
-#      2050:
-#        minimum: 0.0
-#        maximum: 0.0
-#        uncertainty_type: uniform
-#  delete_2:
-#    name: market for wind power plant, 800kW, fixed parts, direct drive
-#    reference product: wind power plant, 800kW, fixed parts
-#    unit: unit
-#    normalization_weight: 0.8
-#    share:
-#      2020:
-#        loc: 0.0
-#      2050:
-#        minimum: 0.0
-#        maximum: 0.0
-#        uncertainty_type: uniform
-#  delete_3:
-#    name: market for wind turbine network connection, 2MW, onshore, direct drive
-#    reference product: wind turbine network connection, 2MW, onshore
-#    unit: unit
-#    normalization_weight: 2
-#    share:
-#      2020:
-#        loc: 0.0
-#      2050:
-#        minimum: 0.0
-#        maximum: 0.0
-#        uncertainty_type: uniform
-#  delete_4:
-#    name: market for wind turbine network connection, 2MW, onshore
-#    reference product: wind turbine network connection, 2MW, onshore
-#    unit: unit
-#    normalization_weight: 2
-#    share:
-#      2020:
-#        loc: 0.0
-#      2050:
-#        minimum: 0.0
-#        maximum: 0.0
-#        uncertainty_type: uniform
-#  delete_5:
-#    name: market for wind turbine network connection, 750kW, onshore, direct drive
-#    reference product: wind turbine network connection, 750kW, onshore
-#    unit: unit
-#    normalization_weight: 0.75
-#    share:
-#      2020:
-#        loc: 0.0
-#      2050:
-#        minimum: 0.0
-#        maximum: 0.0
-#        uncertainty_type: uniform
-#  delete_6:
-#    name: market for wind turbine network connection, 750kW, onshore
-#    reference product: wind turbine network connection, 750kW, onshore
-#    unit: unit
-#    normalization_weight: 0.75
-#    share:
-#      2020:
-#        loc: 0.0
-#      2050:
-#        minimum: 0.0
-#        maximum: 0.0
-#        uncertainty_type: uniform
-#  delete_7:
-#    name: market for wind turbine network connection, small-scale, 6kW, onshore
-#    reference product: wind turbine network connection, small-scale, 6kW, onshore
-#    unit: unit
-#    normalization_weight: 0.006
-#    share:
-#      2020:
-#        loc: 0.0
-#      2050:
-#        minimum: 0.0
-#        maximum: 0.0
-#        uncertainty_type: uniform
-#  delete_8:
-#    name: market for wind turbine network connection, small-scale, 6kW, onshore, direct drive
-#    reference product: wind turbine network connection, small-scale, 6kW, onshore
-#    unit: unit
-#    normalization_weight: 0.006
-#    share:
-#      2020:
-#        loc: 0.0
-#      2050:
-#        minimum: 0.0
-#        maximum: 0.0
-#        uncertainty_type: uniform
-#Wind_offshore_network_capacity:
-#  offshore-DDPM_capacity:
-#    name: market for wind power plant, 2MW, offshore, fixed parts, direct drive
-#    reference product: wind power plant, 2MW, offshore, fixed parts
-#    unit: unit
-#    normalization_weight: 2
-#    share:
-#      2020:
-#        loc: 0.75
-#      2050:
-#        minimum: 0.40
-#        maximum: 0.90
-#        uncertainty_type: uniform
-#  offshore-Gearbox_capacity:
-#    name: market for wind power plant, 2MW, offshore, fixed parts
-#    reference product: wind power plant, 2MW, offshore, fixed parts
-#    unit: unit
-#    normalization_weight: 2
-#    share:
-#      2020:
-#        loc: 0.25
-#      2050:
-#        minimum: 0.10
-#        maximum: 0.60
-#        uncertainty_type: uniform
+PV_capacity:
+  c-Si_capacity:
+    name: photovoltaic slanted-roof installation, 3kWp, multi-Si, laminated, integrated, on roof
+    reference product: photovoltaic slanted-roof installation, 3kWp, multi-Si, laminated, integrated, on roof
+    unit: unit
+    normalization_weight: 3
+    share:
+      2020:
+        loc: 0.9440
+      2050:
+#        minimum: 0.50
+        minimum: 0.40
+        maximum: 0.9440
+        uncertainty_type: uniform
+  CdTe_capacity:
+    name: photovoltaic slanted-roof installation, 3kWp, CdTe, laminated, integrated, on roof
+    reference product: photovoltaic slanted-roof installation, 3kWp, CdTe, laminated, integrated, on roof
+    unit: unit
+    normalization_weight: 3
+    share:
+      2020:
+        loc: 0.0400
+      2050:
+        minimum: 0.0
+        maximum: 0.2500
+        uncertainty_type: uniform
+  CIGS_capacity:
+    name: photovoltaic slanted-roof installation, 3kWp, CIS, panel, mounted, on roof
+    reference product: photovoltaic slanted-roof installation, 3kWp, CIS, panel, mounted, on roof
+    unit: unit
+    normalization_weight: 3
+    share:
+      2020:
+        loc: 0.0150
+      2050:
+        minimum: 0.0
+        maximum: 0.1250
+        uncertainty_type: uniform
+  a-Si_capacity:
+    name: photovoltaic slanted-roof installation, 3kWp, a-Si, laminated, integrated, on roof
+    reference product: photovoltaic slanted-roof installation, 3kWp, a-Si, laminated, integrated, on roof
+    unit: unit
+    normalization_weight: 3
+    share:
+      2020:
+        loc: 0.0010
+      2050:
+        minimum: 0.0000
+        maximum: 0.001
+        uncertainty_type: uniform
+  Perovskite_capacity:
+    name: photovoltaic panel installation, 0.5kWp, perovskite
+    reference product: photovoltaic panel, perovskite
+    unit: unit
+    normalization_weight: 0.5
+    share:
+      2020:
+        loc: 0.0000
+      2050:
+        minimum: 0.0000
+        maximum: 0.3000
+        uncertainty_type: uniform
+  GaAs_capacity:
+    name: photovoltaic installation, 0.28kWp, GaAs
+    reference product: photovoltaic installation, GaAs
+    unit: unit
+    normalization_weight: 0.28
+    share:
+      2020:
+        loc: 0.0000
+      2050:
+        minimum: 0.0000
+        maximum: 0.1500
+        uncertainty_type: uniform
+Wind_onshore_capacity:
+  onshore-DDPM_capacity:
+    name: market for wind turbine, 4.5MW, onshore, direct drive
+    reference product: wind turbine, 4.5MW, onshore
+    unit: unit
+    normalization_weight: 4.5
+    share:
+      2020:
+        loc: 0.2
+      2050:
+        minimum: 0.20
+        maximum: 0.40
+        uncertainty_type: uniform
+  onshore-Gearbox_capacity:
+    name: market for wind turbine, 4.5MW, onshore
+    reference product: wind turbine, 4.5MW, onshore
+    unit: unit
+    normalization_weight: 4.5
+    share:
+      2020:
+        loc: 0.8
+      2050:
+#        minimum: 0.67
+        minimum: 0.60
+        maximum: 0.80
+        uncertainty_type: uniform
+  ### These should have been deleted by premise. But this is a double check.
+  delete_1:
+    name: market for wind power plant, 800kW, moving parts
+    reference product: wind power plant, 800kW, moving parts
+    unit: unit
+    normalization_weight: 0.8
+    share:
+      2020:
+        loc: 0.0
+      2050:
+        minimum: 0.0
+        maximum: 0.0
+        uncertainty_type: undefined
+  delete_2:
+    name: market for wind power plant, 800kW, moving parts, direct drive
+    reference product: wind power plant, 800kW, moving parts
+    unit: unit
+    normalization_weight: 0.8
+    share:
+      2020:
+        loc: 0.0
+      2050:
+        minimum: 0.0
+        maximum: 0.0
+        uncertainty_type: undefined
+  delete_3:
+    name: market for wind turbine, 2.3MW, onshore
+    reference product: wind turbine, 2.3MW, onshore
+    unit: unit
+    normalization_weight: 2.3
+    share:
+      2020:
+        loc: 0.0
+      2050:
+        minimum: 0.0
+        maximum: 0.0
+        uncertainty_type: undefined
+  delete_4:
+    name: market for wind turbine, 2.3MW, onshore, direct drive
+    reference product: wind turbine, 2.3MW, onshore
+    unit: unit
+    normalization_weight: 2.3
+    share:
+      2020:
+        loc: 0.0
+      2050:
+        minimum: 0.0
+        maximum: 0.0
+        uncertainty_type: undefined
+  delete_5:
+    name: market for wind turbine, 2MW, onshore
+    reference product: wind turbine, 2MW, onshore
+    unit: unit
+    normalization_weight: 2
+    share:
+      2020:
+        loc: 0.0
+      2050:
+        minimum: 0.0
+        maximum: 0.0
+        uncertainty_type: undefined
+  delete_6:
+    name: market for wind turbine, 2MW, onshore, direct drive
+    reference product: wind turbine, 2MW, onshore
+    unit: unit
+    normalization_weight: 2
+    share:
+      2020:
+        loc: 0.0
+      2050:
+        minimum: 0.0
+        maximum: 0.0
+        uncertainty_type: undefined
+  delete_7:
+    name: market for wind turbine, 750kW, onshore
+    reference product: wind turbine, 750kW, onshore
+    unit: unit
+    normalization_weight: 0.75
+    share:
+      2020:
+        loc: 0.0
+      2050:
+        minimum: 0.0
+        maximum: 0.0
+        uncertainty_type: undefined
+  delete_8:
+    name: market for wind turbine, 750kW, onshore, direct drive
+    reference product: wind turbine, 750kW, onshore
+    unit: unit
+    normalization_weight: 0.75
+    share:
+      2020:
+        loc: 0.0
+      2050:
+        minimum: 0.0
+        maximum: 0.0
+        uncertainty_type: undefined
+  delete_9:
+    name: market for wind turbine, small-scale, 6kW, onshore
+    reference product: wind turbine, small-scale, 6kW, onshore
+    unit: unit
+    normalization_weight: 0.006
+    share:
+      2020:
+        loc: 0.0
+      2050:
+        minimum: 0.0
+        maximum: 0.0
+        uncertainty_type: undefined
+  delete_10:
+    name: market for wind turbine, small-scale, 6kW, onshore, direct drive
+    reference product: wind turbine, small-scale, 6kW, onshore
+    unit: unit
+    normalization_weight: 0.006
+    share:
+      2020:
+        loc: 0.0
+      2050:
+        minimum: 0.0
+        maximum: 0.0
+        uncertainty_type: undefined
+Wind_offshore_capacity:
+  offshore-DDPM_capacity:
+    name: market for wind power plant, 2MW, offshore, moving parts, direct drive
+    reference product: wind power plant, 2MW, offshore, moving parts
+    unit: unit
+    normalization_weight: 2
+    share:
+      2020:
+        loc: 0.75
+      2050:
+        minimum: 0.40
+        maximum: 0.90
+        uncertainty_type: uniform
+  offshore-Gearbox_capacity:
+    name: market for wind power plant, 2MW, offshore, moving parts
+    reference product: wind power plant, 2MW, offshore, moving parts
+    unit: unit
+    normalization_weight: 2
+    share:
+      2020:
+        loc: 0.25
+      2050:
+        minimum: 0.10
+        maximum: 0.60
+        uncertainty_type: uniform
+Wind_onshore_network_capacity:
+  onshore-DDPM_capacity:
+    name: market for wind turbine network connection, 4.5MW, onshore, direct drive
+    reference product: wind turbine network connection, 4.5MW, onshore
+    unit: unit
+    normalization_weight: 4.5
+    share:
+      2020:
+        loc: 0.20
+      2050:
+        minimum: 0.20
+        maximum: 0.40
+        uncertainty_type: uniform
+  onshore-Gearbox_capacity:
+    name: market for wind turbine network connection, 4.5MW, onshore
+    reference product: wind turbine network connection, 4.5MW, onshore
+    unit: unit
+    normalization_weight: 4.5
+    share:
+      2020:
+        loc: 0.80
+      2050:
+        #        minimum: 0.67
+        minimum: 0.40
+        maximum: 0.60
+        uncertainty_type: uniform
+  ### These should have been deleted by premise. But this is a double check.
+  delete_1:
+    name: market for wind power plant, 800kW, fixed parts
+    reference product: wind power plant, 800kW, fixed parts
+    unit: unit
+    normalization_weight: 0.8
+    share:
+      2020:
+        loc: 0.0
+      2050:
+        minimum: 0.0
+        maximum: 0.0
+        uncertainty_type: undefined
+  delete_2:
+    name: market for wind power plant, 800kW, fixed parts, direct drive
+    reference product: wind power plant, 800kW, fixed parts
+    unit: unit
+    normalization_weight: 0.8
+    share:
+      2020:
+        loc: 0.0
+      2050:
+        minimum: 0.0
+        maximum: 0.0
+        uncertainty_type: undefined
+  delete_3:
+    name: market for wind turbine network connection, 2MW, onshore, direct drive
+    reference product: wind turbine network connection, 2MW, onshore
+    unit: unit
+    normalization_weight: 2
+    share:
+      2020:
+        loc: 0.0
+      2050:
+        minimum: 0.0
+        maximum: 0.0
+        uncertainty_type: undefined
+  delete_4:
+    name: market for wind turbine network connection, 2MW, onshore
+    reference product: wind turbine network connection, 2MW, onshore
+    unit: unit
+    normalization_weight: 2
+    share:
+      2020:
+        loc: 0.0
+      2050:
+        minimum: 0.0
+        maximum: 0.0
+        uncertainty_type: undefined
+  delete_5:
+    name: market for wind turbine network connection, 750kW, onshore, direct drive
+    reference product: wind turbine network connection, 750kW, onshore
+    unit: unit
+    normalization_weight: 0.75
+    share:
+      2020:
+        loc: 0.0
+      2050:
+        minimum: 0.0
+        maximum: 0.0
+        uncertainty_type: undefined
+  delete_6:
+    name: market for wind turbine network connection, 750kW, onshore
+    reference product: wind turbine network connection, 750kW, onshore
+    unit: unit
+    normalization_weight: 0.75
+    share:
+      2020:
+        loc: 0.0
+      2050:
+        minimum: 0.0
+        maximum: 0.0
+        uncertainty_type: undefined
+  delete_7:
+    name: market for wind turbine network connection, small-scale, 6kW, onshore
+    reference product: wind turbine network connection, small-scale, 6kW, onshore
+    unit: unit
+    normalization_weight: 0.006
+    share:
+      2020:
+        loc: 0.0
+      2050:
+        minimum: 0.0
+        maximum: 0.0
+        uncertainty_type: undefined
+  delete_8:
+    name: market for wind turbine network connection, small-scale, 6kW, onshore, direct drive
+    reference product: wind turbine network connection, small-scale, 6kW, onshore
+    unit: unit
+    normalization_weight: 0.006
+    share:
+      2020:
+        loc: 0.0
+      2050:
+        minimum: 0.0
+        maximum: 0.0
+        uncertainty_type: undefined
+Wind_offshore_network_capacity:
+  offshore-DDPM_capacity:
+    name: market for wind power plant, 2MW, offshore, fixed parts, direct drive
+    reference product: wind power plant, 2MW, offshore, fixed parts
+    unit: unit
+    normalization_weight: 2
+    share:
+      2020:
+        loc: 0.75
+      2050:
+        minimum: 0.40
+        maximum: 0.90
+        uncertainty_type: uniform
+  offshore-Gearbox_capacity:
+    name: market for wind power plant, 2MW, offshore, fixed parts
+    reference product: wind power plant, 2MW, offshore, fixed parts
+    unit: unit
+    normalization_weight: 2
+    share:
+      2020:
+        loc: 0.25
+      2050:
+        minimum: 0.10
+        maximum: 0.60
+        uncertainty_type: uniform
