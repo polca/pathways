@@ -256,10 +256,8 @@ class Pathways:
         :return: xr.DataArray
         """
 
-        mapping_vars = [item["scenario variable"] for item in self.mapping.values()]
-
         # check if all variables in mapping are in scenario_data
-        for var in mapping_vars:
+        for var in self.mapping:
             if var not in scenario_data["variables"].values:
                 if self.debug:
                     logging.warning(f"Variable {var} not found in scenario data.")
@@ -267,7 +265,7 @@ class Pathways:
         # remove rows which do not have a value under the `variable`
         # column that correspond to any value in self.mapping for `scenario variable`
 
-        scenario_data = scenario_data[scenario_data["variables"].isin(mapping_vars)]
+        scenario_data = scenario_data[scenario_data["variables"].isin(list(self.mapping.keys()))]
 
         # convert `year` column to integer
         scenario_data.loc[:, "year"] = scenario_data["year"].astype(int)
@@ -284,21 +282,14 @@ class Pathways:
         # convert values under "model" column to lower case
         data.coords["model"] = [x.lower() for x in data.coords["model"].values]
 
-        # Replace variable names with values found in self.mapping
-        new_names = []
-        for variable in data.coords["variables"].values:
-            for p_var, val in self.mapping.items():
-                if val["scenario variable"] == variable:
-                    new_names.append(p_var)
-        data.coords["variables"] = new_names
-
         # Add units
-        units = {}
-        for variable in data.coords["variables"].values:
-            units[variable] = scenario_data[
-                scenario_data["variables"]
-                == self.mapping[variable]["scenario variable"]
-            ].iloc[0]["unit"]
+        lookup = (scenario_data
+                  .drop_duplicates("variables")  # in case of duplicates
+                  .set_index("variables")["unit"]
+                  .to_dict())
+
+        units = {str(v): lookup.get(str(v))
+                 for v in data.coords["variables"].values}
 
         data.attrs["units"] = units
 
