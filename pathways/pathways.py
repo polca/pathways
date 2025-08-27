@@ -265,7 +265,9 @@ class Pathways:
         # remove rows which do not have a value under the `variable`
         # column that correspond to any value in self.mapping for `scenario variable`
 
-        scenario_data = scenario_data[scenario_data["variables"].isin(list(self.mapping.keys()))]
+        scenario_data = scenario_data[
+            scenario_data["variables"].isin(list(self.mapping.keys()))
+        ]
 
         # convert `year` column to integer
         scenario_data.loc[:, "year"] = scenario_data["year"].astype(int)
@@ -283,13 +285,13 @@ class Pathways:
         data.coords["model"] = [x.lower() for x in data.coords["model"].values]
 
         # Add units
-        lookup = (scenario_data
-                  .drop_duplicates("variables")  # in case of duplicates
-                  .set_index("variables")["unit"]
-                  .to_dict())
+        lookup = (
+            scenario_data.drop_duplicates("variables")  # in case of duplicates
+            .set_index("variables")["unit"]
+            .to_dict()
+        )
 
-        units = {str(v): lookup.get(str(v))
-                 for v in data.coords["variables"].values}
+        units = {str(v): lookup.get(str(v)) for v in data.coords["variables"].values}
 
         data.attrs["units"] = units
 
