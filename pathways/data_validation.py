@@ -138,11 +138,3 @@ def validate_mapping(resource: datapackage.Resource):
     for k, v in mapping.items():
         if not set(required_keys).issubset(set(v.keys())):
             raise ValueError(f"Invalid mapping: missing keys for {k}")
-
-    # Check that all values for `scenario variable` are unique
-    scenario_variables = [item["scenario variable"] for item in mapping.values()]
-    if len(scenario_variables) != len(set(scenario_variables)):
-        print(
-            "All values for `scenario variable` must be unique. "
-            f"Duplicate values: {set([x for x in scenario_variables if scenario_variables.count(x) > 1])}"
-        )
