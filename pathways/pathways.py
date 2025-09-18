@@ -46,6 +46,23 @@ def _fill_in_result_array(
     shares: [None, dict],
     methods: list,
 ) -> np.ndarray:
+    """
+    Fill in the result array with the results from each region.
+    The result array has the following dimensions:
+    - iterations (if use_distributions > 0)
+    - variables
+    - regions
+    - locations
+    - methods
+
+    :param coords: tuple. (model, scenario, year)
+    :param result: dict. The result from _calculate_year function.
+    :param use_distributions: int. If > 0, use distributions.
+    :param shares: dict or None. The shares of sub-technologies.
+    :param methods: list. The LCIA methods.
+    :return: np.ndarray. The result array.
+
+    """
     def _load_array(filepath):
         if len(filepath) == 1:
             if Path(filepath[0]).suffix == ".npy":
@@ -133,16 +150,30 @@ class Pathways:
         ecoinvent_version: str = "3.11",
         debug=True,
     ):
+        """
+        Initialize the Pathways class.
+
+        :param datapackage: Path to the datapackage.zip file.
+        :type datapackage: str
+        :param geography_mapping: Optional; path to a YAML file or a dictionary that maps ge
+            geographies to higher-level regions.
+        :type geography_mapping: dict or str, default is None
+        :param activities_mapping: Optional; path to a YAML file or a dictionary that maps
+            activities to higher-level classifications.
+        :type activities_mapping: dict or str, default is None
+        :param ecoinvent_version: Version of the ecoinvent database to use. Default is "3.11".
+        :type ecoinvent_version: str, default is "3.11"
+        :param debug: If True, enable debug logging. Default is True.
+        :type debug: bool, default is True
+
+        """
         self.datapackage = datapackage
         self.data, dataframe, self.filepaths = validate_datapackage(
             _read_datapackage(datapackage)
         )
         self.mapping = _get_mapping(self.data)
         self.ei_version = ecoinvent_version
-        try:
-            self.mapping.update(self._get_final_energy_mapping())
-        except KeyError:
-            pass
+
         self.debug = debug
         self.scenarios = self._get_scenarios(dataframe)
         self.classifications = load_classifications()
@@ -190,63 +221,6 @@ class Pathways:
             logging.info(f"Pathways initialized with datapackage: {datapackage}")
             print(f"Log file: {USER_LOGS_DIR / 'pathways.log'}")
 
-    def _get_final_energy_mapping(self):
-        """
-        Read the final energy mapping file, which is an Excel file
-        :return: dict
-        """
-
-        def create_dict_for_specific_model(row: pd.Series, model: str) -> [dict, None]:
-            """
-            Create a dictionary for a specific model from the row.
-            :param row: dict
-            :param model: str
-            :return: dict
-            """
-            # Construct the key from 'sector', 'variable', and 'fuel'
-            key = f"{row['sector']}_{row['variable']}_{row['fuel']}"
-
-            # Check if the specific model's scenario variable is available
-            if pd.notna(row[model]):
-                # Create the dictionary structure for this row for the specific model
-                dict_structure = {
-                    key: {
-                        "dataset": [
-                            {
-                                "name": row["dataset name"],
-                                "reference product": row["dataset reference product"],
-                                "unit": row["unit"],
-                            }
-                        ],
-                        "scenario variable": row[model],
-                    }
-                }
-                return dict_structure
-            return None
-
-        def create_dict_with_specific_model(
-            dataframe: pd.DataFrame, _model: str
-        ) -> dict:
-            """
-            Create a dictionary for a specific model from the dataframe.
-            :param dataframe: pandas.DataFrame
-            :param _model: str. The specific model to create the dictionary for.
-            :return: dict
-            """
-            model_dict = {}
-            for _, row in dataframe.iterrows():
-                row_dict = create_dict_for_specific_model(row, _model)
-                if row_dict:
-                    model_dict.update(row_dict)
-            return model_dict
-
-        # Read the Excel file
-        mapping_dataframe = pd.read_excel(
-            DATA_DIR / "final_energy_mapping.xlsx",
-        )
-        model = self.data.descriptor["scenarios"][0].split(" - ")[0].strip()
-
-        return create_dict_with_specific_model(mapping_dataframe, model)
 
     def _get_scenarios(self, scenario_data: pd.DataFrame) -> xr.DataArray:
         """
@@ -532,6 +506,13 @@ class Pathways:
                 )
 
     def aggregate_results(self, cutoff: float = 0.001, interpolate: bool = False):
+        """
+        Aggregate the LCA results by removing values below a certain cutoff.
+
+        :param cutoff: float. The cutoff value below which results will be removed.
+        :param interpolate: bool. If True, interpolate missing values.
+        :return: None
+        """
         self.lca_results = display_results(
             self.lca_results, cutoff=cutoff, interpolate=interpolate
         )

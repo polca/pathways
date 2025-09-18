@@ -30,6 +30,8 @@ Mt:
 
 billion tkm/yr:
   ton kilometer: 1e+9
+  kilometer: 1e+9
+  person kilometer: 1e+9
 
 billion pkm/yr:
   person kilometer: 1e+9

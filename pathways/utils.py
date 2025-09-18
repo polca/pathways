@@ -141,10 +141,12 @@ def get_unit_conversion_factors(
 ) -> np.ndarray:
     """
     Get the unit conversion factors for a given scenario unit and dataset unit.
-    :param scenario_unit:
-    :param dataset_unit:
-    :param unit_mapping:
-    :return:
+
+    :param scenario_unit: dict with the units of the scenario variables.
+    :param dataset_unit: list of units of the datasets.
+    :param unit_mapping: dict with the unit conversion factors.
+    :return: numpy array with the unit conversion factors.
+
     """
 
     if scenario_unit != dataset_unit:
@@ -306,6 +308,15 @@ def display_results(
     cutoff: float = 0.001,
     interpolate: bool = False,
 ) -> xr.DataArray:
+    """
+    Display the results of the LCA.
+
+    :param lca_results: Xarray DataArray with LCA results.
+    :param cutoff: Cutoff value for displaying results. Default is 0.001.
+    :param interpolate: Whether to interpolate the results along the years dimension. Default is False.
+    :return: Xarray DataArray with filtered LCA results.
+
+    """
     if lca_results is None:
         raise ValueError("No results to display")
     if "act_category" not in lca_results.dims:
@@ -349,7 +360,13 @@ def display_results(
 
 
 def prune_zero_coords(da: xr.DataArray, tol: float = 0.0) -> xr.DataArray:
-    """Drop coordinate labels in every dimension where the entire slice is ~0."""
+    """
+    Drop coordinate labels in every dimension where the entire slice is ~0.
+
+    :param da: xarray DataArray
+    :param tol: Tolerance below which values are considered zero.
+    :return: pruned xarray DataArray
+    """
     x = da.fillna(0.0)  # treat NaNs as zeros for pruning
     for dim in list(x.dims):
         other = [d for d in x.dims if d != dim]
@@ -441,6 +458,14 @@ def get_activity_indices(
 ) -> List[int]:
     """
     Fetch the indices of activities in the technosphere matrix, optimized for efficiency.
+
+    :param activities: List of activities to find indices for. Each activity is a tuple of
+                          (name, reference product, unit, location).
+    :param technosphere_index: Mapping of activities to their indices in the technosphere matrix.
+    :param geo: Geomap object for handling geographic mappings.
+    :param debug: If True, print debug information.
+    :return: List of indices corresponding to the input activities.
+
     """
 
     # Cache for previously computed IAM to Ecoinvent mappings
@@ -729,7 +754,7 @@ def gather_filters(current_level: Dict, combined_filters: Dict[str, Set[str]]) -
 
 def get_combined_filters(
     filters: Dict, paths: List[List[str]]
-) -> Tuple[Dict[str, List[str]], Dict[str, List[str]]]:
+) -> tuple[dict[str, set[Any]], dict[str, set[Any]]]:
     """
     Traverse the filters dictionary to get combined filter criteria based on multiple paths.
 
@@ -775,7 +800,7 @@ def apply_filters(
     filters: Dict[str, List[str]],
     exceptions: Dict[str, List[str]],
     paths: List[List[str]],  # Add paths as an argument
-) -> Tuple[List[int], List[int], Dict[str, Set[str]], Dict[str, Set[str]]]:
+) -> tuple[list[Any], list[Any], dict[tuple[str, ...], set[Any]], dict[tuple[str, ...], set[Any]]]:
     """
     Apply the filters to the database and return a list of indices and exceptions,
     along with the names of filtered activities and exceptions categorized by paths.
@@ -851,6 +876,9 @@ def apply_filters(
 # Custom filter function
 # Custom context manager for filtering warnings
 class CustomFilter:
+    """
+    Context manager to filter out specific warning messages.
+    """
     def __init__(self, ignore_message):
         self.ignore_message = ignore_message
 
@@ -879,23 +907,6 @@ def _get_mapping(data) -> dict:
 
     """
     return yaml.safe_load(data.get_resource("mapping").raw_read())
-
-
-def _read_scenario_data(data: dict, scenario: str):
-    """
-    Read the scenario data.
-    The scenario data describes scenario variables with production volumes for each time step.
-    :param scenario: str. Scenario name.
-    :return: pd.DataFrame
-
-    """
-    filepath = data["scenarios"][scenario]["path"]
-    # if CSV file
-    if filepath.endswith(".csv"):
-        return pd.read_csv(filepath, index_col=0)
-
-    # Excel file
-    return pd.read_excel(filepath, index_col=0)
 
 
 def _read_datapackage(datapackage: str) -> DataPackage:

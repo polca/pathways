@@ -268,6 +268,22 @@ def log_mc_parameters_to_excel(
     iteration_results: dict,
     shares: dict = None,
 ):
+    """
+    Log the Monte Carlo parameters and results to an Excel file.
+
+    :param model: Name of the model.
+    :param scenario: Name of the scenario.
+    :param year: Year of the scenario.
+    :param methods: List of LCIA method names.
+    :param result: Dictionary with regions as keys and results as values.
+    :param uncertainty_parameters: Dictionary with regions as keys and uncertainty parameters as values.
+    :param uncertainty_values: Dictionary with regions as keys and uncertainty values as values.
+    :param tehnosphere_indices: Dictionary with regions as keys and technosphere indices as values.
+    :param iteration_results: Dictionary with regions as keys and iteration results as values.
+    :param shares: Dictionary with regions as keys and technology shares as values.
+    :return: None.
+
+    """
     export_path = STATS_DIR / f"{model}_{scenario}_{year}.xlsx"
 
     # create Excel workbook using openpyxl

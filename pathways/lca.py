@@ -200,40 +200,18 @@ def find_uncertain_parameters(
     """
     Find the uncertain parameters in the distributions array.
     They will be used for the stats report
-    :param distributions_array:
-    :param indices_array:
-    :return:
+
+    :param distributions_array: The distributions array.
+    :type distributions_array: np.ndarray
+    :param indices_array: The indices array.
+    :type indices_array: np.ndarray
+    :return: A list of tuples containing the indices of the uncertain parameters.
+    :rtype: List[Tuple]
     """
     uncertain_indices = np.where(distributions_array["uncertainty_type"] != 0)[0]
     uncertain_parameters = [tuple(indices_array[idx]) for idx in uncertain_indices]
 
     return uncertain_parameters
-
-
-def remove_double_counting(
-    technosphere_matrix: np.array, activities_to_zero: List[int], infra: List[int]
-):
-    """
-    Remove double counting from a technosphere matrix by zeroing out the demanded row values
-    in all columns, except for those on the diagonal.
-    :param technosphere_matrix: bw2calc.LCA object
-    :return: Technosphere matrix with double counting removed
-    """
-
-    # Copy and convert the technosphere matrix
-    # to COO format for easy manipulation
-    technosphere_matrix = technosphere_matrix.tocoo()
-
-    # Create a mask for elements to zero out
-    mask = np.isin(technosphere_matrix.row, activities_to_zero) & (
-        technosphere_matrix.row != technosphere_matrix.col
-    )
-
-    # Apply the mask to set the relevant elements to zero
-    technosphere_matrix.data[mask] = 0
-    technosphere_matrix.eliminate_zeros()
-
-    return technosphere_matrix.tocsr()
 
 
 def create_functional_units(
@@ -246,6 +224,25 @@ def create_functional_units(
     vars_idx,
     units_map,
 ) -> [dict, dict]:
+    """
+    Create functional units for the given region, model, scenario, and year.
+    The functional units are created based on the demand for each variable in the scenarios dataset.
+    The demand is converted to the appropriate units using the units_map.
+    The functional units are returned as a dictionary where the keys are the dataset indices
+    and the values are the demand for that dataset.
+    Additionally, a detailed dictionary is returned containing information about each variable,
+    including its dataset index, demand, and unit conversion vector.
+
+    :param scenarios: xarray.Dataset containing the scenarios data.
+    :param region: The region for which to create the functional units.
+    :param model: The model for which to create the functional units.
+    :param scenario: The scenario for which to create the functional units.
+    :param year: The year for which to create the functional units.
+    :param variables: List of variables to include in the functional units.
+    :param vars_idx: Dictionary mapping variables to their dataset indices and units.
+    :param units_map: Dictionary mapping units to their conversion factors.
+    :return: A tuple containing:
+    """
     variables_demand = {}
 
     total_demand = (
@@ -539,6 +536,12 @@ def _calculate_year(args: tuple):
     """
     Prepares the data for the calculation of LCA results for a given year
     and calls the process_region function to calculate the results for each region.
+
+    :param args: Tuple containing the model, scenario, year, regions, variables, methods,
+                 demand_cutoff, filepaths, mapping, units, lca_results, classifications,
+                    scenarios, reverse_classifications, geography_mapping, debug, use_distributions,
+                    shares, uncertain_parameters, remove_uncertainty, seed, double_accounting.
+    :return: Dictionary containing the LCA results for each region.
     """
     (
         model,
