@@ -13,10 +13,16 @@ exclude_patterns = []
 
 # docs/conf.py
 autodoc_mock_imports = [
-    "numpy", "pandas", "bw2calc", "bw2data", "sparse", "xarray",
-    "prettytable", "tqdm", "constructive_geometries"
+    "numpy",
+    "pandas",
+    "bw2calc",
+    "bw2data",
+    "sparse",
+    "xarray",
+    "prettytable",
+    "tqdm",
+    "constructive_geometries",
 ]
-
 
 
 html_theme = "alabaster"
