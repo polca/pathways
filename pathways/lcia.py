@@ -31,11 +31,11 @@ def get_lcia_method_names(ei_version="3.11"):
 
 def format_lcia_method_exchanges(method):
     """
-    Format LCIA method data to fit such structure:
-    (name, unit, type, category, subcategory, amount, uncertainty type, uncertainty amount)
--
-    :param method: LCIA method
-    :return: list of tuples
+        Format LCIA method data to fit such structure:
+        (name, unit, type, category, subcategory, amount, uncertainty type, uncertainty amount)
+    -
+        :param method: LCIA method
+        :return: list of tuples
     """
 
     return {

@@ -800,7 +800,12 @@ def apply_filters(
     filters: Dict[str, List[str]],
     exceptions: Dict[str, List[str]],
     paths: List[List[str]],  # Add paths as an argument
-) -> tuple[list[Any], list[Any], dict[tuple[str, ...], set[Any]], dict[tuple[str, ...], set[Any]]]:
+) -> tuple[
+    list[Any],
+    list[Any],
+    dict[tuple[str, ...], set[Any]],
+    dict[tuple[str, ...], set[Any]],
+]:
     """
     Apply the filters to the database and return a list of indices and exceptions,
     along with the names of filtered activities and exceptions categorized by paths.
@@ -879,6 +884,7 @@ class CustomFilter:
     """
     Context manager to filter out specific warning messages.
     """
+
     def __init__(self, ignore_message):
         self.ignore_message = ignore_message
 
