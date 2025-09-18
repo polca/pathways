@@ -63,6 +63,7 @@ def _fill_in_result_array(
     :return: np.ndarray. The result array.
 
     """
+
     def _load_array(filepath):
         if len(filepath) == 1:
             if Path(filepath[0]).suffix == ".npy":
@@ -220,7 +221,6 @@ class Pathways:
             logging.info("#" * 600)
             logging.info(f"Pathways initialized with datapackage: {datapackage}")
             print(f"Log file: {USER_LOGS_DIR / 'pathways.log'}")
-
 
     def _get_scenarios(self, scenario_data: pd.DataFrame) -> xr.DataArray:
         """
