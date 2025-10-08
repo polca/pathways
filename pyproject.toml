@@ -1,0 +1,68 @@
+[build-system]
+requires = ["setuptools>=69"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pathways"
+version = "1.0.0"
+description = "Scenario-level LCA of energy systems and transition pathways"
+readme = "README.md"
+license = { file = "LICENSE" }
+authors = [
+    { name = "Romain Sacchi", email = "romain.sacchi@psi.ch" }
+]
+requires-python = ">=3.9,<3.12"
+urls = { "Homepage" = "https://github.com/polca/pathways" }
+
+classifiers = [
+    "Intended Audience :: End Users/Desktop",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: BSD License",
+    "Operating System :: MacOS :: MacOS X",
+    "Operating System :: Microsoft :: Windows",
+    "Operating System :: POSIX",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Topic :: Scientific/Engineering :: Information Analysis",
+    "Topic :: Scientific/Engineering :: Mathematics",
+    "Topic :: Scientific/Engineering :: Visualization",
+]
+
+dependencies = [
+    "numpy==1.24.4",
+    "pathlib",
+    "pandas",
+    "xarray",
+    "bw2calc",
+    "bw2data",
+    "scipy",
+    "premise",
+    "pyyaml",
+    "bw_processing",
+    "datapackage",
+    "pyprind",
+    "platformdirs",
+    "fs",
+    "statsmodels",
+    "SALib",
+    "pyarrow",
+    "fastparquet",
+    "scikit-umfpack<0.4.0"
+]
+
+[tool.setuptools]
+include-package-data = true
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["pathways*"]
+exclude = ["tests*", "docs*"]
+
+# Optional: If you have non-Python data files (CSV, YAML, etc.)
+# and want them included in wheels/sdists, list them here.
+# Equivalent to include_package_data=True + MANIFEST.in, but explicit.
+[tool.setuptools.package-data]
+pathways = ["**/*.csv", "**/*.yaml", "**/*.yml", "**/*.txt", "**/*.npz", "**/*.pkl"]
+

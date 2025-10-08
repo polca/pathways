@@ -12,13 +12,7 @@ from datapackage import DataPackageException, validate
 
 from .filesystem_constants import USER_LOGS_DIR
 
-logging.basicConfig(
-    level=logging.DEBUG,
-    filename=USER_LOGS_DIR / "pathways.log",  # Log file to save the entries
-    filemode="a",  # Append to the log file if it exists, 'w' to overwrite
-    format="%(asctime)s - %(levelname)s - %(module)s - %(message)s",
-    datefmt="%Y-%m-%d %H:%M:%S",
-)
+logger = logging.getLogger(__name__)
 
 
 def validate_datapackage(

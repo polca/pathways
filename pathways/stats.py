@@ -264,7 +264,7 @@ def log_mc_parameters_to_excel(
     result: dict,
     uncertainty_parameters: dict,
     uncertainty_values: dict,
-    tehnosphere_indices: dict,
+    technosphere_indices: dict,
     iteration_results: dict,
     shares: dict = None,
 ):
@@ -278,7 +278,7 @@ def log_mc_parameters_to_excel(
     :param result: Dictionary with regions as keys and results as values.
     :param uncertainty_parameters: Dictionary with regions as keys and uncertainty parameters as values.
     :param uncertainty_values: Dictionary with regions as keys and uncertainty values as values.
-    :param tehnosphere_indices: Dictionary with regions as keys and technosphere indices as values.
+    :param technosphere_indices: Dictionary with regions as keys and technosphere indices as values.
     :param iteration_results: Dictionary with regions as keys and iteration results as values.
     :param shares: Dictionary with regions as keys and technology shares as values.
     :return: None.
@@ -344,7 +344,7 @@ def log_mc_parameters_to_excel(
                     ],
                 )
 
-        indices = tehnosphere_indices[region]
+        indices = technosphere_indices[region]
 
         if indices:
             df_technosphere_indices = create_mapping_sheet(indices=indices)

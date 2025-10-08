@@ -3,6 +3,7 @@ This module contains functions to calculate the Life Cycle Assessment (LCA) resu
 
 """
 
+from __future__ import annotations
 import logging
 import pickle
 import uuid
@@ -18,7 +19,7 @@ from bw_processing import Datapackage
 from premise.geomap import Geomap
 from scipy import sparse
 
-from .filesystem_constants import DIR_CACHED_DB, USER_LOGS_DIR
+from .filesystem_constants import DIR_CACHED_DB
 from .lcia import fill_characterization_factors_matrices
 from .subshares import (
     adjust_matrix_based_on_shares,
@@ -31,19 +32,10 @@ from .utils import (
     check_unclassified_activities,
     fetch_indices,
     get_unit_conversion_factors,
-    read_indices_csv,
-    apply_filters,
-    get_combined_filters,
-    read_categories_from_yaml,
+    read_indices_csv
 )
 
-logging.basicConfig(
-    level=logging.DEBUG,
-    filename=USER_LOGS_DIR / "pathways.log",  # Log file to save the entries
-    filemode="a",  # Append to the log file if it exists, 'w' to overwrite
-    format="%(asctime)s - %(levelname)s - %(module)s - %(message)s",
-    datefmt="%Y-%m-%d %H:%M:%S",
-)
+logger = logging.getLogger(__name__)
 
 
 def load_matrix_and_index(
@@ -292,22 +284,10 @@ def create_functional_units(
                             * vars_idx[variable]["lhv"]["value"]
                         )
                     else:
-                        print("--------------")
-                        print(f"Unit conversion factors not found for {variable}.")
-                        print(f"Variable unit: {scenarios.attrs['units'][variable]}")
-                        print(f"Dataset unit: {dataset_unit}")
-                        print(f"Dataset: {dataset}")
-                        print("vars_idx[variable]", vars_idx[variable])
-                        print("--------------")
+                        logging.warning(f"Unit conversion factors not found for {variable}.")
                         unit_vector = 1.0
                 else:
-                    print("--------------")
-                    print(f"Unit conversion factors not found for {variable}.")
-                    print(f"Variable unit: {scenarios.attrs['units'][variable]}")
-                    print(f"Dataset unit: {dataset_unit}")
-                    print(f"Dataset: {dataset}")
-                    print("vars_idx[variable]", vars_idx[variable])
-                    print("--------------")
+                    logging.warning(f"Unit conversion factors not found for {variable}.")
                     unit_vector = 1.0
 
             # Fetch the demand for the given

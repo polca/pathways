@@ -55,7 +55,7 @@ or alternatively, you can clone the repository and install it from the source:
 
     git clone https://github.com/polca/pathways.git
     cd pathways
-    pip install -r requirements.txt
+    pip install .
     
 ```
 

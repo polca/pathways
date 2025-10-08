@@ -14,13 +14,7 @@ from pathways.utils import get_activity_indices
 
 SUBSHARES = DATA_DIR / "technologies_shares.yaml"
 
-logging.basicConfig(
-    level=logging.DEBUG,
-    filename=USER_LOGS_DIR / "pathways.log",  # Log file to save the entries
-    filemode="a",  # Append to the log file if it exists, 'w' to overwrite
-    format="%(asctime)s - %(levelname)s - %(module)s - %(message)s",
-    datefmt="%Y-%m-%d %H:%M:%S",
-)
+logger = logging.getLogger(__name__)
 
 
 def load_subshares() -> dict:

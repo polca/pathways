@@ -4,7 +4,9 @@ that contains scenario data, mapping between scenario variables and
 LCA datasets, and LCA matrices.
 """
 
+from __future__ import annotations
 import logging
+import datetime
 import pickle
 from collections import defaultdict
 from multiprocessing import Pool, cpu_count
@@ -38,6 +40,7 @@ from .utils import (
     resize_scenario_data,
 )
 
+logger = logging.getLogger(__name__)
 
 def _fill_in_result_array(
     coords: tuple,
@@ -113,7 +116,7 @@ def _fill_in_result_array(
             for region, data in result.items()
         }
 
-        tehnosphere_indices = {
+        technosphere_indices = {
             region: _load_array(data["technosphere_indices"])
             for region, data in result.items()
         }
@@ -126,7 +129,7 @@ def _fill_in_result_array(
             result=result,
             uncertainty_parameters=uncertainty_parameters,
             uncertainty_values=uncertainty_values,
-            tehnosphere_indices=tehnosphere_indices,
+            technosphere_indices=technosphere_indices,
             iteration_results=iteration_results,
             shares=shares,
         )
@@ -191,7 +194,7 @@ class Pathways:
 
         # a mapping of geographies can be added
         # to aggregate locations to a higher level
-        # e.g. from countries to regions
+        # e.g., from countries to regions
         if geography_mapping:
             self.geography_mapping = load_mapping(geography_mapping)
         else:
@@ -208,16 +211,10 @@ class Pathways:
         for k, v in self.classifications.items():
             self.reverse_classifications[v].append(k)
 
+        # clean cache directory
         clean_cache_directory()
 
         if self.debug:
-            logging.basicConfig(
-                level=logging.DEBUG,
-                filename=USER_LOGS_DIR / "pathways.log",  # Log file to save the entries
-                filemode="a",  # Append to the log file if it exists, 'w' to overwrite
-                format="%(asctime)s - %(levelname)s - %(module)s - %(message)s",
-                datefmt="%Y-%m-%d %H:%M:%S",
-            )
             logging.info("#" * 600)
             logging.info(f"Pathways initialized with datapackage: {datapackage}")
             print(f"Log file: {USER_LOGS_DIR / 'pathways.log'}")

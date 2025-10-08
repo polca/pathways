@@ -8,6 +8,7 @@ dictionary, checking unclassified activities, and getting activity indices.
 
 """
 
+from __future__ import annotations
 import csv
 import logging
 import warnings
@@ -23,18 +24,12 @@ import yaml
 from datapackage import DataPackage, DataPackageException
 from premise.geomap import Geomap
 
-from .filesystem_constants import DATA_DIR, DIR_CACHED_DB, USER_LOGS_DIR
+from .filesystem_constants import DATA_DIR, DIR_CACHED_DB
 
 CLASSIFICATIONS = DATA_DIR / "activities_classifications.yaml"
 UNITS_CONVERSION = DATA_DIR / "units_conversion.yaml"
 
-logging.basicConfig(
-    level=logging.DEBUG,
-    filename=USER_LOGS_DIR / "pathways.log",  # Log file to save the entries
-    filemode="a",  # Append to the log file if it exists, 'w' to overwrite
-    format="%(asctime)s - %(levelname)s - %(module)s - %(message)s",
-    datefmt="%Y-%m-%d %H:%M:%S",
-)
+logger = logging.getLogger(__name__)
 
 
 def read_indices_csv(file_path: Path) -> dict[tuple[str, str, str, str], int]:
@@ -501,7 +496,7 @@ def get_activity_indices(
                 )
                 break
         else:
-            print(f"Activity {activity} not found in technosphere index. Skipping")
+            logger.warning(f"Activity {activity} not found in technosphere index. Skipping")
             pass
     return indices
 
@@ -554,9 +549,6 @@ def fetch_indices(
             logging.error(
                 f"Variable '{variable}' not found in mapping. Ensure it is correctly defined."
             )
-            print(
-                f"Variable '{variable}' not found in mapping. Ensure it is correctly defined."
-            )
             pass
 
     # Initialize dictionary to hold indices
@@ -574,10 +566,6 @@ def fetch_indices(
             idxs = get_activity_indices(activities, technosphere_index, geo)
         except ValueError as e:
             logging.error(
-                f"Error fetching indices for region {region}: {e}. "
-                "Ensure that the activities and regions are correctly defined."
-            )
-            print(
                 f"Error fetching indices for region {region}: {e}. "
                 "Ensure that the activities and regions are correctly defined."
             )
