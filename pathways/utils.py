@@ -496,7 +496,9 @@ def get_activity_indices(
                 )
                 break
         else:
-            logger.warning(f"Activity {activity} not found in technosphere index. Skipping")
+            logger.warning(
+                f"Activity {activity} not found in technosphere index. Skipping"
+            )
             pass
     return indices
 

@@ -32,7 +32,7 @@ from .utils import (
     check_unclassified_activities,
     fetch_indices,
     get_unit_conversion_factors,
-    read_indices_csv
+    read_indices_csv,
 )
 
 logger = logging.getLogger(__name__)
@@ -284,10 +284,14 @@ def create_functional_units(
                             * vars_idx[variable]["lhv"]["value"]
                         )
                     else:
-                        logging.warning(f"Unit conversion factors not found for {variable}.")
+                        logging.warning(
+                            f"Unit conversion factors not found for {variable}."
+                        )
                         unit_vector = 1.0
                 else:
-                    logging.warning(f"Unit conversion factors not found for {variable}.")
+                    logging.warning(
+                        f"Unit conversion factors not found for {variable}."
+                    )
                     unit_vector = 1.0
 
             # Fetch the demand for the given

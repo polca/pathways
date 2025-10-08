@@ -42,6 +42,7 @@ from .utils import (
 
 logger = logging.getLogger(__name__)
 
+
 def _fill_in_result_array(
     coords: tuple,
     result: dict,

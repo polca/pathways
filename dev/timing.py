@@ -18,17 +18,19 @@ p.calculate(
         "EF v3.1 EN15804 - climate change - global warming potential (GWP100)",
         "EF v3.1 EN15804 - ecotoxicity: freshwater - comparative toxic unit for ecosystems (CTUe)",
     ],
-    regions=["World",],
+    regions=[
+        "World",
+    ],
     scenarios=p.scenarios.pathway.values.tolist(),
     years=[
         # 2020,
         # 2030,
         2040,
-        2050
+        2050,
     ],
     variables=vars,
-    #use_distributions=10,
-    #subshares=True,
+    # use_distributions=10,
+    # subshares=True,
 )
 
 p.export_results()
