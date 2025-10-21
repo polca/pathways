@@ -128,7 +128,7 @@ def validate_mapping(resource: datapackage.Resource):
     mapping = yaml.safe_load(resource.raw_read())
 
     # Check that the data has the required structure
-    required_keys = ["dataset", "scenario variable"]
+    required_keys = ["dataset"]
     for k, v in mapping.items():
         if not set(required_keys).issubset(set(v.keys())):
             raise ValueError(f"Invalid mapping: missing keys for {k}")
