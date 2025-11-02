@@ -335,13 +335,19 @@ class Pathways:
             available_methods = get_available_methods()
             for m in edges_methods:
                 if m not in available_methods:
-                    raise ValueError(f"Edge LCIA method {m} not found in available `edges` methods.")
+                    raise ValueError(
+                        f"Edge LCIA method {m} not found in available `edges` methods."
+                    )
 
         if methods and edges_methods:
-            raise ValueError("Please provide either `methods` or `edges_methods`, not both.")
+            raise ValueError(
+                "Please provide either `methods` or `edges_methods`, not both."
+            )
 
         if methods is None and edges_methods is None:
-            raise ValueError("Please provide at least one of `methods` or `edges_methods`.")
+            raise ValueError(
+                "Please provide at least one of `methods` or `edges_methods`."
+            )
 
         # if no methods are provided, use all those available
 

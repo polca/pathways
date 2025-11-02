@@ -19,7 +19,6 @@ from .filesystem_constants import DATA_DIR
 setup_package_logging(level=logging.DEBUG)
 
 
-
 def fetch_topology(model: str) -> Optional[Dict]:
     """
     Find the JSON file containing the topologies of the provided model.
@@ -33,31 +32,37 @@ def fetch_topology(model: str) -> Optional[Dict]:
         f"Geographical definition file for the model '{model.upper()}' not found."
     )
 
+
 def _edge_sets_for_lookup(lca: EdgeLCIA):
     # Start empty; we'll OR them depending on which edge family you use
-    restrict_supplier_positions_bio: set[int]  = set()
+    restrict_supplier_positions_bio: set[int] = set()
     restrict_supplier_positions_tech: set[int] = set()
-    restrict_consumer_positions: set[int]      = set()
+    restrict_consumer_positions: set[int] = set()
 
     if getattr(lca, "biosphere_edges", None):
         # biosphere_edges: (bio_row, tech_col)
         bio_rows = {r for (r, _c) in lca.biosphere_edges}
         tech_cols = {c for (_r, c) in lca.biosphere_edges}
         restrict_supplier_positions_bio |= bio_rows
-        restrict_consumer_positions     |= tech_cols
+        restrict_consumer_positions |= tech_cols
 
     if getattr(lca, "technosphere_edges", None):
         # technosphere_edges: (tech_row_supplier, tech_col_consumer)
         tech_rows = {r for (r, _c) in lca.technosphere_edges}
         tech_cols = {c for (_r, c) in lca.technosphere_edges}
         restrict_supplier_positions_tech |= tech_rows
-        restrict_consumer_positions       |= tech_cols
+        restrict_consumer_positions |= tech_cols
 
-    return (restrict_supplier_positions_bio,
-            restrict_supplier_positions_tech,
-            restrict_consumer_positions)
+    return (
+        restrict_supplier_positions_bio,
+        restrict_supplier_positions_tech,
+        restrict_consumer_positions,
+    )
 
-def _build_position_to_technosphere_lookup(technosphere_index: dict[int, dict]) -> dict[int, dict]:
+
+def _build_position_to_technosphere_lookup(
+    technosphere_index: dict[int, dict],
+) -> dict[int, dict]:
     """
     technosphere_index: maps position -> activity metadata (name, location, classifications, etc.)
     Return minimal fields Edges uses to enrich consumer/supplier info.
@@ -73,6 +78,7 @@ def _build_position_to_technosphere_lookup(technosphere_index: dict[int, dict]) 
         }
     return out
 
+
 def _ensure_minimal_flows(
     lca: EdgeLCIA,
     biosphere_index: dict[int, dict],
@@ -84,7 +90,7 @@ def _ensure_minimal_flows(
                 "name": f.get("name"),
                 "categories": list(f.get("categories")),
                 "unit": f.get("unit"),
-                "location": f.get("location"),                # usually None for biosphere flows
+                "location": f.get("location"),  # usually None for biosphere flows
                 "classifications": f.get("classifications"),  # optional
                 "position": lca.lca.dicts.biosphere[pos],
             }
@@ -106,6 +112,7 @@ def _ensure_minimal_flows(
             if pos in lca.lca.dicts.activity
         ]
 
+
 def _as_row_csr(mat):
     """Ensure the characterization is a 2D CSR row matrix."""
     if issparse(mat):
@@ -121,6 +128,7 @@ def _as_row_csr(mat):
     if arr.shape[0] != 1 and arr.shape[1] == 1:
         arr = arr.T
     return csr_matrix(arr)
+
 
 def create_edges_characterization_matrix(
     model: str,
@@ -139,8 +147,9 @@ def create_edges_characterization_matrix(
     for method in methods:
         # create fake sparse inventory matrix with same SHAPE & DTYPE
         first_matrix = next(iter(multilca_obj.inventories.values()))
-        multilca_obj.inventory = csr_matrix(first_matrix.shape,
-                                            dtype=getattr(first_matrix, "dtype", float))
+        multilca_obj.inventory = csr_matrix(
+            first_matrix.shape, dtype=getattr(first_matrix, "dtype", float)
+        )
 
         lca = EdgeLCIA(
             demand={},
@@ -149,7 +158,9 @@ def create_edges_characterization_matrix(
             additional_topologies=topology,
         )
 
-        if all(cf["supplier"].get("matrix") == "technosphere" for cf in lca.raw_cfs_data):
+        if all(
+            cf["supplier"].get("matrix") == "technosphere" for cf in lca.raw_cfs_data
+        ):
             lca.technosphere_edges = {
                 (r, c)
                 for supply_array in multilca_obj.supply_arrays.values()
@@ -171,8 +182,8 @@ def create_edges_characterization_matrix(
             biosphere_index=indices["biosphere"],
             technosphere_index=indices["technosphere"],
         )
-        lca.position_to_technosphere_flows_lookup = _build_position_to_technosphere_lookup(
-            indices["technosphere"]
+        lca.position_to_technosphere_flows_lookup = (
+            _build_position_to_technosphere_lookup(indices["technosphere"])
         )
 
         rs_bio, rs_tech, rc_cons = _edge_sets_for_lookup(lca)
@@ -183,7 +194,6 @@ def create_edges_characterization_matrix(
         )
         lca.apply_strategies()
         lca.evaluate_cfs()
-
 
         # Each method yields a 2D plane (m x n). Ensure SciPy CSR, then convert to pydata/sparse COO.
         plane = lca.characterization_matrix
