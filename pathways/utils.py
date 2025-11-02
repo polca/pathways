@@ -218,7 +218,7 @@ def create_lca_results_array(
 
     # Define the coordinates for the xarray DataArray
     coords = {
-        "act_category": list(set(list(classifications.values()))),
+        "act_category": list(set(list(classifications.values()))) + ["unclassified"],
         "variable": list(mapping.keys()),
         "year": years,
         "region": regions,
