@@ -19,7 +19,6 @@ from .filesystem_constants import DATA_DIR
 setup_package_logging(level=logging.DEBUG)
 
 
-
 def fetch_topology(model: str) -> Optional[Dict]:
     """
     Find the JSON file containing the topologies of the provided model.
@@ -150,23 +149,15 @@ def create_edges_characterization_matrix(
         )
 
         if all(cf["supplier"].get("matrix") == "technosphere" for cf in lca.raw_cfs_data):
-
-            multilca_obj.inventories = {
-                k: build_technosphere_edges_matrix(
-                    multilca_obj.technosphere_matrix,
-                    multilca_obj.supply_arrays[k]
-                )
-                for k in multilca_obj.supply_arrays
-            }
-
-
-            # Collect nonzero positions across all inventories
             lca.technosphere_edges = {
                 (r, c)
-                for mat in multilca_obj.inventories.values()
-                for r, c in zip(*mat.nonzero())
+                for supply_array in multilca_obj.supply_arrays.values()
+                for r, c in zip(
+                    *build_technosphere_edges_matrix(
+                        multilca_obj.technosphere_matrix, supply_array
+                    ).nonzero()
+                )
             }
-
         else:
             lca.biosphere_edges = {
                 (r, c)
@@ -208,4 +199,4 @@ def create_edges_characterization_matrix(
 
     # Stack along a NEW leading axis -> (n_methods, m, n)
     characterization_tensor = spnd.stack(planes, axis=0)
-    return characterization_tensor, multilca_obj
+    return characterization_tensor
