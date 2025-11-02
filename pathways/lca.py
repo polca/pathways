@@ -431,7 +431,7 @@ def process_region(data: Tuple) -> Dict[str, str | List[str] | List[int]]:
 
     if use_distributions == 0:
         # Regular LCA calculations
-        #with CustomFilter("(almost) singular matrix"):
+        # with CustomFilter("(almost) singular matrix"):
         #    lca.lci()
 
         if debug:
