@@ -430,8 +430,8 @@ def process_region(data: Tuple) -> Dict[str, str | List[str] | List[int]]:
 
     if use_distributions == 0:
         # Regular LCA calculations
-        with CustomFilter("(almost) singular matrix"):
-            lca.lci()
+        #with CustomFilter("(almost) singular matrix"):
+        #    lca.lci()
 
         if debug:
             logging.info(f"Edges methods: {edges_methods}. Monte Carlo iters: {use_distributions}.")
@@ -779,7 +779,7 @@ def _calculate_year(args: tuple):
                     "location": k[3]
                 } for k, v in technosphere_indices.items()
             }
-            characterization_matrix = create_edges_characterization_matrix(
+            characterization_matrix, lca = create_edges_characterization_matrix(
                 model=model,
                 multilca_obj=lca,
                 methods=edges_methods,
