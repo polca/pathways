@@ -280,7 +280,9 @@ def create_functional_units(
                     alternative_unit = vars_idx[variable]["lhv"].get("unit")
                     conversion_factor = vars_idx[variable]["lhv"].get("value")
 
-                    print(f"alternative unit: {alternative_unit}, conversion_factor: {conversion_factor}")
+                    print(
+                        f"alternative unit: {alternative_unit}, conversion_factor: {conversion_factor}"
+                    )
 
                     if alternative_unit and conversion_factor:
                         unit_vector = (
