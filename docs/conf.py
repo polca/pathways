@@ -1,17 +1,22 @@
 import os
 import sys
 
-sys.path.insert(0, os.path.abspath("../.."))
+# Ensure the installed package (and local sources during RTD builds) are importable
+sys.path.insert(0, os.path.abspath(".."))
 
-project = "pathways"
+project = "Pathways"
 copyright = "2025"
 author = "Paul Scherrer Institute"
 
-extensions = ["sphinx.ext.autodoc", "sphinx.ext.napoleon", "sphinx.ext.viewcode"]
+extensions = [
+    "sphinx.ext.autodoc",
+    "sphinx.ext.napoleon",
+    "sphinx.ext.viewcode",
+]
+
 templates_path = ["_templates"]
 exclude_patterns = []
 
-# docs/conf.py
 autodoc_mock_imports = [
     "numpy",
     "pandas",
@@ -24,12 +29,6 @@ autodoc_mock_imports = [
     "constructive_geometries",
 ]
 
-
-html_theme = "alabaster"
+html_theme = "sphinx_rtd_theme"
 html_static_path = ["_static"]
-html_logo = "https://raw.githubusercontent.com/polca/pathways/refs/heads/main/assets/pathways-high-resolution-logo-transparent.png"
-
-import os
-import sys
-
-sys.path.insert(0, os.path.abspath("../"))  # or '../src' if your code is in src/
+html_logo = "../assets/pathways-high-resolution-logo-transparent.png"
