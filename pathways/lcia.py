@@ -16,7 +16,13 @@ LCIA_METHODS_EI311 = DATA_DIR / "lcia_ei311.json"
 
 
 def get_lcia_method_names(ei_version="3.11"):
-    """Get a list of available LCIA methods."""
+    """List LCIA method names bundled with the specified ecoinvent version.
+
+    :param ei_version: Ecoinvent release identifier (e.g. ``"3.11"``).
+    :type ei_version: str
+    :returns: Ordered method names formatted as ``"family - method"``.
+    :rtype: list[str]
+    """
 
     if ei_version != "3.11":
         filepath = LCIA_METHODS_EI311
@@ -30,12 +36,12 @@ def get_lcia_method_names(ei_version="3.11"):
 
 
 def format_lcia_method_exchanges(method):
-    """
-        Format LCIA method data to fit such structure:
-        (name, unit, type, category, subcategory, amount, uncertainty type, uncertainty amount)
-    -
-        :param method: LCIA method
-        :return: list of tuples
+    """Map an LCIA method's exchanges to impact amounts keyed by flow identity.
+
+    :param method: LCIA method object as loaded from the JSON descriptor.
+    :type method: dict
+    :returns: Mapping from ``(flow name, category, subcategory)`` to characterization values.
+    :rtype: dict[tuple[str, str, str], float]
     """
 
     return {
@@ -49,7 +55,15 @@ def format_lcia_method_exchanges(method):
 
 
 def get_lcia_methods(methods: list = None, ei_version="3.11"):
-    """Get a list of available LCIA methods."""
+    """Load selected LCIA methods and format their exchanges.
+
+    :param methods: Optional subset of method names to extract.
+    :type methods: list[str] | None
+    :param ei_version: Ecoinvent release identifier to read.
+    :type ei_version: str
+    :returns: Mapping of method names to formatted exchange dictionaries.
+    :rtype: dict[str, dict[tuple[str, str, str], float]]
+    """
 
     if ei_version != "3.11":
         filepath = LCIA_METHODS_EI311
@@ -68,13 +82,18 @@ def get_lcia_methods(methods: list = None, ei_version="3.11"):
 def fill_characterization_factors_matrices(
     methods: list, biosphere_matrix_dict: dict, biosphere_dict: dict, debug=False
 ) -> csr_matrix:
-    """
-    Create one CSR matrix for all LCIA method, with the last dimension being the index of the method
-    :param methods: contains names of the LCIA methods to use (e.g., ["IPCC 2021, Global wArming Potential"]).
-    :param biosphere_matrix_dict: dictionary with biosphere flows and their indices in bw2calc's matrix
-    :param biosphere_dict: dictionary with biosphere flows and their indices in the biosphere matrix (not bw2calc's matrix)
-    :param debug: if True, log debug information
-    :return: a sparse matrix with the characterization factors
+    """Assemble a CSR matrix with characterization factors for multiple LCIA methods.
+
+    :param methods: Ordered method names to include.
+    :type methods: list[str]
+    :param biosphere_matrix_dict: Mapping of biosphere flows to rows in the bw2calc matrix.
+    :type biosphere_matrix_dict: dict[int, int]
+    :param biosphere_dict: Mapping of flow descriptors to biosphere indices.
+    :type biosphere_dict: dict[tuple[str, str, str], int]
+    :param debug: Flag to emit detailed logging about matched factors.
+    :type debug: bool
+    :returns: CSR matrix with shape ``(len(methods), len(biosphere_matrix_dict))``.
+    :rtype: scipy.sparse.csr_matrix
     """
 
     lcia_data = get_lcia_methods(methods=methods)
