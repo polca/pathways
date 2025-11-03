@@ -50,22 +50,20 @@ def _fill_in_result_array(
     shares: [None, dict],
     methods: list,
 ) -> np.ndarray:
-    """
-    Fill in the result array with the results from each region.
-    The result array has the following dimensions:
-    - iterations (if use_distributions > 0)
-    - variables
-    - regions
-    - locations
-    - methods
+    """Load per-region result files and stack them into the master results tensor.
 
-    :param coords: tuple. (model, scenario, year)
-    :param result: dict. The result from _calculate_year function.
-    :param use_distributions: int. If > 0, use distributions.
-    :param shares: dict or None. The shares of sub-technologies.
-    :param methods: list. The LCIA methods.
-    :return: np.ndarray. The result array.
-
+    :param coords: Tuple ``(model, scenario, year)`` describing the slice to fill.
+    :type coords: tuple[str, str, int]
+    :param result: Region-level data returned from :func:`_calculate_year`.
+    :type result: dict[str, dict]
+    :param use_distributions: Number of Monte Carlo iterations performed.
+    :type use_distributions: int
+    :param shares: Optional correlated share samples used for subtechnology modeling.
+    :type shares: dict | None
+    :param methods: Ordered LCIA method names.
+    :type methods: list[str]
+    :returns: Dense array ready to assign into ``self.lca_results``.
+    :rtype: numpy.ndarray
     """
 
     def _load_array(filepath):
@@ -139,12 +137,19 @@ def _fill_in_result_array(
 
 
 class Pathways:
-    """The Pathways class reads in a datapackage that contains scenario data,
-    mapping between scenario variables and LCA datasets, and LCA matrices.
+    """Instantiate the Pathways workflow around a datapackage bundle.
 
-    :param datapackage: Path to the datapackage.zip file.
-    :type datapackage: str
-
+    :param datapackage: Path to the zipped datapackage file.
+    :type datapackage: str | pathlib.Path
+    :param geography_mapping: Optional YAML path or mapping dict for regional aggregation.
+    :type geography_mapping: str | dict | None
+    :param activities_mapping: Optional YAML path or mapping dict for activity reclassification.
+    :type activities_mapping: str | dict | None
+    :param ecoinvent_version: Target ecoinvent release, used when selecting LCIA data.
+    :type ecoinvent_version: str
+    :param debug: Enable verbose logging when ``True``.
+    :type debug: bool
+    :raises FileNotFoundError: If the datapackage or classification resources cannot be read.
     """
 
     def __init__(
@@ -155,22 +160,18 @@ class Pathways:
         ecoinvent_version: str = "3.11",
         debug=True,
     ):
-        """
-        Initialize the Pathways class.
+        """Initialize the workflow and load datapackage metadata.
 
-        :param datapackage: Path to the datapackage.zip file.
-        :type datapackage: str
-        :param geography_mapping: Optional; path to a YAML file or a dictionary that maps ge
-            geographies to higher-level regions.
-        :type geography_mapping: dict or str, default is None
-        :param activities_mapping: Optional; path to a YAML file or a dictionary that maps
-            activities to higher-level classifications.
-        :type activities_mapping: dict or str, default is None
-        :param ecoinvent_version: Version of the ecoinvent database to use. Default is "3.11".
-        :type ecoinvent_version: str, default is "3.11"
-        :param debug: If True, enable debug logging. Default is True.
-        :type debug: bool, default is True
-
+        :param datapackage: Path to the datapackage archive or descriptor.
+        :type datapackage: str | pathlib.Path
+        :param geography_mapping: Optional aggregation mapping for scenario regions.
+        :type geography_mapping: dict | str | None
+        :param activities_mapping: Optional reclassification mapping for activities.
+        :type activities_mapping: dict | str | None
+        :param ecoinvent_version: Ecoinvent version string used when selecting LCIA data.
+        :type ecoinvent_version: str
+        :param debug: Emit verbose logging when ``True``.
+        :type debug: bool
         """
         self.datapackage = datapackage
         self.data, dataframe, self.filepaths = validate_datapackage(
@@ -221,11 +222,12 @@ class Pathways:
             print(f"Log file: {USER_LOGS_DIR / 'pathways.log'}")
 
     def _get_scenarios(self, scenario_data: pd.DataFrame) -> xr.DataArray:
-        """
-        Load scenarios from filepaths as pandas DataFrame.
-        Concatenate them into an xarray DataArray.
-        :param scenario_data: pd.DataFrame
-        :return: xr.DataArray
+        """Convert the datapackage scenario table into a harmonized ``xarray`` object.
+
+        :param scenario_data: Scenario observations from ``scenario_data`` resource.
+        :type scenario_data: pandas.DataFrame
+        :returns: Multi-dimensional array indexed by model, pathway, variable, region, and year.
+        :rtype: xarray.DataArray
         """
 
         # check if all variables in mapping are in scenario_data
@@ -285,39 +287,36 @@ class Pathways:
         multiprocessing: bool = True,
         double_accounting: Optional[List[str]] = None,
     ) -> None:
-        """
-        Calculate Life Cycle Assessment (LCA) results for given methods, models, scenarios, regions, and years.
+        """Run LCA calculations across selected models, pathways, regions, and years.
 
-        If no arguments are provided for methods, models, scenarios, regions, or years,
-        the function will default to using all available values from the `scenarios` attribute.
-
-        This function processes each combination of model, scenario, and year in parallel
-        and stores the results in the `lca_results` attribute.
-
-        :param methods: List of impact assessment methods. If None, all available methods will be used.
-        :type methods: Optional[List[str]], default is None
-        :param models: List of models. If None, all available models will be used.
-        :type models: Optional[List[str]], default is None
-        :param scenarios: List of scenarios. If None, all available scenarios will be used.
-        :type scenarios: Optional[List[str]], default is None
-        :param regions: List of regions. If None, all available regions will be used.
-        :type regions: Optional[List[str]], default is None
-        :param years: List of years. If None, all available years will be used.
-        :type years: Optional[List[int]], default is None
-        :param variables: List of variables. If None, all available variables will be used.
-        :type variables: Optional[List[str]], default is None
-        :param demand_cutoff: Float. If the total demand for a given variable is less than this value, the variable is skipped.
-        :type demand_cutoff: float, default is 1e-3
-        :param use_distributions: Integer. If non-zero, use distributions for LCA calculations.
-        :type use_distributions: int, default is 0
-        :param subshares: Boolean. If True, calculate subshares.
-        :type subshares: bool, default is False
-        :param remove_uncertainty: Boolean. If True, remove uncertainty from inventory exchanges.
-        :type remove_uncertainty: bool, default is False
-        :param seed: Integer. Seed for random number generator.
-        :type seed: int, default is 0
-        :param double_accounting: List. List of variables for which double accounting processing should be performed.
-        :type double_accounting: Optional[List[str]], default is None
+        :param methods: Impact assessment methods to report; defaults to all available.
+        :type methods: list[str] | None
+        :param models: IAM models to include.
+        :type models: list[str] | None
+        :param scenarios: Pathways to include.
+        :type scenarios: list[str] | None
+        :param regions: IAM regions to include.
+        :type regions: list[str] | None
+        :param years: Simulation years to analyze.
+        :type years: list[int] | None
+        :param variables: Scenario variables supplying demand.
+        :type variables: list[str] | None
+        :param demand_cutoff: Minimum total demand required to run a functional unit.
+        :type demand_cutoff: float
+        :param use_distributions: Number of Monte Carlo iterations; ``0`` performs deterministic runs.
+        :type use_distributions: int
+        :param subshares: Whether to sample sub-technology market share distributions.
+        :type subshares: bool
+        :param remove_uncertainty: Replace exchange uncertainty parameters with deterministic values.
+        :type remove_uncertainty: bool
+        :param seed: Random seed forwarded to ``bw2calc`` when sampling.
+        :type seed: int
+        :param multiprocessing: Whether to parallelize over years using ``multiprocessing.Pool``.
+        :type multiprocessing: bool
+        :param double_accounting: Optional activity filters for double-accounting diagnostics.
+        :type double_accounting: list[str] | None
+        :returns: ``None`` (results are stored on ``self.lca_results``).
+        :rtype: None
         """
 
         self.scenarios = harmonize_units(self.scenarios, variables)
@@ -504,21 +503,25 @@ class Pathways:
                 )
 
     def aggregate_results(self, cutoff: float = 0.001, interpolate: bool = False):
-        """
-        Aggregate the LCA results by removing values below a certain cutoff.
+        """Collapse small contributions and optionally interpolate across years.
 
-        :param cutoff: float. The cutoff value below which results will be removed.
-        :param interpolate: bool. If True, interpolate missing values.
-        :return: None
+        :param cutoff: Minimum contribution kept per activity category.
+        :type cutoff: float
+        :param interpolate: Interpolate missing years when ``True``.
+        :type interpolate: bool
+        :returns: ``None`` (mutates ``self.lca_results``).
+        :rtype: None
         """
         self.lca_results = display_results(
             self.lca_results, cutoff=cutoff, interpolate=interpolate
         )
 
     def export_results(self, filename: str = None) -> str:
-        """
-        Export the non-zero LCA results to a compressed parquet file.
-        :param filename: str. The name of the file to save the results.
-        :return: None
+        """Export non-zero LCA results to a compressed parquet file.
+
+        :param filename: Optional base filename (without extension).
+        :type filename: str | None
+        :returns: Path to the written ``.gzip`` parquet file.
+        :rtype: str
         """
         return export_results_to_parquet(self.lca_results, filename)
