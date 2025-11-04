@@ -734,7 +734,6 @@ def _calculate_year(args: tuple):
         for k in lca_results.coords["location"].values.tolist()
     }
 
-
     bar = pyprind.ProgBar(len(regions))
     for region in regions:
         fus, fus_details = create_functional_units(
