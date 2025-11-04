@@ -280,8 +280,6 @@ def create_functional_units(
                     alternative_unit = vars_idx[variable]["lhv"].get("unit")
                     conversion_factor = vars_idx[variable]["lhv"].get("value")
 
-                    print(f"alternative unit: {alternative_unit}, conversion_factor: {conversion_factor}")
-
                     if alternative_unit and conversion_factor:
                         unit_vector = (
                             get_unit_conversion_factors(
@@ -735,6 +733,7 @@ def _calculate_year(args: tuple):
         k: acts_location_idx_dict[k]
         for k in lca_results.coords["location"].values.tolist()
     }
+
 
     bar = pyprind.ProgBar(len(regions))
     for region in regions:

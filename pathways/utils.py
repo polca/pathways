@@ -511,8 +511,9 @@ def add_lhv(variable, mapping) -> Union[dict, None]:
     :return: The LHV value if it exists, otherwise None.
     """
     if variable in mapping:
-        if "lhv" in mapping[variable]:
-            return mapping[variable]["lhv"]
+        for ds in mapping[variable]["dataset"]:
+            if "lhv" in ds:
+                return ds["lhv"]
     return {}
 
 
@@ -572,6 +573,10 @@ def fetch_indices(
                 "Ensure that the activities and regions are correctly defined."
             )
             pass
+
+        for variable in variables:
+            if variable not in mapping:
+                print(f"Variable '{variable}' not found in mapping. Ensure it is correctly defined.")
 
         if idxs is not None:
 
