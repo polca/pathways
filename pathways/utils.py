@@ -576,7 +576,9 @@ def fetch_indices(
 
         for variable in variables:
             if variable not in mapping:
-                print(f"Variable '{variable}' not found in mapping. Ensure it is correctly defined.")
+                print(
+                    f"Variable '{variable}' not found in mapping. Ensure it is correctly defined."
+                )
 
         if idxs is not None:
 
