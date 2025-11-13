@@ -36,6 +36,7 @@ requirements:
     - pydantic>=2.8.2
     - pyarrow
     - fastparquet
+    - edges
 test:
   imports:
     - pathways

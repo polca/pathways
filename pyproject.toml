@@ -49,6 +49,7 @@ dependencies = [
     "SALib",
     "pyarrow",
     "fastparquet",
+    "edges"
 ]
 
 [tool.setuptools]
