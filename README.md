@@ -79,6 +79,11 @@ or alternatively, you can clone the repository and install it from the source:
 ```
 
 
+## Documentation
+
+The documentation for ``pathways`` can be found at
+https://pathways.readthedocs.io/en/latest.
+
 ## Usage
 
 ``pathways`` is a Python package, and can be used in Python scripts

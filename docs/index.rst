@@ -21,7 +21,8 @@ Contents
 
    quickstart
    user_guide
-   api_references
+   examples
+   api_reference
 
 Indices and tables
 ------------------

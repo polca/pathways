@@ -33,19 +33,12 @@ logger = logging.getLogger(__name__)
 
 
 def read_indices_csv(file_path: Path) -> dict[tuple[str, str, str, str], int]:
-    """
-    Reads a CSV file and returns its contents as a dictionary.
+    """Parse a semicolon-separated index CSV into a lookup dictionary.
 
-    Each row of the CSV file is expected to contain four string values followed by an index.
-    These are stored in the dictionary as a tuple of the four strings mapped to the index.
-
-    :param file_path: The path to the CSV file.
-    :type file_path: Path
-
-    :return: A dictionary mapping tuples of four strings to indices.
-    For technosphere indices, the four strings are the activity name, product name, location, and unit.
-    For biosphere indices, the four strings are the flow name, category, subcategory, and unit.
-    :rtype: Dict[Tuple[str, str, str, str], str]
+    :param file_path: Path to the CSV file containing activity metadata.
+    :type file_path: pathlib.Path
+    :returns: Mapping from ``(name, product, location, unit)`` tuples to indices.
+    :rtype: dict[tuple[str, str, str, str], int]
     """
     indices = dict()
     with open(file_path, encoding="utf-8") as read_obj:
@@ -64,10 +57,13 @@ def read_indices_csv(file_path: Path) -> dict[tuple[str, str, str, str], int]:
 
 
 def load_mapping(mapping: [dict, str]) -> dict:
-    """
-    Load the geography mapping.
-    :param mapping: dict or yaml file with the geography mapping.
-    :return: dict
+    """Load a geography or activity mapping from a dict or YAML file.
+
+    :param mapping: Either a ready mapping dictionary or a YAML path.
+    :type mapping: dict | str
+    :returns: Mapping dictionary loaded from the provided source.
+    :rtype: dict
+    :raises ValueError: If ``mapping`` is neither a dict nor a string path.
     """
 
     if isinstance(mapping, dict):
@@ -81,7 +77,12 @@ def load_mapping(mapping: [dict, str]) -> dict:
 
 
 def load_classifications():
-    """Load the activities classifications."""
+    """Load the bundled activity classification hierarchy.
+
+    :returns: Activity classification mapping keyed by activity tuples.
+    :rtype: dict
+    :raises FileNotFoundError: When the classification YAML is missing.
+    """
 
     # check if file exists
     if not Path(CLASSIFICATIONS).exists():
@@ -94,12 +95,16 @@ def load_classifications():
 
 
 def harmonize_units(scenario: xr.DataArray, variables: list) -> xr.DataArray:
-    """
-    Harmonize the units of a scenario. Some units are in PJ/yr, while others are in EJ/yr
-    We want to convert everything to the same unit - preferably the largest one.
-    :param scenario: xr.DataArray
-    :param variables: list of variables
-    :return: xr.DataArray
+    """Convert scenario variables to consistent energy units when necessary.
+
+    :param scenario: Scenario data array with ``attrs["units"]`` metadata.
+    :type scenario: xarray.DataArray
+    :param variables: Variable names that should be harmonized.
+    :type variables: list[str]
+    :raises KeyError: When a variable lacks unit metadata.
+    :raises ValueError: When no variables are provided.
+    :returns: Updated scenario array with consistent units.
+    :rtype: xarray.DataArray
     """
 
     missing_vars = [var for var in variables if var not in scenario.attrs["units"]]
@@ -134,14 +139,17 @@ def harmonize_units(scenario: xr.DataArray, variables: list) -> xr.DataArray:
 def get_unit_conversion_factors(
     scenario_unit: dict, dataset_unit: list, unit_mapping: dict
 ) -> np.ndarray:
-    """
-    Get the unit conversion factors for a given scenario unit and dataset unit.
+    """Retrieve conversion factors aligning scenario units with dataset units.
 
-    :param scenario_unit: dict with the units of the scenario variables.
-    :param dataset_unit: list of units of the datasets.
-    :param unit_mapping: dict with the unit conversion factors.
-    :return: numpy array with the unit conversion factors.
-
+    :param scenario_unit: Unit metadata declared in the scenario data.
+    :type scenario_unit: str
+    :param dataset_unit: Target unit tuple from the dataset mapping.
+    :type dataset_unit: list[str] | str
+    :param unit_mapping: Conversion factor dictionary loaded from YAML.
+    :type unit_mapping: dict
+    :raises KeyError: If no conversion factor is defined for the unit pair.
+    :returns: Conversion factors as a NumPy array.
+    :rtype: numpy.ndarray
     """
 
     if scenario_unit != dataset_unit:
@@ -155,7 +163,11 @@ def get_unit_conversion_factors(
 
 
 def load_units_conversion() -> dict:
-    """Load the units conversion."""
+    """Load the units conversion table bundled with the package.
+
+    :returns: Mapping from scenario units to dataset unit conversion factors.
+    :rtype: dict
+    """
 
     with open(UNITS_CONVERSION, "r") as f:
         data = yaml.full_load(f)
@@ -174,32 +186,29 @@ def create_lca_results_array(
     mapping: dict,
     use_distributions: bool = False,
 ) -> xr.DataArray:
-    """
-    Create an xarray DataArray to store Life Cycle Assessment (LCA) results.
+    """Create an empty ``xarray.DataArray`` with coordinates for storing LCA results.
 
-    The DataArray has dimensions `act_category`, `impact_category`, `year`, `region`, `model`, and `scenario`.
-
-    :param methods: A list of impact categories.
-    :type methods: List[str]
-    :param years: A list of years.
-    :type years: List[int]
-    :param regions: A list of regions.
-    :type regions: List[str]
-    :param locations: A list of locations.
-    :type locations: List[str]
-    :param models: A list of models.
-    :type models: List[str]
-    :param scenarios: A list of scenarios.
-    :type scenarios: List[str]
-    :param classifications: A dictionary mapping activities to categories.
+    :param methods: LCIA method names.
+    :type methods: list[str]
+    :param years: Years included in the results tensor.
+    :type years: list[int]
+    :param regions: IAM regions covered by the results.
+    :type regions: list[str]
+    :param locations: Technosphere locations associated with activities.
+    :type locations: list[str]
+    :param models: IAM models included.
+    :type models: list[str]
+    :param scenarios: Pathways under analysis.
+    :type scenarios: list[str]
+    :param classifications: Mapping from activities to category labels.
     :type classifications: dict
-    :param mapping: A dictionary mapping scenario variables to LCA datasets.
+    :param mapping: Scenario variable mapping used to populate the ``variable`` coordinate.
     :type mapping: dict
-    :param use_distributions: A boolean indicating whether to use distributions.
+    :param use_distributions: Whether to append a ``quantile`` dimension for Monte Carlo statistics.
     :type use_distributions: bool
-
-    :return: An xarray DataArray with the appropriate coordinates and dimensions to store LCA results.
-    :rtype: xr.DataArray
+    :returns: Zero-initialized results array with all coordinates defined.
+    :rtype: xarray.DataArray
+    :raises ValueError: If any required coordinate list is empty.
     """
 
     # check if any of the list parameters is empty, and if so, throw an error
@@ -218,7 +227,7 @@ def create_lca_results_array(
 
     # Define the coordinates for the xarray DataArray
     coords = {
-        "act_category": list(set(list(classifications.values()))),
+        "act_category": list(set(list(classifications.values()))) + ["unclassified"],
         "variable": list(mapping.keys()),
         "year": years,
         "region": regions,
@@ -252,11 +261,14 @@ def create_lca_results_array(
 
 
 def export_results_to_parquet(lca_results: xr.DataArray, filepath: str) -> str:
-    """
-    Export the LCA results to a parquet file.
-    :param lca_results: Xarray DataArray with LCA results.
-    :param filepath: The path to the parquet file.
-    :return: None
+    """Write non-zero LCA results to a gzip-compressed parquet file.
+
+    :param lca_results: Results array to serialize.
+    :type lca_results: xarray.DataArray
+    :param filepath: Optional base filename without extension.
+    :type filepath: str | None
+    :returns: Actual ``.gzip`` file path written.
+    :rtype: str
     """
     if filepath is None:
         filepath = f"results_{datetime.now().strftime('%Y%m%d_%H%M%S')}.gzip"
@@ -303,14 +315,17 @@ def display_results(
     cutoff: float = 0.001,
     interpolate: bool = False,
 ) -> xr.DataArray:
-    """
-    Display the results of the LCA.
+    """Filter and optionally interpolate LCA results for presentation.
 
-    :param lca_results: Xarray DataArray with LCA results.
-    :param cutoff: Cutoff value for displaying results. Default is 0.001.
-    :param interpolate: Whether to interpolate the results along the years dimension. Default is False.
-    :return: Xarray DataArray with filtered LCA results.
-
+    :param lca_results: Computed LCA results.
+    :type lca_results: xarray.DataArray
+    :param cutoff: Minimum contribution retained per activity category.
+    :type cutoff: float
+    :param interpolate: Interpolate across years when ``True``.
+    :type interpolate: bool
+    :raises ValueError: If results are missing or lack an ``act_category`` dimension.
+    :returns: Processed DataArray with low contributors grouped as ``other``.
+    :rtype: xarray.DataArray
     """
     if lca_results is None:
         raise ValueError("No results to display")
@@ -355,12 +370,14 @@ def display_results(
 
 
 def prune_zero_coords(da: xr.DataArray, tol: float = 0.0) -> xr.DataArray:
-    """
-    Drop coordinate labels in every dimension where the entire slice is ~0.
+    """Drop coordinate labels whose slices are (near) zero along every other dimension.
 
-    :param da: xarray DataArray
-    :param tol: Tolerance below which values are considered zero.
-    :return: pruned xarray DataArray
+    :param da: DataArray to prune.
+    :type da: xarray.DataArray
+    :param tol: Absolute tolerance for considering a value zero.
+    :type tol: float
+    :returns: Pruned DataArray.
+    :rtype: xarray.DataArray
     """
     x = da.fillna(0.0)  # treat NaNs as zeros for pruning
     for dim in list(x.dims):
@@ -377,26 +394,35 @@ def prune_zero_coords(da: xr.DataArray, tol: float = 0.0) -> xr.DataArray:
 
 
 def load_numpy_array_from_disk(filepath):
-    """
-    Load a numpy array from disk.
-    :param filepath: The path to the file containing the numpy array.
-    :return: numpy array
+    """Load a NumPy array saved on disk, allowing pickled objects.
+
+    :param filepath: File path produced by ``numpy.save``.
+    :type filepath: str | pathlib.Path
+    :returns: Loaded NumPy array.
+    :rtype: numpy.ndarray
     """
 
     return np.load(filepath, allow_pickle=True)
 
 
 def get_visible_files(path: str) -> list[Path]:
-    """
-    Get visible files in a directory.
-    :param path: The path to the directory.
-    :return: List of visible files.
+    """List non-hidden entries in a directory.
+
+    :param path: Directory to inspect.
+    :type path: str | pathlib.Path
+    :returns: Paths of files not starting with ``.``.
+    :rtype: list[pathlib.Path]
     """
     return [file for file in Path(path).iterdir() if not file.name.startswith(".")]
 
 
 def clean_cache_directory():
-    # clean up the cache directory
+    """Remove cached arrays stored in :data:`pathways.filesystem_constants.DIR_CACHED_DB`.
+
+    :returns: ``None``
+    :rtype: None
+    """
+
     for file in get_visible_files(DIR_CACHED_DB):
         file.unlink()
 
@@ -409,15 +435,22 @@ def resize_scenario_data(
     year: List[int],
     variables: List[str],
 ) -> xr.DataArray:
-    """
-    Resize the scenario data to the given scenario, year, region, and variables.
-    :param model: List of models.
-    :param scenario_data: xarray DataArray with scenario data.
-    :param scenario: List of scenarios.
-    :param year: List of years.
-    :param region: List of regions.
-    :param variables: List of variables.
-    :return: Resized scenario data.
+    """Subset the scenario dataset to the requested models, pathways, regions, years, and variables.
+
+    :param scenario_data: Original scenario data array.
+    :type scenario_data: xarray.DataArray
+    :param model: Models to retain.
+    :type model: list[str]
+    :param scenario: Pathways to retain.
+    :type scenario: list[str]
+    :param region: Regions to retain.
+    :type region: list[str]
+    :param year: Years to retain.
+    :type year: list[int]
+    :param variables: Variables to retain.
+    :type variables: list[str]
+    :returns: Resized scenario data array.
+    :rtype: xarray.DataArray
     """
 
     # Get the indices for the given scenario, year, region, and variables
@@ -451,16 +484,18 @@ def get_activity_indices(
     geo: Geomap,
     debug: bool = False,
 ) -> List[int]:
-    """
-    Fetch the indices of activities in the technosphere matrix, optimized for efficiency.
+    """Resolve technosphere indices for the supplied activity descriptors.
 
-    :param activities: List of activities to find indices for. Each activity is a tuple of
-                          (name, reference product, unit, location).
-    :param technosphere_index: Mapping of activities to their indices in the technosphere matrix.
-    :param geo: Geomap object for handling geographic mappings.
-    :param debug: If True, print debug information.
-    :return: List of indices corresponding to the input activities.
-
+    :param activities: Sequence of ``(name, product, unit, region)`` tuples.
+    :type activities: list[tuple[str, str, str, str]]
+    :param technosphere_index: Mapping from activity descriptors to indices.
+    :type technosphere_index: dict[tuple[str, str, str, str], int]
+    :param geo: Geomap helper for geographic fallback logic.
+    :type geo: premise.geomap.Geomap
+    :param debug: Emit verbose logging when ``True``.
+    :type debug: bool
+    :returns: List of indices (``None`` entries are omitted).
+    :rtype: list[int]
     """
 
     # Cache for previously computed IAM to Ecoinvent mappings
@@ -504,11 +539,14 @@ def get_activity_indices(
 
 
 def add_lhv(variable, mapping) -> Union[dict, None]:
-    """
-    Add the lower heating value (LHV) to the variable if it exists in the mapping.
-    :param variable: The variable to check for LHV.
-    :param mapping: The mapping dictionary containing LHV information.
-    :return: The LHV value if it exists, otherwise None.
+    """Fetch lower-heating-value metadata for a scenario variable if available.
+
+    :param variable: Scenario variable name.
+    :type variable: str
+    :param mapping: Scenario-to-dataset mapping dictionary.
+    :type mapping: dict
+    :returns: LHV metadata dictionary or an empty dict when absent.
+    :rtype: dict
     """
     if variable in mapping:
         for ds in mapping[variable]["dataset"]:
@@ -520,21 +558,20 @@ def add_lhv(variable, mapping) -> Union[dict, None]:
 def fetch_indices(
     mapping: dict, regions: list, variables: list, technosphere_index: dict, geo: Geomap
 ) -> dict:
-    """
-    Fetch the indices for the given activities in the technosphere matrix.
+    """Derive technosphere indices for each variable across all regions.
 
-    :param mapping: Mapping of scenario variables to LCA datasets.
+    :param mapping: Scenario variable mapping with dataset descriptors.
     :type mapping: dict
-    :param regions: List of regions.
-    :type regions: list
-    :param variables: List of variables.
-    :type variables: list
-    :param technosphere_index: Technosphere index.
+    :param regions: IAM regions to evaluate.
+    :type regions: list[str]
+    :param variables: Scenario variables to map.
+    :type variables: list[str]
+    :param technosphere_index: Mapping from activity descriptors to indices.
     :type technosphere_index: dict
-    :param geo: Geomap object.
-    :type geo: Geomap
-    :return: Dictionary of indices.
-    :rtype: dict
+    :param geo: Geomap helper to resolve alternate locations.
+    :type geo: premise.geomap.Geomap
+    :returns: Nested dictionary of index metadata keyed by region and variable.
+    :rtype: dict[str, dict[str, dict[str, Any]]]
     """
 
     # Pre-process mapping data to minimize repetitive data access
@@ -600,12 +637,11 @@ def fetch_indices(
 
 
 def get_all_indices(vars_info: dict) -> list[int]:
-    """
-    Extract all 'idx' values from the vars_info dictionary.
+    """Collect technosphere indices from a variable-index mapping.
 
-    :param vars_info: Dictionary of variables information returned by fetch_indices.
+    :param vars_info: Mapping returned by :func:`fetch_indices`.
     :type vars_info: dict
-    :return: List of all 'idx' values.
+    :returns: List of index integers present in the mapping.
     :rtype: list[int]
     """
     idx_list = []
@@ -616,10 +652,12 @@ def get_all_indices(vars_info: dict) -> list[int]:
 
 
 def fetch_inventories_locations(technosphere_indices: dict) -> List[str]:
-    """
-    Fetch the locations of the inventories.
-    :param technosphere_indices: Dictionary with the indices of the activities in the technosphere matrix.
-    :return: List of locations.
+    """Extract the unique locations referenced in technosphere indices.
+
+    :param technosphere_indices: Mapping from activity tuples to indices.
+    :type technosphere_indices: dict
+    :returns: Sorted list of location strings.
+    :rtype: list[str]
     """
 
     locations = list(set([act[3] for act in technosphere_indices]))
@@ -629,10 +667,12 @@ def fetch_inventories_locations(technosphere_indices: dict) -> List[str]:
 
 
 def csv_to_dict(filename: str) -> dict[int, tuple[str, ...]]:
-    """
-    Convert a CSV file to a dictionary.
-    :param filename: The name of the CSV file.
-    :return: A dictionary with the data from the CSV file.
+    """Read a five-column CSV file into an index-to-activity mapping.
+
+    :param filename: Path to the CSV file.
+    :type filename: str | pathlib.Path
+    :returns: Dictionary mapping integer indices to activity tuples.
+    :rtype: dict[int, tuple[str, str, str, str]]
     """
     output_dict = {}
 
@@ -654,11 +694,14 @@ def csv_to_dict(filename: str) -> dict[int, tuple[str, ...]]:
 def check_unclassified_activities(
     technosphere_indices: dict, classifications: dict
 ) -> List:
-    """
-    Check if there are activities in the technosphere matrix that are not in the classifications.
-    :param technosphere_indices: List of activities in the technosphere matrix.
-    :param classifications: Dictionary of activities classifications.
-    :return: List of activities not found in the classifications.
+    """Identify technosphere activities missing from the classification mapping.
+
+    :param technosphere_indices: Activities present in the technosphere matrix.
+    :type technosphere_indices: dict
+    :param classifications: Known classification mapping.
+    :type classifications: dict
+    :returns: List of missing activity descriptors.
+    :rtype: list[list[str]]
     """
     missing_classifications = []
     for act in technosphere_indices:
@@ -679,15 +722,18 @@ def _group_technosphere_indices(
     group_values: list,
     mapping: dict = None,
 ) -> dict:
-    """
-    Generalized function to group technosphere indices by an arbitrary attribute (category, location, etc.).
+    """Group technosphere indices by an arbitrary classifier function.
 
-    :param technosphere_indices: Mapping of activities to their indices in the technosphere matrix.
-    :param group_by: A function that takes an activity and returns its group value (e.g., category or location).
-    :param group_values: The set of all possible group values (e.g., all categories or locations).
-    :param mapping: A dictionary mapping.
-    :return: A tuple containing a list of lists of indices, a dictionary mapping group values to lists of indices,
-             and a 2D numpy array of indices, where rows have been padded with -1 to ensure equal lengths.
+    :param technosphere_indices: Mapping from activity descriptors to indices.
+    :type technosphere_indices: dict
+    :param group_by: Callable returning a group label for each activity tuple.
+    :type group_by: collections.abc.Callable
+    :param group_values: Ordered list of expected group labels.
+    :type group_values: list
+    :param mapping: Optional aggregation mapping applied to group labels.
+    :type mapping: dict | None
+    :returns: Ordered dictionary mapping group labels to index lists.
+    :rtype: collections.OrderedDict[str, list[int]]
     """
 
     # create an ordered dictionary to store the indices
@@ -721,11 +767,12 @@ def _group_technosphere_indices(
 
 
 def read_categories_from_yaml(file_path: Path) -> Dict:
-    """
-    Read categories from a YAML file.
+    """Load hierarchical filter definitions from a YAML file.
 
-    :param file_path: The path to the YAML file.
-    :return: The categories.
+    :param file_path: Path to the YAML file.
+    :type file_path: pathlib.Path
+    :returns: Parsed filter dictionary.
+    :rtype: dict
     """
     with open(file_path, "r") as file:
         filters = yaml.safe_load(file)
@@ -734,11 +781,14 @@ def read_categories_from_yaml(file_path: Path) -> Dict:
 
 
 def gather_filters(current_level: Dict, combined_filters: Dict[str, Set[str]]) -> None:
-    """
-    Recursively gather filters from the current level and all sub-levels.
+    """Recursively merge filter criteria from nested dictionaries.
 
-    :param current_level: The current level in the filters dictionary.
-    :param combined_filters: The combined filter criteria dictionary.
+    :param current_level: Current branch of the filter hierarchy.
+    :type current_level: dict
+    :param combined_filters: Aggregated include/exclude sets being built.
+    :type combined_filters: dict[str, set[str]]
+    :returns: ``None`` (updates ``combined_filters`` in place).
+    :rtype: None
     """
     if "ecoinvent_aliases" in current_level:
         ecoinvent_aliases = current_level["ecoinvent_aliases"]
@@ -752,12 +802,14 @@ def gather_filters(current_level: Dict, combined_filters: Dict[str, Set[str]]) -
 def get_combined_filters(
     filters: Dict, paths: List[List[str]]
 ) -> tuple[dict[str, set[Any]], dict[str, set[Any]]]:
-    """
-    Traverse the filters dictionary to get combined filter criteria based on multiple paths.
+    """Collect include/exclude patterns for multiple classification paths.
 
-    :param filters: The filters dictionary loaded from YAML.
-    :param paths: A list of lists, where each inner list represents a path in the hierarchy.
-    :return: A tuple with combined filter criteria dictionary and exceptions dictionary.
+    :param filters: Parsed filter hierarchy from YAML.
+    :type filters: dict
+    :param paths: List of hierarchy paths to combine.
+    :type paths: list[list[str]]
+    :returns: Tuple of (combined filters, exception filters).
+    :rtype: tuple[dict[str, list[str]], dict[str, list[str]]]
     """
     combined_filters = {
         "name_fltr": set(),
@@ -803,17 +855,18 @@ def apply_filters(
     dict[tuple[str, ...], set[Any]],
     dict[tuple[str, ...], set[Any]],
 ]:
-    """
-    Apply the filters to the database and return a list of indices and exceptions,
-    along with the names of filtered activities and exceptions categorized by paths.
+    """Apply include/exclude filters to technosphere activities.
 
-    :param technosphere_inds: Dictionary where keys are tuples of four strings (activity name, product name, location, unit)
-                     and values are integers (indices).
-    :param filters: Dictionary containing the filter criteria.
-    :param exceptions: Dictionary containing the exceptions criteria.
-    :param paths: List of lists, where each inner list represents a path in the hierarchy.
-    :return: Tuple containing a list of indices of filtered activities, a list of indices of exceptions,
-             and dictionaries of categorized names of filtered activities and exceptions.
+    :param technosphere_inds: Mapping from activity descriptors to indices.
+    :type technosphere_inds: dict[tuple[str, str, str, str], int]
+    :param filters: Combined filter lists produced by :func:`get_combined_filters`.
+    :type filters: dict[str, list[str]]
+    :param exceptions: Exception filters overriding the main filters.
+    :type exceptions: dict[str, list[str]]
+    :param paths: Classification paths used to categorize filtered names.
+    :type paths: list[list[str]]
+    :returns: Tuple containing filtered indices, exception indices, and categorized name sets.
+    :rtype: tuple[list[int], list[int], dict[tuple[str, ...], set[str]], dict[tuple[str, ...], set[str]]]
     """
     name_fltr = filters.get("name_fltr", [])
     name_mask = filters.get("name_mask", [])
@@ -878,44 +931,55 @@ def apply_filters(
 # Custom filter function
 # Custom context manager for filtering warnings
 class CustomFilter:
-    """
-    Context manager to filter out specific warning messages.
-    """
+    """Temporarily replace :func:`warnings.showwarning` to suppress matching warnings."""
 
     def __init__(self, ignore_message):
+        """Initialize a warning filter that suppresses messages containing ``ignore_message``.
+
+        :param ignore_message: Substring of warnings to silence.
+        :type ignore_message: str
+        """
+
         self.ignore_message = ignore_message
 
     def __enter__(self):
-        # Capture the original warning show function
+        """Activate the warning filter."""
+
         self.original_showwarning = warnings.showwarning
         warnings.showwarning = self.custom_showwarning
 
     def __exit__(self, exc_type, exc_val, exc_tb):
-        # Restore the original warning show function
+        """Restore the original warning handler."""
+
         warnings.showwarning = self.original_showwarning
 
     def custom_showwarning(
         self, message, category, filename, lineno, file=None, line=None
     ):
-        # Check if the warning message should be ignored
+        """Proxy :func:`warnings.showwarning`, dropping messages that match the filter."""
+
         if self.ignore_message not in str(message):
             self.original_showwarning(message, category, filename, lineno, file, line)
 
 
 def _get_mapping(data) -> dict:
-    """
-    Read the mapping file which maps scenario variables to LCA datasets.
-    It's a YAML file.
-    :return: dict
+    """Read the scenario-to-dataset mapping resource from a datapackage.
 
+    :param data: Loaded datapackage object.
+    :type data: datapackage.DataPackage
+    :returns: Mapping dictionary parsed from ``mapping`` resource.
+    :rtype: dict
     """
     return yaml.safe_load(data.get_resource("mapping").raw_read())
 
 
 def _read_datapackage(datapackage: str) -> DataPackage:
-    """Read the datapackage.json file.
+    """Load a datapackage descriptor from disk.
 
-    :return: DataPackage
+    :param datapackage: Path to ``datapackage.json`` or zipped archive.
+    :type datapackage: str | pathlib.Path
+    :returns: DataPackage instance ready for validation.
+    :rtype: datapackage.DataPackage
     """
 
     return DataPackage(datapackage)

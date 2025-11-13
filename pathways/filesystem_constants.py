@@ -9,7 +9,11 @@ import yaml
 
 
 def load_var_file():
-    """Check if the variable file exists and load it."""
+    """Load optional path overrides from ``variables.yaml`` in the working directory.
+
+    :returns: Parsed YAML contents if present, otherwise ``None``.
+    :rtype: dict | None
+    """
     var_file = Path.cwd() / "variables.yaml"
     if var_file.exists():
         with open(var_file, "r") as f:
