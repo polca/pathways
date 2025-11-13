@@ -8,7 +8,7 @@ import logging
 import pickle
 import uuid
 from pathlib import Path
-from typing import Any, Dict, List, Tuple
+from typing import Dict, List, Tuple, Any
 
 import bw2calc as bc
 import bw_processing as bwp
@@ -18,6 +18,11 @@ import sparse as sp
 from bw_processing import Datapackage
 from premise.geomap import Geomap
 from scipy import sparse
+from scipy.sparse import issparse
+
+from scipy import sparse as sps
+import numpy as np
+import sparse as spnd
 
 from .filesystem_constants import DIR_CACHED_DB
 from .lcia import fill_characterization_factors_matrices
@@ -26,6 +31,7 @@ from .subshares import (
     find_technology_indices,
     get_subshares_matrix,
 )
+from .edges_matrix import create_edges_characterization_matrix
 from .utils import (
     CustomFilter,
     _group_technosphere_indices,
@@ -224,27 +230,25 @@ def create_functional_units(
     variables,
     vars_idx,
     units_map,
-) -> [dict, dict]:
-    """Build functional unit demands per scenario variable for a region.
+) -> tuple[dict[Any, Any], dict[Any, Any]]:
+    """
+    Create functional units for the given region, model, scenario, and year.
+    The functional units are created based on the demand for each variable in the scenarios dataset.
+    The demand is converted to the appropriate units using the units_map.
+    The functional units are returned as a dictionary where the keys are the dataset indices
+    and the values are the demand for that dataset.
+    Additionally, a detailed dictionary is returned containing information about each variable,
+    including its dataset index, demand, and unit conversion vector.
 
-    :param scenarios: Scenario dataset with multi-dimensional demand trajectories.
-    :type scenarios: xarray.Dataset
-    :param region: IAM region to extract.
-    :type region: str
-    :param model: Model identifier in the scenario data.
-    :type model: str
-    :param scenario: Pathway name within the scenario data.
-    :type scenario: str
-    :param year: Year to slice from the scenario dataset.
-    :type year: int
-    :param variables: Scenario variables to include.
-    :type variables: list[str]
-    :param vars_idx: Mapping with technosphere indices and dataset metadata per variable.
-    :type vars_idx: dict[str, dict[str, Any]]
-    :param units_map: Unit conversion dictionary loaded from configuration.
-    :type units_map: dict
-    :returns: Tuple of (functional unit mapping, detailed per-variable metadata).
-    :rtype: tuple[dict[int, float], dict[str, dict[str, Any]]]
+    :param scenarios: xarray.Dataset containing the scenarios data.
+    :param region: The region for which to create the functional units.
+    :param model: The model for which to create the functional units.
+    :param scenario: The scenario for which to create the functional units.
+    :param year: The year for which to create the functional units.
+    :param variables: List of variables to include in the functional units.
+    :param vars_idx: Dictionary mapping variables to their dataset indices and units.
+    :param units_map: Dictionary mapping units to their conversion factors.
+    :return: A tuple containing:
     """
     variables_demand = {}
 
@@ -296,7 +300,7 @@ def create_functional_units(
                         )
                     else:
                         logging.warning(
-                            f"Unit conversion factors not found for {variable}."
+                            f"Alternative unit or conversion factor missing not found for {variable}: {alternative_unit}, conversion_factor: {conversion_factor}."
                         )
                         unit_vector = 1.0
                 else:
@@ -331,6 +335,43 @@ def create_functional_units(
     }, variables_demand
 
 
+def _build_sparse_inventory_results_3d(
+    lca,
+    characterization_matrix,
+    edges_methods: bool,
+):
+    """
+    Return a 3D sparse tensor (pydata/sparse COO):
+
+      - edges_methods=True:
+          slices[i] = characterization_matrix.multiply(v_i)       # (n_bio, n_cols)
+          -> stacked to (n_inv, n_bio, n_cols)
+
+      - edges_methods=False:
+          slices[i] = (characterization_matrix @ v_i)             # (n_methods, n_cols)
+          -> stacked to (n_inv, n_methods, n_cols)
+
+    In both cases, each slice is built as a SciPy sparse matrix,
+    then converted to pydata/sparse COO and stacked along axis=0.
+    """
+    if edges_methods:
+        # elementwise multiply, requires identical shapes
+        slices = []
+        for v in lca.inventories.values():
+            assert issparse(v), "inventory matrices must be SciPy sparse."
+            s = characterization_matrix.multiply(v)  # SciPy sparse (n_bio, n_cols)
+            slices.append(spnd.COO.from_scipy_sparse(s))
+        return spnd.stack(slices, axis=0)
+    else:
+        # proper matrix multiply
+        slices = []
+        for v in lca.inventories.values():
+            assert issparse(v), "inventory matrices must be SciPy sparse."
+            s = characterization_matrix @ v  # SciPy sparse (n_methods, n_cols)
+            slices.append(spnd.COO.from_scipy_sparse(s))
+        return spnd.stack(slices, axis=0)
+
+
 def process_region(data: Tuple) -> Dict[str, str | List[str] | List[int]]:
     """Run LCI/LCIA calculations for one region and persist intermediate arrays.
 
@@ -350,8 +391,9 @@ def process_region(data: Tuple) -> Dict[str, str | List[str] | List[int]]:
         units_map,
         demand_cutoff,
         lca,
-        characterization_matrix,
+        characterization_matrix,  # edges: COO (n_methods, n_bio, n_cols); regular: CSR (n_methods, n_bio)
         methods,
+        edges_methods,
         debug,
         use_distributions,
         uncertain_parameters,
@@ -359,96 +401,183 @@ def process_region(data: Tuple) -> Dict[str, str | List[str] | List[int]]:
 
     id_uncertainty_indices_filepath = None
     id_technosphere_indices_filepath = None
-    iter_results_files = []
+    iter_results_files: List[Path] = []
     iter_param_vals_filepath = None
 
-    dict_loc_cat = {}
-
+    # Build category × location mapping once
+    dict_loc_cat: Dict[tuple, np.ndarray] = {}
     cat_counter = 0
-    for cat, act_cat_idx in lca.acts_category_idx_dict.items():
+    for _, act_cat_idx in lca.acts_category_idx_dict.items():
         loc_counter = 0
-        for loc, act_loc_idx in lca.acts_location_idx_dict.items():
-            # Find the intersection of indices
+        for _, act_loc_idx in lca.acts_location_idx_dict.items():
             idx = np.intersect1d(act_cat_idx, act_loc_idx)
-            # Filter out any -1 indices
             filtered_idx = idx[idx != -1]
-
             if filtered_idx.size > 0:
-                # Assign the filtered index array
-                # to the dict_loc_cat with (cat, loc) as key
                 dict_loc_cat[(cat_counter, loc_counter)] = filtered_idx
-
             loc_counter += 1
         cat_counter += 1
 
+    # Helper to build sparse 3D tensor: (n_inv, second_dim, n_cols)
+    #   - edges: second_dim = n_methods, using characterization (n_methods, n_bio, n_cols) COO
+    #            inventory v (n_bio, n_cols) -> broadcast multiply, then sum over biosphere (axis=1).
+    #   - regular: second_dim = n_methods, using C (n_methods, n_bio) CSR @ v (n_bio, n_cols)
+    def _inventory_results_3d_edges(lca, char_coo: spnd.COO):
+        invs = [mat.tocsr() for mat in lca.inventories.values()]
+        rows = []
+        for v in invs:
+            v_coo = spnd.COO.from_scipy_sparse(v)  # (n_bio, n_cols)
+            H = char_coo * v_coo  # (n_methods, n_bio, n_cols)
+            S = H.sum(axis=1)  # sum over biosphere -> (n_methods, n_cols)
+            rows.append(S)
+        return spnd.stack(rows, axis=0)  # (n_inv, n_methods, n_cols)
+
+    def _inventory_results_3d_regular(lca, C: sps.csr_matrix):
+        invs = [mat.tocsr() for mat in lca.inventories.values()]
+        slices = []
+        for v in invs:
+            M = C @ v  # (n_methods, n_cols), SciPy sparse
+            slices.append(spnd.COO.from_scipy_sparse(M))
+        return spnd.stack(slices, axis=0)  # (n_inv, n_methods, n_cols)
+
     if use_distributions == 0:
         # Regular LCA calculations
-        with CustomFilter("(almost) singular matrix"):
-            lca.lci()
+        # with CustomFilter("(almost) singular matrix"):
+        #    lca.lci()
 
         if debug:
-            logging.info(f"Iterations no.: {use_distributions}.")
-
-        # Create a numpy array with the results
-        inventory_results = np.array(
-            [
-                (characterization_matrix @ value).toarray()
-                for value in lca.inventories.values()
-            ]
-        )
-
-        if debug:
-            logging.info(f"Shape of inventory_results: {inventory_results.shape}")
-
-        if debug:
-            for fu, inventory in lca.inventories.items():
-                logging.info(
-                    f"Functional unit: {fu}. Impact: {(characterization_matrix @ inventory).sum()}"
-                )
-
-        iter_results = np.zeros(
-            (
-                inventory_results.shape[0],
-                inventory_results.shape[1],
-                len(lca.acts_category_idx_dict),
-                len(lca.acts_location_idx_dict),
+            logging.info(
+                f"Edges methods: {edges_methods}. Monte Carlo iters: {use_distributions}."
             )
-        )
+
+        # --- Build sparse 3D inventory_results: (n_inv, n_methods, n_cols)
+        if edges_methods:
+            # characterization_matrix must be a 3D pydata.sparse COO: (n_methods, n_bio, n_cols)
+            if (
+                not isinstance(characterization_matrix, spnd.COO)
+                or characterization_matrix.ndim != 3
+            ):
+                raise ValueError(
+                    "Edges methods require a 3D pydata.sparse COO characterization tensor (n_methods, n_bio, n_cols)."
+                )
+            inventory_results = _inventory_results_3d_edges(
+                lca, characterization_matrix
+            )
+        else:
+            # characterization_matrix must be a 2D SciPy sparse (n_methods, n_bio)
+            if (
+                not issparse(characterization_matrix)
+                or characterization_matrix.ndim != 2
+            ):
+                raise ValueError(
+                    "Regular methods require a 2D SciPy sparse characterization matrix (n_methods, n_bio)."
+                )
+            inventory_results = _inventory_results_3d_regular(
+                lca, characterization_matrix.tocsr()
+            )
 
         if debug:
-            logging.info(f"Shape of iter_results: {iter_results.shape}")
+            logging.info(f"inventory_results shape: {inventory_results.shape}")
 
-        for (cat, loc), idx in dict_loc_cat.items():
-            iter_results[:, :, cat, loc] = inventory_results[:, :, idx].sum(axis=2)
+        # Unify downstream aggregation
+        # inventory_results: (n_inv, second_dim=n_methods, n_cols)
+        n_inv, second_dim, _ = inventory_results.shape
+        n_cat = len(lca.acts_category_idx_dict)
+        n_loc = len(lca.acts_location_idx_dict)
+
+        zeros_block = spnd.zeros((n_inv, second_dim), dtype=inventory_results.dtype)
+
+        cat_stacks = []
+        for cat in range(n_cat):
+            loc_blocks = []
+            for loc in range(n_loc):
+                idx = dict_loc_cat.get((cat, loc))
+                if idx is None or idx.size == 0:
+                    block = zeros_block  # (n_inv, n_methods)
+                else:
+                    block = inventory_results[:, :, idx].sum(
+                        axis=2
+                    )  # (n_inv, n_methods)
+                loc_blocks.append(block)
+            # Stack blocks across the location axis -> (n_inv, n_methods, n_loc)
+            cat_stacks.append(spnd.stack(loc_blocks, axis=2))
+
+        # Stack across categories -> (n_inv, n_methods, n_cat, n_loc)
+        iter_results = spnd.stack(cat_stacks, axis=2)
 
         if debug:
-            for f, fu in enumerate(lca.inventories.keys()):
-                logging.info(f"Functional unit: {fu}. Impact: {iter_results[f].sum()}")
+            logging.info(f"iter_results shape: {iter_results.shape}")
 
-        # Save iteration results to disk
+        # Save without densifying
         iter_results_filepath = DIR_CACHED_DB / f"iter_results_{uuid.uuid4()}.npz"
-        sp.save_npz(
-            filename=iter_results_filepath,
-            matrix=sp.COO(iter_results),
-            compressed=True,
+        spnd.save_npz(
+            filename=iter_results_filepath, matrix=iter_results, compressed=True
         )
         iter_results_files.append(iter_results_filepath)
 
     else:
-        # Use distributions for LCA calculations
+        # Monte Carlo: same sparse flow per iteration
         iter_param_vals = []
         with CustomFilter("(almost) singular matrix"):
-            for iteration in range(use_distributions):
+            for _ in range(use_distributions):
                 next(lca)
                 lca.lci()
 
-                # Create a numpy array with the results
-                inventory_results = np.array(
-                    [
-                        (characterization_matrix @ value).toarray()
-                        for value in lca.inventories.values()
-                    ]
+                if edges_methods:
+                    if (
+                        not isinstance(characterization_matrix, spnd.COO)
+                        or characterization_matrix.ndim != 3
+                    ):
+                        raise ValueError(
+                            "Edges methods require a 3D pydata.sparse COO characterization tensor (n_methods, n_bio, n_cols)."
+                        )
+                    inventory_results = _inventory_results_3d_edges(
+                        lca, characterization_matrix
+                    )
+                else:
+                    if (
+                        not issparse(characterization_matrix)
+                        or characterization_matrix.ndim != 2
+                    ):
+                        raise ValueError(
+                            "Regular methods require a 2D SciPy sparse characterization matrix (n_methods, n_bio)."
+                        )
+                    inventory_results = _inventory_results_3d_regular(
+                        lca, characterization_matrix.tocsr()
+                    )
+
+                # Aggregate to (n_inv, n_methods, n_cat, n_loc)
+                n_inv, second_dim, _ = inventory_results.shape
+                n_cat = len(lca.acts_category_idx_dict)
+                n_loc = len(lca.acts_location_idx_dict)
+
+                zeros_block = spnd.zeros(
+                    (n_inv, second_dim), dtype=inventory_results.dtype
                 )
+
+                cat_stacks = []
+                for cat in range(n_cat):
+                    loc_blocks = []
+                    for loc in range(n_loc):
+                        idx = dict_loc_cat.get((cat, loc))
+                        if idx is None or idx.size == 0:
+                            block = zeros_block
+                        else:
+                            block = inventory_results[:, :, idx].sum(axis=2)
+                        loc_blocks.append(block)
+                    cat_stacks.append(spnd.stack(loc_blocks, axis=2))
+
+                iter_results = spnd.stack(cat_stacks, axis=2)
+
+                # Save per-iteration sparse tensor
+                iter_results_filepath = (
+                    DIR_CACHED_DB / f"iter_results_{uuid.uuid4()}.npz"
+                )
+                spnd.save_npz(
+                    filename=iter_results_filepath, matrix=iter_results, compressed=True
+                )
+                iter_results_files.append(iter_results_filepath)
+
+                # Keep your MC bookkeeping
                 iter_param_vals.append(
                     [
                         -lca.technosphere_matrix[index]
@@ -456,55 +585,24 @@ def process_region(data: Tuple) -> Dict[str, str | List[str] | List[int]]:
                     ]
                 )
 
-                iter_results = np.zeros(
-                    (
-                        inventory_results.shape[0],
-                        inventory_results.shape[1],
-                        len(lca.acts_category_idx_dict),
-                        len(lca.acts_location_idx_dict),
-                    )
-                )
-
-                for (cat, loc), idx in dict_loc_cat.items():
-                    iter_results[:, :, cat, loc] = inventory_results[:, :, idx].sum(
-                        axis=2
-                    )
-
-                # Save iteration results to disk
-                iter_results_filepath = (
-                    DIR_CACHED_DB / f"iter_results_{uuid.uuid4()}.npz"
-                )
-                sp.save_npz(
-                    filename=iter_results_filepath,
-                    matrix=sp.COO(iter_results),
-                    compressed=True,
-                )
-                iter_results_files.append(iter_results_filepath)
-
-        # Save iteration parameter values to disk
+        # Save MC parameter draws
         iter_param_vals_filepath = DIR_CACHED_DB / f"iter_param_vals_{uuid.uuid4()}.npy"
         np.save(file=iter_param_vals_filepath, arr=np.stack(iter_param_vals, axis=-1))
 
-        # Save the uncertainty indices to disk
+        # Save indices
         id_uncertainty_indices_filepath = (
             DIR_CACHED_DB / f"mc_indices_{uuid.uuid4()}.npy"
         )
-        np.save(
-            file=id_uncertainty_indices_filepath,
-            arr=lca.uncertain_parameters,
-        )
+        np.save(file=id_uncertainty_indices_filepath, arr=lca.uncertain_parameters)
 
-        # Save the technosphere indices to disk
         id_technosphere_indices_filepath = (
             DIR_CACHED_DB / f"tech_indices_{uuid.uuid4()}.pkl"
         )
         pickle.dump(
-            lca.technosphere_indices,
-            open(id_technosphere_indices_filepath, "wb"),
+            lca.technosphere_indices, open(id_technosphere_indices_filepath, "wb")
         )
 
-    # Returning a dictionary containing the id_array and the variables
-    # to be able to fetch them back later
+    # Return file paths + FU variables
     d = {
         "iterations_results": iter_results_files,
         "variables": {k: v["demand"] for k, v in fus_details.items()},
@@ -515,15 +613,9 @@ def process_region(data: Tuple) -> Dict[str, str | List[str] | List[int]]:
         logging.info(f"FUs: {list(lca.inventories.keys())}")
 
     if use_distributions > 0:
-        d["uncertainty_params"] = [
-            str(id_uncertainty_indices_filepath),
-        ]
-        d["technosphere_indices"] = [
-            str(id_technosphere_indices_filepath),
-        ]
-        d["iterations_param_vals"] = [
-            str(iter_param_vals_filepath),
-        ]
+        d["uncertainty_params"] = [str(id_uncertainty_indices_filepath)]
+        d["technosphere_indices"] = [str(id_technosphere_indices_filepath)]
+        d["iterations_param_vals"] = [str(iter_param_vals_filepath)]
 
     return d
 
@@ -543,6 +635,7 @@ def _calculate_year(args: tuple):
         regions,
         variables,
         methods,
+        edges_methods,
         demand_cutoff,
         filepaths,
         mapping,
@@ -716,12 +809,40 @@ def _calculate_year(args: tuple):
             if v in {value for tup in lca.uncertain_parameters for value in tup}
         }
 
-        characterization_matrix = fill_characterization_factors_matrices(
-            methods=methods,
-            biosphere_matrix_dict=lca.dicts.biosphere,
-            biosphere_dict=biosphere_indices,
-            debug=debug,
-        )
+        if methods:
+            # regular LCIA methods
+            characterization_matrix = fill_characterization_factors_matrices(
+                methods=methods,
+                biosphere_matrix_dict=lca.dicts.biosphere,
+                biosphere_dict=biosphere_indices,
+                debug=debug,
+            )
+        else:
+            print("Using EDGES' LCIA methods...")
+
+            # EDGES' LCIA methods
+            formatted_biosphere_index = {
+                v: {"name": k[0], "categories": k[1:]}
+                for k, v in biosphere_indices.items()
+            }
+            formatted_technosphere_index = {
+                v: {
+                    "name": k[0],
+                    "reference product": k[1],
+                    "unit": k[2],
+                    "location": k[3],
+                }
+                for k, v in technosphere_indices.items()
+            }
+            characterization_matrix, lca = create_edges_characterization_matrix(
+                model=model,
+                multilca_obj=lca,
+                methods=edges_methods,
+                indices={
+                    "biosphere": formatted_biosphere_index,
+                    "technosphere": formatted_technosphere_index,
+                },
+            )
 
         if debug:
             logging.info(
@@ -745,6 +866,7 @@ def _calculate_year(args: tuple):
                 lca,
                 characterization_matrix,
                 methods,
+                edges_methods,
                 debug,
                 use_distributions,
                 uncertain_parameters,

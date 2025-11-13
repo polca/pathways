@@ -19,6 +19,8 @@ import sparse as sp
 import xarray as xr
 import yaml
 
+from edges import get_available_methods
+
 from .data_validation import validate_datapackage
 from .filesystem_constants import DATA_DIR, USER_LOGS_DIR
 from .lca import _calculate_year, get_lca_matrices
@@ -274,6 +276,7 @@ class Pathways:
     def calculate(
         self,
         methods: Optional[List[str]] = None,
+        edges_methods: Optional[List[str]] = None,
         models: Optional[List[str]] = None,
         scenarios: Optional[List[str]] = None,
         regions: Optional[List[str]] = None,
@@ -321,8 +324,32 @@ class Pathways:
 
         self.scenarios = harmonize_units(self.scenarios, variables)
 
+        if methods:
+            available_methods = get_lcia_method_names()
+            for m in methods:
+                if m not in available_methods:
+                    raise ValueError(f"LCIA method {m} not found in available methods.")
+
+        if edges_methods:
+            available_methods = get_available_methods()
+            for m in edges_methods:
+                if m not in available_methods:
+                    raise ValueError(
+                        f"Edge LCIA method {m} not found in available `edges` methods."
+                    )
+
+        if methods and edges_methods:
+            raise ValueError(
+                "Please provide either `methods` or `edges_methods`, not both."
+            )
+
+        if methods is None and edges_methods is None:
+            raise ValueError(
+                "Please provide at least one of `methods` or `edges_methods`."
+            )
+
         # if no methods are provided, use all those available
-        methods = methods or get_lcia_method_names()
+
         if self.debug:
             logging.info(f"Using the following LCIA methods: {methods}")
 
@@ -383,7 +410,7 @@ class Pathways:
                 self.geography_mapping = {loc: loc for loc in locations}
 
             self.lca_results = create_lca_results_array(
-                methods=methods,
+                methods=methods or [str(m) for m in edges_methods],
                 years=years,
                 regions=regions,
                 locations=locations,
@@ -417,6 +444,7 @@ class Pathways:
                         regions,
                         variables,
                         methods,
+                        edges_methods,
                         demand_cutoff,
                         self.filepaths,
                         self.mapping,
