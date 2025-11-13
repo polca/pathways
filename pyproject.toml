@@ -49,7 +49,6 @@ dependencies = [
     "SALib",
     "pyarrow",
     "fastparquet",
-    "scikit-umfpack<0.4.0",
     "edges"
 ]
 

@@ -10,9 +10,7 @@ sphinx:
 
 python:
   install:
-    # Keep doc deps separate from runtime deps when possible
-    - requirements: requirements.txt
-    # Optional: install your package (without heavy deps) so autodoc can import symbols
+    - requirements: docs/requirements.txt
     - method: pip
       path: .
-      # Or: no-deps: true  (if you mock heavy imports; see below)
+      # no 'no-deps' here

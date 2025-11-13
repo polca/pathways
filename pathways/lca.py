@@ -47,13 +47,12 @@ logger = logging.getLogger(__name__)
 def load_matrix_and_index(
     file_path: Path,
 ) -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
-    """
-    Reads a CSV file and returns its contents as a CSR sparse matrix.
+    """Load a sparse matrix representation and uncertainties from a CSV export.
 
-    :param file_path: The path to the CSV file.
-    :type file_path: Path
-    :return: A tuple containing the data, indices, and sign of the data as well as the exchanges with distributions.
-    :rtype: Tuple[np.ndarray, np.ndarray, np.ndarray, list]
+    :param file_path: CSV file containing row, column, value, and distribution columns.
+    :type file_path: pathlib.Path
+    :returns: Tuple of data values, index pairs, sign flags, and distribution metadata.
+    :rtype: tuple[numpy.ndarray, numpy.ndarray, numpy.ndarray, numpy.ndarray]
     """
     # Load the data from the CSV file
     array = np.genfromtxt(file_path, delimiter=";", skip_header=1)
@@ -104,18 +103,30 @@ def get_lca_matrices(
     list[tuple] | None,
     dict | None,
 ]:
-    """
-    Retrieve Life Cycle Assessment (LCA) matrices from disk.
+    """Retrieve the technosphere and biosphere matrices plus indices for a scenario.
 
-    :param filepaths: A list of filepaths containing the LCA matrices.
-    :type filepaths: List[str]
-    :param model: The name of the model.
+    :param filepaths: Candidate CSV file paths bundled in the datapackage.
+    :type filepaths: list[str]
+    :param model: Name of the IAM model to filter for.
     :type model: str
-    :param scenario: The name of the scenario.
+    :param scenario: Pathway identifier to match in filenames.
     :type scenario: str
-    :param year: The year of the scenario.
+    :param year: Scenario year encoded in the filenames.
     :type year: int
-    :rtype: Tuple[sparse.csr_matrix, sparse.csr_matrix, Dict, Dict, List]
+    :param mapping: Optional scenario-to-dataset mapping for variable lookup.
+    :type mapping: dict | None
+    :param regions: IAM regions used to pre-fetch activity indices.
+    :type regions: list[str] | None
+    :param variables: Scenario variable names to pre-fetch.
+    :type variables: list[str] | None
+    :param geo: Geomap helper for location matching.
+    :type geo: premise.geomap.Geomap | None
+    :param remove_uncertainty: When ``True``, zero out distribution parameters.
+    :type remove_uncertainty: bool
+    :returns: Datapackage with LCI matrices, technosphere/biosphere indices, uncertain parameter tuples, and variable index metadata.
+    :rtype: tuple[bw_processing.Datapackage, dict, dict, list[tuple] | None, dict | None]
+    :raises FileNotFoundError: If expected matrix files cannot be located.
+    :raises ValueError: When the set of candidate files does not match expectations.
     """
 
     # find the correct filepaths in filepaths
@@ -195,16 +206,14 @@ def get_lca_matrices(
 def find_uncertain_parameters(
     distributions_array: np.ndarray, indices_array: np.ndarray
 ) -> list[tuple]:
-    """
-    Find the uncertain parameters in the distributions array.
-    They will be used for the stats report
+    """Identify technosphere elements that carry non-default uncertainty metadata.
 
-    :param distributions_array: The distributions array.
-    :type distributions_array: np.ndarray
-    :param indices_array: The indices array.
-    :type indices_array: np.ndarray
-    :return: A list of tuples containing the indices of the uncertain parameters.
-    :rtype: List[Tuple]
+    :param distributions_array: Structured array of uncertainty descriptors.
+    :type distributions_array: numpy.ndarray
+    :param indices_array: Row/column index pairs aligned with the distributions.
+    :type indices_array: numpy.ndarray
+    :returns: List of index tuples referring to uncertain technosphere elements.
+    :rtype: list[tuple[int, int]]
     """
     uncertain_indices = np.where(distributions_array["uncertainty_type"] != 0)[0]
     uncertain_parameters = [tuple(indices_array[idx]) for idx in uncertain_indices]
@@ -364,11 +373,12 @@ def _build_sparse_inventory_results_3d(
 
 
 def process_region(data: Tuple) -> Dict[str, str | List[str] | List[int]]:
-    """
-    Process the region data.
-    :param data: Tuple containing the model, scenario, year, region, variables, vars_idx, scenarios, units_map,
-                    demand_cutoff, lca, characterization_matrix, debug, use_distributions, uncertain_parameters.
-    :return: Dictionary containing the region data.
+    """Run LCI/LCIA calculations for one region and persist intermediate arrays.
+
+    :param data: Tuple containing model, scenario, year, region, variable metadata, scenario data, unit mapping, demand cutoff, MultiLCA instance, characterization matrix, method names, debug flag, number of Monte Carlo iterations, and uncertainty bookkeeping.
+    :type data: tuple
+    :returns: Dictionary with saved inventory result file paths and demand vectors; includes uncertainty metadata when Monte Carlo is enabled.
+    :rtype: dict[str, Any]
     """
     (
         model,
@@ -611,15 +621,12 @@ def process_region(data: Tuple) -> Dict[str, str | List[str] | List[int]]:
 
 
 def _calculate_year(args: tuple):
-    """
-    Prepares the data for the calculation of LCA results for a given year
-    and calls the process_region function to calculate the results for each region.
+    """Prepare LCI/LCIA inputs and aggregate per-region results for a scenario year.
 
-    :param args: Tuple containing the model, scenario, year, regions, variables, methods,
-                 demand_cutoff, filepaths, mapping, units, lca_results, classifications,
-                    scenarios, reverse_classifications, geography_mapping, debug, use_distributions,
-                    shares, uncertain_parameters, remove_uncertainty, seed, double_accounting.
-    :return: Dictionary containing the LCA results for each region.
+    :param args: Tuple comprising scenario configuration, filtering options, data mappings, debug flags, uncertainty settings, and multiprocessing seed.
+    :type args: tuple
+    :returns: Regional result dictionary keyed by IAM region, or ``None`` when inputs are missing.
+    :rtype: dict[str, dict] | None
     """
     (
         model,

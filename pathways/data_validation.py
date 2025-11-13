@@ -18,17 +18,15 @@ logger = logging.getLogger(__name__)
 def validate_datapackage(
     data_package: datapackage.DataPackage,
 ) -> (datapackage.DataPackage, pd.DataFrame, list):
-    """
-    Validate the datapackage.json file.
-    The datapackage must be valid according to the Frictionless Data.
-    It must also contain the following resources:
-        - scenarios
-        - matrices
-        - mappings
-    And must also contain some metadata, such as:
-        - authors
-        - description
+    """Validate a Frictionless datapackage and extract its scenario content.
 
+    :param data_package: Loaded datapackage descriptor to validate.
+    :type data_package: datapackage.DataPackage
+    :raises ValueError: If Frictionless validation fails, mandatory resources are
+        missing, or required metadata is absent.
+    :returns: The validated datapackage, the scenario data table, and CSV matrix
+        file paths.
+    :rtype: tuple[datapackage.DataPackage, pandas.DataFrame, list[str]]
     """
 
     # Validate datapackage according
@@ -86,19 +84,13 @@ def validate_datapackage(
 
 
 def validate_scenario_data(dataframe: pd.DataFrame) -> bool:
-    """
-    This function validates the scenario data.
-    `filepath` is a relative path within the datapackage.
-    The filepath must be either a CSV or Excel file.
-    The file must contain the following columns:
-        - scenario: string
-        - variable: string
-        - region: string
-        - year: integer
-        - value: float
+    """Ensure the scenario sheet contains the mandatory columns.
 
-    :param dataframe: pandas DataFrame containing the scenario data.
-    :return: True if the data is valid, False otherwise.
+    :param dataframe: Scenario observations extracted from the datapackage.
+    :type dataframe: pandas.DataFrame
+    :raises ValueError: If a required column is missing.
+    :returns: ``True`` when all required fields are present.
+    :rtype: bool
     """
 
     # Check that the file contains the required columns
@@ -112,17 +104,13 @@ def validate_scenario_data(dataframe: pd.DataFrame) -> bool:
 
 
 def validate_mapping(resource: datapackage.Resource):
-    """
-    Validates the mapping between scenario variables and LCA datasets.
-    The mapping must be a YAML file.
-    Its structure should be like this:
+    """Validate the YAML mapping between scenario variables and LCA datasets.
 
-    - pathways variable: string
-      dataset: string
-      scenario variable: string
-
-    :param resource: datapackage.Resource
-    :return: boolean
+    :param resource: Mapping resource as exposed by the datapackage.
+    :type resource: datapackage.Resource
+    :raises ValueError: If mandatory mapping keys are missing.
+    :returns: ``None`` (the function raises when validation fails).
+    :rtype: None
     """
 
     mapping = yaml.safe_load(resource.raw_read())

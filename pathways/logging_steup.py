@@ -13,6 +13,14 @@ _DEFAULT_DATEFMT = "%Y-%m-%d %H:%M:%S"
 
 
 def _ensure_dir(p: Path) -> None:
+    """Create a directory (and parents) if it does not yet exist.
+
+    :param p: Directory path to create.
+    :type p: pathlib.Path
+    :returns: ``None``
+    :rtype: None
+    """
+
     p.mkdir(parents=True, exist_ok=True)
 
 
@@ -27,10 +35,27 @@ def configure_logging(
     fmt: str = _DEFAULT_FMT,
     datefmt: str = _DEFAULT_DATEFMT,
 ) -> Path:
-    """
-    Configure logging for the calling application.
-    Returns the log file path that was configured (or would be used).
-    Safe to call multiple times; it won't duplicate handlers.
+    """Configure application logging and return the active log file path.
+
+    :param mode: ``"per-run"`` for timestamped files or ``"rotating"`` for a rolling handler.
+    :type mode: str
+    :param level: Root logger level to apply.
+    :type level: int
+    :param console: Whether to emit log messages to ``stderr`` in addition to the file.
+    :type console: bool
+    :param max_bytes: Maximum file size for rotating mode before rollover.
+    :type max_bytes: int
+    :param backup_count: Number of rotated files to retain.
+    :type backup_count: int
+    :param run_tag: Optional suffix appended to per-run filenames.
+    :type run_tag: str | None
+    :param fmt: Logging format string to use.
+    :type fmt: str
+    :param datefmt: Date formatting string for log records.
+    :type datefmt: str
+    :raises ValueError: If an unsupported ``mode`` is given.
+    :returns: Path to the log file that is configured.
+    :rtype: pathlib.Path
     """
     _ensure_dir(USER_LOGS_DIR)
 
@@ -70,15 +95,20 @@ def configure_logging(
 
 
 class _PathwaysOnceFilter(logging.Filter):
-    """
-    A harmless filter class so we can detect & remove only the handlers we added
-    (prevents interfering with host app's handlers).
-    """
+    """Filter tagging handlers installed by Pathways so they can be removed safely."""
 
     pass
 
 
 def _remove_pathways_handlers(root: logging.Logger) -> None:
+    """Detach and close any handlers previously installed by :func:`configure_logging`.
+
+    :param root: Logger whose handlers should be inspected.
+    :type root: logging.Logger
+    :returns: ``None``
+    :rtype: None
+    """
+
     to_remove = [
         h
         for h in root.handlers

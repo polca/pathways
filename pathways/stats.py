@@ -14,13 +14,16 @@ def log_double_accounting(
     exception_names: Dict[Tuple[str, ...], Set[str]],
     export_path: Path,
 ):
-    """
-    Log the unique names of the filtered activities and exceptions to an Excel file,
-    distinguished by categories.
+    """Write filtered and exceptional activity names by category to Excel.
 
-    :param filtered_names: Dictionary of category paths to sets of filtered activity names.
-    :param exception_names: Dictionary of category paths to sets of exception names.
-    :param export_path: Path to the export Excel file.
+    :param filtered_names: Mapping from category paths to zeroed activity names.
+    :type filtered_names: dict[tuple[str, ...], set[str]]
+    :param exception_names: Mapping from category paths to exception names.
+    :type exception_names: dict[tuple[str, ...], set[str]]
+    :param export_path: Destination Excel workbook path.
+    :type export_path: pathlib.Path
+    :returns: ``None``
+    :rtype: None
     """
 
     data_filtered = {
@@ -99,9 +102,14 @@ def log_subshares(
     shares: dict,
     region: str,
 ) -> pd.DataFrame:
-    """
-    Create a pandas DataFrame where the keys of shares are the columns
-    and the values are the values. The region is added as a column.
+    """Convert sampled subshare values for a region into a tabular report.
+
+    :param shares: Mapping of technology names to sampled share arrays.
+    :type shares: dict[str, numpy.ndarray]
+    :param region: IAM region name associated with the samples.
+    :type region: str
+    :returns: DataFrame indexed by iteration with one column per technology.
+    :rtype: pandas.DataFrame
     """
 
     df = pd.DataFrame(shares)
@@ -116,15 +124,16 @@ def log_uncertainty_values(
     uncertainty_indices: np.array,
     uncertainty_values: np.array,
 ) -> pd.DataFrame:
-    """
-    Create a pandas DataFrame with the region and uncertainty indices as columns,
-    the uncertainty values as values, and the iteration number as the index.
+    """Tabulate Monte Carlo parameter draws for a region.
 
-    :param region: Name of the region
-    :param uncertainty_indices: Indices of the uncertainty values
-    :param uncertainty_values: Uncertainty values
-    :return: DataFrame with region as column, uncertainty indices as indices and uncertainty values as values
-
+    :param region: IAM region identifier.
+    :type region: str
+    :param uncertainty_indices: Structured identifiers for uncertain exchanges.
+    :type uncertainty_indices: numpy.ndarray
+    :param uncertainty_values: Sampled values per iteration.
+    :type uncertainty_values: numpy.ndarray
+    :returns: DataFrame keyed by ``iteration`` and ``region`` with parameter columns.
+    :rtype: pandas.DataFrame
     """
 
     # convert 2D numpy array to list of tuples
@@ -144,12 +153,16 @@ def log_results(
     methods: list,
     region: str,
 ):
-    """
-    Log the characterized inventory results for each LCIA method into separate columns in an Excel file.
+    """Format total LCIA impacts per iteration for export.
 
-    :param total_impacts: numpy array of total impacts for each method.
-    :param methods: List of method names.
-    :param region: Region name as a string.
+    :param total_impacts: Aggregated impact scores per method.
+    :type total_impacts: numpy.ndarray
+    :param methods: Ordered method names matching the impact array.
+    :type methods: list[str]
+    :param region: Region associated with the impacts.
+    :type region: str
+    :returns: DataFrame with ``iteration`` and ``region`` plus impact columns.
+    :rtype: pandas.DataFrame
     """
 
     df = pd.DataFrame(total_impacts.T, columns=methods)
@@ -160,8 +173,12 @@ def log_results(
 
 
 def create_mapping_sheet(indices: dict) -> pd.DataFrame:
-    """
-    Create a mapping sheet for the activities with uncertainties.
+    """Create a readable mapping table for uncertain activity indices.
+
+    :param indices: Mapping from activity tuples to technosphere indices.
+    :type indices: dict[tuple[str, str, str, str], int]
+    :returns: DataFrame with split columns for name, product, unit, and region.
+    :rtype: pandas.DataFrame
     """
 
     # Converting the dictionary into a pandas DataFrame
@@ -179,12 +196,12 @@ def create_mapping_sheet(indices: dict) -> pd.DataFrame:
 
 
 def escape_formula(text: str):
-    """
-    Prevent a string from being interpreted as a formula in Excel.
-    Strings starting with '=', '-', or '+' are prefixed with an apostrophe.
+    """Prevent Excel from interpreting strings as formulas by prefixing an apostrophe.
 
-    :param text: The string to be adjusted.
-    :return: The adjusted string.
+    :param text: Cell text to sanitize.
+    :type text: str
+    :returns: Safe string for Excel export.
+    :rtype: str
     """
     return "'" + text if text.startswith(("=", "-", "+")) else text
 
@@ -194,13 +211,16 @@ def run_GSA_delta(
     uncertainty_values: pd.DataFrame,
     technology_shares: pd.DataFrame,
 ) -> pd.DataFrame:
-    """
-    Runs Delta Moment-Independent Measure analysis for specified methods and writes summaries to an Excel file.
+    """Run SALib Delta moment-independent sensitivity analysis.
 
-    :param total_impacts: DataFrame with total impacts for each method.
-    :param uncertainty_values: DataFrame with uncertainty values.
-    :param technology_shares: DataFrame with technology shares.
-    :return: DataFrame with Delta Moment-Independent Measure analysis results.
+    :param total_impacts: DataFrame of impact totals with ``iteration`` and ``region`` columns.
+    :type total_impacts: pandas.DataFrame
+    :param uncertainty_values: Monte Carlo parameter samples keyed by iteration.
+    :type uncertainty_values: pandas.DataFrame
+    :param technology_shares: Optional sampled technology share DataFrame.
+    :type technology_shares: pandas.DataFrame | None
+    :returns: Delta sensitivity indices per LCIA method and parameter.
+    :rtype: pandas.DataFrame
     """
 
     # merge uncertainty_values and technology_shares
@@ -268,21 +288,30 @@ def log_mc_parameters_to_excel(
     iteration_results: dict,
     shares: dict = None,
 ):
-    """
-    Log the Monte Carlo parameters and results to an Excel file.
+    """Export Monte Carlo parameter samples and impacts to an Excel workbook.
 
-    :param model: Name of the model.
-    :param scenario: Name of the scenario.
-    :param year: Year of the scenario.
-    :param methods: List of LCIA method names.
-    :param result: Dictionary with regions as keys and results as values.
-    :param uncertainty_parameters: Dictionary with regions as keys and uncertainty parameters as values.
-    :param uncertainty_values: Dictionary with regions as keys and uncertainty values as values.
-    :param technosphere_indices: Dictionary with regions as keys and technosphere indices as values.
-    :param iteration_results: Dictionary with regions as keys and iteration results as values.
-    :param shares: Dictionary with regions as keys and technology shares as values.
-    :return: None.
-
+    :param model: IAM model name.
+    :type model: str
+    :param scenario: Scenario identifier.
+    :type scenario: str
+    :param year: Scenario year analyzed.
+    :type year: int
+    :param methods: LCIA method names.
+    :type methods: list[str]
+    :param result: Regional iteration metadata returned from :func:`process_region`.
+    :type result: dict[str, dict]
+    :param uncertainty_parameters: Mapping of regions to uncertain exchange indices.
+    :type uncertainty_parameters: dict[str, numpy.ndarray]
+    :param uncertainty_values: Monte Carlo samples for each region.
+    :type uncertainty_values: dict[str, numpy.ndarray]
+    :param technosphere_indices: Saved technosphere indices per region.
+    :type technosphere_indices: dict[str, dict]
+    :param iteration_results: Inventory results per region and iteration.
+    :type iteration_results: dict[str, numpy.ndarray]
+    :param shares: Optional sampled technology shares keyed by region.
+    :type shares: dict | None
+    :returns: ``None``
+    :rtype: None
     """
     export_path = STATS_DIR / f"{model}_{scenario}_{year}.xlsx"
 
@@ -364,12 +393,15 @@ def log_mc_parameters_to_excel(
 
 
 def run_gsa(directory: [str, None] = STATS_DIR, method: str = "delta") -> None:
-    """
-    Run a global sensitivity analysis (GSA) on the LCA results.
-    Updates Excel files with the GSA results.
-    :param method: str. The method used for the GSA. Default is 'delta'. Only 'delta' is supported at the moment.
-    :param directory: str. The directory where the Excel files are stored. Default is 'stats'.
-    :return: None.
+    """Iterate over exported Monte Carlo workbooks and append GSA results.
+
+    :param directory: Directory containing per-scenario Excel files.
+    :type directory: str | pathlib.Path
+    :param method: Sensitivity analysis method name (currently only ``"delta"`` supported).
+    :type method: str
+    :raises ValueError: If an unsupported method is requested.
+    :returns: ``None``
+    :rtype: None
     """
     if method != "delta":
         raise ValueError(f"Method {method} is not supported.")

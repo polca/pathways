@@ -18,9 +18,11 @@ logger = logging.getLogger(__name__)
 
 
 def load_subshares() -> dict:
-    """
-    Load a YAML file and return its content as a Python dictionary.
-    :return: A dictionary with the categories, technologies and market shares data.
+    """Load technology share definitions from the bundled YAML file.
+
+    :returns: Validated share configuration keyed by category and technology.
+    :rtype: dict
+    :raises ValueError: If the YAML file does not contain a dictionary.
     """
     with open(SUBSHARES) as stream:
         data = yaml.safe_load(stream)
@@ -32,9 +34,13 @@ def load_subshares() -> dict:
 
 
 def check_uncertainty_params(data):
-    """
-    Check if the uncertainty parameters are valid,
-    according to stats_array specifications
+    """Normalize uncertainty descriptors and ensure mandatory fields are present.
+
+    :param data: Parsed technology share configuration.
+    :type data: dict
+    :returns: Updated configuration with numeric uncertainty identifiers.
+    :rtype: dict
+    :raises ValueError: When required uncertainty fields are missing (logged warnings accompany adjustments).
     """
 
     MANDATORY_UNCERTAINTY_FIELDS = {
@@ -76,15 +82,12 @@ def check_uncertainty_params(data):
 
 
 def check_subshares(data: dict) -> dict:
-    """
-    Adjusts the values in 'data' for each year ensuring the sum equals 1
-    for each category, excluding technologies without a name.
-    It dynamically identifies years (integer keys) that contain a 'value'
-    subkey and adjusts them.
+    """Validate share totals per year and prune invalid technology definitions.
 
-    :param data: A dictionary with categories as keys, each category is
-    a dictionary of subcategories containing a list of technology dictionaries.
-    :return: A dictionary with the adjusted values.
+    :param data: Share configuration keyed by technology group.
+    :type data: dict
+    :returns: Adjusted configuration with normalized ``loc`` values summing to 1.
+    :rtype: dict
     """
 
     for category, technologies in data.items():
@@ -130,16 +133,16 @@ def check_subshares(data: dict) -> dict:
 def find_technology_indices(
     regions: list, technosphere_indices: dict, geo: Geomap
 ) -> dict:
-    """
-    Fetch the indices in the technosphere matrix for the specified technologies and regions.
-    The function dynamically adapts to any integer year keys in the data, and populates details
-    for each such year under each technology in each region.
+    """Resolve technosphere indices for each technology and region combination.
 
-    :param regions: List of region identifiers.
-    :param technosphere_indices: Dictionary mapping activities to indices in the technosphere matrix.
-    :param geo: Geomap object used for location mappings.
-    :return: Dictionary keyed by technology categories, each containing a nested dictionary of regions
-            to technology indices and year attributes.
+    :param regions: IAM regions to consider.
+    :type regions: list[str]
+    :param technosphere_indices: Mapping from activity descriptors to matrix indices.
+    :type technosphere_indices: dict[tuple[str, str, str, str], int]
+    :param geo: Geomap helper for geographic lookups.
+    :type geo: premise.geomap.Geomap
+    :returns: Nested dictionary ``{category: {region: {technology: {...}}}}`` with indices and share metadata.
+    :rtype: dict[str, dict[str, dict[str, dict[str, Any]]]]
     """
     technologies_dict = load_subshares()
     indices_dict = {}
@@ -169,14 +172,14 @@ def find_technology_indices(
 
 
 def create_activity_key(tech: dict, region: str) -> tuple:
-    """
-    Creates a tuple representing an activity with its technology specifications and region.
-    This function forms part of a critical step in linking technology-specific data
-    to a spatial database structure.
+    """Construct the activity tuple used to query technosphere indices.
 
-    :param tech: Dictionary containing technology details.
-    :param region: String representing the region.
-    :return: Tuple of technology name, reference product, unit, and region.
+    :param tech: Technology descriptor from the YAML file.
+    :type tech: dict
+    :param region: IAM region name.
+    :type region: str
+    :returns: Tuple ``(name, reference product, unit, region)``.
+    :rtype: tuple[str, str, str, str]
     """
     return tech.get("name"), tech.get("reference product"), tech.get("unit"), region
 
@@ -184,9 +187,12 @@ def create_activity_key(tech: dict, region: str) -> tuple:
 def get_subshares_matrix(
     correlated_array: list,
 ) -> bwp.datapackage.Datapackage:
-    """
-    Add subshares samples to a bw_processing.datapackage object.
-    :param correlated_array: List containing the subshares samples.
+    """Build a bw_processing datapackage containing correlated share arrays.
+
+    :param correlated_array: Sequence of sampled data, indices, and sign flags.
+    :type correlated_array: list[numpy.ndarray]
+    :returns: Datapackage ready to merge with core technosphere matrices.
+    :rtype: bw_processing.Datapackage
     """
 
     dp_correlated = bwp.create_datapackage()
@@ -208,13 +214,18 @@ def adjust_matrix_based_on_shares(
     subshares: dict,
     year: int,
 ):
-    """
-    Adjust the technosphere matrix based on shares.
-    :param lca: bw2calc.LCA object.
-    :param shares_dict: Dictionary containing the shares data.
-    :param subshares: Dictionary containing the subshares data.
-    :param year: Integer representing the year.
-    :return: Tuple containing the data, indices, and signs.
+    """Redistribute technosphere exchanges according to sampled technology shares.
+
+    :param lca: Running ``bw2calc.MultiLCA`` object.
+    :type lca: bw2calc.MultiLCA
+    :param shares_dict: Nested dictionary of technology indices per region.
+    :type shares_dict: dict[str, dict[str, dict]]
+    :param subshares: Share samples keyed by technology group and year.
+    :type subshares: dict
+    :param year: Scenario year used to select share values.
+    :type year: int
+    :returns: Tuple of sampled amounts, indices, and sign flags for the technosphere matrix.
+    :rtype: tuple[numpy.ndarray, numpy.ndarray, numpy.ndarray]
     """
 
     final_amounts = defaultdict(float)
@@ -280,6 +291,12 @@ def adjust_matrix_based_on_shares(
 
 
 def default_dict_factory():
+    """Helper returning ``defaultdict(dict)`` for nested share storage.
+
+    :returns: Fresh ``defaultdict(dict)`` instance.
+    :rtype: collections.defaultdict
+    """
+
     return defaultdict(dict)
 
 
@@ -287,11 +304,14 @@ def load_and_normalize_shares(
     ranges: dict,
     iterations: int,
 ) -> dict:
-    """
-    Load and normalize shares for parameters to sum to 1 while respecting their specified ranges.
-    :param ranges: A dictionary with categories, technologies and market shares data.
-    :param iterations: Number of iterations for random generation.
-    :return: A dict with normalized shares for each technology and year.
+    """Sample technology shares within uncertainty bounds and normalize totals.
+
+    :param ranges: Validated share configuration from :func:`load_subshares`.
+    :type ranges: dict
+    :param iterations: Number of Monte Carlo draws per technology.
+    :type iterations: int
+    :returns: Nested dictionary of sampled share arrays normalized per year.
+    :rtype: dict
     """
     # shares = defaultdict(lambda: defaultdict(dict)) # Gives problems for pickling in multiprocessing
     shares = defaultdict(default_dict_factory)
@@ -343,11 +363,14 @@ def load_and_normalize_shares(
 
 
 def interpolate_shares(shares: dict, years: list) -> None:
-    """
-    Interpolates missing years in the shares data.
-    :param shares: A dictionary with categories, technologies and market shares data.
-    :param years: List of years for which to interpolate shares.
-    :return: None
+    """Fill missing years in share samples using linear interpolation.
+
+    :param shares: Sampled share dictionary grouped by technology and year.
+    :type shares: dict
+    :param years: Years that should exist after interpolation.
+    :type years: list[int]
+    :returns: ``None`` (``shares`` is modified in place).
+    :rtype: None
     """
     for technology_group in shares:
         all_years = sorted(shares[technology_group])
@@ -369,14 +392,20 @@ def interpolate_for_year(
     upper_year: int,
     target_year: int,
 ) -> None:
-    """
-    Interpolates shares for a specific year.
-    :param shares: A dictionary with categories, technologies and market shares data.
-    :param technology_group: A string representing the technology group.
-    :param lower_year: An integer representing the lower year.
-    :param upper_year: An integer representing the upper year.
-    :param target_year: An integer representing the target year.
-    :return: None
+    """Interpolate share samples for a specific year between two bounding years.
+
+    :param shares: Sampled share dictionary grouped by technology and year.
+    :type shares: dict
+    :param technology_group: Name of the technology group being interpolated.
+    :type technology_group: str
+    :param lower_year: Earliest available year used for interpolation.
+    :type lower_year: int
+    :param upper_year: Latest available year used for interpolation.
+    :type upper_year: int
+    :param target_year: Year to populate with interpolated samples.
+    :type target_year: int
+    :returns: ``None`` (updates ``shares`` in place).
+    :rtype: None
     """
     for technology in shares[technology_group][lower_year]:
 
@@ -399,13 +428,14 @@ def generate_samples(
     years: list,
     iterations: int = 10,
 ) -> dict:
-    """
-    Generates and adjusts randomly selected shares for parameters to sum to 1
-    while respecting their specified ranges, and interpolates missing years.
+    """Generate share samples across requested years, including interpolation.
 
-    :param years: List of years for which to generate/interpolate shares.
-    :param iterations: Number of iterations for random generation.
-    :return: A dict with adjusted and interpolated shares for each technology and year.
+    :param years: Years that should be present in the returned share dictionary.
+    :type years: list[int]
+    :param iterations: Number of Monte Carlo iterations to draw.
+    :type iterations: int
+    :returns: Normalized and interpolated share samples.
+    :rtype: dict
     """
     ranges = load_subshares()
     shares = load_and_normalize_shares(
