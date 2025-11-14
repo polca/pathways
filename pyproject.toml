@@ -11,7 +11,7 @@ license = { file = "LICENSE" }
 authors = [
     { name = "Romain Sacchi", email = "romain.sacchi@psi.ch" }
 ]
-requires-python = ">=3.10"
+requires-python = ">=3.10, <3.13"
 urls = { "Homepage" = "https://github.com/polca/pathways" }
 
 classifiers = [
