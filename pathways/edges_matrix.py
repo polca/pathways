@@ -163,8 +163,7 @@ def create_edges_characterization_matrix(
         ):
             multilca_obj.inventories = {
                 k: build_technosphere_edges_matrix(
-                    multilca_obj.technosphere_matrix,
-                    multilca_obj.supply_arrays[k]
+                    multilca_obj.technosphere_matrix, multilca_obj.supply_arrays[k]
                 )
                 for k in multilca_obj.supply_arrays
             }
