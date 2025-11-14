@@ -28,41 +28,42 @@ jobs:
           git push
 
   build:
-    runs-on: ${{matrix.os}}
+    runs-on: ${{ matrix.os }}
     strategy:
       matrix:
         os: [ubuntu-latest]
+        python-version: ["3.11", "3.12"]
 
     needs: clean
 
     steps:
       - uses: actions/checkout@v4
 
-      - name: Install system dependencies for pyenv
+      # You can usually drop these system deps now, but I left them in case you need them
+      - name: Install system dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install build-essential zlib1g-dev libffi-dev libssl-dev \
-                               libbz2-dev libreadline-dev libsqlite3-dev liblzma-dev \
-                               libncurses-dev tk-dev
+          sudo apt-get install -y build-essential zlib1g-dev libffi-dev libssl-dev \
+                                  libbz2-dev libreadline-dev libsqlite3-dev liblzma-dev \
+                                  libncurses-dev tk-dev
 
-      - name: Install python version
-        uses: gabrielfalcao/pyenv-action@v13
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
         with:
-          default: 3.10.6
-          command: pip install -U pip
-
-      - name: create environment
-        run: pyenv local 3.10.6 && python -mvenv .venv390
+          python-version: ${{ matrix.python-version }}
 
       - name: Install dependencies
         run: |
-          pip install .
-          pip install pytest
+          python -m pip install --upgrade pip
+          # If edges is not on PyPI, you can replace this with a git+https URL
+          python -m pip install edges
+          python -m pip install .
+          python -m pip install pytest
 
       - name: Run tests
         run: |
-          pip list
-          pytest
+          python -m pip list
+          python -m pytest
 
   Pypi:
     runs-on: ubuntu-latest
@@ -105,6 +106,7 @@ jobs:
           password: ${{ secrets.TEST_PYPI_API_TOKEN }}
           repository-url: https://test.pypi.org/legacy/
           skip-existing: true
+
   conda:
     name: (${{ matrix.python-version }}, ubuntu-latest)
     runs-on: ubuntu-latest
@@ -137,7 +139,6 @@ jobs:
       - name: Publish distribution 📦 to Anaconda if Push from non-master branch
         if: github.ref != 'refs/heads/master'
         shell: bash -l {0}
-
         run: |
           conda clean --all
           PKG_NAME=pathways
@@ -176,7 +177,6 @@ jobs:
       - name: Pull distribution 📦 from Anaconda and test it if master branch
         if: github.ref == 'refs/heads/master'
         shell: bash -l {0}
-
         run: |
           conda install -c romainsacchi pathways
           conda update pathways
@@ -186,7 +186,6 @@ jobs:
       - name: Pull distribution 📦 from Anaconda and test it if non-master branch
         if: github.ref != 'refs/heads/master'
         shell: bash -l {0}
-
         run: |
           conda install -c romainsacchi pathways
           conda update pathways
