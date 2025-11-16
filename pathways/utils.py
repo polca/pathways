@@ -116,16 +116,12 @@ def load_classifications():
 
         # Build a mapping from original -> cleaned header so we can normalize keys
         header_map = {
-            raw: cleaned
-            for raw, cleaned in zip(raw_fieldnames, cleaned_fieldnames)
+            raw: cleaned for raw, cleaned in zip(raw_fieldnames, cleaned_fieldnames)
         }
 
         for row in reader:
             # normalize row keys using header_map
-            row_clean = {
-                header_map.get(k, k).strip(): v
-                for k, v in row.items()
-            }
+            row_clean = {header_map.get(k, k).strip(): v for k, v in row.items()}
 
             name = (row_clean.get("name") or "").strip()
             ref = (row_clean.get("reference product") or "").strip()
@@ -150,7 +146,6 @@ def load_classifications():
                 classifications.setdefault(key, []).append((system, code))
 
     return classifications
-
 
 
 def harmonize_units(scenario: xr.DataArray, variables: list) -> xr.DataArray:
