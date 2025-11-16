@@ -153,7 +153,6 @@ jobs:
           ls $CONDA_BLD_PATH/noarch/
           anaconda -t ${{ secrets.ANACONDA_CLOUD }} upload -u $USER $CONDA_BLD_PATH/noarch/$PKG_NAME-$VERSION-py_0.conda --force
 
-
   testconda:
     name: (${{ matrix.python-version }}, ${{ matrix.os }})
     runs-on: ${{ matrix.os }}

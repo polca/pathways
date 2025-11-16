@@ -702,11 +702,14 @@ def _calculate_year(args: tuple):
         return
 
     # check unclassified activities
-    missing_classifications = check_unclassified_activities(
-        technosphere_indices, classifications
+    missing_classifications, classifications, reverse_classifications = check_unclassified_activities(
+        technosphere_indices, classifications, reverse_classifications
     )
 
+
     if missing_classifications:
+        for missing in missing_classifications:
+            print(f"Missing classification: {missing}")
         if debug:
             logging.warning(
                 f"{len(missing_classifications)} activities are not found "
@@ -718,7 +721,7 @@ def _calculate_year(args: tuple):
 
     acts_category_idx_dict = _group_technosphere_indices(
         technosphere_indices=technosphere_indices,
-        group_by=lambda x: classifications.get(x[:3], "unclassified"),
+        group_by=lambda x: classifications.get(x[:2], "undefined"),
         group_values=lca_results.coords["act_category"].values.tolist(),
     )
 

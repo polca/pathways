@@ -26,7 +26,7 @@ from premise.geomap import Geomap
 
 from .filesystem_constants import DATA_DIR, DIR_CACHED_DB
 
-CLASSIFICATIONS = DATA_DIR / "activities_classifications.yaml"
+CLASSIFICATIONS = DATA_DIR / "classifications.csv"
 UNITS_CONVERSION = DATA_DIR / "units_conversion.yaml"
 
 logger = logging.getLogger(__name__)
@@ -77,21 +77,80 @@ def load_mapping(mapping: [dict, str]) -> dict:
 
 
 def load_classifications():
-    """Load the bundled activity classification hierarchy.
+    """Load the bundled activity classification hierarchy from a CSV file.
 
-    :returns: Activity classification mapping keyed by activity tuples.
-    :rtype: dict
-    :raises FileNotFoundError: When the classification YAML is missing.
+    The CSV is expected to have at least the columns:
+        - 'name'
+        - 'reference product'
+    and any number of additional columns, each representing a
+    classification system (e.g. 'ISIC rev.4 ecoinvent', 'CPC').
+
+    Returns
+    -------
+    dict
+        Mapping keyed by (name, reference_product) tuples, with values
+        a list of (system, code) tuples.
     """
 
-    # check if file exists
-    if not Path(CLASSIFICATIONS).exists():
+    path = Path(CLASSIFICATIONS)
+    if not path.exists():
         raise FileNotFoundError(f"File {CLASSIFICATIONS} not found")
 
-    with open(CLASSIFICATIONS, "r") as f:
-        data = yaml.full_load(f)
+    classifications = {}
 
-    return data
+    # utf-8-sig handles BOM if present
+    with open(path, newline="", encoding="utf-8-sig") as f:
+        reader = csv.DictReader(f)
+
+        raw_fieldnames = reader.fieldnames or []
+        # normalize headers: strip whitespace and any BOM remnants
+        cleaned_fieldnames = [fn.strip().lstrip("\ufeff") for fn in raw_fieldnames]
+
+        required = {"name", "reference product"}
+        missing = required - set(cleaned_fieldnames)
+        if missing:
+            raise ValueError(
+                f"Classification CSV {CLASSIFICATIONS} is missing required "
+                f"columns: {', '.join(sorted(missing))}"
+            )
+
+        # Build a mapping from original -> cleaned header so we can normalize keys
+        header_map = {
+            raw: cleaned
+            for raw, cleaned in zip(raw_fieldnames, cleaned_fieldnames)
+        }
+
+        for row in reader:
+            # normalize row keys using header_map
+            row_clean = {
+                header_map.get(k, k).strip(): v
+                for k, v in row.items()
+            }
+
+            name = (row_clean.get("name") or "").strip()
+            ref = (row_clean.get("reference product") or "").strip()
+
+            if not name or not ref:
+                continue
+
+            key = (name, ref)
+
+            # every other non-empty column is treated as a classification system
+            for col, val in row_clean.items():
+                if col in {"name", "reference product"}:
+                    continue
+                if val is None:
+                    continue
+
+                code = str(val).strip()
+                if not code:
+                    continue
+
+                system = col.strip()
+                classifications.setdefault(key, []).append((system, code))
+
+    return classifications
+
 
 
 def harmonize_units(scenario: xr.DataArray, variables: list) -> xr.DataArray:
@@ -692,28 +751,34 @@ def csv_to_dict(filename: str) -> dict[int, tuple[str, ...]]:
 
 
 def check_unclassified_activities(
-    technosphere_indices: dict, classifications: dict
-) -> List:
+    technosphere_indices: dict, classifications: dict, reverse_classifications: dict
+) -> [list, list, list]:
     """Identify technosphere activities missing from the classification mapping.
 
     :param technosphere_indices: Activities present in the technosphere matrix.
     :type technosphere_indices: dict
     :param classifications: Known classification mapping.
     :type classifications: dict
+    :param reverse_classifications: Known reverse classification mapping.
+    :type reverse_classifications: dict
     :returns: List of missing activity descriptors.
     :rtype: list[list[str]]
     """
     missing_classifications = []
     for act in technosphere_indices:
-        if act[:3] not in classifications:
-            missing_classifications.append(list(act[:3]))
+        if act[:2] not in classifications:
+            missing_classifications.append(list(act[:2]))
+
+            # we add them to `undefined`
+            classifications[act[:2]] = "undefined"
+            reverse_classifications["undefined"].append(act[:2])
 
     if missing_classifications:
         with open("missing_classifications.csv", "a") as f:
             writer = csv.writer(f)
             writer.writerows(missing_classifications)
 
-    return missing_classifications
+    return missing_classifications, classifications, reverse_classifications
 
 
 def _group_technosphere_indices(

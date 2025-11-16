@@ -7,6 +7,8 @@ LCA datasets, and LCA matrices.
 from __future__ import annotations
 import logging
 import datetime
+import csv
+import io
 import pickle
 from collections import defaultdict
 from multiprocessing import Pool, cpu_count
@@ -160,6 +162,7 @@ class Pathways:
         geography_mapping: [dict, str] = None,
         activities_mapping: [dict, str] = None,
         ecoinvent_version: str = "3.11",
+        classification_system: str = "CPC",
         debug=True,
     ):
         """Initialize the workflow and load datapackage metadata.
@@ -172,6 +175,8 @@ class Pathways:
         :type activities_mapping: dict | str | None
         :param ecoinvent_version: Ecoinvent version string used when selecting LCIA data.
         :type ecoinvent_version: str
+        :param classification_system: Ecoinvent classification system to use.
+        :type classification_system: str
         :param debug: Emit verbose logging when ``True``.
         :type debug: bool
         """
@@ -184,12 +189,8 @@ class Pathways:
 
         self.debug = debug
         self.scenarios = self._get_scenarios(dataframe)
-        self.classifications = load_classifications()
-
-        if self.data.get_resource("classifications"):
-            self.classifications.update(
-                yaml.full_load(self.data.get_resource("classifications").raw_read())
-            )
+        self.classification_system = classification_system
+        self._load_classifications()
 
         self.lca_results = None
         self.lcia_methods = get_lcia_method_names(self.ei_version)
@@ -204,16 +205,14 @@ class Pathways:
         else:
             self.geography_mapping = None
 
-        if activities_mapping:
-            mapping = load_mapping(activities_mapping)
-            for k, v in self.classifications.items():
-                if v in mapping:
-                    self.classifications[k] = mapping[v]
-
         # create a reverse mapping
         self.reverse_classifications = defaultdict(list)
         for k, v in self.classifications.items():
             self.reverse_classifications[v].append(k)
+
+        # add an `undefined` classification
+        self.reverse_classifications["undefined"] = []
+
 
         # clean cache directory
         clean_cache_directory()
@@ -222,6 +221,80 @@ class Pathways:
             logging.info("#" * 600)
             logging.info(f"Pathways initialized with datapackage: {datapackage}")
             print(f"Log file: {USER_LOGS_DIR / 'pathways.log'}")
+
+    def _load_classifications(self):
+
+        # final structure: {(name, reference product): "code for chosen system"}
+        self.classifications = {}
+
+        try:
+            resource = self.data.get_resource("classifications")
+        except Exception:
+            print("[CLASSIFICATIONS] No 'classifications' resource found in datapackage.")
+            resource = None
+
+        if resource:
+            path = resource.descriptor.get("path", "").lower()
+            raw = resource.raw_read()
+
+            if isinstance(raw, bytes):
+                raw = raw.decode("utf-8")
+
+            if path.endswith(".csv"):
+                reader = csv.DictReader(io.StringIO(raw))
+
+                n_rows = 0
+                n_used = 0
+
+                for row in reader:
+                    n_rows += 1
+                    name = (row.get("name") or "").strip()
+                    ref = (row.get("reference product") or "").strip()
+
+                    system = (
+                        (row.get("classification_system") or row.get("system") or "").strip()
+                    )
+                    code = (
+                        (row.get("classification_code") or row.get("code") or "").strip()
+                    )
+
+                    if not name or not ref or not system or not code:
+                        continue
+
+                    # Only keep the chosen classification system, e.g. "CPC"
+                    if system != self.classification_system:
+                        continue
+
+                    key = (name, ref)
+
+                    self.classifications[key] = code
+                    n_used += 1
+
+
+        fallback = load_classifications()  # dict[(name, ref) -> list[(system, code)]]
+
+        added_keys = 0
+        skipped_no_match = 0
+
+        for key, cls_list in fallback.items():
+            if key in self.classifications:
+                # datapackage already gave a code for this key in chosen system
+                continue
+
+            # find a code for the chosen system in the fallback list
+            code_for_system = None
+            for system, code in cls_list:
+                if system == self.classification_system:
+                    code_for_system = code
+                    break
+
+            if code_for_system is None:
+                skipped_no_match += 1
+                continue
+
+            self.classifications[key] = code_for_system
+            added_keys += 1
+
 
     def _get_scenarios(self, scenario_data: pd.DataFrame) -> xr.DataArray:
         """Convert the datapackage scenario table into a harmonized ``xarray`` object.
