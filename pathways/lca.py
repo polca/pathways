@@ -702,10 +702,11 @@ def _calculate_year(args: tuple):
         return
 
     # check unclassified activities
-    missing_classifications, classifications, reverse_classifications = check_unclassified_activities(
-        technosphere_indices, classifications, reverse_classifications
+    missing_classifications, classifications, reverse_classifications = (
+        check_unclassified_activities(
+            technosphere_indices, classifications, reverse_classifications
+        )
     )
-
 
     if missing_classifications:
         for missing in missing_classifications:

@@ -213,7 +213,6 @@ class Pathways:
         # add an `undefined` classification
         self.reverse_classifications["undefined"] = []
 
-
         # clean cache directory
         clean_cache_directory()
 
@@ -230,7 +229,9 @@ class Pathways:
         try:
             resource = self.data.get_resource("classifications")
         except Exception:
-            print("[CLASSIFICATIONS] No 'classifications' resource found in datapackage.")
+            print(
+                "[CLASSIFICATIONS] No 'classifications' resource found in datapackage."
+            )
             resource = None
 
         if resource:
@@ -252,11 +253,11 @@ class Pathways:
                     ref = (row.get("reference product") or "").strip()
 
                     system = (
-                        (row.get("classification_system") or row.get("system") or "").strip()
-                    )
+                        row.get("classification_system") or row.get("system") or ""
+                    ).strip()
                     code = (
-                        (row.get("classification_code") or row.get("code") or "").strip()
-                    )
+                        row.get("classification_code") or row.get("code") or ""
+                    ).strip()
 
                     if not name or not ref or not system or not code:
                         continue
@@ -269,7 +270,6 @@ class Pathways:
 
                     self.classifications[key] = code
                     n_used += 1
-
 
         fallback = load_classifications()  # dict[(name, ref) -> list[(system, code)]]
 
@@ -294,7 +294,6 @@ class Pathways:
 
             self.classifications[key] = code_for_system
             added_keys += 1
-
 
     def _get_scenarios(self, scenario_data: pd.DataFrame) -> xr.DataArray:
         """Convert the datapackage scenario table into a harmonized ``xarray`` object.
