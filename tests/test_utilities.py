@@ -39,7 +39,6 @@ def test_load_classifications_success(tmp_path, monkeypatch):
     }
 
 
-
 def test_load_classifications_file_not_found():
     with patch("pathways.utils.CLASSIFICATIONS", new="non_existent_file.yaml"):
         with pytest.raises(FileNotFoundError):
