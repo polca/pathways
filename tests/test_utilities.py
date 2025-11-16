@@ -12,24 +12,32 @@ from pathways.utils import (
 )
 
 
-def test_load_classifications_success():
-    mock_content = """
-    activity1: classification1
-    activity2: classification2
-    """
-    with patch("builtins.open", mock_open(read_data=mock_content)):
-        with patch(
-            "yaml.full_load",
-            return_value={
-                "activity1": "classification1",
-                "activity2": "classification2",
-            },
-        ):
-            classifications = load_classifications()
-            assert classifications == {
-                "activity1": "classification1",
-                "activity2": "classification2",
-            }
+def test_load_classifications_success(tmp_path, monkeypatch):
+    # Create a temporary CSV file that mimics the new format
+    csv_content = (
+        "name,reference product,ISIC rev.4 ecoinvent,CPC\n"
+        "activity1,product1,1111:Foo,2222:Bar\n"
+        "activity2,product2,3333:Baz,4444:Qux\n"
+    )
+    csv_path = tmp_path / "classifications.csv"
+    csv_path.write_text(csv_content, encoding="utf-8")
+
+    # Point CLASSIFICATIONS to this temporary CSV
+    monkeypatch.setattr("pathways.utils.CLASSIFICATIONS", str(csv_path))
+
+    classifications = load_classifications()
+
+    assert classifications == {
+        ("activity1", "product1"): [
+            ("ISIC rev.4 ecoinvent", "1111:Foo"),
+            ("CPC", "2222:Bar"),
+        ],
+        ("activity2", "product2"): [
+            ("ISIC rev.4 ecoinvent", "3333:Baz"),
+            ("CPC", "4444:Qux"),
+        ],
+    }
+
 
 
 def test_load_classifications_file_not_found():
