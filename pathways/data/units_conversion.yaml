@@ -36,3 +36,9 @@ billion tkm/yr:
 billion pkm/yr:
   person kilometer: 1e+9
   kilometer: 1e+9
+
+GW/yr:
+  unit: 1
+
+million veh:
+  unit: 1e6
