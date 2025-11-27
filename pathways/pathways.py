@@ -10,6 +10,7 @@ import datetime
 import csv
 import io
 import pickle
+import re
 from collections import defaultdict
 from multiprocessing import Pool, cpu_count
 from pathlib import Path
@@ -172,7 +173,6 @@ class Pathways:
         :param geography_mapping: Optional aggregation mapping for scenario regions.
         :type geography_mapping: dict | str | None
         :param activities_mapping: Optional reclassification mapping for activities.
-        :type activities_mapping: dict | str | None
         :param ecoinvent_version: Ecoinvent version string used when selecting LCIA data.
         :type ecoinvent_version: str
         :param classification_system: Ecoinvent classification system to use.
@@ -191,6 +191,10 @@ class Pathways:
         self.scenarios = self._get_scenarios(dataframe)
         self.classification_system = classification_system
         self._load_classifications()
+
+        # Apply activities_mapping to aggregate classifications
+        if activities_mapping:
+            self._apply_activities_mapping(activities_mapping)
 
         self.lca_results = None
         self.lcia_methods = get_lcia_method_names(self.ei_version)
@@ -294,6 +298,82 @@ class Pathways:
 
             self.classifications[key] = code_for_system
             added_keys += 1
+
+    def _extract_description(self, classification_code: str) -> str:
+        """Extract description from classification code.
+        
+        Classification codes have format like '2011:Manufacture of basic chemicals'
+        This extracts 'Manufacture of basic chemicals'.
+        
+        :param classification_code: Full classification code with number prefix.
+        :type classification_code: str
+        :returns: Description part after the colon.
+        :rtype: str
+        """
+        if ':' in classification_code:
+            return classification_code.split(':', 1)[1].strip()
+        return classification_code.strip()
+
+    def _normalize_text(self, text: str) -> str:
+        """Normalize text for fuzzy matching.
+        
+        Converts to lowercase, removes punctuation, normalizes whitespace.
+        
+        :param text: Text to normalize.
+        :type text: str
+        :returns: Normalized text.
+        :rtype: str
+        """
+        text = text.lower()
+        text = re.sub(r'[,\-\(\)\.]', ' ', text)  # Replace punctuation with spaces
+        text = ' '.join(text.split())  # Normalize whitespace
+        return text
+
+    def _apply_activities_mapping(self, activities_mapping):
+        """Aggregate classification codes using the provided mapping.
+        
+        The mapping YAML has format::
+        
+            "Manufacture of basic chemicals": "Chemicals and Fertilizers"
+        
+        Classification codes from the datapackage have format::
+        
+            "2011:Manufacture of basic chemicals"
+        
+        We extract the description, match against mapping keys, and replace
+        with the aggregated category. Unmatched items become "unclassified".
+        
+        :param activities_mapping: Path to YAML file or dict with mapping.
+        :type activities_mapping: str | dict
+        """
+        mapping = load_mapping(activities_mapping)
+        
+        # Normalize mapping keys for fuzzy matching
+        normalized_mapping = {
+            self._normalize_text(k): v 
+            for k, v in mapping.items()
+        }
+        
+        aggregated_count = 0
+        unclassified_count = 0
+        
+        for key, code in self.classifications.items():
+            # Extract description from code like "2011:Manufacture of basic chemicals"
+            description = self._extract_description(code)
+            normalized_desc = self._normalize_text(description)
+            
+            if normalized_desc in normalized_mapping:
+                self.classifications[key] = normalized_mapping[normalized_desc]
+                aggregated_count += 1
+            else:
+                self.classifications[key] = "unclassified"
+                unclassified_count += 1
+        
+        if self.debug:
+            logging.info(
+                f"Activities mapping applied: {aggregated_count} aggregated, "
+                f"{unclassified_count} unclassified"
+            )
 
     def _get_scenarios(self, scenario_data: pd.DataFrame) -> xr.DataArray:
         """Convert the datapackage scenario table into a harmonized ``xarray`` object.

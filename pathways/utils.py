@@ -280,8 +280,13 @@ def create_lca_results_array(
         raise ValueError("Empty list of scenarios")
 
     # Define the coordinates for the xarray DataArray
+    # Get unique categories, only add "unclassified" if not already present
+    act_categories = list(set(classifications.values()))
+    if "unclassified" not in act_categories:
+        act_categories.append("unclassified")
+    
     coords = {
-        "act_category": list(set(list(classifications.values()))) + ["unclassified"],
+        "act_category": act_categories,
         "variable": list(mapping.keys()),
         "year": years,
         "region": regions,
