@@ -296,7 +296,7 @@ def create_functional_units(
                                 vars_idx[variable]["lhv"]["unit"],
                                 units_map,
                             ).astype(float)
-                            * vars_idx[variable]["lhv"]["value"]
+                            / vars_idx[variable]["lhv"]["value"] # MJ/(MJ/kg) = kg
                         )
                     else:
                         logging.warning(
