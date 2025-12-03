@@ -24,7 +24,7 @@ from scipy import sparse as sps
 import numpy as np
 import sparse as spnd
 
-from .filesystem_constants import DIR_CACHED_DB
+from .filesystem_constants import DIR_CACHED_DB, DATA_DIR, STATS_DIR
 from .lcia import fill_characterization_factors_matrices
 from .subshares import (
     adjust_matrix_based_on_shares,
@@ -39,7 +39,11 @@ from .utils import (
     fetch_indices,
     get_unit_conversion_factors,
     read_indices_csv,
+    read_categories_from_yaml,
+    get_combined_filters,
+    apply_filters,
 )
+from .stats import log_double_accounting
 
 logger = logging.getLogger(__name__)
 
@@ -219,6 +223,48 @@ def find_uncertain_parameters(
     uncertain_parameters = [tuple(indices_array[idx]) for idx in uncertain_indices]
 
     return uncertain_parameters
+
+
+def remove_double_accounting(
+    lca: bc.MultiLCA,
+    activities_to_exclude: List[int],
+    exceptions: List[int],
+) -> bc.MultiLCA:
+    """Remove double counting from a technosphere matrix.
+
+    Zeroes out inputs to specified activities (except diagonal and exceptions),
+    then recalculates the inventory.
+
+    :param lca: bw2calc.MultiLCA object with computed technosphere matrix.
+    :type lca: bw2calc.MultiLCA
+    :param activities_to_exclude: List of activity indices whose inputs should be zeroed.
+    :type activities_to_exclude: list[int]
+    :param exceptions: List of activity indices that should not be zeroed even if they
+        are inputs to excluded activities.
+    :type exceptions: list[int]
+    :returns: The modified LCA object with updated technosphere matrix.
+    :rtype: bw2calc.MultiLCA
+    """
+    tm_original = lca.technosphere_matrix.copy()
+    tm_modified = tm_original.tocoo()
+
+    for act in activities_to_exclude:
+        row_idx = np.where(tm_modified.col == act)[0]
+        for idx in row_idx:
+            # Skip the diagonal and exceptions
+            if tm_modified.row[idx] != act and (
+                exceptions is None or tm_modified.row[idx] not in exceptions
+            ):
+                tm_modified.data[idx] = 0
+
+    tm_modified = tm_modified.tocsr()
+    tm_modified.eliminate_zeros()
+
+    # Update the technosphere matrix and recalculate inventory
+    lca.technosphere_matrix = tm_modified
+    lca.lci()
+
+    return lca
 
 
 def create_functional_units(
@@ -701,6 +747,34 @@ def _calculate_year(args: tuple):
             )
         return
 
+    # Handle double accounting if specified
+    if double_accounting is not None:
+        categories = read_categories_from_yaml(DATA_DIR / "smart_categories.yaml")
+        combined_filters, exception_filters = get_combined_filters(
+            categories, double_accounting
+        )
+        activities_to_exclude, exceptions, filtered_names, exception_names = (
+            apply_filters(
+                technosphere_indices,
+                combined_filters,
+                exception_filters,
+                double_accounting,
+            )
+        )
+        log_double_accounting(
+            filtered_names,
+            exception_names,
+            STATS_DIR / f"double_accounting_{model}_{scenario}_{year}.xlsx",
+        )
+        if debug:
+            logging.info(
+                f"Double accounting: {len(activities_to_exclude)} activities to exclude, "
+                f"{len(exceptions)} exceptions."
+            )
+    else:
+        activities_to_exclude = None
+        exceptions = None
+
     # check unclassified activities
     missing_classifications, classifications, reverse_classifications = (
         check_unclassified_activities(
@@ -780,6 +854,17 @@ def _calculate_year(args: tuple):
 
         with CustomFilter("(almost) singular matrix"):
             lca.lci()
+            # Apply double accounting removal if activities were identified
+            if activities_to_exclude is not None:
+                lca = remove_double_accounting(
+                    lca=lca,
+                    activities_to_exclude=activities_to_exclude,
+                    exceptions=exceptions,
+                )
+                if debug:
+                    logging.info(
+                        f"Double accounting removal applied for {region}."
+                    )
 
         if shares:
             shares_indices = find_technology_indices(regions, technosphere_indices, geo)
