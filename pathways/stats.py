@@ -279,12 +279,14 @@ def log_double_accounting_flows(
                 )
             elif not flows_df.empty:
                 # Add a note that detailed flows are available with debug=True
-                note_df = pd.DataFrame({
-                    "Note": [
-                        f"Detailed flows ({len(flows_df):,} rows) not written. "
-                        "Set debug=True to include detailed flow-by-flow breakdown."
-                    ]
-                })
+                note_df = pd.DataFrame(
+                    {
+                        "Note": [
+                            f"Detailed flows ({len(flows_df):,} rows) not written. "
+                            "Set debug=True to include detailed flow-by-flow breakdown."
+                        ]
+                    }
+                )
                 note_df.to_excel(
                     writer, sheet_name=sheet_name, index=False, startrow=next_row
                 )
