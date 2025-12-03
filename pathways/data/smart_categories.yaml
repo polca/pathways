@@ -163,6 +163,19 @@ Energy:
             - electricity, residential, by combustion of hydrogen
           product_fltr:
             - electricity
+    Markets:
+      market group:
+        ecoinvent_aliases:
+          name_fltr:
+            - market group for electricity,
+          product_fltr:
+            - electricity,
+      markets:
+        ecoinvent_aliases:
+          name_fltr:
+            - market for electricity,
+          product_fltr:
+            - electricity,
   Heat:
     Industrial:
       CHP and furnace:
@@ -245,8 +258,8 @@ Energy:
             - heat pump
           product_fltr:
             - heat,
-          name_mask:
-            - market
+#          name_mask:
+#            - market
       Solar:
         ecoinvent_aliases:
           name_fltr:
@@ -257,6 +270,19 @@ Energy:
             - concentrating
             - construction
             - thermal parabolic
+    Markets:
+      market group:
+        ecoinvent_aliases:
+          name_fltr:
+            - market group for heat,
+          product_fltr:
+            - heat,
+      markets:
+        ecoinvent_aliases:
+          name_fltr:
+            - market for heat,
+          product_fltr:
+            - heat,
 Transport:
   Freight:
     Air:

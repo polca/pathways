@@ -1,12 +1,15 @@
 from pathlib import Path
 from typing import Dict, Set, Tuple
 from zipfile import BadZipFile
+import logging
 
 import numpy as np
 import pandas as pd
 from SALib.analyze import delta
 
 from pathways.filesystem_constants import STATS_DIR
+
+logger = logging.getLogger(__name__)
 
 
 def log_double_accounting(
@@ -96,6 +99,159 @@ def log_double_accounting(
             exception_df.to_excel(
                 writer, sheet_name="Double accounting - Exceptions", index=False
             )
+
+
+def log_double_accounting_flows(
+    stats: Dict,
+    region: str,
+    export_path: Path,
+):
+    """Write detailed zeroed flows to an Excel sheet.
+
+    Creates a detailed log of which flows were zeroed during double accounting
+    removal, including source activity, recipient activity, and original value.
+
+    :param stats: Statistics dict returned by remove_double_accounting containing
+        'zeroed_flows', 'kept_internal', 'kept_exceptions', 'kept_diagonal'.
+    :type stats: dict
+    :param region: Region identifier for this calculation.
+    :type region: str
+    :param export_path: Destination Excel workbook path.
+    :type export_path: pathlib.Path
+    :returns: ``None``
+    :rtype: None
+    """
+    # Always log the summary, even if no flows were zeroed
+    total_zeroed = stats.get('total_zeroed', 0)
+    kept_internal = stats.get('kept_internal', 0)
+    kept_fus = stats.get('kept_exceptions', 0)
+    kept_diagonal = stats.get('kept_diagonal', 0)
+    
+    logger.info(
+        f"[Double Accounting - {region}] "
+        f"Zeroed: {total_zeroed}, "
+        f"Kept internal: {kept_internal}, "
+        f"Kept FUs: {kept_fus}, "
+        f"Kept diagonal: {kept_diagonal}"
+    )
+
+    zeroed_flows = stats.get("zeroed_flows", [])
+
+    # Create summary DataFrame (always created)
+    summary_data = {
+        "Metric": [
+            "Total flows zeroed",
+            "Flows kept (internal energy system)",
+            "Flows kept (to functional units)",
+            "Flows kept (diagonal)",
+        ],
+        "Count": [
+            stats.get("total_zeroed", 0),
+            stats.get("kept_internal", 0),
+            stats.get("kept_exceptions", 0),
+            stats.get("kept_diagonal", 0),
+        ],
+    }
+    summary_df = pd.DataFrame(summary_data)
+
+    # Create DataFrame from zeroed flows (may be empty)
+    if zeroed_flows:
+        flows_df = pd.DataFrame(zeroed_flows)
+        flows_df["region"] = region
+
+        # Reorder columns for clarity
+        flows_df = flows_df[["region", "from", "to", "value", "from_idx", "to_idx"]]
+        flows_df.columns = [
+            "Region",
+            "Source Activity",
+            "Recipient Activity",
+            "Original Value",
+            "Source Index",
+            "Recipient Index",
+        ]
+
+        # Aggregate flows by source
+        by_source = (
+            flows_df.groupby("Source Activity")
+            .agg(
+                {
+                    "Recipient Activity": "count",
+                    "Original Value": "sum",
+                }
+            )
+            .reset_index()
+        )
+        by_source.columns = ["Source Activity", "Number of Flows Zeroed", "Total Value Zeroed"]
+        by_source = by_source.sort_values("Number of Flows Zeroed", ascending=False)
+    else:
+        flows_df = pd.DataFrame(columns=[
+            "Region", "Source Activity", "Recipient Activity",
+            "Original Value", "Source Index", "Recipient Index"
+        ])
+        by_source = pd.DataFrame(columns=[
+            "Source Activity", "Number of Flows Zeroed", "Total Value Zeroed"
+        ])
+
+    export_path.parent.mkdir(parents=True, exist_ok=True)
+
+    sheet_name = f"Zeroed Flows - {region}"
+
+    try:
+        # Determine if file exists and mode
+        file_exists = export_path.exists()
+        mode = "a" if file_exists else "w"
+
+        with pd.ExcelWriter(
+            export_path, engine="openpyxl", mode=mode, if_sheet_exists="overlay"
+        ) as writer:
+            # If sheet exists, remove it first (like log_double_accounting does)
+            if sheet_name in writer.book.sheetnames:
+                idx = writer.book.sheetnames.index(sheet_name)
+                old_sheet = writer.book.worksheets[idx]
+                writer.book.remove(old_sheet)
+                writer.book.create_sheet(sheet_name, idx)
+                print(f"  → Replaced existing sheet '{sheet_name}'")
+            else:
+                print(f"  → Creating new sheet '{sheet_name}'")
+
+            # Write summary (always first)
+            summary_df.to_excel(
+                writer, sheet_name=sheet_name, index=False, startrow=0
+            )
+
+            # Calculate next row position
+            next_row = len(summary_df) + 3
+
+            # Write aggregated by source if available
+            if not by_source.empty:
+                by_source.to_excel(
+                    writer, sheet_name=sheet_name, index=False, startrow=next_row
+                )
+                next_row = next_row + len(by_source) + 3
+            else:
+                # Add note if no flows were zeroed
+                note_df = pd.DataFrame({
+                    "Note": ["No flows were zeroed - all energy flows were kept (internal or to functional units)."]
+                })
+                note_df.to_excel(
+                    writer, sheet_name=sheet_name, index=False, startrow=next_row
+                )
+                next_row += len(note_df) + 2
+
+            # Write detailed flows ONLY if not empty
+            if not flows_df.empty:
+                flows_df.to_excel(
+                    writer,
+                    sheet_name=sheet_name,
+                    index=False,
+                    startrow=next_row,
+                )
+
+        logger.info(f"Double accounting flows logged to {export_path} (sheet: {sheet_name})")
+
+    except Exception as e:
+        logger.error(f"Error writing double accounting flows to Excel: {e}")
+        raise
 
 
 def log_subshares(

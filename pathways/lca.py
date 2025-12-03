@@ -43,7 +43,7 @@ from .utils import (
     get_combined_filters,
     apply_filters,
 )
-from .stats import log_double_accounting
+from .stats import log_double_accounting, log_double_accounting_flows
 
 logger = logging.getLogger(__name__)
 
@@ -229,42 +229,123 @@ def remove_double_accounting(
     lca: bc.MultiLCA,
     activities_to_exclude: List[int],
     exceptions: List[int],
-) -> bc.MultiLCA:
+    technosphere_indices: Dict[tuple, int] = None,
+    debug: bool = False,
+) -> tuple[bc.MultiLCA, Dict]:
     """Remove double counting from a technosphere matrix.
 
-    Zeroes out inputs to specified activities (except diagonal and exceptions),
-    then recalculates the inventory.
+    Zeroes out outputs FROM specified activities (e.g., electricity production/markets)
+    TO activities OUTSIDE the energy system. Flows WITHIN the energy system
+    (between activities in activities_to_exclude) are preserved to maintain the
+    complete supply chain for functional units.
+
+    For example, if electricity production and markets are in activities_to_exclude
+    and a heat pump activity is in exceptions (as a functional unit):
+    - HV production → HV market: KEPT (both are energy activities)
+    - HV market → LV transformation: KEPT (both are energy activities)
+    - LV market → heat pump (FU): KEPT (FU is in exceptions)
+    - LV market → battery production: ZEROED (battery is outside energy system)
 
     :param lca: bw2calc.MultiLCA object with computed technosphere matrix.
     :type lca: bw2calc.MultiLCA
-    :param activities_to_exclude: List of activity indices whose inputs should be zeroed.
+    :param activities_to_exclude: List of activity indices representing the energy system
+        (production, transformation, markets). Outputs from these to non-energy,
+        non-exception activities will be zeroed.
     :type activities_to_exclude: list[int]
-    :param exceptions: List of activity indices that should not be zeroed even if they
-        are inputs to excluded activities.
+    :param exceptions: List of activity indices (typically functional units) that should
+        continue to receive outputs from energy activities.
     :type exceptions: list[int]
-    :returns: The modified LCA object with updated technosphere matrix.
-    :rtype: bw2calc.MultiLCA
+    :param technosphere_indices: Optional mapping from (name, product, unit, location) to index
+        for logging purposes.
+    :type technosphere_indices: dict[tuple, int] | None
+    :param debug: Enable detailed logging when True.
+    :type debug: bool
+    :returns: Tuple of (modified LCA object, zeroed flows statistics dict).
+    :rtype: tuple[bw2calc.MultiLCA, dict]
     """
     tm_original = lca.technosphere_matrix.copy()
     tm_modified = tm_original.tocoo()
 
+    # Convert to sets for O(1) lookup
+    activities_to_exclude_set = set(activities_to_exclude)
+    exceptions_set = set(exceptions) if exceptions else set()
+
+    # Build reverse index for logging (index -> activity name)
+    idx_to_name = {}
+    if technosphere_indices:
+        idx_to_name = {v: k[0] for k, v in technosphere_indices.items()}
+
+    # Track zeroed flows for logging
+    zeroed_flows = []
+    kept_internal = 0
+    kept_exceptions = 0
+    kept_diagonal = 0
+
     for act in activities_to_exclude:
-        row_idx = np.where(tm_modified.col == act)[0]
-        for idx in row_idx:
-            # Skip the diagonal and exceptions
-            if tm_modified.row[idx] != act and (
-                exceptions is None or tm_modified.row[idx] not in exceptions
-            ):
+        act_name = idx_to_name.get(act, f"idx:{act}")
+        # Find all OUTPUTS FROM this activity (where this activity is the supplier/row)
+        col_idx = np.where(tm_modified.row == act)[0]
+        for idx in col_idx:
+            recipient = tm_modified.col[idx]
+            recipient_name = idx_to_name.get(recipient, f"idx:{recipient}")
+
+            if recipient == act:
+                kept_diagonal += 1
+            elif recipient in activities_to_exclude_set:
+                kept_internal += 1
+            elif recipient in exceptions_set:
+                kept_exceptions += 1
+            else:
+                # Zero this flow
+                zeroed_flows.append({
+                    "from": act_name,
+                    "from_idx": act,
+                    "to": recipient_name,
+                    "to_idx": recipient,
+                    "value": tm_modified.data[idx],
+                })
                 tm_modified.data[idx] = 0
 
     tm_modified = tm_modified.tocsr()
     tm_modified.eliminate_zeros()
 
+    # Build statistics
+    stats = {
+        "total_zeroed": len(zeroed_flows),
+        "kept_internal": kept_internal,
+        "kept_exceptions": kept_exceptions,
+        "kept_diagonal": kept_diagonal,
+        "zeroed_flows": zeroed_flows,
+    }
+
+    # Log summary
+    logging.info(
+        f"Double accounting removal: {len(zeroed_flows)} flows zeroed, "
+        f"{kept_internal} kept (internal energy flows), "
+        f"{kept_exceptions} kept (to functional units), "
+        f"{kept_diagonal} kept (diagonal)."
+    )
+
+    if debug and zeroed_flows:
+        # Group by source activity for cleaner logging
+        from collections import defaultdict
+        by_source = defaultdict(list)
+        for flow in zeroed_flows:
+            by_source[flow["from"]].append(flow["to"])
+
+        logging.info("Zeroed flows by source activity:")
+        for source, recipients in sorted(by_source.items()):
+            unique_recipients = list(set(recipients))
+            logging.info(
+                f"  {source} → {len(recipients)} flows to: "
+                f"{unique_recipients[:3]}{'...' if len(unique_recipients) > 3 else ''}"
+            )
+
     # Update the technosphere matrix and recalculate inventory
     lca.technosphere_matrix = tm_modified
     lca.lci()
 
-    return lca
+    return lca, stats
 
 
 def create_functional_units(
@@ -747,6 +828,24 @@ def _calculate_year(args: tuple):
             )
         return
 
+    # Collect all functional unit indices from vars_info to protect them
+    # from double accounting removal
+    fu_indices = set()
+    fu_names = set()  # For logging
+    if vars_info is not None:
+        for region_data in vars_info.values():
+            for var_data in region_data.values():
+                if "idx" in var_data and var_data["idx"] is not None:
+                    fu_indices.add(var_data["idx"])
+                    # Also collect the activity name for logging
+                    if "dataset" in var_data and var_data["dataset"]:
+                        fu_names.add(var_data["dataset"][0])  # name is first element
+
+    if debug and fu_indices:
+        logging.info(
+            f"Found {len(fu_indices)} functional unit indices to protect from double accounting."
+        )
+
     # Handle double accounting if specified
     if double_accounting is not None:
         categories = read_categories_from_yaml(DATA_DIR / "smart_categories.yaml")
@@ -761,6 +860,47 @@ def _calculate_year(args: tuple):
                 double_accounting,
             )
         )
+
+        # Protect functional unit activities: add them to exceptions and
+        # remove them from activities_to_exclude
+        if fu_indices:
+            # Check if any FU activities were accidentally included in activities_to_exclude
+            protected_fus = fu_indices & set(activities_to_exclude)
+
+            # Find the names of protected activities for logging
+            protected_names = {
+                k[0] for k, v in technosphere_indices.items() if v in protected_fus
+            }
+
+            if protected_fus:
+                logging.info(
+                    f"Double accounting: {len(protected_fus)} of {len(fu_indices)} functional units "
+                    f"matched filters and were protected: {list(protected_names)[:5]}..."
+                )
+
+                # Update filtered_names: remove protected activity names from each category
+                for path_key in filtered_names:
+                    filtered_names[path_key] -= protected_names
+
+                # Update exception_names: add protected FU activities under a special category
+                fu_category = ("Functional Units (Protected)",)
+                if fu_category not in exception_names:
+                    exception_names[fu_category] = set()
+                exception_names[fu_category] |= protected_names
+            else:
+                logging.info(
+                    f"Double accounting: None of the {len(fu_indices)} functional units "
+                    f"matched the double accounting filters (no protection needed)."
+                )
+
+            # Remove FU indices from activities to exclude
+            activities_to_exclude = [
+                idx for idx in activities_to_exclude if idx not in fu_indices
+            ]
+            # Add ALL FU indices to exceptions (even if they didn't match filters,
+            # they should still be protected from having their outputs zeroed)
+            exceptions = list(set(exceptions) | fu_indices)
+
         log_double_accounting(
             filtered_names,
             exception_names,
@@ -768,8 +908,9 @@ def _calculate_year(args: tuple):
         )
         if debug:
             logging.info(
-                f"Double accounting: {len(activities_to_exclude)} activities to exclude, "
-                f"{len(exceptions)} exceptions."
+                f"Double accounting summary: {len(activities_to_exclude)} activities will have "
+                f"outputs zeroed, {len(exceptions)} activities in exceptions "
+                f"(including all {len(fu_indices)} functional units)."
             )
     else:
         activities_to_exclude = None
@@ -856,13 +997,25 @@ def _calculate_year(args: tuple):
             lca.lci()
             # Apply double accounting removal if activities were identified
             if activities_to_exclude is not None:
-                lca = remove_double_accounting(
+                print(f"[{region}] Applying double accounting removal...")
+                lca, da_stats = remove_double_accounting(
                     lca=lca,
                     activities_to_exclude=activities_to_exclude,
                     exceptions=exceptions,
+                    technosphere_indices=technosphere_indices,
+                    debug=debug,
+                )
+                # Log detailed zeroed flows to Excel
+                log_double_accounting_flows(
+                    stats=da_stats,
+                    region=region,
+                    export_path=STATS_DIR / f"double_accounting_{model}_{scenario}_{year}.xlsx",
                 )
                 if debug:
-                    logging.info(f"Double accounting removal applied for {region}.")
+                    logging.info(
+                        f"Double accounting removal applied for {region}: "
+                        f"{da_stats['total_zeroed']} flows zeroed."
+                    )
 
         if shares:
             shares_indices = find_technology_indices(regions, technosphere_indices, geo)
