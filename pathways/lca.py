@@ -862,9 +862,7 @@ def _calculate_year(args: tuple):
                     exceptions=exceptions,
                 )
                 if debug:
-                    logging.info(
-                        f"Double accounting removal applied for {region}."
-                    )
+                    logging.info(f"Double accounting removal applied for {region}.")
 
         if shares:
             shares_indices = find_technology_indices(regions, technosphere_indices, geo)
