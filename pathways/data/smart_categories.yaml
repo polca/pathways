@@ -36,7 +36,6 @@ Energy:
             - electricity production, at co-generation natural gas-fired
             - electricity production, at natural gas-fired
             - electricity production, natural gas
-            - natural gas, burned in
             - electricity production, from combined cycle plant, synthetic natural gas
             - heat and power co-generation, natural gas
           product_fltr:
@@ -184,7 +183,7 @@ Energy:
             - 160kWe Jakobsberg
             - 125kWe
             - 180kWe
-            - refinery gas, burned in furnace
+#            - refinery gas, burned in furnace
           name_mask:
             - treatment
             - wood pellets, burned in stirling heat and power co-generation unit, 3kW electrical, future
@@ -234,8 +233,8 @@ Energy:
             - <100kW
             - 10kW
             - heat, residential
-            - natural gas, burned in polymer electrolyte membrane fuel cell 2kWe, future
-            - wood pellets, burned in stirling heat and power co-generation unit, 3kW electrical, future-
+#            - natural gas, burned in polymer electrolyte membrane fuel cell 2kWe, future
+#            - wood pellets, burned in stirling heat and power co-generation unit, 3kW electrical, future-
           product_fltr:
             - heat
           product_mask:
