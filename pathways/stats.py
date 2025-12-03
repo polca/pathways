@@ -122,11 +122,11 @@ def log_double_accounting_flows(
     :rtype: None
     """
     # Always log the summary, even if no flows were zeroed
-    total_zeroed = stats.get('total_zeroed', 0)
-    kept_internal = stats.get('kept_internal', 0)
-    kept_fus = stats.get('kept_exceptions', 0)
-    kept_diagonal = stats.get('kept_diagonal', 0)
-    
+    total_zeroed = stats.get("total_zeroed", 0)
+    kept_internal = stats.get("kept_internal", 0)
+    kept_fus = stats.get("kept_exceptions", 0)
+    kept_diagonal = stats.get("kept_diagonal", 0)
+
     logger.info(
         f"[Double Accounting - {region}] "
         f"Zeroed: {total_zeroed}, "
@@ -181,16 +181,26 @@ def log_double_accounting_flows(
             )
             .reset_index()
         )
-        by_source.columns = ["Source Activity", "Number of Flows Zeroed", "Total Value Zeroed"]
+        by_source.columns = [
+            "Source Activity",
+            "Number of Flows Zeroed",
+            "Total Value Zeroed",
+        ]
         by_source = by_source.sort_values("Number of Flows Zeroed", ascending=False)
     else:
-        flows_df = pd.DataFrame(columns=[
-            "Region", "Source Activity", "Recipient Activity",
-            "Original Value", "Source Index", "Recipient Index"
-        ])
-        by_source = pd.DataFrame(columns=[
-            "Source Activity", "Number of Flows Zeroed", "Total Value Zeroed"
-        ])
+        flows_df = pd.DataFrame(
+            columns=[
+                "Region",
+                "Source Activity",
+                "Recipient Activity",
+                "Original Value",
+                "Source Index",
+                "Recipient Index",
+            ]
+        )
+        by_source = pd.DataFrame(
+            columns=["Source Activity", "Number of Flows Zeroed", "Total Value Zeroed"]
+        )
 
     export_path.parent.mkdir(parents=True, exist_ok=True)
 
@@ -215,9 +225,7 @@ def log_double_accounting_flows(
                 print(f"  → Creating new sheet '{sheet_name}'")
 
             # Write summary (always first)
-            summary_df.to_excel(
-                writer, sheet_name=sheet_name, index=False, startrow=0
-            )
+            summary_df.to_excel(writer, sheet_name=sheet_name, index=False, startrow=0)
 
             # Calculate next row position
             next_row = len(summary_df) + 3
@@ -230,9 +238,13 @@ def log_double_accounting_flows(
                 next_row = next_row + len(by_source) + 3
             else:
                 # Add note if no flows were zeroed
-                note_df = pd.DataFrame({
-                    "Note": ["No flows were zeroed - all energy flows were kept (internal or to functional units)."]
-                })
+                note_df = pd.DataFrame(
+                    {
+                        "Note": [
+                            "No flows were zeroed - all energy flows were kept (internal or to functional units)."
+                        ]
+                    }
+                )
                 note_df.to_excel(
                     writer, sheet_name=sheet_name, index=False, startrow=next_row
                 )
@@ -247,7 +259,9 @@ def log_double_accounting_flows(
                     startrow=next_row,
                 )
 
-        logger.info(f"Double accounting flows logged to {export_path} (sheet: {sheet_name})")
+        logger.info(
+            f"Double accounting flows logged to {export_path} (sheet: {sheet_name})"
+        )
 
     except Exception as e:
         logger.error(f"Error writing double accounting flows to Excel: {e}")

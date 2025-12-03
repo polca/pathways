@@ -297,13 +297,15 @@ def remove_double_accounting(
                 kept_exceptions += 1
             else:
                 # Zero this flow
-                zeroed_flows.append({
-                    "from": act_name,
-                    "from_idx": act,
-                    "to": recipient_name,
-                    "to_idx": recipient,
-                    "value": tm_modified.data[idx],
-                })
+                zeroed_flows.append(
+                    {
+                        "from": act_name,
+                        "from_idx": act,
+                        "to": recipient_name,
+                        "to_idx": recipient,
+                        "value": tm_modified.data[idx],
+                    }
+                )
                 tm_modified.data[idx] = 0
 
     tm_modified = tm_modified.tocsr()
@@ -329,6 +331,7 @@ def remove_double_accounting(
     if debug and zeroed_flows:
         # Group by source activity for cleaner logging
         from collections import defaultdict
+
         by_source = defaultdict(list)
         for flow in zeroed_flows:
             by_source[flow["from"]].append(flow["to"])
@@ -1009,7 +1012,8 @@ def _calculate_year(args: tuple):
                 log_double_accounting_flows(
                     stats=da_stats,
                     region=region,
-                    export_path=STATS_DIR / f"double_accounting_{model}_{scenario}_{year}.xlsx",
+                    export_path=STATS_DIR
+                    / f"double_accounting_{model}_{scenario}_{year}.xlsx",
                 )
                 if debug:
                     logging.info(
