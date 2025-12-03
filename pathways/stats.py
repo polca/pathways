@@ -16,6 +16,7 @@ def log_double_accounting(
     filtered_names: Dict[Tuple[str, ...], Set[str]],
     exception_names: Dict[Tuple[str, ...], Set[str]],
     export_path: Path,
+    debug: bool = False,
 ):
     """Write filtered and exceptional activity names by category to Excel.
 
@@ -25,9 +26,14 @@ def log_double_accounting(
     :type exception_names: dict[tuple[str, ...], set[str]]
     :param export_path: Destination Excel workbook path.
     :type export_path: pathlib.Path
+    :param debug: If True, write to Excel. If False, skip Excel writing.
+    :type debug: bool
     :returns: ``None``
     :rtype: None
     """
+    # Only write to Excel if debug=True
+    if not debug:
+        return
 
     data_filtered = {
         "/".join(category): list(names)
@@ -105,6 +111,7 @@ def log_double_accounting_flows(
     stats: Dict,
     region: str,
     export_path: Path,
+    debug: bool = False,
 ):
     """Write detailed zeroed flows to an Excel sheet.
 
@@ -118,6 +125,9 @@ def log_double_accounting_flows(
     :type region: str
     :param export_path: Destination Excel workbook path.
     :type export_path: pathlib.Path
+    :param debug: If True, include detailed flow-by-flow breakdown. If False, only
+        write summary and aggregated statistics (much faster for large datasets).
+    :type debug: bool
     :returns: ``None``
     :rtype: None
     """
@@ -206,6 +216,18 @@ def log_double_accounting_flows(
 
     sheet_name = f"Zeroed Flows - {region}"
 
+    # Only write to Excel if debug=True (to avoid performance hit on large runs)
+    if not debug:
+        logger.info(
+            f"[Double Accounting - {region}] "
+            f"Zeroed: {total_zeroed}, "
+            f"Kept internal: {kept_internal}, "
+            f"Kept FUs: {kept_fus}, "
+            f"Kept diagonal: {kept_diagonal} "
+            f"(Excel logging skipped - set debug=True to write to Excel)"
+        )
+        return
+
     try:
         # Determine if file exists and mode
         file_exists = export_path.exists()
@@ -220,9 +242,6 @@ def log_double_accounting_flows(
                 old_sheet = writer.book.worksheets[idx]
                 writer.book.remove(old_sheet)
                 writer.book.create_sheet(sheet_name, idx)
-                print(f"  → Replaced existing sheet '{sheet_name}'")
-            else:
-                print(f"  → Creating new sheet '{sheet_name}'")
 
             # Write summary (always first)
             summary_df.to_excel(writer, sheet_name=sheet_name, index=False, startrow=0)
@@ -250,13 +269,24 @@ def log_double_accounting_flows(
                 )
                 next_row += len(note_df) + 2
 
-            # Write detailed flows ONLY if not empty
-            if not flows_df.empty:
+            # Write detailed flows ONLY if debug=True (can be very large, e.g., 50k+ rows)
+            if not flows_df.empty and debug:
                 flows_df.to_excel(
                     writer,
                     sheet_name=sheet_name,
                     index=False,
                     startrow=next_row,
+                )
+            elif not flows_df.empty:
+                # Add a note that detailed flows are available with debug=True
+                note_df = pd.DataFrame({
+                    "Note": [
+                        f"Detailed flows ({len(flows_df):,} rows) not written. "
+                        "Set debug=True to include detailed flow-by-flow breakdown."
+                    ]
+                })
+                note_df.to_excel(
+                    writer, sheet_name=sheet_name, index=False, startrow=next_row
                 )
 
         logger.info(

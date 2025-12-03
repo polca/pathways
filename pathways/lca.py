@@ -908,6 +908,7 @@ def _calculate_year(args: tuple):
             filtered_names,
             exception_names,
             STATS_DIR / f"double_accounting_{model}_{scenario}_{year}.xlsx",
+            debug=debug,
         )
         if debug:
             logging.info(
@@ -1014,6 +1015,7 @@ def _calculate_year(args: tuple):
                     region=region,
                     export_path=STATS_DIR
                     / f"double_accounting_{model}_{scenario}_{year}.xlsx",
+                    debug=debug,
                 )
                 if debug:
                     logging.info(
