@@ -25,9 +25,9 @@ def get_lcia_method_names(ei_version="3.11"):
     """
 
     if ei_version != "3.11":
-        filepath = LCIA_METHODS_EI311
-    else:
         filepath = LCIA_METHODS_EI310
+    else:
+        filepath = LCIA_METHODS_EI311
 
     with open(filepath, "r") as f:
         data = json.load(f)
