@@ -474,7 +474,7 @@ class Pathways:
         self.scenarios = harmonize_units(self.scenarios, variables)
 
         if methods:
-            available_methods = get_lcia_method_names()
+            available_methods = get_lcia_method_names(self.ei_version)
             for m in methods:
                 if m not in available_methods:
                     raise ValueError(f"LCIA method {m} not found in available methods.")
@@ -610,6 +610,7 @@ class Pathways:
                         remove_uncertainty,
                         seed,
                         double_accounting,
+                        self.ei_version
                     )
                     for year in years
                 ]

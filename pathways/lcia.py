@@ -24,10 +24,10 @@ def get_lcia_method_names(ei_version="3.11"):
     :rtype: list[str]
     """
 
-    if ei_version != "3.11":
-        filepath = LCIA_METHODS_EI310
-    else:
+    if ei_version == "3.11":
         filepath = LCIA_METHODS_EI311
+    else:
+        filepath = LCIA_METHODS_EI310
 
     with open(filepath, "r") as f:
         data = json.load(f)
@@ -80,7 +80,7 @@ def get_lcia_methods(methods: list = None, ei_version="3.11"):
 
 
 def fill_characterization_factors_matrices(
-    methods: list, biosphere_matrix_dict: dict, biosphere_dict: dict, debug=False
+    methods: list, biosphere_matrix_dict: dict, biosphere_dict: dict, ei_version="3.11", debug=False
 ) -> csr_matrix:
     """Assemble a CSR matrix with characterization factors for multiple LCIA methods.
 
@@ -92,11 +92,13 @@ def fill_characterization_factors_matrices(
     :type biosphere_dict: dict[tuple[str, str, str], int]
     :param debug: Flag to emit detailed logging about matched factors.
     :type debug: bool
+    :param ei_version: Ecoinvent release identifier to read.
+    :type ei_version: str
     :returns: CSR matrix with shape ``(len(methods), len(biosphere_matrix_dict))``.
     :rtype: scipy.sparse.csr_matrix
     """
 
-    lcia_data = get_lcia_methods(methods=methods)
+    lcia_data = get_lcia_methods(methods=methods, ei_version=ei_version)
 
     # Prepare data for efficient creation of the sparse matrix
     data = []
