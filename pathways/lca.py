@@ -782,7 +782,7 @@ def _calculate_year(args: tuple):
         remove_uncertainty,
         seed,
         double_accounting,
-        ei_version
+        ei_version,
     ) = args
 
     print(f"------ Calculating LCA results for {year}...")
@@ -1063,7 +1063,7 @@ def _calculate_year(args: tuple):
                 biosphere_matrix_dict=lca.dicts.biosphere,
                 biosphere_dict=biosphere_indices,
                 debug=debug,
-                ei_version=ei_version
+                ei_version=ei_version,
             )
         else:
             print("Using EDGES' LCIA methods...")

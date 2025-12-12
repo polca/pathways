@@ -80,7 +80,11 @@ def get_lcia_methods(methods: list = None, ei_version="3.11"):
 
 
 def fill_characterization_factors_matrices(
-    methods: list, biosphere_matrix_dict: dict, biosphere_dict: dict, ei_version="3.11", debug=False
+    methods: list,
+    biosphere_matrix_dict: dict,
+    biosphere_dict: dict,
+    ei_version="3.11",
+    debug=False,
 ) -> csr_matrix:
     """Assemble a CSR matrix with characterization factors for multiple LCIA methods.
 

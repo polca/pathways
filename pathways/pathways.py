@@ -610,7 +610,7 @@ class Pathways:
                         remove_uncertainty,
                         seed,
                         double_accounting,
-                        self.ei_version
+                        self.ei_version,
                     )
                     for year in years
                 ]
