@@ -44,6 +44,8 @@ def read_indices_csv(file_path: Path) -> dict[tuple[str, str, str, str], int]:
     with open(file_path, encoding="utf-8") as read_obj:
         csv_reader = csv.reader(read_obj, delimiter=";")
         for row in csv_reader:
+            if row[4] == "index":
+                continue
             try:
                 indices[(row[0], row[1], row[2], row[3])] = int(row[4])
             except IndexError as err:
