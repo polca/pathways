@@ -64,5 +64,5 @@ exclude = ["tests*", "docs*"]
 # and want them included in wheels/sdists, list them here.
 # Equivalent to include_package_data=True + MANIFEST.in, but explicit.
 [tool.setuptools.package-data]
-pathways = ["**/*.csv", "**/*.yaml", "**/*.yml", "**/*.txt", "**/*.npz", "**/*.pkl"]
+pathways = ["**/*.csv", "**/*.yaml", "**/*.yml", "**/*.txt", "**/*.npz", "**/*.pkl", "**/*.json", "**/*.xlsx"]
 
