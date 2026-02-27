@@ -424,6 +424,9 @@ class Pathways:
             .to_xarray()
         )
 
+        # fill missing values with zeros
+        data = data.fillna(0)
+
         # convert values under "model" column to lower case
         data.coords["model"] = [x.lower() for x in data.coords["model"].values]
 

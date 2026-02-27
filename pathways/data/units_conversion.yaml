@@ -42,3 +42,7 @@ GW/yr:
 
 million veh:
   unit: 1e6
+
+TWh/year:
+  kilowatt hour: 1e+9
+  megajoule: 3.6e+9
