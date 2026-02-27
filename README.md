@@ -36,7 +36,8 @@ Sacchi et al., (2024). pathways: life cycle assessment of energy transition scen
 
 ## Requirements
 
-``pathways`` requires Python 3.10 or 3.11. It also requires the packages listed in the `requirements.txt` file.
+``pathways`` requires Python 3.10, 3.11, or 3.12 (`>=3.10, <3.13`).
+Dependencies are defined in `pyproject.toml`.
 
 ## Installation
 
@@ -106,6 +107,7 @@ from pathways import Pathways
 datapackage_path = "path/to/your/datapackage.zip"
 p = Pathways(
     datapackage=datapackage_path,
+    ecoinvent_version="3.12",  # optional, supported: "3.10", "3.11", "3.12"
     debug=True # optional, if you want to see the logs
 )
 
@@ -174,11 +176,11 @@ exported to a CSV/Excel file using the built-in methods of ``xarray``.
 
 ```
 
-Or the result can be exported as a Parquet file for further use in `pandas` or `dask`:
+Or the result can be exported as a gzip-compressed Parquet file for further use in `pandas` or `dask`:
 
 ```python
 
-    p.export_results(filename="results.gzip")
+    p.export_results(filename="results")
 
 ```
 

@@ -20,7 +20,7 @@ Pathways workflow
    .. code-block:: python
 
       from pathways import Pathways
-      pw = Pathways("remind-SSP2-NPi.zip", ecoinvent_version="3.11")
+      pw = Pathways("remind-SSP2-NPi.zip", ecoinvent_version="3.12")
 
    The initializer parses the datapackage, builds internal indices, loads
    classification info and LCIA method names, and prepares the scenario catalog:
@@ -52,7 +52,7 @@ Pathways workflow
 
    ``pw.lca_results`` is an :mod:`xarray` **DataArray** with dimensions:
 
-   ``(act_category, impact_category, year, region, model, scenario)``
+   ``(act_category, variable, year, region, location, model, scenario, impact_category)``
 
 3. **Aggregate for display**
 
@@ -67,3 +67,10 @@ Pathways workflow
    .. code-block:: python
 
       path = pw.export_results("my_results")  # → my_results.gzip
+
+Notes
+-----
+
+- Supported ``ecoinvent_version`` values are ``"3.10"``, ``"3.11"``, and ``"3.12"``.
+- Matrix files ``A_matrix.csv`` and ``B_matrix.csv`` are semicolon-delimited and may include a header row.
+- Index files ``A_matrix_index.csv`` and ``B_matrix_index.csv`` may include a header row.

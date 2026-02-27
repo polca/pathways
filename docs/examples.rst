@@ -15,7 +15,7 @@ Load the datapackage
    from pathways import Pathways
 
    sample_pkg = Path("example/datapackage_sample")
-   pw = Pathways(sample_pkg, ecoinvent_version="3.11", debug=True)
+   pw = Pathways(sample_pkg, ecoinvent_version="3.12", debug=True)
 
    print(pw.scenarios["models"])   # -> ['ModelX']
    print(pw.lcia_methods[:3])       # show first available LCIA methods

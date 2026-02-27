@@ -19,7 +19,7 @@ and export the non-zero entries to Parquet:
    from pathways import Pathways
 
    # 1) Load the datapackage (zip or folder)
-   pw = Pathways("remind-SSP2-NPi.zip", ecoinvent_version="3.11")
+   pw = Pathways("remind-SSP2-NPi.zip", ecoinvent_version="3.12")
 
    # 2) Inspect available LCIA methods
    print("Available LCIA methods:", pw.lcia_methods)
@@ -41,7 +41,7 @@ and export the non-zero entries to Parquet:
    )
 
    # Results are an xarray DataArray with dims:
-   # (act_category, impact_category, year, region, model, scenario)
+   # (act_category, variable, year, region, location, model, scenario, impact_category)
    pw.lca_results
 
    # 4) Aggregate for display: cut small contributions by act_category, optional interpolation
