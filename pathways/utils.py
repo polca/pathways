@@ -372,7 +372,8 @@ def export_results_to_parquet(lca_results: xr.DataArray, filepath: str) -> str:
 
     df = pd.DataFrame(coord_values)
     df["value"] = non_zero_values
-    df.to_parquet(path=filepath, compression="gzip")
+    # Avoid persisting any pandas index metadata/column in the exported parquet.
+    df.to_parquet(path=filepath, compression="gzip", index=False)
 
     print(f"Results exported to {filepath}")
 
@@ -777,13 +778,23 @@ def csv_to_dict(filename: str) -> dict[int, tuple[str, ...]]:
 
     with open(filename, encoding="utf-8") as file:
         reader = csv.reader(file, delimiter=";")
-        for row in reader:
+        for i, row in enumerate(reader):
+            if not row or all(not str(cell).strip() for cell in row):
+                continue
+            row = [str(cell).strip().lstrip("\ufeff") for cell in row]
             # Making sure there are at least 5 items in the row
             if len(row) >= 5:
+                if i == 0 and row[4].lower() == "index":
+                    continue
                 # The first four items are the key, the fifth item is the value
                 key = tuple(row[:4])
                 value = row[4]
-                output_dict[int(value)] = key
+                try:
+                    output_dict[int(value)] = key
+                except ValueError:
+                    logging.warning(
+                        "Row %s has a non-integer index value '%s'; skipping.", row, value
+                    )
             else:
                 logging.warning(f"Row {row} has less than 5 items.")
 

@@ -622,8 +622,11 @@ def run_gsa(directory: [str, None] = STATS_DIR, method: str = "delta") -> None:
                 file,
                 sheet_name="Technology shares",
             )
-        except:
-            df_technology_shares = None
+        except ValueError as err:
+            if "Worksheet named 'Technology shares' not found" in str(err):
+                df_technology_shares = None
+            else:
+                raise
 
         # load content of "Total impacts" sheet into a pandas DataFrame
         df_sum_impacts = pd.read_excel(file, sheet_name="Total impacts")

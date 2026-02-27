@@ -22,6 +22,7 @@ import pandas as pd
 import sparse as sp
 import xarray as xr
 import yaml
+from datapackage import DataPackageException
 
 from edges import get_available_methods
 
@@ -249,7 +250,7 @@ class Pathways:
 
         try:
             resource = self.data.get_resource("classifications")
-        except Exception:
+        except DataPackageException:
             print(
                 "[CLASSIFICATIONS] No 'classifications' resource found in datapackage."
             )
@@ -454,6 +455,7 @@ class Pathways:
         remove_uncertainty: bool = False,
         seed: int = 0,
         multiprocessing: bool = True,
+        postprocess_multiprocessing: bool = False,
         double_accounting: Optional[List[str]] = None,
     ) -> None:
         """Run LCA calculations across selected models, pathways, regions, and years.
@@ -482,6 +484,9 @@ class Pathways:
         :type seed: int
         :param multiprocessing: Whether to parallelize over years using ``multiprocessing.Pool``.
         :type multiprocessing: bool
+        :param postprocess_multiprocessing: Whether to parallelize the post-processing stage that assembles final arrays.
+            Defaults to ``False`` to avoid heavy inter-process serialization overhead.
+        :type postprocess_multiprocessing: bool
         :param double_accounting: Optional activity filters for double-accounting diagnostics.
         :type double_accounting: list[str] | None
         :returns: ``None`` (results are stored on ``self.lca_results``).
@@ -655,7 +660,7 @@ class Pathways:
         # remove None values in results
         results = {k: v for k, v in results.items() if v is not None}
 
-        if multiprocessing:
+        if multiprocessing and postprocess_multiprocessing:
             with Pool(cpu_count(), maxtasksperchild=1000) as p:
                 args = [
                     (

@@ -1,6 +1,7 @@
 from unittest.mock import mock_open, patch
 
 import numpy as np
+import pandas as pd
 import pytest
 import xarray as xr
 
@@ -8,6 +9,7 @@ from pathways.utils import (
     apply_filters,
     clean_cache_directory,
     create_lca_results_array,
+    export_results_to_parquet,
     harmonize_units,
     load_classifications,
     load_mapping,
@@ -234,3 +236,17 @@ def test_load_numpy_array_from_disk_disallows_pickle(tmp_path):
 
     with pytest.raises(ValueError):
         load_numpy_array_from_disk(fp)
+
+
+def test_export_results_to_parquet_does_not_write_index_column(tmp_path):
+    data = xr.DataArray(
+        np.array([[1.0, 0.0], [0.0, 2.0]]),
+        dims=["row_dim", "col_dim"],
+        coords={"row_dim": ["r1", "r2"], "col_dim": ["c1", "c2"]},
+    )
+    out_base = tmp_path / "results"
+    out_path = export_results_to_parquet(data, str(out_base))
+
+    df = pd.read_parquet(out_path)
+    assert "index" not in df.columns
+    assert "__index_level_0__" not in df.columns

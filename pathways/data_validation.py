@@ -35,19 +35,15 @@ def validate_datapackage(
     try:
         validate(data_package.descriptor)
     except DataPackageException as e:
-        # we want to remove errors relating to the YAMl file
-        for error in e.errors:
-            if ".yaml" in str(error):
-                e.errors.remove(error)
-
-        if e.multiple:
-            for error in e.errors:
-                if "not one of" in str(error):
-                    e.errors.remove(error)
-                else:
-                    print(f"Invalid datapackage: {error}")
-        else:
-            raise ValueError(f"Invalid datapackage: {e}")
+        raw_errors = list(getattr(e, "errors", []) or [])
+        filtered_errors = [
+            err
+            for err in raw_errors
+            if ".yaml" not in str(err) and "not one of" not in str(err)
+        ]
+        if filtered_errors:
+            details = "; ".join(str(err) for err in filtered_errors)
+            raise ValueError(f"Invalid datapackage: {details}") from e
 
     # Check that the datapackage contains the required resources
     required_resources = ["scenario_data", "exchanges", "labels", "mapping"]
