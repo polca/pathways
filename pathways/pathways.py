@@ -9,7 +9,8 @@ import logging
 import datetime
 import csv
 import io
-import pickle
+import json
+import os
 import re
 from collections import defaultdict
 from multiprocessing import Pool, cpu_count
@@ -46,6 +47,7 @@ from .utils import (
 )
 
 logger = logging.getLogger(__name__)
+ALLOW_UNSAFE_PICKLE = os.getenv("PATHWAYS_ALLOW_UNSAFE_PICKLE", "").strip() == "1"
 
 
 def _fill_in_result_array(
@@ -75,7 +77,22 @@ def _fill_in_result_array(
         if len(filepath) == 1:
             if Path(filepath[0]).suffix == ".npy":
                 return np.load(filepath[0])
+            elif Path(filepath[0]).suffix == ".json":
+                with open(filepath[0], encoding="utf-8") as f:
+                    payload = json.load(f)
+                return {
+                    tuple(item["activity"]): int(item["index"])
+                    for item in payload
+                }
             elif Path(filepath[0]).suffix == ".pkl":
+                if not ALLOW_UNSAFE_PICKLE:
+                    raise ValueError(
+                        "Refusing to load unsafe pickle cache file. "
+                        "Set PATHWAYS_ALLOW_UNSAFE_PICKLE=1 to temporarily allow legacy cache files, "
+                        "or regenerate cache artifacts."
+                    )
+                import pickle
+
                 with open(filepath[0], "rb") as f:
                     return pickle.load(f)
             else:
@@ -545,8 +562,12 @@ class Pathways:
                 year=years[0],
             )
         except Exception as e:
-            logging.error(f"Error retrieving LCA matrices: {str(e)}")
-            return
+            msg = (
+                "Error retrieving LCA matrices for "
+                f"model={models[0]}, scenario={scenarios[0]}, year={years[0]}: {e}"
+            )
+            logging.error(msg)
+            raise RuntimeError(msg) from e
 
         # Create xarray for storing LCA results if not already present
         if self.lca_results is None:

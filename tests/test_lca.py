@@ -73,3 +73,30 @@ def test_load_matrix_and_index(tmp_path):
     assert np.array_equal(indices_array, expected_output[1])
     assert np.array_equal(flip_array, expected_output[2])
     assert np.array_equal(distributions_array, expected_output[3])
+
+
+def test_load_matrix_and_index_single_row(tmp_path):
+    csv_data = (
+        "row;col;value;uncertainty type;loc;scale;shape;minimum;maximum;negative;flip\n"
+        "1;0;3.5;3;4;5;6;7;8;0;1"
+    )
+    temp_file = tmp_path / "single.csv"
+    temp_file.write_text(csv_data)
+
+    data_array, indices_array, flip_array, distributions_array = load_matrix_and_index(
+        temp_file
+    )
+
+    assert data_array.shape == (1,)
+    assert tuple(indices_array[0]) == (0, 1)
+    assert bool(flip_array[0]) is True
+    assert distributions_array.shape == (1,)
+
+
+def test_load_matrix_and_index_bad_columns(tmp_path):
+    csv_data = "row;col;value\n1;0;3.5"
+    temp_file = tmp_path / "bad_cols.csv"
+    temp_file.write_text(csv_data)
+
+    with pytest.raises(ValueError, match="at least 11"):
+        load_matrix_and_index(temp_file)

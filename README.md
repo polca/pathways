@@ -203,6 +203,16 @@ Delta Moment-Independent Measure (DMIM) sensitivity analysis on the
 results of the Monte Carlo analysis, to rank the influence of each
 uncertain exchange on the results' distribution.
 
+## Cache and Safety Notes
+
+- Matrix files `A_matrix.csv` and `B_matrix.csv` are expected to be semicolon-delimited and can include a header row.
+- Index files (`A_matrix_index.csv`, `B_matrix_index.csv`) can include a header row as well.
+- By default, cache cleanup is restricted to the default Pathways cache directory (`<user_data_dir>/cache`).
+  - To override this behavior intentionally, set `PATHWAYS_ALLOW_UNSAFE_CACHE_DELETE=1`.
+- Legacy pickle cache files are blocked by default for safety.
+  - To temporarily allow loading old pickle cache artifacts, set `PATHWAYS_ALLOW_UNSAFE_PICKLE=1`.
+  - Regenerating cache files is recommended.
+
 ## Contributing
 
 Contributions are welcome, and they are greatly appreciated! Every
@@ -260,4 +270,3 @@ The best way to send feedback is to file an issue on the GitHub repository.
 ## License
 
 ``pathways`` is licensed under the terms of the BSD 3-Clause License.
-

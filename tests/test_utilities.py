@@ -5,10 +5,14 @@ import pytest
 import xarray as xr
 
 from pathways.utils import (
+    apply_filters,
     clean_cache_directory,
     create_lca_results_array,
     harmonize_units,
     load_classifications,
+    load_mapping,
+    load_units_conversion,
+    load_numpy_array_from_disk,
 )
 
 
@@ -169,17 +173,64 @@ def test_clean_cache_directory(tmp_path, monkeypatch):
     # Use a temporary directory to simulate the cache directory
     cache_dir = tmp_path / "cache"
     cache_dir.mkdir()
-    (cache_dir / "temp_cache_file").write_text("This is a cache file.")
+    (cache_dir / "temp_cache_file.npy").write_text("This is a cache file.")
     non_cache_dir = tmp_path / "non_cache"
     non_cache_dir.mkdir()
     (non_cache_dir / "temp_non_cache_file").write_text("This should remain.")
 
     # Use monkeypatch to set DIR_CACHED_DB for the duration of the test
     monkeypatch.setattr("pathways.utils.DIR_CACHED_DB", str(cache_dir))
+    monkeypatch.setattr("pathways.utils.USER_DATA_BASE_DIR", tmp_path)
 
     clean_cache_directory()
 
-    assert not (cache_dir / "temp_cache_file").exists(), "Cache file was not deleted"
+    assert not (cache_dir / "temp_cache_file.npy").exists(), "Cache file was not deleted"
     assert (
         non_cache_dir / "temp_non_cache_file"
     ).exists(), "Non-cache file was incorrectly deleted"
+
+
+def test_clean_cache_directory_rejects_unsafe_path(tmp_path, monkeypatch):
+    cache_dir = tmp_path / "cache-outside"
+    cache_dir.mkdir()
+    monkeypatch.setattr("pathways.utils.DIR_CACHED_DB", str(cache_dir))
+    monkeypatch.setattr("pathways.utils.USER_DATA_BASE_DIR", tmp_path / "base")
+
+    with pytest.raises(ValueError, match="Refusing to clean cache directory"):
+        clean_cache_directory()
+
+
+def test_apply_filters_path_matching_is_not_character_based():
+    technosphere = {("alpha plant", "prod", "EU", "kg"): 1}
+    filters = {"name_fltr": [], "name_mask": [], "product_fltr": [], "product_mask": []}
+    exceptions = {"name_fltr": [], "name_mask": [], "product_fltr": [], "product_mask": []}
+    paths = [["ab"]]
+
+    _, _, filtered_names, _ = apply_filters(technosphere, filters, exceptions, paths)
+    assert filtered_names[("ab",)] == set()
+
+
+def test_load_mapping_requires_dict_yaml(tmp_path):
+    mapping_file = tmp_path / "mapping.yaml"
+    mapping_file.write_text("- a\n- b\n")
+
+    with pytest.raises(ValueError, match="expected a YAML dictionary"):
+        load_mapping(str(mapping_file))
+
+
+def test_load_units_conversion_requires_dict_yaml(tmp_path, monkeypatch):
+    bad_units = tmp_path / "units.yaml"
+    bad_units.write_text("- unit\n")
+    monkeypatch.setattr("pathways.utils.UNITS_CONVERSION", bad_units)
+
+    with pytest.raises(ValueError, match="expected a YAML dictionary"):
+        load_units_conversion()
+
+
+def test_load_numpy_array_from_disk_disallows_pickle(tmp_path):
+    arr = np.array([{"x": 1}], dtype=object)
+    fp = tmp_path / "obj.npy"
+    np.save(fp, arr, allow_pickle=True)
+
+    with pytest.raises(ValueError):
+        load_numpy_array_from_disk(fp)

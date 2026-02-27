@@ -11,6 +11,7 @@ dictionary, checking unclassified activities, and getting activity indices.
 from __future__ import annotations
 import csv
 import logging
+import os
 import warnings
 from collections import OrderedDict
 from datetime import datetime
@@ -24,7 +25,7 @@ import yaml
 from datapackage import DataPackage, DataPackageException
 from premise.geomap import Geomap
 
-from .filesystem_constants import DATA_DIR, DIR_CACHED_DB
+from .filesystem_constants import DATA_DIR, DIR_CACHED_DB, USER_DATA_BASE_DIR
 
 CLASSIFICATIONS = DATA_DIR / "classifications.csv"
 UNITS_CONVERSION = DATA_DIR / "units_conversion.yaml"
@@ -80,7 +81,9 @@ def load_mapping(mapping: [dict, str]) -> dict:
         return mapping
     elif isinstance(mapping, str):
         with open(mapping, "r") as f:
-            data = yaml.full_load(f)
+            data = yaml.safe_load(f)
+        if not isinstance(data, dict):
+            raise ValueError("Invalid geography mapping: expected a YAML dictionary.")
         return data
     else:
         raise ValueError("Invalid geography mapping")
@@ -234,7 +237,9 @@ def load_units_conversion() -> dict:
     """
 
     with open(UNITS_CONVERSION, "r") as f:
-        data = yaml.full_load(f)
+        data = yaml.safe_load(f)
+    if not isinstance(data, dict):
+        raise ValueError("Invalid units conversion mapping: expected a YAML dictionary.")
 
     return data
 
@@ -463,7 +468,7 @@ def prune_zero_coords(da: xr.DataArray, tol: float = 0.0) -> xr.DataArray:
 
 
 def load_numpy_array_from_disk(filepath):
-    """Load a NumPy array saved on disk, allowing pickled objects.
+    """Load a NumPy array saved on disk.
 
     :param filepath: File path produced by ``numpy.save``.
     :type filepath: str | pathlib.Path
@@ -471,7 +476,7 @@ def load_numpy_array_from_disk(filepath):
     :rtype: numpy.ndarray
     """
 
-    return np.load(filepath, allow_pickle=True)
+    return np.load(filepath, allow_pickle=False)
 
 
 def get_visible_files(path: str) -> list[Path]:
@@ -492,8 +497,33 @@ def clean_cache_directory():
     :rtype: None
     """
 
-    for file in get_visible_files(DIR_CACHED_DB):
+    cache_dir = Path(DIR_CACHED_DB).expanduser().resolve()
+    allowed_dir = (Path(USER_DATA_BASE_DIR) / "cache").expanduser().resolve()
+    allow_unsafe = os.getenv("PATHWAYS_ALLOW_UNSAFE_CACHE_DELETE", "").strip() == "1"
+
+    if not allow_unsafe and cache_dir != allowed_dir:
+        raise ValueError(
+            f"Refusing to clean cache directory outside the default cache path: {cache_dir}. "
+            f"Expected: {allowed_dir}. Set PATHWAYS_ALLOW_UNSAFE_CACHE_DELETE=1 to override."
+        )
+    if not cache_dir.exists() or not cache_dir.is_dir():
+        raise ValueError(f"Cache directory does not exist or is not a directory: {cache_dir}")
+
+    allowed_suffixes = {".npy", ".npz", ".json", ".pkl"}
+    removed = 0
+    skipped = 0
+    for file in get_visible_files(cache_dir):
+        if not file.is_file() or file.suffix not in allowed_suffixes:
+            skipped += 1
+            continue
         file.unlink()
+        removed += 1
+    logger.info(
+        "Cache cleanup completed for %s (removed=%s, skipped=%s).",
+        cache_dir,
+        removed,
+        skipped,
+    )
 
 
 def resize_scenario_data(
@@ -959,6 +989,12 @@ def apply_filters(
     def match_mask(item, mask_values):
         return any(msk in item for msk in mask_values)
 
+    def match_path_label(item, path_tokens):
+        if not path_tokens:
+            return False
+        label = " ".join(path_tokens).strip()
+        return bool(label) and label in item
+
     filtered_indices = []
     exception_indices = []
     filtered_names = {tuple(path): set() for path in paths}
@@ -978,8 +1014,7 @@ def apply_filters(
 
         filtered_indices.append(value)
         for path in paths:
-            path_str = " ".join(path)
-            if match_filter(name, path_str):
+            if match_path_label(name, path):
                 filtered_names[tuple(path)].add(name)
 
     for key, value in technosphere_inds.items():
@@ -996,8 +1031,7 @@ def apply_filters(
 
         exception_indices.append(value)
         for path in paths:
-            path_str = " ".join(path)
-            if match_filter(name, path_str):
+            if match_path_label(name, path):
                 exception_names[tuple(path)].add(name)
 
     return filtered_indices, exception_indices, filtered_names, exception_names

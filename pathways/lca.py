@@ -4,8 +4,8 @@ This module contains functions to calculate the Life Cycle Assessment (LCA) resu
 """
 
 from __future__ import annotations
+import json
 import logging
-import pickle
 import uuid
 from pathlib import Path
 from typing import Dict, List, Tuple, Any
@@ -59,7 +59,14 @@ def load_matrix_and_index(
     :rtype: tuple[numpy.ndarray, numpy.ndarray, numpy.ndarray, numpy.ndarray]
     """
     # Load the data from the CSV file
-    array = np.genfromtxt(file_path, delimiter=";", skip_header=1)
+    array = np.genfromtxt(file_path, delimiter=";", skip_header=1, ndmin=2)
+    if array.size == 0 or array.shape[0] == 0:
+        raise ValueError(f"Matrix file {file_path} has no data rows.")
+    if array.shape[1] < 11:
+        raise ValueError(
+            f"Matrix file {file_path} must contain at least 11 semicolon-separated columns; "
+            f"found {array.shape[1]}."
+        )
 
     # give `indices_array` a list of tuples of indices
     indices_array = np.array(
@@ -726,11 +733,14 @@ def process_region(data: Tuple) -> Dict[str, str | List[str] | List[int]]:
         np.save(file=id_uncertainty_indices_filepath, arr=lca.uncertain_parameters)
 
         id_technosphere_indices_filepath = (
-            DIR_CACHED_DB / f"tech_indices_{uuid.uuid4()}.pkl"
+            DIR_CACHED_DB / f"tech_indices_{uuid.uuid4()}.json"
         )
-        pickle.dump(
-            lca.technosphere_indices, open(id_technosphere_indices_filepath, "wb")
-        )
+        payload = [
+            {"activity": list(key), "index": int(value)}
+            for key, value in lca.technosphere_indices.items()
+        ]
+        with open(id_technosphere_indices_filepath, "w", encoding="utf-8") as f:
+            json.dump(payload, f)
 
     # Return file paths + FU variables
     d = {
