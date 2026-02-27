@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "pathways"
-version = "1.0.3"
+version = "1.0.4"
 description = "Scenario-level LCA of energy systems and transition pathways"
 readme = "README.md"
 license = { file = "LICENSE" }
