@@ -988,6 +988,15 @@ def _calculate_year(args: tuple):
             units_map=units,
         )
 
+        if not fus:
+            raise ValueError(
+                "No functional units could be created for "
+                f"region={region}, model={model}, scenario={scenario}, year={year}. "
+                "This usually means mapped activities are missing in the technosphere "
+                "for the selected region/location, or selected variables have no "
+                "mapped non-zero demand."
+            )
+
         if debug:
             logging.info(
                 f"Functional units created. " f"Total number of activities: {len(fus)}"

@@ -583,7 +583,7 @@ def get_activity_indices(
     technosphere_index: Dict[Tuple, Any],
     geo: Geomap,
     debug: bool = False,
-) -> List[int]:
+) -> List[Union[int, None]]:
     """Resolve technosphere indices for the supplied activity descriptors.
 
     :param activities: Sequence of ``(name, product, unit, region)`` tuples.
@@ -594,8 +594,8 @@ def get_activity_indices(
     :type geo: premise.geomap.Geomap
     :param debug: Emit verbose logging when ``True``.
     :type debug: bool
-    :returns: List of indices (``None`` entries are omitted).
-    :rtype: list[int]
+    :returns: List of indices aligned with ``activities``; missing lookups are ``None``.
+    :rtype: list[int | None]
     """
 
     # Cache for previously computed IAM to Ecoinvent mappings
@@ -634,7 +634,7 @@ def get_activity_indices(
             logger.warning(
                 f"Activity {activity} not found in technosphere index. Skipping"
             )
-            pass
+            indices.append(None)
     return indices
 
 
@@ -730,7 +730,7 @@ def fetch_indices(
                 if idx is not None
             }
 
-        if len(variables) != len(idxs):
+        if idxs is None or len(variables) != len(idxs):
             logging.warning(f"Could not find all activities for region {region}.")
 
     return vars_idx

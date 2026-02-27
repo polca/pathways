@@ -10,6 +10,8 @@ from pathways.utils import (
     clean_cache_directory,
     create_lca_results_array,
     export_results_to_parquet,
+    fetch_indices,
+    get_activity_indices,
     harmonize_units,
     load_classifications,
     load_mapping,
@@ -250,3 +252,52 @@ def test_export_results_to_parquet_does_not_write_index_column(tmp_path):
     df = pd.read_parquet(out_path)
     assert "index" not in df.columns
     assert "__index_level_0__" not in df.columns
+
+
+class _FakeGeo:
+    model = "REMIND"
+    geo = {}
+
+    def iam_to_ecoinvent_location(self, _region):
+        return []
+
+    def ecoinvent_to_iam_location(self, _region):
+        return None
+
+
+def test_get_activity_indices_preserves_activity_order_with_missing():
+    technosphere_index = {("act-2", "prod-2", "kilometer", "ZA"): 42}
+    activities = [
+        ("act-1", "prod-1", "kilometer", "ZA"),
+        ("act-2", "prod-2", "kilometer", "ZA"),
+    ]
+
+    indices = get_activity_indices(activities, technosphere_index, _FakeGeo())
+    assert indices == [None, 42]
+
+
+def test_fetch_indices_does_not_shift_indices_when_first_activity_missing():
+    mapping = {
+        "var1": {
+            "dataset": [
+                {"name": "act-1", "reference product": "prod-1", "unit": "kilometer"}
+            ]
+        },
+        "var2": {
+            "dataset": [
+                {"name": "act-2", "reference product": "prod-2", "unit": "kilometer"}
+            ]
+        },
+    }
+    technosphere_index = {("act-2", "prod-2", "kilometer", "ZA"): 42}
+
+    vars_idx = fetch_indices(
+        mapping=mapping,
+        regions=["ZA"],
+        variables=["var1", "var2"],
+        technosphere_index=technosphere_index,
+        geo=_FakeGeo(),
+    )
+
+    assert "var1" not in vars_idx["ZA"]
+    assert vars_idx["ZA"]["var2"]["idx"] == 42
