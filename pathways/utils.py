@@ -43,13 +43,23 @@ def read_indices_csv(file_path: Path) -> dict[tuple[str, str, str, str], int]:
     indices = dict()
     with open(file_path, encoding="utf-8") as read_obj:
         csv_reader = csv.reader(read_obj, delimiter=";")
-        for row in csv_reader:
+        for i, row in enumerate(csv_reader):
+            if not row or all(not str(cell).strip() for cell in row):
+                continue
             try:
+                row = [str(cell).strip().lstrip("\ufeff") for cell in row]
                 indices[(row[0], row[1], row[2], row[3])] = int(row[4])
             except IndexError as err:
                 logging.error(
                     f"Error reading row {row} from {file_path}: {err}. "
                     f"Could it be that the file uses commas instead of semicolons?"
+                )
+            except ValueError:
+                # Ignore header-like rows (e.g. "...;index") but log other malformed rows.
+                if i == 0 and row[4].strip().lower() == "index":
+                    continue
+                logging.error(
+                    f"Error reading row {row} from {file_path}: invalid index value '{row[4]}'."
                 )
     # remove any unicode characters
     indices = {tuple([str(x) for x in k]): v for k, v in indices.items()}

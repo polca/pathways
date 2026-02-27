@@ -18,6 +18,21 @@ def test_read_indices_csv_success():
         assert result == expected_dict
 
 
+def test_read_indices_csv_with_header():
+    mock_csv_data = (
+        "activity;product;location;unit;index\n"
+        "activity;product;location;unit;1\n"
+        "another_activity;another_product;another_location;another_unit;2"
+    )
+    expected_dict = {
+        ("activity", "product", "location", "unit"): 1,
+        ("another_activity", "another_product", "another_location", "another_unit"): 2,
+    }
+    with patch("builtins.open", mock_open(read_data=mock_csv_data)):
+        result = read_indices_csv(Path("dummy_path.csv"))
+        assert result == expected_dict
+
+
 def test_load_matrix_and_index(tmp_path):
     mock_csv_data = (
         "row;col;value;uncertainty type;loc;scale;shape;minimum;maximum;negative;flip"
