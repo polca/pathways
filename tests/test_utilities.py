@@ -188,7 +188,9 @@ def test_clean_cache_directory(tmp_path, monkeypatch):
 
     clean_cache_directory()
 
-    assert not (cache_dir / "temp_cache_file.npy").exists(), "Cache file was not deleted"
+    assert not (
+        cache_dir / "temp_cache_file.npy"
+    ).exists(), "Cache file was not deleted"
     assert (
         non_cache_dir / "temp_non_cache_file"
     ).exists(), "Non-cache file was incorrectly deleted"
@@ -207,7 +209,12 @@ def test_clean_cache_directory_rejects_unsafe_path(tmp_path, monkeypatch):
 def test_apply_filters_path_matching_is_not_character_based():
     technosphere = {("alpha plant", "prod", "EU", "kg"): 1}
     filters = {"name_fltr": [], "name_mask": [], "product_fltr": [], "product_mask": []}
-    exceptions = {"name_fltr": [], "name_mask": [], "product_fltr": [], "product_mask": []}
+    exceptions = {
+        "name_fltr": [],
+        "name_mask": [],
+        "product_fltr": [],
+        "product_mask": [],
+    }
     paths = [["ab"]]
 
     _, _, filtered_names, _ = apply_filters(technosphere, filters, exceptions, paths)

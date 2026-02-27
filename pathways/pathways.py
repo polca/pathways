@@ -81,10 +81,7 @@ def _fill_in_result_array(
             elif Path(filepath[0]).suffix == ".json":
                 with open(filepath[0], encoding="utf-8") as f:
                     payload = json.load(f)
-                return {
-                    tuple(item["activity"]): int(item["index"])
-                    for item in payload
-                }
+                return {tuple(item["activity"]): int(item["index"]) for item in payload}
             elif Path(filepath[0]).suffix == ".pkl":
                 if not ALLOW_UNSAFE_PICKLE:
                     raise ValueError(
