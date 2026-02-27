@@ -4,6 +4,7 @@ This module contains functions to list, and LCIA methods and fill the LCIA chara
 
 import json
 import logging
+from functools import lru_cache
 
 import numpy as np
 from scipy import sparse
@@ -13,6 +14,26 @@ from .filesystem_constants import DATA_DIR
 
 LCIA_METHODS_EI310 = DATA_DIR / "lcia_ei310.json"
 LCIA_METHODS_EI311 = DATA_DIR / "lcia_ei311.json"
+LCIA_METHODS_EI312 = DATA_DIR / "lcia_ei312.json"
+
+
+def _get_lcia_filepath(ei_version: str):
+    if ei_version == "3.12":
+        return LCIA_METHODS_EI312
+    if ei_version == "3.11":
+        return LCIA_METHODS_EI311
+    if ei_version == "3.10":
+        return LCIA_METHODS_EI310
+    raise ValueError(
+        f"Unsupported ecoinvent version '{ei_version}'. Supported versions are '3.10', '3.11' and '3.12'."
+    )
+
+
+@lru_cache(maxsize=3)
+def _load_lcia_data(ei_version: str):
+    filepath = _get_lcia_filepath(ei_version)
+    with open(filepath, "r") as f:
+        return json.load(f)
 
 
 def get_lcia_method_names(ei_version="3.11"):
@@ -24,13 +45,7 @@ def get_lcia_method_names(ei_version="3.11"):
     :rtype: list[str]
     """
 
-    if ei_version == "3.11":
-        filepath = LCIA_METHODS_EI311
-    else:
-        filepath = LCIA_METHODS_EI310
-
-    with open(filepath, "r") as f:
-        data = json.load(f)
+    data = _load_lcia_data(ei_version)
 
     return [" - ".join(x["name"]) for x in data]
 
@@ -65,13 +80,7 @@ def get_lcia_methods(methods: list = None, ei_version="3.11"):
     :rtype: dict[str, dict[tuple[str, str, str], float]]
     """
 
-    if ei_version != "3.11":
-        filepath = LCIA_METHODS_EI311
-    else:
-        filepath = LCIA_METHODS_EI310
-
-    with open(filepath, "r") as f:
-        data = json.load(f)
+    data = _load_lcia_data(ei_version)
 
     if methods:
         data = [x for x in data if " - ".join(x["name"]) in methods]

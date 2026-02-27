@@ -6,8 +6,10 @@ import pytest
 from scipy.sparse import csr_matrix
 
 from pathways.lcia import (
+    _load_lcia_data,
     fill_characterization_factors_matrices,
     format_lcia_method_exchanges,
+    get_lcia_methods,
     get_lcia_method_names,
 )
 
@@ -99,3 +101,29 @@ def test_fill_characterization_factors_matrices(
     np.testing.assert_array_equal(
         matrix.indptr, np.array([0, 2]), "Matrix indices does not match expected values"
     )
+
+
+def test_lcia_version_file_selection(tmp_path, monkeypatch):
+    fp310 = tmp_path / "lcia310.json"
+    fp311 = tmp_path / "lcia311.json"
+    fp312 = tmp_path / "lcia312.json"
+    fp310.write_text('[{"name": ["M310", "A"], "exchanges": []}]')
+    fp311.write_text('[{"name": ["M311", "A"], "exchanges": []}]')
+    fp312.write_text('[{"name": ["M312", "A"], "exchanges": []}]')
+
+    monkeypatch.setattr("pathways.lcia.LCIA_METHODS_EI310", fp310)
+    monkeypatch.setattr("pathways.lcia.LCIA_METHODS_EI311", fp311)
+    monkeypatch.setattr("pathways.lcia.LCIA_METHODS_EI312", fp312)
+    _load_lcia_data.cache_clear()
+
+    assert get_lcia_method_names("3.10") == ["M310 - A"]
+    assert get_lcia_method_names("3.11") == ["M311 - A"]
+    assert get_lcia_method_names("3.12") == ["M312 - A"]
+    assert list(get_lcia_methods(ei_version="3.10").keys()) == ["M310 - A"]
+    assert list(get_lcia_methods(ei_version="3.11").keys()) == ["M311 - A"]
+    assert list(get_lcia_methods(ei_version="3.12").keys()) == ["M312 - A"]
+
+
+def test_lcia_unsupported_version_raises():
+    with pytest.raises(ValueError, match="Unsupported ecoinvent version"):
+        get_lcia_method_names("9.99")
