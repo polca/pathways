@@ -239,7 +239,9 @@ def load_units_conversion() -> dict:
     with open(UNITS_CONVERSION, "r") as f:
         data = yaml.safe_load(f)
     if not isinstance(data, dict):
-        raise ValueError("Invalid units conversion mapping: expected a YAML dictionary.")
+        raise ValueError(
+            "Invalid units conversion mapping: expected a YAML dictionary."
+        )
 
     return data
 
@@ -508,7 +510,9 @@ def clean_cache_directory():
             f"Expected: {allowed_dir}. Set PATHWAYS_ALLOW_UNSAFE_CACHE_DELETE=1 to override."
         )
     if not cache_dir.exists() or not cache_dir.is_dir():
-        raise ValueError(f"Cache directory does not exist or is not a directory: {cache_dir}")
+        raise ValueError(
+            f"Cache directory does not exist or is not a directory: {cache_dir}"
+        )
 
     allowed_suffixes = {".npy", ".npz", ".json", ".pkl"}
     removed = 0
@@ -793,7 +797,9 @@ def csv_to_dict(filename: str) -> dict[int, tuple[str, ...]]:
                     output_dict[int(value)] = key
                 except ValueError:
                     logging.warning(
-                        "Row %s has a non-integer index value '%s'; skipping.", row, value
+                        "Row %s has a non-integer index value '%s'; skipping.",
+                        row,
+                        value,
                     )
             else:
                 logging.warning(f"Row {row} has less than 5 items.")
