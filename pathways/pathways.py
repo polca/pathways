@@ -438,9 +438,7 @@ class Pathways:
         scenario_data["year"] = pd.to_numeric(
             scenario_data["year"], errors="raise"
         ).astype(int)
-        scenario_data["value"] = pd.to_numeric(
-            scenario_data["value"], errors="coerce"
-        )
+        scenario_data["value"] = pd.to_numeric(scenario_data["value"], errors="coerce")
         scenario_data = scenario_data[scenario_data["value"].notna()]
         scenario_data["model"] = scenario_data["model"].str.lower()
 
