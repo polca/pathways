@@ -1247,10 +1247,13 @@ def _calculate_year(args: tuple):
         lca.acts_category_idx_dict = acts_category_idx_dict
         lca.acts_location_idx_dict = acts_location_idx_dict
 
+        uncertain_parameter_indices = {
+            value for tup in lca.uncertain_parameters for value in tup
+        }
         lca.technosphere_indices = {
             k: v
             for k, v in lca.technosphere_indices.items()
-            if v in {value for tup in lca.uncertain_parameters for value in tup}
+            if v in uncertain_parameter_indices
         }
 
         if methods:

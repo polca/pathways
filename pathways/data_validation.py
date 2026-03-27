@@ -4,6 +4,7 @@ in the datapackage.json file.
 """
 
 import logging
+from pathlib import Path
 
 import datapackage
 import pandas as pd
@@ -60,9 +61,14 @@ def validate_datapackage(
             raise ValueError(f"Missing metadata: {metadata}")
 
     # extract the scenario data
-    data = data_package.get_resource("scenario_data").read()
-    headers = data_package.get_resource("scenario_data").headers
-    dataframe = pd.DataFrame(data, columns=headers)
+    scenario_resource = data_package.get_resource("scenario_data")
+    scenario_source = getattr(scenario_resource, "source", None)
+    if scenario_source and Path(scenario_source).exists():
+        dataframe = pd.read_csv(scenario_source)
+    else:
+        data = scenario_resource.read()
+        headers = scenario_resource.headers
+        dataframe = pd.DataFrame(data, columns=headers)
 
     # Check that the scenario data is valid
     validate_scenario_data(dataframe)
@@ -109,7 +115,12 @@ def validate_mapping(resource: datapackage.Resource):
     :rtype: None
     """
 
-    mapping = yaml.safe_load(resource.raw_read())
+    source = getattr(resource, "source", None)
+    if source and Path(source).exists():
+        with open(source, "r", encoding="utf-8") as handle:
+            mapping = yaml.safe_load(handle)
+    else:
+        mapping = yaml.safe_load(resource.raw_read())
 
     # Check that the data has the required structure
     required_keys = [

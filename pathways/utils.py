@@ -10,9 +10,12 @@ dictionary, checking unclassified activities, and getting activity indices.
 
 from __future__ import annotations
 import csv
+import hashlib
 import logging
 import os
+import shutil
 import warnings
+import zipfile
 from collections import OrderedDict
 from datetime import datetime
 from pathlib import Path
@@ -1089,7 +1092,62 @@ def _get_mapping(data) -> dict:
     :returns: Mapping dictionary parsed from ``mapping`` resource.
     :rtype: dict
     """
-    return yaml.safe_load(data.get_resource("mapping").raw_read())
+    resource = data.get_resource("mapping")
+    source = getattr(resource, "source", None)
+    if source and Path(source).exists():
+        with open(source, "r", encoding="utf-8") as handle:
+            return yaml.safe_load(handle)
+
+    return yaml.safe_load(resource.raw_read())
+
+
+def _datapackage_cache_dir() -> Path:
+    """Return the persistent directory used for extracted datapackage archives."""
+    cache_dir = Path(DIR_CACHED_DB) / "datapackages"
+    cache_dir.mkdir(parents=True, exist_ok=True)
+    return cache_dir
+
+
+def _resolve_datapackage_path(datapackage: str | Path) -> Path:
+    """Return a descriptor path, extracting zipped datapackages into a stable cache."""
+    datapackage_path = Path(datapackage).expanduser().resolve()
+
+    if datapackage_path.suffix.lower() != ".zip":
+        return datapackage_path
+
+    stat = datapackage_path.stat()
+    cache_key = hashlib.sha1(
+        f"{datapackage_path}:{stat.st_size}:{stat.st_mtime_ns}".encode("utf-8")
+    ).hexdigest()
+    target_dir = _datapackage_cache_dir() / f"{datapackage_path.stem}_{cache_key}"
+    descriptor_path = target_dir / "datapackage.json"
+
+    if descriptor_path.exists():
+        return descriptor_path
+
+    tmp_dir = target_dir.with_name(f"{target_dir.name}.{os.getpid()}.tmp")
+    shutil.rmtree(tmp_dir, ignore_errors=True)
+    tmp_dir.mkdir(parents=True, exist_ok=True)
+
+    try:
+        with zipfile.ZipFile(datapackage_path) as zip_file:
+            zip_file.extractall(tmp_dir)
+
+        extracted_descriptor = tmp_dir / "datapackage.json"
+        if not extracted_descriptor.exists():
+            raise FileNotFoundError(
+                f"No datapackage.json found after extracting {datapackage_path}."
+            )
+
+        try:
+            tmp_dir.rename(target_dir)
+        except FileExistsError:
+            shutil.rmtree(tmp_dir, ignore_errors=True)
+
+        return descriptor_path
+    except Exception:
+        shutil.rmtree(tmp_dir, ignore_errors=True)
+        raise
 
 
 def _read_datapackage(datapackage: str) -> DataPackage:
@@ -1101,4 +1159,4 @@ def _read_datapackage(datapackage: str) -> DataPackage:
     :rtype: datapackage.DataPackage
     """
 
-    return DataPackage(datapackage)
+    return DataPackage(str(_resolve_datapackage_path(datapackage)))

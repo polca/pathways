@@ -270,40 +270,50 @@ class Pathways:
 
         if resource:
             path = resource.descriptor.get("path", "").lower()
-            raw = resource.raw_read()
-
-            if isinstance(raw, bytes):
-                raw = raw.decode("utf-8")
-
             if path.endswith(".csv"):
-                reader = csv.DictReader(io.StringIO(raw))
+                source = getattr(resource, "source", None)
+                if source and Path(source).exists():
+                    handle = open(source, newline="", encoding="utf-8-sig")
+                    close_handle = True
+                else:
+                    raw = resource.raw_read()
+                    if isinstance(raw, bytes):
+                        raw = raw.decode("utf-8")
+                    handle = io.StringIO(raw)
+                    close_handle = False
 
-                n_rows = 0
-                n_used = 0
+                try:
+                    reader = csv.DictReader(handle)
 
-                for row in reader:
-                    n_rows += 1
-                    name = (row.get("name") or "").strip()
-                    ref = (row.get("reference product") or "").strip()
+                    n_rows = 0
+                    n_used = 0
 
-                    system = (
-                        row.get("classification_system") or row.get("system") or ""
-                    ).strip()
-                    code = (
-                        row.get("classification_code") or row.get("code") or ""
-                    ).strip()
+                    for row in reader:
+                        n_rows += 1
+                        name = (row.get("name") or "").strip()
+                        ref = (row.get("reference product") or "").strip()
 
-                    if not name or not ref or not system or not code:
-                        continue
+                        system = (
+                            row.get("classification_system") or row.get("system") or ""
+                        ).strip()
+                        code = (
+                            row.get("classification_code") or row.get("code") or ""
+                        ).strip()
 
-                    # Only keep the chosen classification system, e.g. "CPC"
-                    if system != self.classification_system:
-                        continue
+                        if not name or not ref or not system or not code:
+                            continue
 
-                    key = (name, ref)
+                        # Only keep the chosen classification system, e.g. "CPC"
+                        if system != self.classification_system:
+                            continue
 
-                    self.classifications[key] = code
-                    n_used += 1
+                        key = (name, ref)
+
+                        self.classifications[key] = code
+                        n_used += 1
+                finally:
+                    if close_handle:
+                        handle.close()
 
         fallback = load_classifications()  # dict[(name, ref) -> list[(system, code)]]
 
@@ -422,25 +432,29 @@ class Pathways:
 
         scenario_data = scenario_data[
             scenario_data["variables"].isin(list(self.mapping.keys()))
-        ]
+        ].copy()
 
-        # convert `year` column to integer
-        scenario_data.loc[:, "year"] = scenario_data["year"].astype(int)
+        # Normalize dtypes before aggregation so pandas can use the fast numeric path.
+        scenario_data["year"] = pd.to_numeric(
+            scenario_data["year"], errors="raise"
+        ).astype(int)
+        scenario_data["value"] = pd.to_numeric(
+            scenario_data["value"], errors="coerce"
+        )
+        scenario_data = scenario_data[scenario_data["value"].notna()]
+        scenario_data["model"] = scenario_data["model"].str.lower()
 
         # Convert to xarray DataArray
         data = (
-            scenario_data.groupby(["model", "pathway", "variables", "region", "year"])[
-                "value"
-            ]
+            scenario_data.groupby(
+                ["model", "pathway", "variables", "region", "year"], sort=False
+            )["value"]
             .mean()
             .to_xarray()
         )
 
         # fill missing values with zeros
         data = data.fillna(0)
-
-        # convert values under "model" column to lower case
-        data.coords["model"] = [x.lower() for x in data.coords["model"].values]
 
         # Add units
         lookup = (
