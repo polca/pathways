@@ -197,7 +197,9 @@ def test_clean_cache_directory(tmp_path, monkeypatch):
     ).exists(), "Non-cache file was incorrectly deleted"
 
 
-def test_clean_cache_directory_preserves_persistent_subdirectories(tmp_path, monkeypatch):
+def test_clean_cache_directory_preserves_persistent_subdirectories(
+    tmp_path, monkeypatch
+):
     cache_dir = tmp_path / "cache"
     cache_dir.mkdir()
     persistent_dir = cache_dir / "matrix_arrays"

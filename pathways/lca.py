@@ -741,7 +741,9 @@ def process_region(data: Tuple) -> Dict[str, str | List[str] | List[int]]:
             S = H.sum(axis=1)  # sum over biosphere -> (n_methods, n_cols)
             grouped = S.to_scipy_sparse().tocsr() @ aggregation_matrix
             rows.append(
-                spnd.COO.from_scipy_sparse(grouped).reshape((grouped.shape[0], n_cat, n_loc))
+                spnd.COO.from_scipy_sparse(grouped).reshape(
+                    (grouped.shape[0], n_cat, n_loc)
+                )
             )
         return spnd.stack(rows, axis=0)  # (n_inv, n_methods, n_cat, n_loc)
 
@@ -751,7 +753,9 @@ def process_region(data: Tuple) -> Dict[str, str | List[str] | List[int]]:
         for v in invs:
             grouped = (C @ v) @ aggregation_matrix  # (n_methods, n_cat * n_loc)
             slices.append(
-                spnd.COO.from_scipy_sparse(grouped).reshape((grouped.shape[0], n_cat, n_loc))
+                spnd.COO.from_scipy_sparse(grouped).reshape(
+                    (grouped.shape[0], n_cat, n_loc)
+                )
             )
         return spnd.stack(slices, axis=0)  # (n_inv, n_methods, n_cat, n_loc)
 
@@ -775,9 +779,7 @@ def process_region(data: Tuple) -> Dict[str, str | List[str] | List[int]]:
                 raise ValueError(
                     "Edges methods require a 3D pydata.sparse COO characterization tensor (n_methods, n_bio, n_cols)."
                 )
-            iter_results = _inventory_results_4d_edges(
-                lca, characterization_matrix
-            )
+            iter_results = _inventory_results_4d_edges(lca, characterization_matrix)
         else:
             # characterization_matrix must be a 2D SciPy sparse (n_methods, n_bio)
             if (
@@ -1230,7 +1232,9 @@ def _calculate_year(args: tuple):
                     demands=fus,
                     method_config={"impact_categories": []},
                     data_objs=[bw_datapackage, bw_correlated],
-                    use_distributions=True if effective_use_distributions > 0 else False,
+                    use_distributions=(
+                        True if effective_use_distributions > 0 else False
+                    ),
                     use_arrays=True,
                     seed_override=seed,
                 )

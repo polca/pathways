@@ -125,7 +125,9 @@ def test_load_matrix_and_index_reuses_persistent_cache(tmp_path, monkeypatch):
         assert np.array_equal(left, right)
 
 
-def test_load_matrix_and_index_cache_survives_datapackage_reextract(tmp_path, monkeypatch):
+def test_load_matrix_and_index_cache_survives_datapackage_reextract(
+    tmp_path, monkeypatch
+):
     csv_data = (
         "row;col;value;uncertainty type;loc;scale;shape;minimum;maximum;negative;flip\n"
         "1;0;3.5;3;4;5;6;7;8;0;1\n"
@@ -133,10 +135,26 @@ def test_load_matrix_and_index_cache_survives_datapackage_reextract(tmp_path, mo
     )
     cache_dir = tmp_path / "cache"
     cache_dir.mkdir()
-    first_file = tmp_path / "extract_a" / "inventories" / "model" / "scenario" / "2025" / "A_matrix.csv"
+    first_file = (
+        tmp_path
+        / "extract_a"
+        / "inventories"
+        / "model"
+        / "scenario"
+        / "2025"
+        / "A_matrix.csv"
+    )
     first_file.parent.mkdir(parents=True)
     first_file.write_text(csv_data)
-    second_file = tmp_path / "extract_b" / "inventories" / "model" / "scenario" / "2025" / "A_matrix.csv"
+    second_file = (
+        tmp_path
+        / "extract_b"
+        / "inventories"
+        / "model"
+        / "scenario"
+        / "2025"
+        / "A_matrix.csv"
+    )
     second_file.parent.mkdir(parents=True)
     second_file.write_text(csv_data)
 
@@ -145,7 +163,9 @@ def test_load_matrix_and_index_cache_survives_datapackage_reextract(tmp_path, mo
     load_matrix_and_index(first_file)
 
     def fail_genfromtxt(*args, **kwargs):
-        raise AssertionError("genfromtxt should not be called after datapackage re-extraction")
+        raise AssertionError(
+            "genfromtxt should not be called after datapackage re-extraction"
+        )
 
     monkeypatch.setattr("pathways.lca.np.genfromtxt", fail_genfromtxt)
     second = load_matrix_and_index(second_file)

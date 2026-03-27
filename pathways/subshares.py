@@ -375,7 +375,9 @@ def find_technology_indices(
     groups: list[str] | None = None,
 ) -> dict:
     """Resolve technosphere indices for each technology and region combination."""
-    technologies_dict = load_subshares(subshares=subshares, groups=groups, regions=regions)
+    technologies_dict = load_subshares(
+        subshares=subshares, groups=groups, regions=regions
+    )
     indices_dict = {}
 
     for region in regions:
@@ -493,7 +495,10 @@ def _build_correlated_array(
     indices = np.array(list(updates), dtype=bwp.INDICES_DTYPE)
     if updates:
         data = np.vstack(
-            [np.atleast_1d(np.asarray(values, dtype=float)) for values in updates.values()]
+            [
+                np.atleast_1d(np.asarray(values, dtype=float))
+                for values in updates.values()
+            ]
         )
     else:
         data = np.empty((0, iteration_count or 0), dtype=float)
@@ -582,9 +587,7 @@ def adjust_matrix_based_on_shares(
 
             year_shares = regional_year_shares[year]
             if iteration_count is None and year_shares:
-                iteration_count = len(
-                    np.atleast_1d(next(iter(year_shares.values())))
-                )
+                iteration_count = len(np.atleast_1d(next(iter(year_shares.values()))))
 
             if group_has_targets:
                 targets = targets_by_region.get(region, [])
@@ -632,7 +635,9 @@ def adjust_matrix_based_on_shares(
                         if other_supplier == name or other_supplier not in year_shares:
                             continue
 
-                        additional_amount = abs(initial_amount) * year_shares[other_supplier]
+                        additional_amount = (
+                            abs(initial_amount) * year_shares[other_supplier]
+                        )
                         set_update(
                             technosphere_updates,
                             other_supplier_tech["idx"],
@@ -694,14 +699,18 @@ def _project_to_bounded_simplex(
         else:
             upper_tau = tau
 
-    projected = np.clip(values - 0.5 * (lower_tau + upper_tau), lower_bounds, upper_bounds)
+    projected = np.clip(
+        values - 0.5 * (lower_tau + upper_tau), lower_bounds, upper_bounds
+    )
     residual = target - projected.sum()
 
     if abs(residual) > 1e-8:
         slack = upper_bounds - projected if residual > 0 else projected - lower_bounds
         candidates = slack > tol
         if not np.any(candidates):
-            raise ValueError("Unable to normalize sampled shares within the configured bounds.")
+            raise ValueError(
+                "Unable to normalize sampled shares within the configured bounds."
+            )
 
         weights = slack[candidates]
         weights = weights / weights.sum()
@@ -726,7 +735,9 @@ def load_and_normalize_shares(
 ) -> dict:
     """Sample technology shares within uncertainty bounds and normalize totals."""
     if iterations <= 0:
-        raise ValueError("Subshare sampling requires `iterations` to be greater than zero.")
+        raise ValueError(
+            "Subshare sampling requires `iterations` to be greater than zero."
+        )
 
     shares = {}
     for technology_group, technologies in ranges.items():
@@ -736,7 +747,9 @@ def load_and_normalize_shares(
                     uncertainty_base = UncertaintyBase.from_dicts(share)
                     random_generator = MCRandomNumberGenerator(
                         params=uncertainty_base,
-                        seed=_stable_seed(seed, technology_group, region, technology, year),
+                        seed=_stable_seed(
+                            seed, technology_group, region, technology, year
+                        ),
                     )
 
                     samples = np.atleast_1d(
@@ -748,9 +761,9 @@ def load_and_normalize_shares(
                         )
                     )
 
-                    shares.setdefault(technology_group, {}).setdefault(region, {}).setdefault(
-                        year, {}
-                    )[technology] = samples
+                    shares.setdefault(technology_group, {}).setdefault(
+                        region, {}
+                    ).setdefault(year, {})[technology] = samples
 
     for technology_group, regions in shares.items():
         for region, years in regions.items():
@@ -846,10 +859,14 @@ def interpolate_for_year(
 
     for technology in shares[technology_group][region][lower_year]:
         shares_lower = np.atleast_1d(
-            np.asarray(shares[technology_group][region][lower_year][technology], dtype=float)
+            np.asarray(
+                shares[technology_group][region][lower_year][technology], dtype=float
+            )
         )
         shares_upper = np.atleast_1d(
-            np.asarray(shares[technology_group][region][upper_year][technology], dtype=float)
+            np.asarray(
+                shares[technology_group][region][upper_year][technology], dtype=float
+            )
         )
         interpolated[technology] = shares_lower + weight * (shares_upper - shares_lower)
 
