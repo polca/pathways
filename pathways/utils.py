@@ -858,32 +858,25 @@ def _group_technosphere_indices(
     :rtype: collections.OrderedDict[str, list[int]]
     """
 
-    # create an ordered dictionary to store the indices
-    acts_dict = OrderedDict(
-        (
-            value,
-            [
-                int(technosphere_indices[a])
-                for a in technosphere_indices
-                if group_by(a) == value
-            ],
-        )
-        for value in group_values
-    )
+    acts_dict = OrderedDict((value, []) for value in group_values)
 
     if mapping:
-        aggregated = {}
-        for k, v in acts_dict.items():
-            if mapping.get(k, k) in aggregated:
-                aggregated[mapping.get(k, k)].extend(v)
-            else:
-                aggregated[mapping.get(k, k)] = v
+        mapped_order = list(OrderedDict((value, None) for value in mapping.values()))
+        aggregated = OrderedDict((value, []) for value in mapped_order)
 
-        # reorder the dictionary to match with the
-        # order of mapping.values()
-        aggregated = {k: aggregated[k] for k in mapping.values()}
+        for activity, index in technosphere_indices.items():
+            group = group_by(activity)
+            mapped_group = mapping.get(group, group)
+            if mapped_group in aggregated:
+                aggregated[mapped_group].append(int(index))
 
         return aggregated
+
+    valid_groups = set(acts_dict)
+    for activity, index in technosphere_indices.items():
+        group = group_by(activity)
+        if group in valid_groups:
+            acts_dict[group].append(int(index))
 
     return acts_dict
 

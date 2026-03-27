@@ -12,6 +12,7 @@ from pathways.utils import (
     export_results_to_parquet,
     fetch_indices,
     get_activity_indices,
+    _group_technosphere_indices,
     harmonize_units,
     load_classifications,
     load_mapping,
@@ -196,6 +197,23 @@ def test_clean_cache_directory(tmp_path, monkeypatch):
     ).exists(), "Non-cache file was incorrectly deleted"
 
 
+def test_clean_cache_directory_preserves_persistent_subdirectories(tmp_path, monkeypatch):
+    cache_dir = tmp_path / "cache"
+    cache_dir.mkdir()
+    persistent_dir = cache_dir / "matrix_arrays"
+    persistent_dir.mkdir()
+    (cache_dir / "temp_cache_file.npy").write_text("temporary")
+    (persistent_dir / "parsed_matrix.npz").write_text("persistent")
+
+    monkeypatch.setattr("pathways.utils.DIR_CACHED_DB", str(cache_dir))
+    monkeypatch.setattr("pathways.utils.USER_DATA_BASE_DIR", tmp_path)
+
+    clean_cache_directory()
+
+    assert not (cache_dir / "temp_cache_file.npy").exists()
+    assert (persistent_dir / "parsed_matrix.npz").exists()
+
+
 def test_clean_cache_directory_rejects_unsafe_path(tmp_path, monkeypatch):
     cache_dir = tmp_path / "cache-outside"
     cache_dir.mkdir()
@@ -204,6 +222,48 @@ def test_clean_cache_directory_rejects_unsafe_path(tmp_path, monkeypatch):
 
     with pytest.raises(ValueError, match="Refusing to clean cache directory"):
         clean_cache_directory()
+
+
+def test_group_technosphere_indices_single_pass_behavior():
+    technosphere = {
+        ("a1", "p1", "kg", "CH"): 1,
+        ("a2", "p2", "kg", "RER"): 2,
+        ("a3", "p3", "kg", "CH"): 3,
+        ("a4", "p4", "kg", "US"): 4,
+    }
+
+    grouped = _group_technosphere_indices(
+        technosphere_indices=technosphere,
+        group_by=lambda x: x[-1],
+        group_values=["CH", "US", "RER", "GLO"],
+    )
+
+    assert list(grouped.keys()) == ["CH", "US", "RER", "GLO"]
+    assert grouped["CH"] == [1, 3]
+    assert grouped["US"] == [4]
+    assert grouped["RER"] == [2]
+    assert grouped["GLO"] == []
+
+
+def test_group_technosphere_indices_with_mapping():
+    technosphere = {
+        ("a1", "p1", "kg", "CH"): 1,
+        ("a2", "p2", "kg", "RER"): 2,
+        ("a3", "p3", "kg", "US"): 3,
+        ("a4", "p4", "kg", "CN"): 4,
+    }
+
+    grouped = _group_technosphere_indices(
+        technosphere_indices=technosphere,
+        group_by=lambda x: x[-1],
+        group_values=["CH", "RER", "US", "CN"],
+        mapping={"CH": "EUR", "RER": "EUR", "US": "USA", "CN": "CHA"},
+    )
+
+    assert list(grouped.keys()) == ["EUR", "USA", "CHA"]
+    assert grouped["EUR"] == [1, 2]
+    assert grouped["USA"] == [3]
+    assert grouped["CHA"] == [4]
 
 
 def test_apply_filters_path_matching_is_not_character_based():

@@ -74,6 +74,21 @@ def _fill_in_result_array(
     :rtype: numpy.ndarray
     """
 
+    def _ensure_iteration_axis(array: np.ndarray) -> np.ndarray:
+        if use_distributions <= 0:
+            return array
+
+        if array.ndim == 4:
+            return array[..., np.newaxis]
+
+        if array.ndim != 5:
+            raise ValueError(
+                "Expected Monte Carlo results with 4 or 5 dimensions, "
+                f"got shape {array.shape}."
+            )
+
+        return array
+
     def _load_array(filepath):
         if len(filepath) == 1:
             if Path(filepath[0]).suffix == ".npy":
@@ -102,7 +117,7 @@ def _fill_in_result_array(
 
     # Pre-loading data from disk if possible
     iteration_results = {
-        region: _load_array(data["iterations_results"])
+        region: _ensure_iteration_axis(_load_array(data["iterations_results"]))
         for region, data in result.items()
     }
 
@@ -451,7 +466,8 @@ class Pathways:
         variables: Optional[List[str]] = None,
         demand_cutoff: float = 1e-3,
         use_distributions: int = 0,
-        subshares: bool = False,
+        subshares: bool | dict | str | Path = False,
+        subshare_groups: Optional[List[str]] = None,
         remove_uncertainty: bool = False,
         seed: int = 0,
         multiprocessing: bool = True,
@@ -476,8 +492,13 @@ class Pathways:
         :type demand_cutoff: float
         :param use_distributions: Number of Monte Carlo iterations; ``0`` performs deterministic runs.
         :type use_distributions: int
-        :param subshares: Whether to sample sub-technology market share distributions.
-        :type subshares: bool
+        :param subshares: ``False`` disables sub-technology sampling. ``True`` uses the
+            bundled configuration. A dict or YAML path can be supplied for a custom,
+            region-aware configuration.
+        :type subshares: bool | dict | str | pathlib.Path
+        :param subshare_groups: Optional list of technology groups to activate from the
+            selected subshare configuration.
+        :type subshare_groups: list[str] | None
         :param remove_uncertainty: Replace exchange uncertainty parameters with deterministic values.
         :type remove_uncertainty: bool
         :param seed: Random seed forwarded to ``bw2calc`` when sampling.
@@ -598,10 +619,24 @@ class Pathways:
 
         # generate share of sub-technologies
         shares = None
-        if subshares is True:
+        subshares_config = None
+        subshares_enabled = subshares not in (False, None)
+        if subshares_enabled:
+            if use_distributions <= 0:
+                raise ValueError(
+                    "`subshares` requires `use_distributions` to be greater than zero."
+                )
+
+            if subshares is not True:
+                subshares_config = subshares
+
             shares = generate_samples(
                 years=self.scenarios.coords["year"].values.tolist(),
                 iterations=use_distributions,
+                regions=list(regions),
+                seed=seed,
+                subshares=subshares_config,
+                groups=subshare_groups,
             )
 
         # Iterate over each combination of model, scenario, and year
@@ -632,6 +667,8 @@ class Pathways:
                         self.debug,
                         use_distributions,
                         shares,
+                        subshares_config,
+                        subshare_groups,
                         uncertain_parameters,
                         remove_uncertainty,
                         seed,

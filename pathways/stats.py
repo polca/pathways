@@ -559,11 +559,12 @@ def log_mc_parameters_to_excel(
 
             if shares:
                 sub_shares = {}
-                for k, v in shares.items():
-                    for x, y in v.items():
-                        if x == year:
-                            for z, w in y.items():
-                                sub_shares[f"{k} - {z}"] = w
+                for group, regions in shares.items():
+                    if region not in regions or year not in regions[region]:
+                        continue
+
+                    for technology, sampled_values in regions[region][year].items():
+                        sub_shares[f"{group} - {technology}"] = sampled_values
 
                 df_technology_shares = pd.concat(
                     [
