@@ -313,7 +313,9 @@ def create_lca_results_array(
     aggregate_by = set(aggregate_by or [])
 
     coords = {
-        "act_category": ["aggregated"] if "act_category" in aggregate_by else act_categories,
+        "act_category": (
+            ["aggregated"] if "act_category" in aggregate_by else act_categories
+        ),
         "variable": list(mapping.keys()),
         "year": years,
         "region": regions,

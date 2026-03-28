@@ -332,8 +332,12 @@ def test_jacobi_gmres_multilca_solves_multiple_demands():
 
     lca.lci_calculation()
 
-    expected_a = np.linalg.solve(lca.technosphere_matrix.toarray(), np.array([1.0, 0.0]))
-    expected_b = np.linalg.solve(lca.technosphere_matrix.toarray(), np.array([0.0, 1.0]))
+    expected_a = np.linalg.solve(
+        lca.technosphere_matrix.toarray(), np.array([1.0, 0.0])
+    )
+    expected_b = np.linalg.solve(
+        lca.technosphere_matrix.toarray(), np.array([0.0, 1.0])
+    )
 
     assert np.allclose(lca.supply_arrays["a"], expected_a)
     assert np.allclose(lca.supply_arrays["b"], expected_b)
