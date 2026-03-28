@@ -188,8 +188,7 @@ class JacobiGMRESMultiLCA(bc.MultiLCA):
             [
                 (
                     name,
-                    self.biosphere_matrix
-                    @ sparse.spdiags([arr], [0], count, count),
+                    self.biosphere_matrix @ sparse.spdiags([arr], [0], count, count),
                 )
                 for name, arr in self.supply_arrays.items()
             ]
