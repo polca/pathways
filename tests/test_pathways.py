@@ -30,6 +30,29 @@ def test_get_mapping():
     ), "Mapping does not match expected dictionary"
 
 
+def test_get_mapping_reads_mapping_source_file(tmp_path):
+    mapping_path = tmp_path / "mapping.yaml"
+    mapping_path.write_text(
+        """
+variable1:
+  dataset: [from-file]
+""".lstrip(),
+        encoding="utf-8",
+    )
+
+    resource = Mock()
+    resource.source = str(mapping_path)
+    resource.raw_read.return_value = """
+    variable1:
+      dataset: [from-raw-read]
+    """
+
+    mock_data = Mock()
+    mock_data.get_resource.return_value = resource
+
+    assert _get_mapping(mock_data) == {"variable1": {"dataset": ["from-file"]}}
+
+
 def test_fill_in_result_array_handles_single_mc_iteration_file(tmp_path, monkeypatch):
     iter_array = sp.COO.from_numpy(np.arange(24, dtype=float).reshape(2, 1, 3, 4))
     iter_path = tmp_path / "iter_results.npz"

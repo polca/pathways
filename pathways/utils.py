@@ -1101,8 +1101,13 @@ def _get_mapping(data) -> dict:
     """
     resource = data.get_resource("mapping")
     source = getattr(resource, "source", None)
-    if source and Path(source).exists():
-        with open(source, "r", encoding="utf-8") as handle:
+    try:
+        source_path = Path(source) if source is not None else None
+    except TypeError:
+        source_path = None
+
+    if source_path and source_path.exists():
+        with open(source_path, "r", encoding="utf-8") as handle:
             return yaml.safe_load(handle)
 
     return yaml.safe_load(resource.raw_read())
