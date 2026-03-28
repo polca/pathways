@@ -50,3 +50,32 @@ and export the non-zero entries to Parquet:
    # 5) Export non-zero cells to compressed Parquet
    out = pw.export_results("results_baseline")
    print("Wrote:", out)  # e.g., results_baseline.gzip
+
+Large Monte Carlo runs
+----------------------
+
+When ``use_distributions`` is greater than zero, you can switch from the
+default direct solver to the experimental iterative backend and reduce cache
+size by collapsing dimensions you do not need later:
+
+.. code-block:: python
+
+   pw.calculate(
+       methods=["AWARE"],
+       models=["REMIND"],
+       scenarios=["SSP2-NPi"],
+       regions=["World"],
+       years=[2050],
+       variables=["Electricity|Generation"],
+       use_distributions=300,
+       solver="jacobi-gmres",
+       iterative_rtol=1e-8,
+       aggregate_by=["act_category", "location"],
+       multiprocessing=True,
+       postprocess_multiprocessing=True,
+   )
+
+``solver="direct"`` remains the default. ``aggregate_by`` currently supports
+``"act_category"`` and ``"location"`` and replaces those coordinates with a
+single ``"aggregated"`` label in the resulting array, so use it only when you
+do not need detailed attribution along those dimensions.

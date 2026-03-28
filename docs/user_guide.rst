@@ -54,6 +54,43 @@ Pathways workflow
 
    ``(act_category, variable, year, region, location, model, scenario, impact_category)``
 
+   When ``aggregate_by`` is used during Monte Carlo runs, the dimensions stay in
+   the output, but the collapsed coordinates become ``"aggregated"``.
+
+   **Advanced Monte Carlo options**
+
+   .. code-block:: python
+
+      pw.calculate(
+          methods=["AWARE"],
+          models=["REMIND"],
+          scenarios=["SSP2-NPi"],
+          regions=["World"],
+          years=[2050],
+          variables=["Electricity|Generation"],
+          use_distributions=300,
+          solver="jacobi-gmres",
+          iterative_rtol=1e-8,
+          aggregate_by=["act_category", "location"],
+          multiprocessing=True,
+          postprocess_multiprocessing=True,
+      )
+
+   - ``solver="direct"`` is the default and uses ``bw2calc.MultiLCA``.
+   - ``solver="jacobi-gmres"`` uses an experimental iterative backend. It
+     reuses prior supply arrays as warm starts when possible and falls back to
+     the direct solve if GMRES does not converge.
+   - The iterative backend exposes ``iterative_rtol``, ``iterative_atol``,
+     ``iterative_restart``, ``iterative_maxiter``, and
+     ``iterative_use_guess`` on :meth:`pathways.Pathways.calculate`.
+   - ``aggregate_by`` currently supports ``"act_category"`` and
+     ``"location"``. It collapses those dimensions before Monte Carlo
+     iteration arrays are cached, which reduces cache size and shortens
+     post-processing.
+   - ``postprocess_multiprocessing=True`` parallelizes final cached-result
+     assembly after the solver stage. Pathways also logs yearly assembly
+     progress during this step.
+
 3. **Aggregate for display**
 
    .. code-block:: python
@@ -74,3 +111,5 @@ Notes
 - Supported ``ecoinvent_version`` values are ``"3.10"``, ``"3.11"``, and ``"3.12"``.
 - Matrix files ``A_matrix.csv`` and ``B_matrix.csv`` are semicolon-delimited and may include a header row.
 - Index files ``A_matrix_index.csv`` and ``B_matrix_index.csv`` may include a header row.
+- If you loosen ``iterative_rtol`` for speed, compare the result against a
+  direct-solver run before using it for production Monte Carlo analysis.

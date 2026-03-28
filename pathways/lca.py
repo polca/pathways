@@ -26,6 +26,7 @@ import numpy as np
 import sparse as spnd
 
 from .filesystem_constants import DIR_CACHED_DB, DATA_DIR, STATS_DIR
+from .jacobi_gmres_multi_lca import JacobiGMRESMultiLCA
 from .lcia import fill_characterization_factors_matrices
 from .subshares import (
     adjust_matrix_based_on_shares,
@@ -49,6 +50,7 @@ from .stats import log_double_accounting, log_double_accounting_flows
 
 logger = logging.getLogger(__name__)
 MATRIX_ARRAY_CACHE_VERSION = 2
+MULTILCA_SOLVERS = {"direct", "jacobi-gmres"}
 
 
 def _matrix_array_cache_dir() -> Path:
@@ -175,6 +177,56 @@ def _effective_distribution_count(
         return requested_iterations
 
     return 1
+
+
+def _get_multilca_class(solver: str):
+    """Return the ``MultiLCA`` implementation to use for the requested solver."""
+    if solver == "direct":
+        return bc.MultiLCA
+    if solver == "jacobi-gmres":
+        return JacobiGMRESMultiLCA
+    raise ValueError(
+        f"Unknown solver '{solver}'. Expected one of {sorted(MULTILCA_SOLVERS)}."
+    )
+
+
+def _create_multilca(
+    *,
+    demands: dict[str, dict[int, float]],
+    data_objs: list,
+    use_distributions: bool,
+    seed: int,
+    solver: str,
+    iterative_rtol: float,
+    iterative_atol: float,
+    iterative_restart: int | None,
+    iterative_maxiter: int | None,
+    iterative_use_guess: bool,
+    use_arrays: bool = False,
+):
+    """Instantiate the requested ``MultiLCA`` backend."""
+    lca_cls = _get_multilca_class(solver)
+
+    kwargs = dict(
+        demands=demands,
+        method_config={"impact_categories": []},
+        data_objs=data_objs,
+        use_distributions=use_distributions,
+        seed_override=seed,
+    )
+    if use_arrays:
+        kwargs["use_arrays"] = True
+
+    if lca_cls is JacobiGMRESMultiLCA:
+        kwargs.update(
+            rtol=iterative_rtol,
+            atol=iterative_atol,
+            restart=iterative_restart,
+            maxiter=iterative_maxiter,
+            use_guess=iterative_use_guess,
+        )
+
+    return lca_cls(**kwargs)
 
 
 def load_matrix_and_index(
@@ -937,6 +989,13 @@ def _calculate_year(args: tuple):
         seed,
         double_accounting,
         ei_version,
+        solver,
+        iterative_rtol,
+        iterative_atol,
+        iterative_restart,
+        iterative_maxiter,
+        iterative_use_guess,
+        aggregate_by,
     ) = args
 
     print(f"------ Calculating LCA results for {year}...")
@@ -1094,11 +1153,20 @@ def _calculate_year(args: tuple):
 
     results = {}
 
-    acts_category_idx_dict = _group_technosphere_indices(
-        technosphere_indices=technosphere_indices,
-        group_by=lambda x: classifications.get(x[:2], "undefined"),
-        group_values=lca_results.coords["act_category"].values.tolist(),
-    )
+    aggregate_by = set(aggregate_by or [])
+
+    if "act_category" in aggregate_by:
+        acts_category_idx_dict = _group_technosphere_indices(
+            technosphere_indices=technosphere_indices,
+            group_by=lambda _: "aggregated",
+            group_values=lca_results.coords["act_category"].values.tolist(),
+        )
+    else:
+        acts_category_idx_dict = _group_technosphere_indices(
+            technosphere_indices=technosphere_indices,
+            group_by=lambda x: classifications.get(x[:2], "undefined"),
+            group_values=lca_results.coords["act_category"].values.tolist(),
+        )
 
     # reorder keys of acts_category_idx_dict based on lca_results.coords["act_category"].values
     acts_category_idx_dict = {
@@ -1106,12 +1174,19 @@ def _calculate_year(args: tuple):
         for k in lca_results.coords["act_category"].values.tolist()
     }
 
-    acts_location_idx_dict = _group_technosphere_indices(
-        technosphere_indices=technosphere_indices,
-        group_by=lambda x: x[-1],
-        group_values=list(set([x[-1] for x in technosphere_indices.keys()])),
-        mapping=geography_mapping,
-    )
+    if "location" in aggregate_by:
+        acts_location_idx_dict = _group_technosphere_indices(
+            technosphere_indices=technosphere_indices,
+            group_by=lambda _: "aggregated",
+            group_values=lca_results.coords["location"].values.tolist(),
+        )
+    else:
+        acts_location_idx_dict = _group_technosphere_indices(
+            technosphere_indices=technosphere_indices,
+            group_by=lambda x: x[-1],
+            group_values=list(set([x[-1] for x in technosphere_indices.keys()])),
+            mapping=geography_mapping,
+        )
 
     # reorder keys of acts_location_idx_dict based on lca_results.coords["location"].values
     acts_location_idx_dict = {
@@ -1182,14 +1257,17 @@ def _calculate_year(args: tuple):
                 )
             logging.info(f"variables: {variables}")
 
-        lca = bc.MultiLCA(
+        lca = _create_multilca(
             demands=fus,
-            method_config={"impact_categories": []},
-            data_objs=[
-                bw_datapackage,
-            ],
+            data_objs=[bw_datapackage],
             use_distributions=True if effective_use_distributions > 0 else False,
-            seed_override=seed,
+            seed=seed,
+            solver=solver,
+            iterative_rtol=iterative_rtol,
+            iterative_atol=iterative_atol,
+            iterative_restart=iterative_restart,
+            iterative_maxiter=iterative_maxiter,
+            iterative_use_guess=iterative_use_guess,
         )
 
         with CustomFilter("(almost) singular matrix"):
@@ -1228,15 +1306,20 @@ def _calculate_year(args: tuple):
             bw_correlated = get_subshares_matrix(correlated_arrays)
 
             if bw_correlated is not None:
-                lca = bc.MultiLCA(
+                lca = _create_multilca(
                     demands=fus,
-                    method_config={"impact_categories": []},
                     data_objs=[bw_datapackage, bw_correlated],
                     use_distributions=(
                         True if effective_use_distributions > 0 else False
                     ),
+                    seed=seed,
+                    solver=solver,
+                    iterative_rtol=iterative_rtol,
+                    iterative_atol=iterative_atol,
+                    iterative_restart=iterative_restart,
+                    iterative_maxiter=iterative_maxiter,
+                    iterative_use_guess=iterative_use_guess,
                     use_arrays=True,
-                    seed_override=seed,
                 )
 
                 with CustomFilter("(almost) singular matrix"):

@@ -11,7 +11,10 @@ Pathways provides tools for **prospective life cycle assessment (LCA)** driven b
 You can then compute multi-year, multi-region impact results with a single call to
 :py:meth:`pathways.Pathways.calculate`, aggregate the results with
 :py:meth:`pathways.Pathways.aggregate_results`, and export them to a compact
-Parquet file with :py:meth:`pathways.Pathways.export_results`.
+Parquet file with :py:meth:`pathways.Pathways.export_results`. For larger Monte
+Carlo studies, ``calculate`` can also use an experimental iterative solver,
+collapse selected dimensions before caching, and parallelize the final
+cache-assembly step.
 
 Contents
 --------

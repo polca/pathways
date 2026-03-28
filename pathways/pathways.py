@@ -28,7 +28,7 @@ from edges import get_available_methods
 
 from .data_validation import validate_datapackage
 from .filesystem_constants import DATA_DIR, USER_LOGS_DIR
-from .lca import _calculate_year, get_lca_matrices
+from .lca import MULTILCA_SOLVERS, _calculate_year, get_lca_matrices
 from .lcia import get_lcia_method_names
 from .stats import log_mc_parameters_to_excel
 from .subshares import generate_samples
@@ -57,6 +57,8 @@ def _fill_in_result_array(
     use_distributions: int,
     shares: [None, dict],
     methods: list,
+    progress_idx: int | None = None,
+    progress_total: int | None = None,
 ) -> np.ndarray:
     """Load per-region result files and stack them into the master results tensor.
 
@@ -115,13 +117,20 @@ def _fill_in_result_array(
                 return np.stack([np.load(f) for f in filepath], axis=-1)
             return np.stack([sp.load_npz(f).todense() for f in filepath], axis=-1)
 
+    model, scenario, year = coords
+    if progress_idx is not None and progress_total is not None:
+        print(
+            f"------ Assembling cached results for {year} "
+            f"({progress_idx}/{progress_total})..."
+        )
+    else:
+        print(f"------ Assembling cached results for {year}...")
+
     # Pre-loading data from disk if possible
     iteration_results = {
         region: _ensure_iteration_axis(_load_array(data["iterations_results"]))
         for region, data in result.items()
     }
-
-    model, scenario, year = coords
 
     results = []
 
@@ -482,6 +491,13 @@ class Pathways:
         subshare_groups: Optional[List[str]] = None,
         remove_uncertainty: bool = False,
         seed: int = 0,
+        solver: str = "direct",
+        iterative_rtol: float = 1e-8,
+        iterative_atol: float = 0.0,
+        iterative_restart: int | None = 50,
+        iterative_maxiter: int | None = 300,
+        iterative_use_guess: bool = True,
+        aggregate_by: Optional[List[str]] = None,
         multiprocessing: bool = True,
         postprocess_multiprocessing: bool = False,
         double_accounting: Optional[List[str]] = None,
@@ -515,10 +531,31 @@ class Pathways:
         :type remove_uncertainty: bool
         :param seed: Random seed forwarded to ``bw2calc`` when sampling.
         :type seed: int
+        :param solver: Sparse solver backend for the technosphere system.
+            ``"direct"`` uses ``bw2calc.MultiLCA``. ``"jacobi-gmres"`` uses
+            an experimental iterative ``MultiLCA`` backend and falls back to
+            the direct solve if GMRES does not converge.
+        :type solver: str
+        :param iterative_rtol: Relative tolerance used by the iterative solver.
+        :type iterative_rtol: float
+        :param iterative_atol: Absolute tolerance used by the iterative solver.
+        :type iterative_atol: float
+        :param iterative_restart: GMRES restart interval.
+        :type iterative_restart: int | None
+        :param iterative_maxiter: Maximum GMRES outer iterations.
+        :type iterative_maxiter: int | None
+        :param iterative_use_guess: Reuse prior supply arrays as warm starts
+            within a run when using the iterative backend.
+        :type iterative_use_guess: bool
+        :param aggregate_by: Dimensions to collapse before caching Monte Carlo results.
+            Currently supports ``"act_category"`` and ``"location"``. Collapsed
+            coordinates are labeled ``"aggregated"`` in ``self.lca_results``.
+        :type aggregate_by: list[str] | None
         :param multiprocessing: Whether to parallelize over years using ``multiprocessing.Pool``.
         :type multiprocessing: bool
         :param postprocess_multiprocessing: Whether to parallelize the post-processing stage that assembles final arrays.
-            Defaults to ``False`` to avoid heavy inter-process serialization overhead.
+            Defaults to ``False`` to avoid heavy inter-process serialization
+            overhead. Pathways logs per-year assembly progress during this stage.
         :type postprocess_multiprocessing: bool
         :param double_accounting: Optional activity filters for double-accounting diagnostics.
         :type double_accounting: list[str] | None
@@ -545,6 +582,21 @@ class Pathways:
         if methods and edges_methods:
             raise ValueError(
                 "Please provide either `methods` or `edges_methods`, not both."
+            )
+
+        aggregate_by = list(dict.fromkeys(aggregate_by or []))
+        supported_aggregate_by = {"act_category", "location"}
+        unsupported_aggregate_by = sorted(set(aggregate_by) - supported_aggregate_by)
+        if unsupported_aggregate_by:
+            raise ValueError(
+                "Unsupported `aggregate_by` dimensions: "
+                f"{unsupported_aggregate_by}. Supported values are "
+                f"{sorted(supported_aggregate_by)}."
+            )
+
+        if solver not in MULTILCA_SOLVERS:
+            raise ValueError(
+                f"Unknown solver '{solver}'. Expected one of {sorted(MULTILCA_SOLVERS)}."
             )
 
         if methods is None and edges_methods is None:
@@ -626,6 +678,7 @@ class Pathways:
                 scenarios=scenarios,
                 classifications=self.classifications,
                 mapping=self.mapping,
+                aggregate_by=aggregate_by,
                 use_distributions=use_distributions > 0,
             )
 
@@ -686,6 +739,13 @@ class Pathways:
                         seed,
                         double_accounting,
                         self.ei_version,
+                        solver,
+                        iterative_rtol,
+                        iterative_atol,
+                        iterative_restart,
+                        iterative_maxiter,
+                        iterative_use_guess,
+                        aggregate_by,
                     )
                     for year in years
                 ]
@@ -718,8 +778,10 @@ class Pathways:
                         use_distributions,
                         shares,
                         methods,
+                        idx,
+                        len(results),
                     )
-                    for coords, result in results.items()
+                    for idx, (coords, result) in enumerate(results.items(), start=1)
                 ]
 
                 r = p.starmap(_fill_in_result_array, args)
@@ -734,7 +796,8 @@ class Pathways:
                         )
                     ] = r[c]
         else:
-            for coords, values in results.items():
+            total_results = len(results)
+            for idx, (coords, values) in enumerate(results.items(), start=1):
                 model, scenario, year = coords
 
                 logging.info(
@@ -753,6 +816,8 @@ class Pathways:
                     use_distributions,
                     shares,
                     methods,
+                    idx,
+                    total_results,
                 )
 
     def aggregate_results(self, cutoff: float = 0.001, interpolate: bool = False):

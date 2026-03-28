@@ -45,9 +45,11 @@ Monte Carlo sampling and export
 -------------------------------
 
 Set ``use_distributions`` to a non-zero integer to trigger Monte Carlo draws
-for the technosphere uncertainty parameters stored in the datapackage.  The
-example below runs five iterations and writes both the aggregated results and
-per-iteration outputs to disk.
+for the technosphere uncertainty parameters stored in the datapackage. For
+larger runs, you can switch to the experimental iterative solver and collapse
+selected dimensions before cached iteration arrays are written. The example
+below runs five iterations, aggregates ``act_category`` and ``location`` during
+caching, and exports the final tensor.
 
 .. code-block:: python
 
@@ -59,6 +61,11 @@ per-iteration outputs to disk.
        years=[2030],
        variables=["Electricity|Generation"],
        use_distributions=5,
+       solver="jacobi-gmres",
+       iterative_rtol=1e-8,
+       aggregate_by=["act_category", "location"],
+       multiprocessing=True,
+       postprocess_multiprocessing=True,
        remove_uncertainty=False,
    )
 
@@ -74,3 +81,7 @@ per-iteration outputs to disk.
 
    mc_book = STATS_DIR / "ModelX_baseline_2030.xlsx"
    print(mc_book.exists())
+
+In this example, ``pw.lca_results`` keeps the same dimension names, but the
+``act_category`` and ``location`` coordinates each contain only the single value
+``"aggregated"``.

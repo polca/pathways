@@ -154,6 +154,44 @@ If not specified, all the methods, years, regions and scenarios
 defined in the datapackage.json file are used, which can be very
 time-consuming.
 
+For larger Monte Carlo studies, ``Pathways.calculate(...)`` also supports an
+experimental iterative solver and cache-shaping options:
+
+```python
+
+p.calculate(
+    methods=methods,
+    models=models,
+    scenarios=scenarios,
+    regions=regions,
+    years=years,
+    variables=variables,
+    use_distributions=300,
+    solver="jacobi-gmres",
+    iterative_rtol=1e-8,
+    aggregate_by=["act_category", "location"],
+    multiprocessing=True,
+    postprocess_multiprocessing=True,
+)
+
+```
+
+- `solver="direct"` is the default and uses `bw2calc.MultiLCA`.
+- `solver="jacobi-gmres"` uses an experimental iterative `MultiLCA` backend.
+  It can reuse previous supply arrays as warm starts and falls back to the
+  direct solve if GMRES does not converge.
+- `aggregate_by` currently supports `act_category` and `location`. These
+  dimensions are collapsed to a single `"aggregated"` label before Monte Carlo
+  iteration arrays are cached, which reduces cache size and shortens
+  post-processing.
+- `postprocess_multiprocessing=True` parallelizes final cached-result assembly.
+  During this phase, Pathways logs per-year assembly progress so long runs do
+  not appear stalled.
+
+Use `aggregate_by` only when you do not need detailed attribution along those
+dimensions in the final results. If you relax `iterative_rtol` for speed, check
+the result against a direct-solver reference first.
+
 Once calculated, the results of the LCA calculations are stored in the `.lcia_results`
 attribute of the `Pathways` object as an ``xarray.DataArray``. 
 

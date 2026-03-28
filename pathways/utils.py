@@ -258,6 +258,7 @@ def create_lca_results_array(
     scenarios: List[str],
     classifications: dict,
     mapping: dict,
+    aggregate_by: List[str] | None = None,
     use_distributions: bool = False,
 ) -> xr.DataArray:
     """Create an empty ``xarray.DataArray`` with coordinates for storing LCA results.
@@ -278,6 +279,10 @@ def create_lca_results_array(
     :type classifications: dict
     :param mapping: Scenario variable mapping used to populate the ``variable`` coordinate.
     :type mapping: dict
+    :param aggregate_by: Optional dimensions to collapse to a single
+        ``"aggregated"`` coordinate before allocating the results array.
+        Currently supports ``"act_category"`` and ``"location"``.
+    :type aggregate_by: list[str] | None
     :param use_distributions: Whether to append a ``quantile`` dimension for Monte Carlo statistics.
     :type use_distributions: bool
     :returns: Zero-initialized results array with all coordinates defined.
@@ -305,12 +310,14 @@ def create_lca_results_array(
     if "unclassified" not in act_categories:
         act_categories.append("unclassified")
 
+    aggregate_by = set(aggregate_by or [])
+
     coords = {
-        "act_category": act_categories,
+        "act_category": ["aggregated"] if "act_category" in aggregate_by else act_categories,
         "variable": list(mapping.keys()),
         "year": years,
         "region": regions,
-        "location": locations,
+        "location": ["aggregated"] if "location" in aggregate_by else locations,
         "model": models,
         "scenario": scenarios,
         "impact_category": methods,
@@ -323,12 +330,12 @@ def create_lca_results_array(
     dims = (
         len(coords["act_category"]),
         len(coords["variable"]),
-        len(years),
-        len(regions),
-        len(locations),
-        len(models),
-        len(scenarios),
-        len(methods),
+        len(coords["year"]),
+        len(coords["region"]),
+        len(coords["location"]),
+        len(coords["model"]),
+        len(coords["scenario"]),
+        len(coords["impact_category"]),
     )
 
     if use_distributions is True:
