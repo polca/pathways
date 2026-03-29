@@ -236,6 +236,7 @@ class Pathways:
             self._apply_activities_mapping(activities_mapping)
 
         self.lca_results = None
+        self.edges_contributors_manifest = None
         self.lcia_methods = get_lcia_method_names(self.ei_version)
         self.units = load_units_conversion()
         self.lcia_matrix = None
@@ -501,6 +502,8 @@ class Pathways:
         multiprocessing: bool = True,
         postprocess_multiprocessing: bool = False,
         double_accounting: Optional[List[str]] = None,
+        collect_edges_contributors: bool = False,
+        edges_contributors_include_unmatched: bool = False,
     ) -> None:
         """Run LCA calculations across selected models, pathways, regions, and years.
 
@@ -559,6 +562,10 @@ class Pathways:
         :type postprocess_multiprocessing: bool
         :param double_accounting: Optional activity filters for double-accounting diagnostics.
         :type double_accounting: list[str] | None
+        :param collect_edges_contributors: Export per-functional-unit EDGES contributor tables and store a manifest on ``self.edges_contributors_manifest``.
+        :type collect_edges_contributors: bool
+        :param edges_contributors_include_unmatched: Include unmatched EDGES exchanges in contributor exports when ``True``.
+        :type edges_contributors_include_unmatched: bool
         :returns: ``None`` (results are stored on ``self.lca_results``).
         :rtype: None
         """
@@ -582,6 +589,11 @@ class Pathways:
         if methods and edges_methods:
             raise ValueError(
                 "Please provide either `methods` or `edges_methods`, not both."
+            )
+
+        if collect_edges_contributors and not edges_methods:
+            raise ValueError(
+                "`collect_edges_contributors` requires `edges_methods` to be provided."
             )
 
         aggregate_by = list(dict.fromkeys(aggregate_by or []))
@@ -706,6 +718,7 @@ class Pathways:
 
         # Iterate over each combination of model, scenario, and year
         results = {}
+        self.edges_contributors_manifest = None
         for model in models:
             print(f"Calculating LCA results for {model}...")
             for scenario in scenarios:
@@ -746,6 +759,8 @@ class Pathways:
                         iterative_maxiter,
                         iterative_use_guess,
                         aggregate_by,
+                        collect_edges_contributors,
+                        edges_contributors_include_unmatched,
                     )
                     for year in years
                 ]
@@ -820,6 +835,13 @@ class Pathways:
                     total_results,
                 )
 
+        if collect_edges_contributors:
+            contributor_rows = []
+            for result in results.values():
+                for region_data in result.values():
+                    contributor_rows.extend(region_data.get("edges_contributors", []))
+            self.edges_contributors_manifest = pd.DataFrame(contributor_rows)
+
     def aggregate_results(self, cutoff: float = 0.001, interpolate: bool = False):
         """Collapse small contributions and optionally interpolate across years.
 
@@ -833,6 +855,53 @@ class Pathways:
         self.lca_results = display_results(
             self.lca_results, cutoff=cutoff, interpolate=interpolate
         )
+
+    def get_edges_contributors(
+        self,
+        models: Optional[List[str] | str] = None,
+        scenarios: Optional[List[str] | str] = None,
+        regions: Optional[List[str] | str] = None,
+        years: Optional[List[int] | int] = None,
+        methods: Optional[List[str] | str] = None,
+        variables: Optional[List[str] | str] = None,
+    ) -> pd.DataFrame:
+        """Load exported EDGES contributor tables for the selected filters."""
+
+        if self.edges_contributors_manifest is None:
+            raise ValueError(
+                "No EDGES contributor manifest available. Run calculate("
+                "collect_edges_contributors=True, edges_methods=[...]) first."
+            )
+
+        def _normalize(value):
+            if value is None:
+                return None
+            if isinstance(value, (str, int)):
+                return {value}
+            return set(value)
+
+        manifest = self.edges_contributors_manifest.copy()
+        filters = {
+            "model": _normalize(models),
+            "scenario": _normalize(scenarios),
+            "region": _normalize(regions),
+            "year": _normalize(years),
+            "method": _normalize(methods),
+            "variable": _normalize(variables),
+        }
+
+        for column, allowed in filters.items():
+            if allowed is not None and column in manifest.columns:
+                manifest = manifest.loc[manifest[column].isin(allowed)]
+
+        if manifest.empty:
+            return pd.DataFrame()
+
+        frames = [pd.read_parquet(filepath) for filepath in manifest["filepath"]]
+        if not frames:
+            return pd.DataFrame()
+
+        return pd.concat(frames, ignore_index=True)
 
     def export_results(self, filename: str = None) -> str:
         """Export non-zero LCA results to a compressed parquet file.

@@ -34,7 +34,10 @@ from .subshares import (
     get_subshares_matrix,
     year_has_subshare_variation,
 )
-from .edges_matrix import create_edges_characterization_matrix
+from .edges_matrix import (
+    create_edges_characterization_matrix,
+    export_edges_contributors,
+)
 from .utils import (
     CustomFilter,
     _group_technosphere_indices,
@@ -996,6 +999,8 @@ def _calculate_year(args: tuple):
         iterative_maxiter,
         iterative_use_guess,
         aggregate_by,
+        collect_edges_contributors,
+        edges_contributors_include_unmatched,
     ) = args
 
     print(f"------ Calculating LCA results for {year}...")
@@ -1339,6 +1344,8 @@ def _calculate_year(args: tuple):
             if v in uncertain_parameter_indices
         }
 
+        edges_contributor_manifest = []
+
         if methods:
             # regular LCIA methods
             characterization_matrix = fill_characterization_factors_matrices(
@@ -1365,7 +1372,7 @@ def _calculate_year(args: tuple):
                 }
                 for k, v in technosphere_indices.items()
             }
-            characterization_matrix, lca = create_edges_characterization_matrix(
+            characterization_matrix, lca, edges_lcas = create_edges_characterization_matrix(
                 model=model,
                 multilca_obj=lca,
                 methods=edges_methods,
@@ -1375,6 +1382,18 @@ def _calculate_year(args: tuple):
                 },
             )
 
+            if collect_edges_contributors:
+                edges_contributor_manifest = export_edges_contributors(
+                    multilca_obj=lca,
+                    edges_lcas=edges_lcas,
+                    model=model,
+                    scenario=scenario,
+                    year=year,
+                    region=region,
+                    functional_units=fus_details,
+                    include_unmatched=edges_contributors_include_unmatched,
+                )
+
         if debug:
             logging.info(
                 f"Characterization matrix created. "
@@ -1383,7 +1402,7 @@ def _calculate_year(args: tuple):
 
         bar.update()
         # Iterate over each region
-        results[region] = process_region(
+        region_result = process_region(
             (
                 model,
                 scenario,
@@ -1403,5 +1422,10 @@ def _calculate_year(args: tuple):
                 uncertain_parameters,
             )
         )
+
+        if edges_contributor_manifest:
+            region_result["edges_contributors"] = edges_contributor_manifest
+
+        results[region] = region_result
 
     return results

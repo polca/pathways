@@ -526,7 +526,7 @@ def clean_cache_directory():
             f"Cache directory does not exist or is not a directory: {cache_dir}"
         )
 
-    allowed_suffixes = {".npy", ".npz", ".json", ".pkl"}
+    allowed_suffixes = {".npy", ".npz", ".json", ".pkl", ".gzip"}
     removed = 0
     skipped = 0
     for file in get_visible_files(cache_dir):
