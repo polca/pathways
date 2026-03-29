@@ -1372,14 +1372,16 @@ def _calculate_year(args: tuple):
                 }
                 for k, v in technosphere_indices.items()
             }
-            characterization_matrix, lca, edges_lcas = create_edges_characterization_matrix(
-                model=model,
-                multilca_obj=lca,
-                methods=edges_methods,
-                indices={
-                    "biosphere": formatted_biosphere_index,
-                    "technosphere": formatted_technosphere_index,
-                },
+            characterization_matrix, lca, edges_lcas = (
+                create_edges_characterization_matrix(
+                    model=model,
+                    multilca_obj=lca,
+                    methods=edges_methods,
+                    indices={
+                        "biosphere": formatted_biosphere_index,
+                        "technosphere": formatted_technosphere_index,
+                    },
+                )
             )
 
             if collect_edges_contributors:
