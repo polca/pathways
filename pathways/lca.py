@@ -347,8 +347,7 @@ def get_lca_matrices(
             and Path(fp).suffix == suffix
             # A year can also occur in an ancestor (e.g. a project named
             # sweet_sure-2050-switzerland). Select the actual matrix directory.
-            and Path(fp).parent.name == str(year)
-            and Path(fp).exists()
+            and Path(fp).parent.name == str(year) and Path(fp).exists()
         ]
 
     def select_filepath(keyword: str, fps):
