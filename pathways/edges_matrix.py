@@ -183,8 +183,12 @@ def _build_edges_contributor_table(
     """Build a contributor table from EDGES mappings without Brightway lookups."""
 
     is_technosphere = _edges_method_is_technosphere(edge_lca)
-    technosphere_lookup = _build_position_lookup(getattr(edge_lca, "technosphere_flows", None))
-    biosphere_lookup = _build_position_lookup(getattr(edge_lca, "biosphere_flows", None))
+    technosphere_lookup = _build_position_lookup(
+        getattr(edge_lca, "technosphere_flows", None)
+    )
+    biosphere_lookup = _build_position_lookup(
+        getattr(edge_lca, "biosphere_flows", None)
+    )
 
     def _supplier_metadata(position: int) -> dict:
         lookup = technosphere_lookup if is_technosphere else biosphere_lookup
@@ -332,9 +336,7 @@ def export_edges_contributors(
         is_technosphere = _edges_method_is_technosphere(edge_lca)
 
         for variable, inventory in multilca_obj.inventories.items():
-            matrix = (
-                inventory.tocsr() if issparse(inventory) else csr_matrix(inventory)
-            )
+            matrix = inventory.tocsr() if issparse(inventory) else csr_matrix(inventory)
             df = _build_edges_contributor_table(
                 edge_lca,
                 matrix,
