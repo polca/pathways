@@ -188,6 +188,32 @@ def test_load_matrix_and_index_bad_columns(tmp_path):
         load_matrix_and_index(temp_file)
 
 
+@pytest.mark.parametrize("short_production", [True, False])
+def test_matrix_temporal_metadata_does_not_change_values_or_signs(
+    tmp_path, short_production
+):
+    path = tmp_path / "extended.csv"
+    header = (
+        "row;col;value;uncertainty type;loc;scale;shape;minimum;maximum;negative;flip"
+    )
+    temporal = ";temporal_distribution;temporal_loc;temporal_scale;temporal_min;temporal_max;temporal_offsets;temporal_weights"
+    production = "0;0;1;0;1;;;;;0;0"
+    if not short_production:
+        production += ";fixed;0;0;0;0;[0];[1]"
+    path.write_text(
+        header
+        + temporal
+        + "\n"
+        + production
+        + "\n1;0;2;0;2;;;;;0;1;fixed;0;0;0;0;[-1,0];[0.5,0.5]\n"
+    )
+    values, indices, flips, distributions = load_matrix_and_index(path)
+    assert values.tolist() == [1, 2]
+    assert [tuple(x) for x in indices] == [(0, 0), (0, 1)]
+    assert flips.tolist() == [False, True]
+    assert distributions["uncertainty_type"].tolist() == [0, 0]
+
+
 def test_effective_distribution_count_only_collapses_without_uncertainty():
     varying_shares = {
         "PV": {
