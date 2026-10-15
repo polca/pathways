@@ -52,7 +52,7 @@ from .utils import (
 from .stats import log_double_accounting, log_double_accounting_flows
 
 logger = logging.getLogger(__name__)
-MATRIX_ARRAY_CACHE_VERSION = 2
+MATRIX_ARRAY_CACHE_VERSION = 3
 MULTILCA_SOLVERS = {"direct", "jacobi-gmres"}
 
 
@@ -246,8 +246,19 @@ def load_matrix_and_index(
     if cached is not None:
         return cached
 
-    # Load the data from the CSV file
-    array = np.genfromtxt(file_path, delimiter=";", skip_header=1, ndmin=2)
+    # Premise can append temporal metadata, with short production rows and
+    # extended technosphere rows in the same export. Annual static LCA uses
+    # the first 11 numeric columns; temporal fields must not become sign flags.
+    with Path(file_path).open(encoding="utf-8-sig") as stream:
+        columns = len(stream.readline().rstrip("\r\n").split(";"))
+    if columns < 11:
+        raise ValueError(
+            f"Matrix file {file_path} must contain at least 11 semicolon-separated columns; "
+            f"found {columns}."
+        )
+    array = np.genfromtxt(
+        file_path, delimiter=";", skip_header=1, ndmin=2, usecols=range(11)
+    )
     if array.size == 0 or array.shape[0] == 0:
         raise ValueError(f"Matrix file {file_path} has no data rows.")
     if array.shape[1] < 11:
@@ -265,7 +276,7 @@ def load_matrix_and_index(
     data_array = array[:, 2]
 
     # make a boolean scalar array to store the sign of the data
-    flip_array = array[:, -1].astype(bool)
+    flip_array = array[:, 10].astype(bool)
 
     distributions_array = np.array(
         list(
